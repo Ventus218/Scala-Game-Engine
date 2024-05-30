@@ -11,6 +11,14 @@ Si sono realizzati due file sotto la cartella [process](../process/) ovvero:
 
 Si è inoltre deciso che lo sprint backlog manterrà una storia di tutte le sprint realizzate.
 
+## Sprint
+Le sprint dureranno una settimana ciascuna e ci si aspetta un quantitativo effettivo di lavoro da parte di ogni sviluppatore di circa 15 ore.
+
+### Meeting
+- Un incontro a inizio sprint per decidere come suddividere agli sivluppatori le task
+- Per conciliare gli impegni degli studenti si è deciso di utilizzare un gruppo per comunicare giornalmente gli avanzamenti al posto del classico meeting ad inizio giornata
+- Un incontro a fine sprint per valutare il risultato e applicare eventuali correzioni al processo di sviluppo
+
 ## La nostra definizione di "done"
 - tutti i test devono essere superati
 - l'intero progetto deve compilare
