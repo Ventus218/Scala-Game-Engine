@@ -1,6 +1,8 @@
 # Requisiti e specifica
 
-## Requisiti di business
+## Requisiti
+
+### Di business
 - Si vuole realizzare un game engine in Scala per poter sperimentare come le funzionalità avanzate di questo linguaggio possono influenzare l'esperienza di sviluppo.
 
 - Il game engine deve essere abbastanza general purpose.
@@ -8,7 +10,7 @@
 - Il software deve essere progettato e sviluppato per poter essere evoluto nel tempo.
 - Per verificare la buona riuscita del progetto deve essere possibile realizzare almeno due giochi con caratteristiche differenti.
 
-## Modello del dominio
+### Modello del dominio
 Si è presa ispirazione da altri game engine esistenti e di successo.
 
 Il framework avrà le seguenti caratteristiche:
@@ -22,9 +24,9 @@ Il framework avrà le seguenti caratteristiche:
 
 ![Diagramma delle classi - modello del dominio](./img/Modello%20del%20dominio.png)
 
-## Requisiti funzionali
+### Funzionali
 
-### L'Utente ...
+#### L'Utente ...
 - realizzando i propri behaviour può implementare o meno i seguenti metodi che fungono da punto di aggancio all'engine.
     - Inizializzazione del behaviour
     - Abilitazione del behaviour
@@ -40,12 +42,21 @@ Il framework avrà le seguenti caratteristiche:
     - abilitare e disabilitare un oggetto.
     - passare da una scena all'altra.
 - avrà a disposizione i seguenti comportamenti built-in:
-    - Definizione della posizione dell'oggetto.
-    - Definizione di un renderer con sprite e dimensione di visualizzazione
-    - Definizione di un collider con dimensione.
+    - Definizione della posizione 2D dell'oggetto.
+    - Definizione di un renderer 2D con sprite e dimensione di visualizzazione
+    - Definizione di un collider 2D con dimensione.
     - Possibilità di leggere l'input (tastiera e mouse)
 
-### Di sistema
+#### Di sistema
 - L'engine chiama dei metodi sui game object in momenti specifici del game loop.
 - L'engine mantiene attiva solo una scena alla volta.
 - L'engine mette a disposizione un concetto condiviso di framerate/tempo trascorso dall'ultimo frame
+
+### Non funzionali
+- La flessibilità ed estensibilità del sistema sono le cose più importanti. L'obiettivo è quello di permettere potenzialmente all'utente di allargare le funzionalità del framework.
+(Ad esempio si potrebbe introdurre la possibilità di realizzare giochi 3D semplicemente creando i propri behaviour specifici)
+
+- La semplicità e intuitività di utilizzo dell'engine da parte dell'utente
+
+
+## Specifica
