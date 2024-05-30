@@ -7,7 +7,7 @@
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |1|Requisiti di business|Tutti|||X|
-|1|Requisiti modello di dominio|Tutti||X||
+|1|Requisiti modello di dominio|Tutti|||X|
 |1|Requisiti funzionali utente / di sistema|Tutti||X||
 |1|Requisiti non funzionali|Tutti||X||
 |1|Requisiti di implementazione|Tutti||X||
