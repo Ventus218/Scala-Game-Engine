@@ -21,3 +21,31 @@ Il framework avrà le seguenti caratteristiche:
 - L'editor sarà testuale e sfrutterà un DSL per la definizione delle scene
 
 ![Diagramma delle classi - modello del dominio](./img/Modello%20del%20dominio.png)
+
+## Requisiti funzionali
+
+### L'Utente ...
+- realizzando i propri behaviour può implementare o meno i seguenti metodi che fungono da punto di aggancio all'engine.
+    - Inizializzazione del behaviour
+    - Abilitazione del behaviour
+    - Avvio del behaviour
+    - Chiamata di aggiornamento anticipata per ogni frame
+    - Chiamata di aggiornamento
+    - Chiamata di aggiornamento posticipata per ogni frame
+    - Disabilitazione del behaviour
+    - Distruzione del behaviour
+- deve aver a disposizione dall'engine dei metodi per:
+    - cercare specifi oggetti nella scena. (In base all'identificativo o al behaviour che questi possiedono).
+    - creare e distruggere oggetti.
+    - abilitare e disabilitare un oggetto.
+    - passare da una scena all'altra.
+- avrà a disposizione i seguenti comportamenti built-in:
+    - Definizione della posizione dell'oggetto.
+    - Definizione di un renderer con sprite e dimensione di visualizzazione
+    - Definizione di un collider con dimensione.
+    - Possibilità di leggere l'input (tastiera e mouse)
+
+### Di sistema
+- L'engine chiama dei metodi sui game object in momenti specifici del game loop.
+- L'engine mantiene attiva solo una scena alla volta.
+- L'engine mette a disposizione un concetto condiviso di framerate/tempo trascorso dall'ultimo frame
