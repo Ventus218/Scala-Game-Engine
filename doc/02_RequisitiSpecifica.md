@@ -20,7 +20,7 @@ Il framework avrà le seguenti caratteristiche:
 - Ogni game object ha un comportamento (*behaviour*)
 - I behaviour sono componibili tra di loro
 - Devono essere presenti dei behaviour built-in ad esempio per gestire l'input o il rendering grafico
-- L'editor sarà testuale e sfrutterà un DSL per la definizione delle scene
+- L'editor sarà testuale
 
 ![Diagramma delle classi - modello del dominio](./img/Modello%20del%20dominio.png)
 
@@ -57,6 +57,12 @@ Il framework avrà le seguenti caratteristiche:
 (Ad esempio si potrebbe introdurre la possibilità di realizzare giochi 3D semplicemente creando i propri behaviour specifici)
 
 - La semplicità e intuitività di utilizzo dell'engine da parte dell'utente
+
+### Di implementazione
+- Dato lo scopo del progetto (dimostrare le competenze aquisite durante l'insegnamento) si utilizzerà Scala.
+- Gli svilupattori intendono utilizzare i mixin per realizzare quello che normalmente viene implementato con il pattern Component, in quanto sembra essere un buon campo di applicazione di questo concetto.
+- Per ottenere come risultato una codebase solida e di qualità si è deciso di implementare la tecnica del Test Drive Development (TDD).
+- Per implementare l'editor testuale si è deciso di sviluppare un DSL che permetta di definire le scene.
 
 
 ## Specifica
