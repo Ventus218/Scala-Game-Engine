@@ -27,4 +27,10 @@ Le sprint dureranno una settimana ciascuna e ci si aspetta un quantitativo effet
 - il software deve rispettare certe caratteristiche di qualità
   - deve essere formattato in maniera consistente
 
+## Continuous integration
+Per migliorare l'agilità del team si vuole sfruttare la continuous integration per quanto riguarda testing, documentazione e delivery.
 
+### Branching model
+Verrà utilizzato il modello Git-Flow.
+
+Per il nostro caso sembra non sarà particolarmente utile l'utilizzo di *release branch* ma nel caso in cui dovesse diventarlo allora verranno utilizzate.
