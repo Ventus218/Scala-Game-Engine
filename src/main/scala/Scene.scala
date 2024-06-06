@@ -1,2 +1,2 @@
 trait Scene:
-  val objects: Unit => Iterable[GameObject[?]]
+  val objects: () => Iterable[GameObject[?]]
