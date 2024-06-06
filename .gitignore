@@ -1,3 +1,6 @@
+# generated jars (sbt assembly)
+SGE.jar
+
 # macOS
 .DS_Store
 
