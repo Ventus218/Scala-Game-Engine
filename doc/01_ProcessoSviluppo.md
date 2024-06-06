@@ -37,3 +37,8 @@ Per il nostro caso sembra non sarà particolarmente utile l'utilizzo di *release
 
 ### Peer review
 Ogni pull request deve essere approvata da almeno un altro componente del team prima che se ne possa fare il merge.
+
+### Github branch protection rules
+Per rafforzare il processo di lavoro, si è applicata la seguente regola sui branch *main* e *develop*:
+
+È possibile effettuare merge solo a seguito di una pull request con test verdi e almeno una revisione da parte di uno degli sviluppatori.
