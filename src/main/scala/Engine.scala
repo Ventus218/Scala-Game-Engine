@@ -1,3 +1,4 @@
+import scala.annotation.targetName
 trait IO
 
 class Engine(val io: IO, private var scene: Scene):
@@ -10,8 +11,10 @@ class Engine(val io: IO, private var scene: Scene):
 
   def loadScene(scene: Scene): Unit = sceneToLoad = Option(scene)
 
-  def enable(gameObject: GameObject[?]): Unit = ???
-  def disable(gameObject: GameObject[?]): Unit = ???
+  def enable(gameObject: GameObject[?]): Unit =
+    gameObjectsToEnable = gameObjectsToEnable.appended(gameObject)
+  def disable(gameObject: GameObject[?]): Unit =
+    gameObjectsToDisable = gameObjectsToDisable.appended(gameObject)
 
   private var shouldStop = false;
   def stop(): Unit = shouldStop = true;
@@ -53,13 +56,41 @@ class Engine(val io: IO, private var scene: Scene):
     sceneToLoad = Option.empty
     gameObjects = scene.objects().toSeq
 
+  import scala.reflect.ClassTag
+  import scala.reflect.TypeTest
+
+  @targetName("find_object")
+  def find[G <: GameObject[?]](using
+      tt: TypeTest[GameObject[?], G]
+  ): Iterable[G] =
+    gameObjects
+      .filter(_ match
+        case tt(_) => true
+        case _     => false
+      )
+      .map(_.asInstanceOf[G])
+
+  def find[B <: Behaviour](using
+      tt: TypeTest[Behaviour, B]
+  ): Iterable[GameObject[B]] =
+    gameObjects
+      .filter(_.behaviour match
+        case tt(_) => true
+        case _     => false
+      )
+      .map(_.asInstanceOf[GameObject[B]])
+
 object Engine:
   def apply(io: IO, scene: Scene): Engine = new Engine(io, scene)
 
 @main def main(): Unit =
   val io = new IO {}
   val scene = new Scene {
-    override val objects: () => Iterable[GameObject[?]] = () => Seq()
+    override val objects: () => Iterable[GameObject[?]] =
+      () =>
+        Seq(
+          PallaGameObject(r = true, enabled = true)
+        )
   }
 
   Engine(io, scene).run()
