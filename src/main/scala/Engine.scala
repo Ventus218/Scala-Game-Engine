@@ -1,6 +1,4 @@
 import scala.annotation.targetName
-trait IO
-
 class Engine(val io: IO, private var scene: Scene):
   private var gameObjects: Seq[GameObject[?]] = Seq()
 
