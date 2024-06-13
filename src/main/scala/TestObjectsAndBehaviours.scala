@@ -1,7 +1,7 @@
 trait InputB extends Behaviour:
   var inputs: List[Int] = List()
-  override def onUpdate(): Unit =
-    super.onUpdate()
+  override def onUpdate: Context => Unit = (context) =>
+    super.onUpdate(context)
     inputs = List(inputs.lastOption.getOrElse(0) + 1)
 
 trait TranformB(var x: Double = 0, var y: Double = 0) extends Behaviour
@@ -13,8 +13,8 @@ class PallaB(val rimbalzo: Boolean = true)
 
   def hit(): Unit = println("I was hit")
 
-  override def onUpdate(): Unit =
-    super.onUpdate()
+  override def onUpdate: Context => Unit = (context) =>
+    super.onUpdate(context)
     // TODO: far notare nella relazione come questo approccio sia molto più comodo
     // e semplice rispetto a cercare un component di tipo Transform nel proprio oggetto
     // e utilizzarlo.

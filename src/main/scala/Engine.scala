@@ -14,6 +14,9 @@ class Engine(val io: IO, private var scene: Scene):
   def disable(gameObject: GameObject[?]): Unit =
     gameObjectsToDisable = gameObjectsToDisable.appended(gameObject)
 
+  extension (gameObjects: Seq[GameObject[?]])
+    def toContexts(): Seq[Context] = gameObjects.map(Context(this, _))
+
   private var shouldStop = false;
   def stop(): Unit = shouldStop = true;
 
@@ -21,34 +24,59 @@ class Engine(val io: IO, private var scene: Scene):
     while !shouldStop do
       if sceneToLoad.isDefined then applyScene(sceneToLoad.get)
 
-      gameObjects.foreach(_.behaviour.onInit())
+      gameObjects
+        .toContexts()
+        .foreach(context => context.gameObject.behaviour.onInit(context))
 
-      enabledBehaviours().foreach(_.onEnabled())
-      enabledBehaviours().foreach(_.onStart())
+      enabledContexts().foreach(context =>
+        context.gameObject.behaviour.onEnabled(context)
+      )
+      enabledContexts().foreach(context =>
+        context.gameObject.behaviour.onStart(context)
+      )
 
       // Game loop
       while (sceneToLoad.isEmpty && !shouldStop) do
-        gameObjectsToEnable.foreach(o =>
-          o.enabled = true
-          o.behaviour.onEnabled()
-        )
+        gameObjectsToEnable
+          .toContexts()
+          .foreach(context =>
+            context.gameObject.enabled = true
+            context.gameObject.behaviour.onEnabled(context)
+          )
         gameObjectsToEnable = Seq()
-        gameObjectsToDisable.foreach(o =>
-          o.enabled = false
-          o.behaviour.onDisabled()
-        )
+        gameObjectsToDisable
+          .toContexts()
+          .foreach(context =>
+            context.gameObject.enabled = false
+            context.gameObject.behaviour.onDisabled(context)
+          )
         gameObjectsToDisable = Seq()
-        enabledBehaviours().foreach(_.onEarlyUpdate())
-        enabledBehaviours().foreach(_.onUpdate())
-        enabledBehaviours().foreach(_.onLateUpdate())
+        enabledContexts().foreach(context =>
+          context.gameObject.behaviour.onEarlyUpdate(context)
+        )
+        enabledContexts().foreach(context =>
+          context.gameObject.behaviour.onUpdate(context)
+        )
+        enabledContexts().foreach(context =>
+          context.gameObject.behaviour.onLateUpdate(context)
+        )
 
-      gameObjects.foreach(_.behaviour.onDeinit())
+      gameObjects
+        .toContexts()
+        .foreach(context => context.gameObject.behaviour.onDeinit(context))
 
   private def enabledGameObjects(): Seq[GameObject[?]] =
     gameObjects.filter(_.enabled)
 
-  private def enabledBehaviours(): Seq[Behaviour] =
-    gameObjects.filter(_.enabled).map(_.behaviour)
+  private def enabledContexts(): Seq[Context] =
+    gameObjects
+      .map(go => Context(this, go))
+      .filter(_.gameObject.enabled)
+
+  case class BehaviourWithContext(
+      val behaviour: Behaviour,
+      val context: Context
+  )
 
   private def applyScene(scene: Scene) =
     sceneToLoad = Option.empty
@@ -82,12 +110,17 @@ object Engine:
   def apply(io: IO, scene: Scene): Engine = new Engine(io, scene)
 
 @main def main(): Unit =
-  val io = new IO {}
+  val io = ConsoleIO()
   val scene = new Scene {
     override val objects: () => Iterable[GameObject[?]] =
       () =>
         Seq(
-          PallaGameObject(r = true, enabled = true)
+          PallaGameObject(r = true, enabled = true),
+          new GameObject {
+            val id: Option[String] = Option("sasso")
+            var enabled: Boolean = true
+            val behaviour: RendererB = new Behaviour with ConsoleIORendererB
+          }
         )
   }
 
