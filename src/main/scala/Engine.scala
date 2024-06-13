@@ -18,19 +18,14 @@ class Engine(val io: IO, private var scene: Scene):
 
   def run(): Unit =
     while !shouldStop do
-      if sceneToLoad.isDefined then
-        scene = sceneToLoad.get
-        sceneToLoad = Option.empty
-        gameObjects = scene.objects().toSeq
+      if sceneToLoad.isDefined then applyScene(sceneToLoad.get)
 
       gameObjects.foreach(_.behaviour.onInit())
 
-      val enabledGameObjectBehaviour = gameObjects
-        .filter(_.enabled)
-        .map(_.behaviour)
+      enabledBehaviours().foreach(_.onEnabled())
+      enabledBehaviours().foreach(_.onStart())
 
-      enabledGameObjectBehaviour.foreach(_.onEnabled())
-      enabledGameObjectBehaviour.foreach(_.onStart())
+      // Game loop
       while (sceneToLoad.isEmpty && !shouldStop) do
         gameObjectsToEnable.foreach(o =>
           o.enabled = true
@@ -42,9 +37,21 @@ class Engine(val io: IO, private var scene: Scene):
           o.behaviour.onDisabled()
         )
         gameObjectsToDisable = Seq()
-        enabledGameObjectBehaviour.foreach(_.onUpdate())
+        enabledBehaviours().foreach(_.onEarlyUpdate())
+        enabledBehaviours().foreach(_.onUpdate())
+        enabledBehaviours().foreach(_.onLateUpdate())
 
       gameObjects.foreach(_.behaviour.onDeinit())
+
+  private def enabledGameObjects(): Seq[GameObject[?]] =
+    gameObjects.filter(_.enabled)
+
+  private def enabledBehaviours(): Seq[Behaviour] =
+    gameObjects.filter(_.enabled).map(_.behaviour)
+
+  private def applyScene(scene: Scene) =
+    sceneToLoad = Option.empty
+    gameObjects = scene.objects().toSeq
 
 object Engine:
   def apply(io: IO, scene: Scene): Engine = new Engine(io, scene)
