@@ -20,8 +20,11 @@ class Engine(val io: IO, private var scene: Scene):
   private var shouldStop = false;
   def stop(): Unit = shouldStop = true;
 
+  var deltaTimeNanos: Long = 0
+
   def run(): Unit =
     while !shouldStop do
+      deltaTimeNanos = 0
       if sceneToLoad.isDefined then applyScene(sceneToLoad.get)
 
       gameObjects
@@ -37,6 +40,7 @@ class Engine(val io: IO, private var scene: Scene):
 
       // Game loop
       while (sceneToLoad.isEmpty && !shouldStop) do
+        val start = System.nanoTime()
         gameObjectsToEnable
           .toContexts()
           .foreach(context =>
@@ -60,6 +64,8 @@ class Engine(val io: IO, private var scene: Scene):
         enabledContexts().foreach(context =>
           context.gameObject.behaviour.onLateUpdate(context)
         )
+        val end = System.nanoTime()
+        deltaTimeNanos = end - start
 
       gameObjects
         .toContexts()

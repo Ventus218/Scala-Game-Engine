@@ -4,7 +4,10 @@ trait Context:
   val engine: Engine
   val gameObject: GameObject[?]
 
-  def io: IO = engine.io
+extension (context: Context)
+  def io: IO = context.engine.io
+  def deltaTimeNanos: Long = context.engine.deltaTimeNanos
+  def deltaTimeSeconds: Double = context.deltaTimeNanos / (Math.pow(10, 9))
 
 // Examples
 

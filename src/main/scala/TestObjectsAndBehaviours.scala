@@ -20,7 +20,8 @@ class PallaB(val rimbalzo: Boolean = true)
     // e utilizzarlo.
     // Inoltre questo è controllato dal compilatore.
     x = x + 1
-    println(s"transform x ${this.x}")
+    // println(s"transform x ${this.x}")
+    println(context.deltaTimeNanos)
     inputs.foreach(println(_))
 
 class PallaGameObject(r: Boolean, var enabled: Boolean)
