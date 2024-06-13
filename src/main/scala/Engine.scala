@@ -1,5 +1,42 @@
 import scala.annotation.targetName
-class Engine(val io: IO, private var scene: Scene):
+
+trait Engine:
+  val io: IO
+  def loadScene(scene: Scene): Unit
+  def enable(gameObject: GameObject[?]): Unit
+  def disable(gameObject: GameObject[?]): Unit
+  def create(gameObject: GameObject[?]): Unit
+  def destroy(gameObject: GameObject[?]): Unit
+  def run(): Unit
+  def stop(): Unit
+  def deltaTimeNanos: Long
+
+  import scala.reflect.TypeTest
+
+  @targetName("find_object")
+  def find[G <: GameObject[?]](using
+      tt: TypeTest[GameObject[?], G]
+  )(): Iterable[G]
+
+  def find[B <: Behaviour](using
+      tt: TypeTest[Behaviour, B]
+  )(): Iterable[GameObject[B]]
+
+  @targetName("find_object_by_id")
+  def findById[G <: GameObject[?]](using
+      tt: TypeTest[GameObject[?], G]
+  )(id: String): Option[G]
+
+  def findById[B <: Behaviour](using
+      tt: TypeTest[Behaviour, B]
+  )(id: String): Option[GameObject[B]]
+
+class EngineImpl(val io: IO, private var scene: Scene) extends Engine:
+
+  override def destroy(gameObject: GameObject[?]): Unit = ???
+
+  override def create(gameObject: GameObject[?]): Unit = ???
+
   private var gameObjects: Seq[GameObject[?]] = Seq()
 
   private var gameObjectsToDisable: Seq[GameObject[?]] = Seq()
@@ -20,7 +57,9 @@ class Engine(val io: IO, private var scene: Scene):
   private var shouldStop = false;
   def stop(): Unit = shouldStop = true;
 
-  var deltaTimeNanos: Long = 0
+  private var _deltaTimeNanos: Long = 0
+  def deltaTimeNanos: Long = _deltaTimeNanos
+  private def deltaTimeNanos_=(value: Long) = _deltaTimeNanos = value
 
   def run(): Unit =
     while !shouldStop do
@@ -94,7 +133,7 @@ class Engine(val io: IO, private var scene: Scene):
   @targetName("find_object")
   def find[G <: GameObject[?]](using
       tt: TypeTest[GameObject[?], G]
-  ): Iterable[G] =
+  )(): Iterable[G] =
     gameObjects
       .filter(_ match
         case tt(_) => true
@@ -104,7 +143,7 @@ class Engine(val io: IO, private var scene: Scene):
 
   def find[B <: Behaviour](using
       tt: TypeTest[Behaviour, B]
-  ): Iterable[GameObject[B]] =
+  )(): Iterable[GameObject[B]] =
     gameObjects
       .filter(_.behaviour match
         case tt(_) => true
@@ -112,8 +151,19 @@ class Engine(val io: IO, private var scene: Scene):
       )
       .map(_.asInstanceOf[GameObject[B]])
 
-object Engine:
-  def apply(io: IO, scene: Scene): Engine = new Engine(io, scene)
+  @targetName("find_object_by_id")
+  def findById[G <: GameObject[?]](using
+      tt: TypeTest[GameObject[?], G]
+  )(id: String): Option[G] =
+    find[G]().find(_.id == Some(id))
+
+  def findById[B <: Behaviour](using
+      tt: TypeTest[Behaviour, B]
+  )(id: String): Option[GameObject[B]] =
+    find[B]().find(_.id == Some(id))
+
+object EngineImpl:
+  def apply(io: IO, scene: Scene): EngineImpl = new EngineImpl(io, scene)
 
 @main def main(): Unit =
   val io = ConsoleIO()
@@ -130,4 +180,4 @@ object Engine:
         )
   }
 
-  Engine(io, scene).run()
+  val a = EngineImpl(io, scene).findById[TranformB]("")
