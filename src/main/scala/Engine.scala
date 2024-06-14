@@ -2,6 +2,7 @@ import scala.annotation.targetName
 
 trait Engine:
   val io: IO
+  val storage: Storage
   def loadScene(scene: Scene): Unit
   def enable(gameObject: GameObject[?]): Unit
   def disable(gameObject: GameObject[?]): Unit
@@ -31,7 +32,8 @@ trait Engine:
       tt: TypeTest[Behaviour, B]
   )(id: String): Option[GameObject[B]]
 
-class EngineImpl(val io: IO, private var scene: Scene) extends Engine:
+class EngineImpl(val io: IO, val storage: Storage, private var scene: Scene)
+    extends Engine:
 
   override def destroy(gameObject: GameObject[?]): Unit = ???
 
@@ -103,6 +105,9 @@ class EngineImpl(val io: IO, private var scene: Scene) extends Engine:
         enabledContexts().foreach(context =>
           context.gameObject.behaviour.onLateUpdate(context)
         )
+
+        io.onFrameEnd(this)
+
         val end = System.nanoTime()
         deltaTimeNanos = end - start
 
@@ -163,7 +168,8 @@ class EngineImpl(val io: IO, private var scene: Scene) extends Engine:
     find[B]().find(_.id == Some(id))
 
 object EngineImpl:
-  def apply(io: IO, scene: Scene): EngineImpl = new EngineImpl(io, scene)
+  def apply(io: IO, storage: Storage, scene: Scene): EngineImpl =
+    new EngineImpl(io, storage, scene)
 
 @main def main(): Unit =
   val io = ConsoleIO()
@@ -179,5 +185,3 @@ object EngineImpl:
           }
         )
   }
-
-  val a = EngineImpl(io, scene).findById[TranformB]("")

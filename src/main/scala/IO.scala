@@ -1,6 +1,7 @@
 import scala.annotation.targetName
 
-trait IO
+trait IO:
+  def onFrameEnd: Engine => Unit = (_) => {}
 
 // Examples
 trait RendererB extends Behaviour

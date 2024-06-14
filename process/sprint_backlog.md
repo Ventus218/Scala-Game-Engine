@@ -17,4 +17,4 @@
 |2|Setup CI per testing|Tutti|||X|
 |2|Setup CI per delivery|Tutti|||X|
 |3|Gettare basi architettura|Tutti|||X|
-|3|Definizione delle interfacce base|Tutti||X||
+|3|Definizione delle interfacce base|Tutti|||X|
