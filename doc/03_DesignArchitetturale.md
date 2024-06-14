@@ -22,3 +22,4 @@ L'utente può utilizzare i comportamenti già forniti dal framework oppure defin
 
 ## Motore di gioco
 Il motore di gioco orchestra tutte le entità presenti in modo da generare l'output previsto. Inoltre fornisce delle API che permettono all'utente di interagire (ad esempio per creare/distruggere oggetti, cercarne alcuni con specifici comportamenti, ecc....).
+Inoltre il motore di gioco mette a disposizione un concetto di IO che permette all'utente di definire il proprio sistema di input/output (grafico o meno).

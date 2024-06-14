@@ -1,2 +1,2 @@
-// TODO:
-trait Scene
+trait Scene:
+  val gameObjects: () => Iterable[GameObject[?]]
