@@ -125,7 +125,7 @@ class EngineImpl(val io: IO, private var scene: Scene) extends Engine:
 
   private def applyScene(scene: Scene) =
     sceneToLoad = Option.empty
-    gameObjects = scene.objects().toSeq
+    gameObjects = scene.gameObjects().toSeq
 
   import scala.reflect.ClassTag
   import scala.reflect.TypeTest
@@ -168,7 +168,7 @@ object EngineImpl:
 @main def main(): Unit =
   val io = ConsoleIO()
   val scene = new Scene {
-    override val objects: () => Iterable[GameObject[?]] =
+    override val gameObjects: () => Iterable[GameObject[?]] =
       () =>
         Seq(
           PallaGameObject(r = true, enabled = true),

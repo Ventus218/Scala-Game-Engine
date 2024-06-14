@@ -1,5 +1,8 @@
 import scala.annotation.targetName
+
 trait IO
+
+// Examples
 trait RendererB extends Behaviour
 
 extension (context: Context)
