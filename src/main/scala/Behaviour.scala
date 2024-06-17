@@ -39,5 +39,3 @@ trait Behaviour:
   /** Called only once before the engine destroys the object.
     */
   def onDeinit: Context => Unit = (context) => {}
-
-trait PositionB(var x: Int = 0, var y: Int = 0) extends Behaviour
