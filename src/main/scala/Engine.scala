@@ -57,9 +57,14 @@ object Engine:
         
         override def disable(gameObject: GameObject[?]): Unit = ???
 
-        override def run(): Unit = gameObjects.foreach(
-            _.behaviour.onInit(null)
-        )
+        override def run(): Unit = 
+            gameObjects.foreach(
+                _.behaviour.onInit(null)
+            )
+
+            gameObjects.filter(gameObject => gameObject.enabled).foreach(
+                _.behaviour.onEnabled(null)
+            )
 
         override def stop(): Unit = ???
 
