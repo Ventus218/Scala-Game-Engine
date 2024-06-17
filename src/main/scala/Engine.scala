@@ -34,7 +34,7 @@ trait Engine:
   )(id: String): Option[GameObject[B]]
 
 object Engine:
-    private class EngineImpl(override val io: IO, override val storage: Storage, private val gameObjects: Iterable[GameObject[?]]) extends Engine:
+    private class EngineImpl(override val io: IO, override val storage: Storage, private val gameObjects: Iterable[GameObject[?]], numSteps: Int) extends Engine:
         override def enable(gameObject: GameObject[?]): Unit = ???
 
         override def find[B <: Behaviour](using tt: TypeTest[Behaviour, B])(): Iterable[GameObject[B]] = ???
@@ -57,15 +57,38 @@ object Engine:
         
         override def disable(gameObject: GameObject[?]): Unit = ???
 
+        def enabledGameObjects = gameObjects.filter(gameObject => gameObject.enabled)
+
         override def run(): Unit = 
             gameObjects.foreach(
                 _.behaviour.onInit(null)
             )
 
-            gameObjects.filter(gameObject => gameObject.enabled).foreach(
+            enabledGameObjects.foreach(
                 _.behaviour.onEnabled(null)
+            )
+
+            enabledGameObjects.foreach(
+                _.behaviour.onStart(null)
+            )
+
+            for _ <- 0 until numSteps do
+                enabledGameObjects.foreach(
+                    _.behaviour.onEarlyUpdate(null)
+                )
+
+                enabledGameObjects.foreach(
+                    _.behaviour.onUpdate(null)
+                )
+
+                enabledGameObjects.foreach(
+                    _.behaviour.onLateUpdate(null)
+                )
+
+            gameObjects.foreach(
+                _.behaviour.onDeinit(null)
             )
 
         override def stop(): Unit = ???
 
-    def apply(io: IO, storage: Storage, gameObjects: Iterable[GameObject[?]]): Engine = new EngineImpl(io = io, storage = storage, gameObjects = gameObjects)
+    def apply(io: IO, storage: Storage, gameObjects: Iterable[GameObject[?]], numSteps: Int): Engine = new EngineImpl(io = io, storage = storage, gameObjects = gameObjects, numSteps = numSteps)
