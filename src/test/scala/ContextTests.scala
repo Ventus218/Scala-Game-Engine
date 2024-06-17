@@ -4,7 +4,7 @@ import org.scalatest.matchers.should.Matchers.*
 class ContextTests extends AnyFlatSpec:
   val engine =
     EngineMock(new IO {}, StorageMock(), deltaTimeNanosInit = 1_000_000_000L)
-  val gameObject = GameObjectMock(true)
+  val gameObject = GameObjectMock()
   def context: Context = Context(engine, gameObject)
 
   "Context" should "provide a direct reference to the engine IO" in:
@@ -60,8 +60,3 @@ private case class StorageMock() extends Storage:
   def get[T](key: String): T = ???
   def getOption[T](key: String): Option[T] = ???
   def unset(key: String): Unit = ???
-
-private case class GameObjectMock(enabled: Boolean)
-    extends GameObject[Behaviour]:
-  val id: Option[String] = Option.empty
-  val behaviour: Behaviour = new Behaviour {}
