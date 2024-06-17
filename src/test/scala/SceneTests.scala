@@ -15,10 +15,3 @@ class SceneTests extends AnyFlatSpec:
     instantiatedObjects.exists(_.id == Some("1")) shouldBe true
     instantiatedObjects.exists(_.id == Some("2")) shouldBe true
     instantiatedObjects.exists(_.id == None) shouldBe true
-
-// Mocks
-private case class GameObjectMock(
-    id: Option[String] = Option.empty,
-    enabled: Boolean = true,
-    behaviour: Behaviour = new Behaviour {}
-) extends GameObject[Behaviour]
