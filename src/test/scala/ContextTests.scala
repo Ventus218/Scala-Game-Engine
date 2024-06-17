@@ -1,26 +1,36 @@
 import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers.*
 
 class ContextTests extends AnyFlatSpec:
-  val engine = EngineMock(new IO {}, StorageMock())
+  val engine =
+    EngineMock(new IO {}, StorageMock(), deltaTimeNanosInit = 1_000_000_000L)
   val gameObject = GameObjectMock(true)
   def context: Context = Context(engine, gameObject)
 
   "Context" should "provide a direct reference to the engine IO" in:
-    context.io == engine.io
+    context.io shouldBe engine.io
 
   it should "provide a direct reference to the engine Storage" in:
-    context.storage == engine.storage
+    context.storage shouldBe engine.storage
 
   it should "provide a direct reference to the engine deltaTimeNanos" in:
-    context.deltaTimeNanos == engine.deltaTimeNanos
+    context.deltaTimeNanos shouldBe engine.deltaTimeNanos
 
   it should "provide utility for converting deltaTimeNanos into seconds" in:
-    context.deltaTimeSeconds == 1
+    context.deltaTimeSeconds shouldBe 1
+
+    val engine2 =
+      EngineMock(new IO {}, StorageMock(), deltaTimeNanosInit = 500_000_000L)
+    Context(engine2, gameObject).deltaTimeSeconds shouldBe 0.5
 
 // Mocks
 import scala.annotation.targetName
 import scala.reflect.TypeTest
-private case class EngineMock(io: IO, storage: Storage) extends Engine {
+private case class EngineMock(
+    io: IO,
+    storage: Storage,
+    deltaTimeNanosInit: Long
+) extends Engine {
   def stop(): Unit = ???
   def enable(gameObject: GameObject[?]): Unit = ???
   @targetName("find_object")
@@ -42,7 +52,7 @@ private case class EngineMock(io: IO, storage: Storage) extends Engine {
   def disable(gameObject: GameObject[?]): Unit = ???
   def loadScene(scene: Scene): Unit = ???
   def create(gameObject: GameObject[?]): Unit = ???
-  def deltaTimeNanos: Long = 1_000_000_000
+  def deltaTimeNanos: Long = deltaTimeNanosInit
 }
 
 private case class StorageMock() extends Storage:
