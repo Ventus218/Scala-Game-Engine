@@ -3,7 +3,7 @@ import org.scalatest.matchers.should.Matchers.*
 
 class ContextTests extends AnyFlatSpec:
   val engine =
-    EngineMock(new IO {}, StorageMock(), deltaTimeNanosInit = 1_000_000_000L)
+    Engine(new IO {}, StorageMock(), null, 0, deltaTimeNanos = 1_000_000_000L)
   val gameObject = GameObjectMock()
   def context: Context = Context(engine, gameObject)
 
@@ -20,37 +20,5 @@ class ContextTests extends AnyFlatSpec:
     context.deltaTimeSeconds shouldBe 1
 
     val engine2 =
-      EngineMock(new IO {}, StorageMock(), deltaTimeNanosInit = 500_000_000L)
+      Engine(new IO {}, StorageMock(), null, 0, deltaTimeNanos = 500_000_000L)
     Context(engine2, gameObject).deltaTimeSeconds shouldBe 0.5
-
-// Mocks
-import scala.annotation.targetName
-import scala.reflect.TypeTest
-private case class EngineMock(
-    io: IO,
-    storage: Storage,
-    deltaTimeNanosInit: Long
-) extends Engine {
-  def stop(): Unit = ???
-  def enable(gameObject: GameObject[?]): Unit = ???
-  @targetName("find_object")
-  def find[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(): Iterable[G] = ???
-  def find[B <: Behaviour](using
-      tt: TypeTest[Behaviour, B]
-  )(): Iterable[GameObject[B]] = ???
-  @targetName("find_object_by_id")
-  def findById[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(id: String): Option[G] = ???
-  def findById[B <: Behaviour](using
-      tt: TypeTest[Behaviour, B]
-  )(id: String): Option[GameObject[B]] = ???
-  def run(): Unit = ???
-  def destroy(gameObject: GameObject[?]): Unit = ???
-  def disable(gameObject: GameObject[?]): Unit = ???
-  def loadScene(scene: Scene): Unit = ???
-  def create(gameObject: GameObject[?]): Unit = ???
-  def deltaTimeNanos: Long = deltaTimeNanosInit
-}
