@@ -16,5 +16,7 @@ Quando un behaviour usa PositionB come mixin, avrà accesso ad una x ed una y se
 Si possono passare i valori iniziali di x e y se non si vuole inizializzarle a 0 e si possono cambiare una volta creato il behaviour.
 
 *Esempio*
-`val positionB: PositionB = new Behaviour() with PositionB(5) //create a PositionB with x = 5, y = 0`
-`positionB.y = 2 //change value of y`
+```scala
+// create a PositionB with x = 5, y = 0
+val positionB: PositionB = new Behaviour() with PositionB(5)
+```
