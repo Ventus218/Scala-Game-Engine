@@ -4,6 +4,11 @@ import org.scalatest.matchers.should.Matchers.*
 class BehavioursTest extends AnyFlatSpec:
     val positionB = new Behaviour() with PositionB()
 
-    "positionB" should "have 0 as x and y as default values" in:
+    "PositionB" should "have 0 as x and y as default values" in:
         positionB.x shouldBe 0
         positionB.y shouldBe 0
+
+    it should "be created with other values other than 0 as x and y" in:
+        val positionB2: PositionB = new Behaviour() with PositionB(5, 3)
+        positionB2.x shouldBe 5
+        positionB2.y shouldBe 3
