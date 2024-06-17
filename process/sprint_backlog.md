@@ -23,14 +23,14 @@
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |4|Specifica|Tutti|||X|
-|5|Implementazione **Scene**|Alessandro||X||
+|5|Implementazione **Scene**|Alessandro|||X|
 |6|Implementazione **SceneManager**|Alessandro|X|||
 |7|Implementazione **Storage**|Alessandro||X||
-|8|Implementazione **Context**|Alessandro||X||
+|8|Implementazione **Context**|Alessandro|||X|
 |9|Implementazione **Engine** (game loop)|Corrado||X||
 |9|Implementazione **Engine** (metodi find...)|Alessandro|X|||
 |9|Implementazione **Engine** (altri metodi (caricamento scena, distruzione/creazione, run/stop, delta time))|Michele||X||
-|10|Behaviour **PositionB**|Corrado||X||
+|10|Behaviour **PositionB**|Corrado|||X|
 |10|Behaviour **DimensionB**|Corrado||X||
 |10|Behaviour **ColliderB** (di diverse forme)|Corrado|X|||
 |11|Implementazione **IO (Swing)**|Michele||X||
