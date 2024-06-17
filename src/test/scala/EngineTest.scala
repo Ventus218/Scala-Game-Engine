@@ -16,11 +16,9 @@ class EngineTest extends AnyFlatSpec:
   it should "init all gameObjects behaviour when it is started" in:
     getEngine(gameObjects).run()
 
-    gameObject1.behaviour.x shouldBe 1
-    gameObject1.behaviour.y shouldBe -1
-
-    gameObject2.behaviour.x shouldBe 1
-    gameObject2.behaviour.y shouldBe -1
+    gameObjects.foreach( gameObject =>
+      gameObject.behaviour.list shouldBe Seq("init")
+    )
 
   it should "call onEnabled on enabledGameObjects after init" in:
     val gameObject3 = new GameObjectMockWithBehaviour(0, 0)
@@ -28,35 +26,34 @@ class EngineTest extends AnyFlatSpec:
 
     getEngine(gameObjects ++ Iterable(gameObject3) ++ Iterable(gameObject4)).run()
 
-    gameObject1.behaviour.x shouldBe 1
-    gameObject1.behaviour.y shouldBe -1
+    gameObjects.foreach(gameObject =>
+      gameObject.behaviour.list shouldBe Seq("init")
+    )
 
-    gameObject3.behaviour.x shouldBe 2
-    gameObject3.behaviour.y shouldBe -2
+    gameObject3.behaviour.list shouldBe Seq("init", "enable")
+    gameObject4.behaviour.list shouldBe Seq("init", "enable")
 
-    gameObject4.behaviour.x shouldBe 2
-    gameObject4.behaviour.y shouldBe -2
+  it should "call onStart on enabledGameObjects after enable" in:
+    ()
   
-  private class GameObjectMockWithBehaviour(x: Double, y: Double, var enabled: Boolean = true) extends GameObject[OnInitOnEnabledMockB]:
+  private class GameObjectMockWithBehaviour(x: Double, y: Double, var enabled: Boolean = true) extends GameObject[MockB]:
     override val id: Option[String] = Option.empty
-    override val behaviour: OnInitOnEnabledMockB = new Behaviour() with OnInitOnEnabledMockB() with PositionB(x = x, y = y)
+    override val behaviour: MockB = new Behaviour() with MockB()
 
-  private trait OnInitOnEnabledMockB extends PositionB:
+
+  private trait MockB extends Behaviour:
+    var list: Seq[String] = Seq()
     override def onInit: Context => Unit =
       context =>
-        x = 1
-        y = -1
+        list = list :+ "init"
 
     override def onEnabled: Context => Unit =
       context =>
-        x = 2
-        y = -2
+        list = list :+ "enable"
 
-  private trait OnStartMockB extends PositionB:
     override def onStart: Context => Unit =
       context =>
-        x = 3
-        y = -3
+        list = list :+ "start"
 
   private class StorageMock extends Storage:
     override def set[T](key: String, value: T): Unit = ???
