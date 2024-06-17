@@ -19,11 +19,11 @@ class BehavioursTest extends AnyFlatSpec:
     
     it should "change x and y" in:
         positionB.x = 3
-        positionB.y = 5
+        positionB.y = -5
         positionB.x shouldBe 3
-        positionB.y shouldBe 5
+        positionB.y shouldBe -5
 
-        positionB.x = 7
+        positionB.x = -7
         positionB.y = 10
-        positionB.x shouldBe 7
+        positionB.x shouldBe -7
         positionB.y shouldBe 10
