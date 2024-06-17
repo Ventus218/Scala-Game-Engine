@@ -30,7 +30,7 @@
 |9|Implementazione **Engine** (game loop)|Corrado||X||
 |9|Implementazione **Engine** (metodi find...)|Alessandro|X|||
 |9|Implementazione **Engine** (altri metodi (caricamento scena, distruzione/creazione, run/stop, delta time))|Michele||X||
-|10|Behaviour **PositionB**|Corrado||X||
+|10|Behaviour **PositionB**|Corrado|||X|
 |10|Behaviour **DimensionB**|Corrado||X||
 |10|Behaviour **ColliderB** (di diverse forme)|Corrado|X|||
 |11|Implementazione **IO (Swing)**|Michele||X||
