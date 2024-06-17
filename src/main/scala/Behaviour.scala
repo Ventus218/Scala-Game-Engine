@@ -40,4 +40,4 @@ trait Behaviour:
     */
   def onDeinit: Context => Unit = (context) => {}
 
-trait PositionB(val x: Int = 0, val y: Int = 0) extends Behaviour
+trait PositionB(var x: Int = 0, var y: Int = 0) extends Behaviour

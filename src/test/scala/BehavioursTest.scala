@@ -16,3 +16,14 @@ class BehavioursTest extends AnyFlatSpec:
         val positionB3: PositionB = new Behaviour() with PositionB(2, 7)
         positionB3.x shouldBe 2
         positionB3.y shouldBe 7
+    
+    it should "change x and y" in:
+        positionB.x = 3
+        positionB.y = 5
+        positionB.x shouldBe 3
+        positionB.y shouldBe 5
+
+        positionB.x = 7
+        positionB.y = 10
+        positionB.x shouldBe 7
+        positionB.y shouldBe 10
