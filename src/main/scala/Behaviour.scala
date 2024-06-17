@@ -39,3 +39,7 @@ trait Behaviour:
   /** Called only once before the engine destroys the object.
     */
   def onDeinit: Context => Unit = (context) => {}
+
+trait PositionB extends Behaviour:
+  val x: Int = 0
+  val y: Int = 0
