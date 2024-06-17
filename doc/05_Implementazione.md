@@ -5,6 +5,13 @@ Context offre un'implementazione di default tramite `Context.apply` che non è a
 
 Inoltre mette a disposizione dei metodi di utilità (come riferimenti diretti ad IO, Storage e deltaTimeNanos la conversione di quest'ultimo in secondi.) che possono anche essere aggiunti dall'utente finale attraverso delle *extensions*.
 
+## Storage
+Storage permette di salvare coppie chiave valore in memoria volatile.
+
+La natura di questo componente costringe a lavorare con il tipo Any nell'implementazione, comunque cast e controlli riguardanti i tipi vengono effettuati a runtime attraversion reflection.
+
+L'implementazione di default, che viene restituita da `Storage.apply` è `StorageImmutableMapImpl` che sfrutta al suo interno una `Map` immutabile, nel caso si necessiti di migliorare le prestazioni è suggerito creare una nuova implementazione con una struttura dati mutabile.
+
 ## Scene
 Scene ha una implementazione di default attraverso `Scene.apply`.
 
