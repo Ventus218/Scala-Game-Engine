@@ -17,6 +17,7 @@ Si possono passare i valori iniziali di x e y se non si vuole inizializzarle a 0
 
 *Esempio*
 ```scala
-// create a PositionB with x = 5, y = 0
+// create a PositionB with x = 5, y = 0 then change y to 3
 val positionB: PositionB = new Behaviour() with PositionB(5)
+positionB.y = 3
 ```
