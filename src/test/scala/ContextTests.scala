@@ -7,9 +7,15 @@ class ContextTests extends AnyFlatSpec:
 
   "Context" should "provide a direct reference to the engine IO" in:
     context.io == engine.io
-    
+
   it should "provide a direct reference to the engine Storage" in:
     context.storage == engine.storage
+
+  it should "provide a direct reference to the engine deltaTimeNanos" in:
+    context.deltaTimeNanos == engine.deltaTimeNanos
+
+  it should "provide utility for converting deltaTimeNanos into seconds" in:
+    context.deltaTimeSeconds == 1
 
 // Mocks
 import scala.annotation.targetName
@@ -36,7 +42,7 @@ private case class EngineMock(io: IO, storage: Storage) extends Engine {
   def disable(gameObject: GameObject[?]): Unit = ???
   def loadScene(scene: Scene): Unit = ???
   def create(gameObject: GameObject[?]): Unit = ???
-  def deltaTimeNanos: Long = ???
+  def deltaTimeNanos: Long = 1_000_000_000
 }
 
 private case class StorageMock() extends Storage:
