@@ -46,7 +46,6 @@ class EngineTest extends AnyFlatSpec:
     override val id: Option[String] = Option.empty
     override val behaviour: MockB = new Behaviour() with MockB()
 
-
   private trait MockB extends Behaviour:
     var list: Seq[String] = Seq()
     override def onInit: Context => Unit =
@@ -76,12 +75,3 @@ class EngineTest extends AnyFlatSpec:
     override def onDeinit: Context => Unit =
       context =>
         list = list :+ "deinit"
-
-  private class StorageMock extends Storage:
-    override def set[T](key: String, value: T): Unit = ???
-
-    override def get[T](key: String): T = ???
-
-    override def getOption[T](key: String): Option[T] = ???
-
-    override def unset(key: String): Unit = ???

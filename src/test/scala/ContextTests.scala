@@ -54,9 +54,3 @@ private case class EngineMock(
   def create(gameObject: GameObject[?]): Unit = ???
   def deltaTimeNanos: Long = deltaTimeNanosInit
 }
-
-private case class StorageMock() extends Storage:
-  def set[T](key: String, value: T): Unit = ???
-  def get[T](key: String): T = ???
-  def getOption[T](key: String): Option[T] = ???
-  def unset(key: String): Unit = ???
