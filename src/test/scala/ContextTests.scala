@@ -7,6 +7,9 @@ class ContextTests extends AnyFlatSpec:
 
   "Context" should "provide a direct reference to the engine IO" in:
     context.io == engine.io
+    
+  it should "provide a direct reference to the engine Storage" in:
+    context.storage == engine.storage
 
 // Mocks
 import scala.annotation.targetName
