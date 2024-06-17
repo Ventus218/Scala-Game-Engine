@@ -1,14 +1,16 @@
 import org.scalatest.flatspec.AnyFlatSpec
-import scala.reflect.TypeTest
 
 class ContextTests extends AnyFlatSpec:
-  "Context" should "have a default implementation" in:
-    val engine = EngineMock(new IO {}, StorageMock())
-    val gameObject = GameObjectMock(true)
-    val _ = Context(engine, gameObject)
+  val engine = EngineMock(new IO {}, StorageMock())
+  val gameObject = GameObjectMock(true)
+  def context: Context = Context(engine, gameObject)
+
+  "Context" should "provide a direct reference to the engine IO" in:
+    context.io == engine.io
 
 // Mocks
 import scala.annotation.targetName
+import scala.reflect.TypeTest
 private case class EngineMock(io: IO, storage: Storage) extends Engine {
   def stop(): Unit = ???
   def enable(gameObject: GameObject[?]): Unit = ???

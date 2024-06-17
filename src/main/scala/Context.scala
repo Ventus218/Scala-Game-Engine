@@ -2,6 +2,8 @@ trait Context:
   val engine: Engine
   val gameObject: GameObject[?]
 
+extension (c: Context) def io: IO = c.engine.io
+
 object Context:
   private case class ContextImpl(engine: Engine, gameObject: GameObject[?])
       extends Context
