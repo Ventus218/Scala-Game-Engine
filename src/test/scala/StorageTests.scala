@@ -25,7 +25,7 @@ class StorageTests extends AnyFlatSpec with BeforeAndAfterEach:
   it should "throw when trying to get a value of the wrong data type" in:
     storage.set("one", 1)
     assertThrows[ClassCastException]:
-      storage.get[String]("one") shouldBe "1"
+      storage.get[String]("one")
 
   it should "allow to change a value" in:
     storage.set(playerNameKey, playerNameValue)
