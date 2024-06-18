@@ -23,7 +23,7 @@
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |4|Specifica|Tutti|||X|
-|15|Refactor Behaviour|Tutti||X||
+|15|Refactor Behaviour|Tutti|||X|
 |5|Implementazione **Scene**|Alessandro|||X|
 |6|Implementazione **SceneManager**|Alessandro|X|||
 |7|Implementazione **Storage**|Alessandro||X||
