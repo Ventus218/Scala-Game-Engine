@@ -2,11 +2,11 @@
   * a new scene.
   */
 trait Scene:
-  val gameObjects: () => Iterable[GameObject[?]]
+  val gameObjects: () => Iterable[Behaviour]
 
 object Scene:
-  private case class SceneImpl(gameObjects: () => Iterable[GameObject[?]])
+  private case class SceneImpl(gameObjects: () => Iterable[Behaviour])
       extends Scene
 
-  def apply(gameObjects: () => Iterable[GameObject[?]]): Scene =
+  def apply(gameObjects: () => Iterable[Behaviour]): Scene =
     SceneImpl(gameObjects)

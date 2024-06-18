@@ -15,8 +15,7 @@ Il framework avrà le seguenti caratteristiche:
 - Game loop
 - Più scene (*scene*)
 - Più game object
-- Ogni game object ha un comportamento (*behaviour*)
-- I behaviour sono componibili tra di loro
+- Ogni game object ha uno o più comportamenti (*behaviour*) componibili tra di loro
 - Devono essere presenti dei behaviour built-in ad esempio per gestire l'input o il rendering grafico
 - L'editor sarà testuale
 - Un meccanismo per passare informazioni tra una scena e l'altra
@@ -37,12 +36,13 @@ Il framework avrà le seguenti caratteristiche:
     - Distruzione del behaviour
 - deve aver a disposizione dall'engine dei metodi per:
     - avviarlo e fermarlo
-    - cercare specifi oggetti nella scena. (In base all'identificativo o al behaviour che questi possiedono).
+    - cercare specifi oggetti nella scena. (In base ad un identificativo o al behaviour che questi possiedono).
     - creare e distruggere oggetti.
     - abilitare e disabilitare un oggetto.
     - passare da una scena all'altra.
     - memorizzare informazioni che persistano anche al cambio di scena
 - avrà a disposizione i seguenti comportamenti built-in:
+    - Definizione di un identificativo
     - Definizione della posizione 2D dell'oggetto.
     - Definizione della dimensione 2D dell'oggetto.
     - Definizione di un renderer 2D con sprite e dimensione di visualizzazione
