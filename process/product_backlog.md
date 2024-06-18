@@ -5,11 +5,11 @@ Priority goes from top to bottom.
 
 |Id|Item|Details|
 |--|----|-------|
+|15|Refactor Behaviour|e rimozione di GameObject|
 |4|Specifica|Completare la sezione Specifica nella documentazione|
 |5|Implementazione **Scene**||
 |6|Implementazione **SceneManager**||
 |7|Implementazione **Storage**||
-|8|Implementazione **Context**||
 |9|Implementazione **Engine**||
 |10|Implementazione behaviour built-in||
 |11|Implementazione **IO (Swing)**|e behaviour correlati (Input e Renderer)|

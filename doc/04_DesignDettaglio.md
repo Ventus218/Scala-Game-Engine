@@ -16,11 +16,7 @@ Ogni behaviour possiede dei metodi che vengono chiamati dall'engine in momenti s
 - onLateUpdate
 - onDeinit
 
-Questi metodi ricevono come parametro un **Context** che contiene tutti i riferimenti utili per implementare il comportamento desiderato.
-
-## [Context](../src/main/scala/Context.scala)
-Context viene passato dall'engine ai metodi di **Behaviour** e contiene il riferimento all'engine per poterci interagire. E rappresenta un ottimo luogo per poter definire metodi di utilità attraverso extensions (come ad esempio scale diverse di tempo o riferimenti diretti ad IO e Storage).
-Inoltre contiene il riferimento all'game object del behaviour al quale viene passato.
+Questi metodi ricevono come parametro l'**Engine** in modo da poterci interagire.
 
 ## [IO](../src/main/scala/IO.scala)
 IO è pensato per essere implementato in modo che si possa definire un qualsiasi proprio sistema di input/output.

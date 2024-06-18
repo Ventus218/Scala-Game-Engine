@@ -31,3 +31,10 @@ trait Engine:
   def findById[B <: Behaviour](using
       tt: TypeTest[Behaviour, B]
   )(id: String): Option[GameObject[B]]
+
+// TODO: add tests before decommenting
+// extension (engine: Engine)
+//   def io: IO = engine.io
+//   def storage: Storage = engine.storage
+//   def deltaTimeNanos: Long = engine.deltaTimeNanos
+//   def deltaTimeSeconds: Double = engine.deltaTimeNanos / Math.pow(10, 9)
