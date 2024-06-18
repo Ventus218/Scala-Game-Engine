@@ -32,8 +32,7 @@ class EngineTest extends AnyFlatSpec:
     io = new IO() {},
     storage = new StorageMock(),
     gameObjects,
-    numSteps,
-    0
+    numSteps
   )
 
   val engine = Engine()
@@ -44,8 +43,7 @@ class EngineTest extends AnyFlatSpec:
         io = new IO() {},
         storage = new StorageMock(),
         null,
-        1,
-        10
+        1
       )
     ) 
   
