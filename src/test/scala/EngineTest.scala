@@ -14,15 +14,21 @@ class EngineTest extends AnyFlatSpec:
 
   private val gameObject1 = getMockB()
   private val gameObject2 = getMockB()
+  private val gameObject3 = getMockB(false)
+  private val gameObject4 = getMockB(false)
+  private val gameObjectStop = new Behaviour with StopMockB(step = 5)
 
   val numSteps = 3
 
   private val gameObjects = Iterable(
     gameObject1,
-    gameObject2
+    gameObject2,
+    gameObject3,
+    gameObject4,
+    gameObjectStop
   )
 
-  def getEngine(gameObjects: Iterable[Behaviour]): Engine = Engine(
+  Engine.intantiate(
     io = new IO() {},
     storage = new StorageMock(),
     gameObjects,
@@ -30,41 +36,47 @@ class EngineTest extends AnyFlatSpec:
     0
   )
 
-  it should "init all disabled gameObjects behaviour when it is started and deinit them at the end" in:
-    val gameObject1 = getMockB(false)
-    val gameObject2 = getMockB(false)
+  val engine = Engine()
 
-    val gameObjects = Iterable(gameObject1, gameObject2)
-
-    getEngine(gameObjects).run()
-
-    gameObjects.foreach(gameObject =>
-      gameObject.list shouldBe Seq("init", "deinit")
+  "Engine" should "be instantiated only one time" in:
+    assertThrows[IllegalStateException](
+      Engine.intantiate(
+        io = new IO() {},
+        storage = new StorageMock(),
+        null,
+        1,
+        10
+      )
+    ) 
+  
+  it should "be instantiated before getting the instance" in:
+    assertThrows[IllegalStateException](
+      Engine.engine = null,
+      Engine()
     )
 
-  it should "call all methods once on enabled GameObjects" in:
-    val gameObject3 = getMockB(false)
-
-    getEngine(gameObjects ++ Iterable(gameObject3)).run()
+  it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
+    engine.run()
 
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects.foreach(gameObject =>
+    gameObjects.filter(_.enabled).foreach(gameObject =>
       gameObject.list shouldBe sequenceOfActions :+ "deinit"
     )
 
-    gameObject3.list shouldBe Seq("init", "deinit")
+    gameObjects.filter(!_.enabled).foreach(gameObject =>
+      gameObject.list shouldBe Seq("init", "deinit")
+    )
 
-  it should "stop when engine.stop() is called and context have references to engine and gameObject" in:
+  it should "stop when engine.stop() is called" in:
     val stepToStop = 1
-    val gameObject = new Behaviour with StopMockB(step = stepToStop)
-
-    gameObject.state shouldBe "Active"
-
-    getEngine(gameObjects ++ Iterable(gameObject)).run()
+    gameObjectStop.step = stepToStop
+    gameObjectStop.state shouldBe "Active"
+    
+    engine.run()
 
     var sequenceOfActions = getSequenceOfActions()
 
@@ -72,19 +84,29 @@ class EngineTest extends AnyFlatSpec:
       sequenceOfActions =
         sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects.foreach(gameObject =>
+    gameObjects.filter(_.enabled).foreach(gameObject =>
       gameObject.list shouldBe sequenceOfActions :+ "deinit"
     )
 
-    gameObject.state shouldBe "Stopped"
+    gameObjectStop.state shouldBe "Stopped"
 
-  private trait StopMockB(step: Int) extends Behaviour:
+  private trait StopMockB(var step: Int) extends MockB:
     var state: String = "Active"
+    var counter: Int = -1
+
+    override def onInit: Engine => Unit = 
+      engine => 
+        super.onInit(engine)
+        counter = 0
+
     override def onUpdate: Engine => Unit =
       engine =>
-        if engine.getCurrentNumSteps() == step then
+        super.onUpdate(engine)
+        if counter == step then
           engine.stop()
           state = "Stopped"
+        else
+          counter = counter + 1
 
   private trait MockB extends Behaviour:
     var list: Seq[String] = Seq()

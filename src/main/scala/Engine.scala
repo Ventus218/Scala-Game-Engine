@@ -2,17 +2,28 @@ import scala.annotation.targetName
 import Behaviours.*
 import scala.reflect.TypeTest
 
+/** Takes care of starting and stopping the game loop, 
+  * enable/disable Behaviours of the loaded Scene, create/destroy Behaviours of the loaded Scene,
+  * find some Behaviours of the loaded Scene and gives the delta time in nanoseconds.
+  */
 trait Engine:
+  /** The IO of the engine, used to render the view to the monitor and getting inputs by the user */
   val io: IO
+
+  /** The Storage that the engine will use to store values between scenes */
   val storage: Storage
-  def getCurrentNumSteps(): Int
   def loadScene(scene: Scene): Unit
   def enable(gameObject: Behaviour): Unit
   def disable(gameObject: Behaviour): Unit
   def create(gameObject: Behaviour): Unit
   def destroy(gameObject: Behaviour): Unit
+
+  /** Starts the game loop of the engine */
   def run(): Unit
+
+  /** Tells to the engine to stop the game loop */
   def stop(): Unit
+
   def deltaTimeNanos: Long
 
   import scala.reflect.TypeTest
@@ -26,10 +37,11 @@ trait Engine:
   )(id: String): Option[B]
 
 object Engine:
+  //gameObjects, numSteps and dtNanos are used just to test the Engine until other Interfaces are implemented
   private class EngineImpl(
       override val io: IO,
       override val storage: Storage,
-      private val gameObjects: Iterable[Behaviour],
+      gameObjects: Iterable[Behaviour],
       numSteps: Int,
       dtNanos: Long
   ) extends Engine:
@@ -54,8 +66,6 @@ object Engine:
 
     override def destroy(gameObject: Behaviour): Unit = ???
 
-    override def getCurrentNumSteps(): Int = currentStep
-
     private def enabledGameObjects =
       gameObjects.filter(gameObject => gameObject.enabled)
 
@@ -78,19 +88,39 @@ object Engine:
         currentStep = currentStep + 1
 
       gameObjects.foreach(gameObject => gameObject.onDeinit(this))
+      currentStep = 0
 
     override def stop(): Unit = shouldStop = true
 
-  def apply(
+  var engine: Engine = null
+
+  /** Instantiate the engine. 
+    * Throws Illegal State Excpetion if it is called more than one time.
+    *
+    * @param io The IO of the engine, used to render the view to the monitor and getting inputs by the user
+    * @param storage The Storage that the engine will use to store values between scenes
+    */
+  def intantiate(
       io: IO,
       storage: Storage,
       gameObjects: Iterable[Behaviour],
       numSteps: Int,
       deltaTimeNanos: Long
-  ): Engine = new EngineImpl(
-    io = io,
-    storage = storage,
-    gameObjects = gameObjects,
-    numSteps = numSteps,
-    dtNanos = deltaTimeNanos
-  )
+  ): Unit =
+    if engine == null then
+      engine = new EngineImpl(
+        io = io,
+        storage = storage,
+        gameObjects = gameObjects,
+        numSteps = numSteps,
+        dtNanos = deltaTimeNanos
+      )
+    else
+      throw new IllegalStateException("Engine alrady instantiated")
+
+  /** Returns always the same instance of the engine if instantiated, otherwise
+    * throws an IllegalStateException
+    * 
+    * @return the instance of the engine
+    */
+  def apply(): Engine = if engine != null then engine else throw new IllegalStateException("Engine not yet instantiated")
