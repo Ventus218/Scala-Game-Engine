@@ -3,19 +3,24 @@ import java.awt.{Canvas, Color, Dimension}
 import javax.swing
 import javax.swing.{JFrame, WindowConstants}
 
-trait SwingIO extends IO
-
+trait SwingIO extends IO:
+  val title: String
+  val size: (Int, Int)
+  val pixelsPerUnit: Int
+  val center: (Int, Int)
+  val backgroundColor: Color
+  
 object SwingIO:
   def apply(title: String, size: (Int, Int), pixelsPerUnit: Int = 100, center: (Int, Int) = (0, 0), background: Color = Color.white): SwingIO =
     new SwingIOImpl(title, size, pixelsPerUnit, center, background)
   
-  private class SwingIOImpl(title: String, size: (Int, Int), pixelsPerUnit: Int, center: (Int, Int), background: Color) extends SwingIO:
+  private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Int, Int), val backgroundColor: Color) extends SwingIO:
     
     val canvas: Canvas = initCanvas(title, size)
-    
+
     override def onFrameEnd: Engine => Unit =
-      engine =>
-        super.onFrameEnd(engine)
+    engine =>
+    super.onFrameEnd(engine)
 
     private def initCanvas(title: String, size: (Int, Int)): Canvas =
       val canvas: Canvas = createCanvas(size)
@@ -23,7 +28,7 @@ object SwingIO:
       frame.add(canvas)
       frame.pack()
       canvas
-      
+
     private def createCanvas(size: (Int, Int)): Canvas =
       val canvas: Canvas = new Canvas()
       val dimension: Dimension = new Dimension(size._1, size._2)
@@ -39,6 +44,7 @@ object SwingIO:
       frame.setVisible(true)
       frame.setLocationRelativeTo(null)
       frame
+
 
   /* builder class for SwingIO, with defaults */
   case class SwingIOBuilder(

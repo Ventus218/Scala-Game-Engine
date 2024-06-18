@@ -8,7 +8,7 @@ class SwingIOTest extends AnyFlatSpec:
     SwingIO("SwingTest", size = (500, 500)) shouldBe a [IO]
 
   it should "create a GUI on creation" in:
-    SwingIO("Swing Test", size = (800, 800), pixelsPerUnit = 100, center = (0, 0))
+    SwingIO("Swing Test", size = (800, 800))
     Thread.sleep(3000)
     // test done through visual interface
 
@@ -22,5 +22,10 @@ class SwingIOTest extends AnyFlatSpec:
         .withBackgroundColor(Color.green)
         .build()
 
+    frame.size shouldBe (400, 400)
+    frame.title shouldBe "Swing Test"
+    frame.center shouldBe (0, 0)
+    frame.pixelsPerUnit shouldBe 100
+    frame.backgroundColor shouldBe Color.green
     Thread.sleep(3000)
     // test done through visual interface
