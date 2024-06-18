@@ -1,7 +1,7 @@
 import java.awt
-import java.awt.{Canvas, Color, Dimension}
+import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D}
 import javax.swing
-import javax.swing.{JFrame, WindowConstants}
+import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
 
 trait SwingIO extends IO:
   val title: String
@@ -9,6 +9,8 @@ trait SwingIO extends IO:
   val pixelsPerUnit: Int
   val center: (Int, Int)
   val backgroundColor: Color
+  def draw(renderer: Graphics2D => Unit): Unit
+  def show(): Unit
 
 object SwingIO:
   def apply(title: String, size: (Int, Int), pixelsPerUnit: Int = 100, center: (Int, Int) = (0, 0), background: Color = Color.white): SwingIO =
@@ -16,26 +18,23 @@ object SwingIO:
 
   private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Int, Int), val backgroundColor: Color) extends SwingIO:
 
-    val canvas: Canvas = initCanvas(title, size)
+    val canvas: DrawableCanvas = initCanvas()
 
     override def onFrameEnd: Engine => Unit =
       engine =>
         super.onFrameEnd(engine)
 
-    private def initCanvas(title: String, size: (Int, Int)): Canvas =
-      val canvas: Canvas = createCanvas(size)
-      val frame: JFrame = createFrame(title, size)
+    private def initCanvas(): DrawableCanvas =
+      val canvas: DrawableCanvas = createCanvas()
+      val frame: JFrame = createFrame()
       frame.add(canvas)
-      frame.pack()
+      frame.validate()
       canvas
 
-    private def createCanvas(size: (Int, Int)): Canvas =
-      val canvas: Canvas = new Canvas()
-      canvas.setBounds(0, 0, size._1, size._2)
-      canvas.setBackground(backgroundColor)
-      canvas
+    private def createCanvas(): DrawableCanvas =
+      new DrawableCanvas(size, backgroundColor)
 
-    private def createFrame(title: String, size: (Int, Int)): JFrame =
+    private def createFrame(): JFrame =
       val frame: JFrame = new JFrame(title)
       frame.setSize(size._1, size._2)
       frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
@@ -43,6 +42,26 @@ object SwingIO:
       frame.setVisible(true)
       frame.setLocationRelativeTo(null)
       frame
+
+    override def draw(renderer: Graphics2D => Unit): Unit =
+      SwingUtilities.invokeLater( () => canvas.add(renderer) )
+
+    override def show(): Unit =
+      SwingUtilities.invokeLater( () => canvas.drawRenderers() )
+
+  private class DrawableCanvas(size: (Int, Int), color: Color) extends JPanel:
+    private var renderers: Seq[Graphics2D => Unit] = Seq.empty
+    
+    setBounds(0, 0, size._1, size._2)
+    setBackground(color)
+    
+    def add(renderer: Graphics2D => Unit): Unit = renderers = renderers :+ renderer
+    def drawRenderers(): Unit = repaint()
+    protected override def paintComponent(g: Graphics): Unit =
+      super.paintComponent(g)
+      renderers.foreach(_(g.asInstanceOf[Graphics2D]))
+      renderers = Seq.empty
+      
 
 
   /* builder class for SwingIO, with defaults */
