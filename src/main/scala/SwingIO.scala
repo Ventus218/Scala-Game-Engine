@@ -9,18 +9,18 @@ trait SwingIO extends IO:
   val pixelsPerUnit: Int
   val center: (Int, Int)
   val backgroundColor: Color
-  
+
 object SwingIO:
   def apply(title: String, size: (Int, Int), pixelsPerUnit: Int = 100, center: (Int, Int) = (0, 0), background: Color = Color.white): SwingIO =
     new SwingIOImpl(title, size, pixelsPerUnit, center, background)
-  
+
   private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Int, Int), val backgroundColor: Color) extends SwingIO:
-    
+
     val canvas: Canvas = initCanvas(title, size)
 
     override def onFrameEnd: Engine => Unit =
-    engine =>
-    super.onFrameEnd(engine)
+      engine =>
+        super.onFrameEnd(engine)
 
     private def initCanvas(title: String, size: (Int, Int)): Canvas =
       val canvas: Canvas = createCanvas(size)
@@ -31,11 +31,10 @@ object SwingIO:
 
     private def createCanvas(size: (Int, Int)): Canvas =
       val canvas: Canvas = new Canvas()
-      val dimension: Dimension = new Dimension(size._1, size._2)
-      canvas.setPreferredSize(dimension)
-      canvas.setMaximumSize(dimension)
-      canvas.setMinimumSize(dimension)
+      canvas.setBounds(0, 0, size._1, size._2)
+      canvas.setBackground(backgroundColor)
       canvas
+
     private def createFrame(title: String, size: (Int, Int)): JFrame =
       val frame: JFrame = new JFrame(title)
       frame.setSize(size._1, size._2)
@@ -64,7 +63,7 @@ object SwingIO:
     SwingIOBuilder(center = center)
   def withBackgroundColor(color: Color): SwingIOBuilder =
     SwingIOBuilder(background = color)
-    
+
   extension (builder: SwingIOBuilder)
     def build(): SwingIO = SwingIO(builder.title, builder.size, builder.pixelsPerUnit, builder.center, builder.background)
     def withTitle(title: String): SwingIOBuilder =
