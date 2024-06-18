@@ -1,5 +1,6 @@
 import scala.annotation.targetName
 import Behaviours.*
+import scala.reflect.TypeTest
 
 trait Engine:
   val io: IO
@@ -25,70 +26,71 @@ trait Engine:
   )(id: String): Option[B]
 
 object Engine:
-    private class EngineImpl(override val io: IO, override val storage: Storage, private val gameObjects: Iterable[GameObject[?]], numSteps: Int, dtNanos: Long) extends Engine:
-        override def enable(gameObject: GameObject[?]): Unit = ???
+  private class EngineImpl(
+      override val io: IO,
+      override val storage: Storage,
+      private val gameObjects: Iterable[Behaviour],
+      numSteps: Int,
+      dtNanos: Long
+  ) extends Engine:
 
-        override def find[B <: Behaviour](using tt: TypeTest[Behaviour, B])(): Iterable[GameObject[B]] = ???
+    override def loadScene(scene: Scene): Unit = ???
 
-        @targetName("find_object")
-        override def find[G <: GameObject[?]](using tt: TypeTest[GameObject[?], G])(): Iterable[G] = ???
+    override def enable(gameObject: Behaviour): Unit = ???
 
-        override def destroy(gameObject: GameObject[?]): Unit = ???
+    override def disable(gameObject: Behaviour): Unit = ???
 
-        override def loadScene(scene: Scene): Unit = ???
-        
-        override def deltaTimeNanos: Long = dtNanos
-        
-        override def findById[B <: Behaviour](using tt: TypeTest[Behaviour, B])(id: String): Option[GameObject[B]] = ???
-        
-        @targetName("find_object_by_id")
-        override def findById[G <: GameObject[?]](using tt: TypeTest[GameObject[?], G])(id: String): Option[G] = ???
-        
-        override def create(gameObject: GameObject[?]): Unit = ???
-        
-        override def disable(gameObject: GameObject[?]): Unit = ???
-        
-        override def getCurrentNumSteps(): Int = currentStep
-        
-        private def enabledGameObjects = gameObjects.filter(gameObject => gameObject.enabled)
-        
-        private var currentStep = 0
-        private var shouldStop = false
+    override def create(gameObject: Behaviour): Unit = ???
 
-        override def run(): Unit =
-            gameObjects.toContexts().foreach(context =>
-                context.gameObject.behaviour.onInit(context)
-            )
+    override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
+        id: String
+    ): Option[B] = ???
 
-            enabledGameObjects.toContexts().foreach(context =>
-                context.gameObject.behaviour.onEnabled(context)
-            )
+    override def find[B <: Behaviour](using
+        tt: TypeTest[Behaviour, B]
+    )(): Iterable[B] = ???
 
-            enabledGameObjects.toContexts().foreach(context =>
-                context.gameObject.behaviour.onStart(context)
-            )
+    override def deltaTimeNanos: Long = ???
 
-            while !shouldStop && currentStep < numSteps do
-                enabledGameObjects.toContexts().foreach(context =>
-                    context.gameObject.behaviour.onEarlyUpdate(context)
-                )
+    override def destroy(gameObject: Behaviour): Unit = ???
 
-                enabledGameObjects.toContexts().foreach(context =>
-                    context.gameObject.behaviour.onUpdate(context)
-                )
+    override def getCurrentNumSteps(): Int = currentStep
 
-                enabledGameObjects.toContexts().foreach(context =>
-                    context.gameObject.behaviour.onLateUpdate(context)
-                )
-                currentStep = currentStep + 1
+    private def enabledGameObjects =
+      gameObjects.filter(gameObject => gameObject.enabled)
 
-            gameObjects.toContexts().foreach(context =>
-                context.gameObject.behaviour.onDeinit(context)
-            )
+    private var currentStep = 0
+    private var shouldStop = false
 
-        override def stop(): Unit = shouldStop = true
+    override def run(): Unit =
+      gameObjects.foreach(gameObject => gameObject.onInit(this))
 
-        extension (gameObjects: Iterable[GameObject[?]])
-            def toContexts(): Iterable[Context] = gameObjects.map(Context(this, _))
+      enabledGameObjects.foreach(gameObject => gameObject.onEnabled(this))
 
-    def apply(io: IO, storage: Storage, gameObjects: Iterable[GameObject[?]], numSteps: Int, deltaTimeNanos: Long): Engine = new EngineImpl(io = io, storage = storage, gameObjects = gameObjects, numSteps = numSteps, dtNanos = deltaTimeNanos)
+      enabledGameObjects.foreach(gameObject => gameObject.onStart(this))
+
+      while !shouldStop && currentStep < numSteps do
+        enabledGameObjects.foreach(gameObject => gameObject.onEarlyUpdate(this))
+
+        enabledGameObjects.foreach(gameObject => gameObject.onUpdate(this))
+
+        enabledGameObjects.foreach(gameObject => gameObject.onLateUpdate(this))
+        currentStep = currentStep + 1
+
+      gameObjects.foreach(gameObject => gameObject.onDeinit(this))
+
+    override def stop(): Unit = shouldStop = true
+
+  def apply(
+      io: IO,
+      storage: Storage,
+      gameObjects: Iterable[Behaviour],
+      numSteps: Int,
+      deltaTimeNanos: Long
+  ): Engine = new EngineImpl(
+    io = io,
+    storage = storage,
+    gameObjects = gameObjects,
+    numSteps = numSteps,
+    dtNanos = deltaTimeNanos
+  )
