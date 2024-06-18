@@ -1,4 +1,4 @@
-trait Behaviour:
+trait Behaviour(var enabled: Boolean = true):
   // The order of the methods below reflects the order on which the engine will call them.
 
   /** Called only once when the object is instatiated.

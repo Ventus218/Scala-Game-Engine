@@ -10,9 +10,13 @@ Il motivo per cui Scene prende in input una funzione che crea i game object e no
 Di seguito sono descritte le implementazioni dei vari Behaviours built-in del SGE.
 Da notare che ogni behaviour built-in è un mixin di Behaviour.
 
+### Identifiable
+
+Un oggetto che viene mixato con il behaviour **Identifiable** avrà a disposizione un id e potrà essere cercato attraverso questo tra tutti gli altri oggetti.
+
 ### PositionB
 
-Quando un behaviour usa PositionB come mixin, avrà accesso ad una x ed una y settate a 0 di default.
+Quando un behaviour usa **PositionB** come mixin, avrà accesso ad una x ed una y settate a 0 di default.
 Si possono passare i valori iniziali di x e y se non si vuole inizializzarle a 0 e si possono cambiare una volta creato il behaviour.
 
 *Esempio*

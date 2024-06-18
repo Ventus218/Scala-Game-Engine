@@ -1,37 +1,27 @@
 import scala.annotation.targetName
+import Behaviours.*
 
 trait Engine:
   val io: IO
   val storage: Storage
   def loadScene(scene: Scene): Unit
-  def enable(gameObject: GameObject[?]): Unit
-  def disable(gameObject: GameObject[?]): Unit
-  def create(gameObject: GameObject[?]): Unit
-  def destroy(gameObject: GameObject[?]): Unit
+  def enable(gameObject: Behaviour): Unit
+  def disable(gameObject: Behaviour): Unit
+  def create(gameObject: Behaviour): Unit
+  def destroy(gameObject: Behaviour): Unit
   def run(): Unit
   def stop(): Unit
   def deltaTimeNanos: Long
 
   import scala.reflect.TypeTest
 
-  @targetName("find_object")
-  def find[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(): Iterable[G]
-
   def find[B <: Behaviour](using
       tt: TypeTest[Behaviour, B]
-  )(): Iterable[GameObject[B]]
+  )(): Iterable[B]
 
-  @targetName("find_object_by_id")
-  def findById[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(id: String): Option[G]
-
-  def findById[B <: Behaviour](using
+  def find[B <: Identifiable](using
       tt: TypeTest[Behaviour, B]
-  )(id: String): Option[GameObject[B]]
-
+  )(id: String): Option[B]
 // TODO: add tests before decommenting
 // extension (engine: Engine)
 //   def deltaTimeSeconds: Double = engine.deltaTimeNanos / Math.pow(10, 9)

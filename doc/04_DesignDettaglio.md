@@ -1,19 +1,16 @@
 # Design di dettaglio
 
-## [GameObject](../src/main/scala/GameObject.scala)
-GameObject rappresenta un oggetto di gioco, questo ha un Behaviour che rappresenta il comporamento dell'oggetto e può avere un identificativo settato dall'utente (per potersi riferire a quell'oggetto univocamente).
-Può essere attivo o disattivo, questo implica che salterà o meno certe fasi del game loop.
-
 ## [Behaviour](../src/main/scala/Behaviour.scala)
 Behaviour rappresenta il comportamento di un oggetto ed è il punto principale nel quale l'utente definisce la sua logica applicativa.
+Può essere attivo o disattivo, questo implica che salterà o meno certe fasi del game loop.
 Ogni behaviour possiede dei metodi che vengono chiamati dall'engine in momenti specifici del game loop:
 - onInit
-- onEnable
-- onDisable
-- onStart
-- onEarlyUpdate
-- onUpdate
-- onLateUpdate
+- onEnable (saltato se disabilitato)
+- onDisable (saltato se disabilitato)
+- onStart (saltato se disabilitato)
+- onEarlyUpdate (saltato se disabilitato)
+- onUpdate (saltato se disabilitato)
+- onLateUpdate (saltato se disabilitato)
 - onDeinit
 
 Questi metodi ricevono come parametro l'**Engine** in modo da poterci interagire.
@@ -60,7 +57,6 @@ L'utente può:
     - loadScene
 - cercare oggetti tra quelli presenti in gioco in base a:
     - Un tipo di behaviour che possiedono (find)
-    - Un tipo di game object che sono (find)
-    - Un identificativo (findById)
+    - Un identificativo (find(id))
 
 Inoltre engine mette a disposizione un riferimento ad IO, uno a Storage e l'informazione di quanto tempo è trascorso dall'utlimo frame (deltaTimeNanos).
