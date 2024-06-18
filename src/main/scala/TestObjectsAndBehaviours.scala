@@ -6,8 +6,10 @@ trait InputB extends Behaviour:
 
 trait TranformB(var x: Double = 0, var y: Double = 0) extends Behaviour
 
-class PallaB(val rimbalzo: Boolean = true)
+class Palla(val rimbalzo: Boolean = true, id: String)
     extends Behaviour
+    with Identifiable(id)
+    with Enableable(true)
     with InputB
     with TranformB:
 
@@ -23,9 +25,3 @@ class PallaB(val rimbalzo: Boolean = true)
     // println(s"transform x ${this.x}")
     println(context.deltaTimeNanos)
     inputs.foreach(println(_))
-
-class PallaGameObject(r: Boolean, var enabled: Boolean)
-    extends GameObject[PallaB]:
-  val id = Some("1")
-  override val behaviour: PallaB = PallaB(rimbalzo = r)
-  export behaviour.*

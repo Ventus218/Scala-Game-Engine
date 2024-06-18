@@ -39,3 +39,7 @@ trait Behaviour:
   /** Called only once before the engine destroys the object.
     */
   def onDeinit: Context => Unit = (context) => {}
+
+trait Enableable(var enabled: Boolean) extends Behaviour
+
+trait Identifiable(val id: String) extends Behaviour

@@ -15,8 +15,7 @@ case class ConsoleIO() extends IO:
   def in(prompt: String = ""): String = readLine(prompt)
   def out(string: String): Unit = println(string)
 
-trait ConsoleIORendererB() extends RendererB:
+trait ConsoleIORendererB extends RendererB with Identifiable:
 
   override def onUpdate: Context => Unit =
-    (context) =>
-      context.consoleIO().out(s"ciao il mio id è: ${context.gameObject.id}")
+    (context) => context.consoleIO().out(s"ciao il mio id è: ${id}")

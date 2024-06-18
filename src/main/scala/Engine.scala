@@ -4,57 +4,43 @@ trait Engine:
   val io: IO
   val storage: Storage
   def loadScene(scene: Scene): Unit
-  def enable(gameObject: GameObject[?]): Unit
-  def disable(gameObject: GameObject[?]): Unit
-  def create(gameObject: GameObject[?]): Unit
-  def destroy(gameObject: GameObject[?]): Unit
+  def enable(gameObject: Enableable): Unit
+  def disable(gameObject: Enableable): Unit
+  def create(gameObject: Behaviour): Unit
+  def destroy(gameObject: Behaviour): Unit
   def run(): Unit
   def stop(): Unit
   def deltaTimeNanos: Long
 
   import scala.reflect.TypeTest
 
-  @targetName("find_object")
-  def find[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(): Iterable[G]
-
   def find[B <: Behaviour](using
       tt: TypeTest[Behaviour, B]
-  )(): Iterable[GameObject[B]]
+  )(): Iterable[B]
 
-  @targetName("find_object_by_id")
-  def findById[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(id: String): Option[G]
-
-  def findById[B <: Behaviour](using
+  def find[B <: Identifiable](using
       tt: TypeTest[Behaviour, B]
-  )(id: String): Option[GameObject[B]]
+  )(id: String): Option[B]
 
 class EngineImpl(val io: IO, val storage: Storage, private var scene: Scene)
     extends Engine:
 
-  override def destroy(gameObject: GameObject[?]): Unit = ???
+  override def create(gameObject: Behaviour): Unit = ???
+  override def destroy(gameObject: Behaviour): Unit = ???
 
-  override def create(gameObject: GameObject[?]): Unit = ???
+  private var gameObjects: Seq[Behaviour] = Seq()
 
-  private var gameObjects: Seq[GameObject[?]] = Seq()
-
-  private var gameObjectsToDisable: Seq[GameObject[?]] = Seq()
-  private var gameObjectsToEnable: Seq[GameObject[?]] = Seq()
+  private var gameObjectsToDisable: Seq[Enableable] = Seq()
+  private var gameObjectsToEnable: Seq[Enableable] = Seq()
 
   private var sceneToLoad: Option[Scene] = Option(scene)
 
   def loadScene(scene: Scene): Unit = sceneToLoad = Option(scene)
 
-  def enable(gameObject: GameObject[?]): Unit =
+  def enable(gameObject: Enableable): Unit =
     gameObjectsToEnable = gameObjectsToEnable.appended(gameObject)
-  def disable(gameObject: GameObject[?]): Unit =
+  def disable(gameObject: Enableable): Unit =
     gameObjectsToDisable = gameObjectsToDisable.appended(gameObject)
-
-  extension (gameObjects: Seq[GameObject[?]])
-    def toContexts(): Seq[Context] = gameObjects.map(Context(this, _))
 
   private var shouldStop = false;
   def stop(): Unit = shouldStop = true;
@@ -62,71 +48,46 @@ class EngineImpl(val io: IO, val storage: Storage, private var scene: Scene)
   private var _deltaTimeNanos: Long = 0
   def deltaTimeNanos: Long = _deltaTimeNanos
   private def deltaTimeNanos_=(value: Long) = _deltaTimeNanos = value
-
   def run(): Unit =
+    val context = Context(this)
     while !shouldStop do
       deltaTimeNanos = 0
       if sceneToLoad.isDefined then applyScene(sceneToLoad.get)
 
       gameObjects
-        .toContexts()
-        .foreach(context => context.gameObject.behaviour.onInit(context))
+        .foreach(_.onInit(context))
 
-      enabledContexts().foreach(context =>
-        context.gameObject.behaviour.onEnabled(context)
-      )
-      enabledContexts().foreach(context =>
-        context.gameObject.behaviour.onStart(context)
-      )
+      enabledBehaviours().foreach(_.onEnabled(context))
+      enabledBehaviours().foreach(_.onStart(context))
 
       // Game loop
       while (sceneToLoad.isEmpty && !shouldStop) do
         val start = System.nanoTime()
         gameObjectsToEnable
-          .toContexts()
-          .foreach(context =>
-            context.gameObject.enabled = true
-            context.gameObject.behaviour.onEnabled(context)
+          .foreach(b =>
+            b.enabled = true
+            b.onEnabled(context)
           )
         gameObjectsToEnable = Seq()
         gameObjectsToDisable
-          .toContexts()
-          .foreach(context =>
-            context.gameObject.enabled = false
-            context.gameObject.behaviour.onDisabled(context)
+          .foreach(b =>
+            b.enabled = false
+            b.onDisabled(context)
           )
         gameObjectsToDisable = Seq()
-        enabledContexts().foreach(context =>
-          context.gameObject.behaviour.onEarlyUpdate(context)
-        )
-        enabledContexts().foreach(context =>
-          context.gameObject.behaviour.onUpdate(context)
-        )
-        enabledContexts().foreach(context =>
-          context.gameObject.behaviour.onLateUpdate(context)
-        )
+        enabledBehaviours().foreach(_.onEarlyUpdate(context))
+        enabledBehaviours().foreach(_.onUpdate(context))
+        enabledBehaviours().foreach(_.onLateUpdate(context))
 
         io.onFrameEnd(this)
 
         val end = System.nanoTime()
         deltaTimeNanos = end - start
 
-      gameObjects
-        .toContexts()
-        .foreach(context => context.gameObject.behaviour.onDeinit(context))
+      gameObjects.foreach(_.onDeinit(context))
 
-  private def enabledGameObjects(): Seq[GameObject[?]] =
-    gameObjects.filter(_.enabled)
-
-  private def enabledContexts(): Seq[Context] =
-    gameObjects
-      .map(go => Context(this, go))
-      .filter(_.gameObject.enabled)
-
-  case class BehaviourWithContext(
-      val behaviour: Behaviour,
-      val context: Context
-  )
+  private def enabledBehaviours(): Seq[Enableable] =
+    find[Enableable]().filter(_.enabled).toSeq
 
   private def applyScene(scene: Scene) =
     sceneToLoad = Option.empty
@@ -135,37 +96,20 @@ class EngineImpl(val io: IO, val storage: Storage, private var scene: Scene)
   import scala.reflect.ClassTag
   import scala.reflect.TypeTest
 
-  @targetName("find_object")
-  def find[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(): Iterable[G] =
+  def find[B <: Behaviour](using
+      tt: TypeTest[Behaviour, B]
+  )(): Iterable[B] =
     gameObjects
       .filter(_ match
         case tt(_) => true
         case _     => false
       )
-      .map(_.asInstanceOf[G])
+      .map(_.asInstanceOf[B])
 
-  def find[B <: Behaviour](using
-      tt: TypeTest[Behaviour, B]
-  )(): Iterable[GameObject[B]] =
-    gameObjects
-      .filter(_.behaviour match
-        case tt(_) => true
-        case _     => false
-      )
-      .map(_.asInstanceOf[GameObject[B]])
-
-  @targetName("find_object_by_id")
-  def findById[G <: GameObject[?]](using
-      tt: TypeTest[GameObject[?], G]
-  )(id: String): Option[G] =
-    find[G]().find(_.id == Some(id))
-
-  def findById[B <: Behaviour](using
-      tt: TypeTest[Behaviour, B]
-  )(id: String): Option[GameObject[B]] =
-    find[B]().find(_.id == Some(id))
+  def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
+      id: String
+  ): Option[B] =
+    find[B]().find(_.id == id)
 
 object EngineImpl:
   def apply(io: IO, storage: Storage, scene: Scene): EngineImpl =
@@ -174,14 +118,10 @@ object EngineImpl:
 @main def main(): Unit =
   val io = ConsoleIO()
   val scene = new Scene {
-    override val gameObjects: () => Iterable[GameObject[?]] =
+    override val gameObjects: () => Iterable[Behaviour] =
       () =>
         Seq(
-          PallaGameObject(r = true, enabled = true),
-          new GameObject {
-            val id: Option[String] = Option("sasso")
-            var enabled: Boolean = true
-            val behaviour: RendererB = new Behaviour with ConsoleIORendererB
-          }
+          Palla(rimbalzo = true, id = "palla1"),
+          new Behaviour with ConsoleIORendererB with Identifiable("a")
         )
   }
