@@ -45,13 +45,16 @@ class EngineTest extends AnyFlatSpec:
         null,
         1
       )
-    ) 
+    )
   
   it should "be instantiated before getting the instance" in:
     assertThrows[IllegalStateException](
       Engine.engine = null,
       Engine()
     )
+
+  it should "start with delta time nanos at 0" in:
+    engine.deltaTimeNanos shouldBe 0
 
   it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
     engine.run()
@@ -93,7 +96,7 @@ class EngineTest extends AnyFlatSpec:
     var counter: Int = -1
 
     override def onInit: Engine => Unit = 
-      engine => 
+      engine =>
         super.onInit(engine)
         counter = 0
 

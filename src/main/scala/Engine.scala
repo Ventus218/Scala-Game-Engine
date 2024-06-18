@@ -39,7 +39,7 @@ trait Engine:
   )(id: String): Option[B]
 
 object Engine:
-  // gameObjects, numSteps and dtNanos are used just to test the Engine until other Interfaces are implemented
+  // gameObjects and numSteps are used just to test the Engine until other Interfaces are implemented
   private class EngineImpl(
       override val io: IO,
       override val storage: Storage,
@@ -63,7 +63,7 @@ object Engine:
         tt: TypeTest[Behaviour, B]
     )(): Iterable[B] = ???
 
-    override def deltaTimeNanos: Long = ???
+    override def deltaTimeNanos: Long = 0
 
     override def destroy(gameObject: Behaviour): Unit = ???
 
