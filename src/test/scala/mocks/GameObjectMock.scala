@@ -1,5 +1,2 @@
-private case class GameObjectMock(
-    id: Option[String] = Option.empty,
-    enabled: Boolean = true,
-    behaviour: Behaviour = new Behaviour {}
-) extends GameObject[Behaviour]
+import Behaviours.Identifiable
+private case class GameObjectMock() extends Behaviour(enabled = true)
