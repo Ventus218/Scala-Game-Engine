@@ -2,7 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 
-class PositionableTest extends AnyFlatSpec:
+class PositionableTests extends AnyFlatSpec:
     val positionable = new Behaviour() with Positionable()
 
     "Positionable" should "have 0 as x and y as default values" in:
