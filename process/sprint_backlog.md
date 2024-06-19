@@ -31,7 +31,7 @@
 |9|Implementazione **Engine** (metodi find...)|Alessandro|X|||
 |9|Implementazione **Engine** (altri metodi (caricamento scena, distruzione/creazione, run/stop, delta time))|Michele||X||
 |10|Behaviour **Positionable**|Corrado|||X|
-|10|Behaviour **Dimensionable**|Corrado||X||
+|10|Behaviour **Dimensionable**|Corrado|||X|
 |10|Behaviour **Collider** (di diverse forme)|Corrado|X|||
 |11|Implementazione **IO (Swing)**|Michele||X||
 |11|Implementazione **SwingRendererB**|Michele|X|||
