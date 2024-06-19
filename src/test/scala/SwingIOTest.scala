@@ -2,17 +2,25 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 
 import java.awt.{Color, Graphics2D}
-class SwingIOTest extends AnyFlatSpec:
 
-  val rectRenderer: Graphics2D => Unit = g => {g.setColor(Color.red); g.fillRect(0, 0, 50, 50)}
+private val rectRenderer: Graphics2D => Unit = g => {g.setColor(Color.red); g.fillRect(0, 0, 50, 50)}
+@main def testSwingIOcreation(): Unit =
+  SwingIO("Swing Test", size = (800, 800))
+
+@main def testSwingIOrendering(): Unit =
+  val frame: SwingIO =
+    SwingIO
+      .withSize((400, 400))
+      .withTitle("Swing Test")
+      .build()
+
+  frame.draw(rectRenderer)
+  frame.show()
+
+class SwingIOTest extends AnyFlatSpec:
 
   "SwingIO" should "be an IO class" in:
     SwingIO("SwingTest", size = (500, 500)) shouldBe a [IO]
-
-  it should "create a GUI on creation" in:
-    SwingIO("Swing Test", size = (800, 800))
-    Thread.sleep(3000)
-    // test done through visual interface
 
   it should "be fully customizable" in:
     val frame: SwingIO =
@@ -29,17 +37,22 @@ class SwingIOTest extends AnyFlatSpec:
     frame.center shouldBe (0, 0)
     frame.pixelsPerUnit shouldBe 100
     frame.backgroundColor shouldBe Color.green
-    Thread.sleep(3000)
-    // test done through visual interface
-
-  it should "draw the renderers" in:
+    
+  it should "work in a game coordinate system" in:
     val frame: SwingIO =
       SwingIO
         .withSize((400, 400))
-        .withTitle("Swing Test")
+        .withCenter((0, 0))
+        .withPixelsPerUnitRatio(100)
         .build()
+      
+    frame.center shouldBe (0, 0)
     
-    frame.draw(rectRenderer)
-    frame.show()
-    Thread.sleep(3000)
-    // test done through visual interface
+    frame.pixelPosition(frame.center) shouldBe (200, 200)
+    frame.pixelPosition((1, 1)) shouldBe (300, 100)
+    frame.pixelPosition((-1, -1)) shouldBe (100, 300)
+    
+    frame.scenePosition((0, 0)) shouldBe (-2, 2)
+    frame.scenePosition((400, 400)) shouldBe (2, -2)
+    frame.scenePosition((0, 400)) shouldBe (-2, -2)
+    frame.scenePosition((400, 0)) shouldBe (2, 2)

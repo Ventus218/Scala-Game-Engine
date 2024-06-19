@@ -7,16 +7,21 @@ trait SwingIO extends IO:
   val title: String
   val size: (Int, Int)
   val pixelsPerUnit: Int
-  val center: (Int, Int)
+  val center: (Double, Double)
   val backgroundColor: Color
   def draw(renderer: Graphics2D => Unit): Unit
   def show(): Unit
+  def pixelPosition(scenePosition: (Double, Double)): (Int, Int) =
+    (size._1/2 + (pixelsPerUnit*(scenePosition._1 - center._1)).toInt, size._2/2 - (pixelsPerUnit*(scenePosition._2 - center._2)).toInt)
+  def scenePosition(pixelPosition: (Int, Int)): (Double, Double) =
+    (center._1 + (pixelPosition._1 - size._1/2)/pixelsPerUnit, center._2 - (pixelPosition._2 - size._2/2)/pixelsPerUnit)
+    
 
 object SwingIO:
-  def apply(title: String, size: (Int, Int), pixelsPerUnit: Int = 100, center: (Int, Int) = (0, 0), background: Color = Color.white): SwingIO =
+  def apply(title: String, size: (Int, Int), pixelsPerUnit: Int = 100, center: (Double, Double) = (0, 0), background: Color = Color.white): SwingIO =
     new SwingIOImpl(title, size, pixelsPerUnit, center, background)
 
-  private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Int, Int), val backgroundColor: Color) extends SwingIO:
+  private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Double, Double), val backgroundColor: Color) extends SwingIO:
 
     val canvas: DrawableCanvas = initCanvas()
 
@@ -49,6 +54,7 @@ object SwingIO:
     override def show(): Unit =
       SwingUtilities.invokeLater( () => canvas.drawRenderers() )
 
+
   private class DrawableCanvas(size: (Int, Int), color: Color) extends JPanel:
     private var renderers: Seq[Graphics2D => Unit] = Seq.empty
     
@@ -69,7 +75,7 @@ object SwingIO:
                              title: String = "Title",
                              size: (Int, Int) = (0, 0),
                              pixelsPerUnit: Int = 100,
-                             center: (Int, Int) = (0, 0),
+                             center: (Double, Double) = (0, 0),
                              background: Color = Color.white
                            )
   def withTitle(title: String): SwingIOBuilder =
@@ -78,7 +84,7 @@ object SwingIO:
     SwingIOBuilder(size = size)
   def withPixelsPerUnitRatio(pixelsPerUnit: Int): SwingIOBuilder =
     SwingIOBuilder(pixelsPerUnit = pixelsPerUnit)
-  def withCenter(center: (Int, Int)): SwingIOBuilder =
+  def withCenter(center: (Double, Double)): SwingIOBuilder =
     SwingIOBuilder(center = center)
   def withBackgroundColor(color: Color): SwingIOBuilder =
     SwingIOBuilder(background = color)
@@ -91,7 +97,7 @@ object SwingIO:
       SwingIOBuilder(builder.title, size, builder.pixelsPerUnit, builder.center, builder.background)
     def withPixelsPerUnitRatio(pixelsPerUnit: Int): SwingIOBuilder =
       SwingIOBuilder(builder.title, builder.size, pixelsPerUnit, builder.center, builder.background)
-    def withCenter(center: (Int, Int)): SwingIOBuilder =
+    def withCenter(center: (Double, Double)): SwingIOBuilder =
       SwingIOBuilder(builder.title, builder.size, builder.pixelsPerUnit, center, builder.background)
     def withBackgroundColor(color: Color): SwingIOBuilder =
       SwingIOBuilder(builder.title, builder.size, builder.pixelsPerUnit, builder.center, color)
