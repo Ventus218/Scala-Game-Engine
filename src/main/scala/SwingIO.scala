@@ -3,16 +3,58 @@ import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D}
 import javax.swing
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
 
+/**
+ * An implementation of IO trait using Java Swing
+ */
 trait SwingIO extends IO:
+  /**
+   * The title of the window frame
+   */
   val title: String
+  /**
+   * The size in pixels of the window frame
+   */
   val size: (Int, Int)
+  /**
+   * The ratio of pixels over game unit. Game unit is the unit of the coordinate system of the game scene
+   */
   val pixelsPerUnit: Int
+  /**
+   * The position of the center of the window translated to game coordinates
+   */
   val center: (Double, Double)
+  /**
+   * The background color of the window frame
+   */
   val backgroundColor: Color
+
+  /**
+   * Register an operation over the graphic context of the window frame. The operation will be executed when show() is called
+   *
+   * @param renderer The operation to apply to the given graphic context
+   */
   def draw(renderer: Graphics2D => Unit): Unit
+
+  /**
+   * Update the windows, executing all the registered operations over the graphics context
+   */
   def show(): Unit
+
+  /**
+   * Converts game-coordinates positions to screen-coordinates positions
+   *
+   * @param scenePosition The game-coordinate position to convert
+   * @return The screen-coordinates position
+   */
   def pixelPosition(scenePosition: (Double, Double)): (Int, Int) =
     (size._1/2 + (pixelsPerUnit*(scenePosition._1 - center._1)).toInt, size._2/2 - (pixelsPerUnit*(scenePosition._2 - center._2)).toInt)
+
+  /**
+   * Converts screen-coordinates positions to game-coordinates positions
+   *
+   * @param pixelPosition The screen-coordinate position to convert
+   * @return The game-coordinates position
+   */
   def scenePosition(pixelPosition: (Int, Int)): (Double, Double) =
     (center._1 + (pixelPosition._1 - size._1/2)/pixelsPerUnit, center._2 - (pixelPosition._2 - size._2/2)/pixelsPerUnit)
 
@@ -55,6 +97,11 @@ object SwingIO:
       SwingUtilities.invokeLater( () => canvas.drawRenderers() )
 
 
+  /**
+   * Class used as canvas for SwingIOImpl
+   * @param size
+   * @param color
+   */
   private class DrawableCanvas(size: (Int, Int), color: Color) extends JPanel:
     private var renderers: Seq[Graphics2D => Unit] = Seq.empty
     
@@ -71,6 +118,15 @@ object SwingIO:
 
 
   /* builder class for SwingIO, with defaults */
+
+  /**
+   * Builder for a SwingIO class
+   * @param title The window title
+   * @param size The screen size
+   * @param pixelsPerUnit The pixels/unit ratio
+   * @param center The game-wise center position
+   * @param background The background color
+   */
   case class SwingIOBuilder(
                              title: String = "Title",
                              size: (Int, Int) = (0, 0),
@@ -78,26 +134,101 @@ object SwingIO:
                              center: (Double, Double) = (0, 0),
                              background: Color = Color.white
                            )
+
+  /**
+   * Build a SwingIO with a new title
+   *
+   * @param title The new title
+   * @return a new builder
+   */
   def withTitle(title: String): SwingIOBuilder =
     SwingIOBuilder(title = title)
+
+  /**
+   * Build a SwingIO with a new size
+   *
+   * @param size The new size
+   * @return a new builder
+   */
   def withSize(size: (Int, Int)): SwingIOBuilder =
     SwingIOBuilder(size = size)
+
+  /**
+   * Build a SwingIO with a new pixels/unit ratio
+   *
+   * @param pixelsPerUnit The new pixels/unit ratio
+   * @return a new builder
+   */
   def withPixelsPerUnitRatio(pixelsPerUnit: Int): SwingIOBuilder =
     SwingIOBuilder(pixelsPerUnit = pixelsPerUnit)
+
+  /**
+   * Build a SwingIO with a new center position
+   *
+   * @param center The new position
+   * @return a new builder
+   */
   def withCenter(center: (Double, Double)): SwingIOBuilder =
     SwingIOBuilder(center = center)
+
+  /**
+   * Build a SwingIO with a new background color
+   *
+   * @param color The new background color
+   * @return a new builder
+   */
   def withBackgroundColor(color: Color): SwingIOBuilder =
     SwingIOBuilder(background = color)
 
   extension (builder: SwingIOBuilder)
+    /**
+     * Create a new SwingIO class from this builder configuration
+     *
+     * @return a SwingIO implementation
+     */
     def build(): SwingIO = SwingIO(builder.title, builder.size, builder.pixelsPerUnit, builder.center, builder.background)
+
+    /**
+     * Build a SwingIO with a new title
+     *
+     * @param title The new title
+     * @return a new builder
+     */
     def withTitle(title: String): SwingIOBuilder =
       SwingIOBuilder(title, builder.size, builder.pixelsPerUnit, builder.center, builder.background)
+
+    /**
+     * Build a SwingIO with a new size
+     *
+     * @param size The new size
+     * @return a new builder
+     */
     def withSize(size: (Int, Int)): SwingIOBuilder =
       SwingIOBuilder(builder.title, size, builder.pixelsPerUnit, builder.center, builder.background)
+
+    /**
+     * Build a SwingIO with a new pixels/unit ratio
+     *
+     * @param pixelsPerUnit The new pixels/unit ratio
+     * @return a new builder
+     */
     def withPixelsPerUnitRatio(pixelsPerUnit: Int): SwingIOBuilder =
       SwingIOBuilder(builder.title, builder.size, pixelsPerUnit, builder.center, builder.background)
+
+    /**
+     * Build a SwingIO with a new center position
+     *
+     * @param center The new position
+     * @return a new builder
+     */
     def withCenter(center: (Double, Double)): SwingIOBuilder =
       SwingIOBuilder(builder.title, builder.size, builder.pixelsPerUnit, center, builder.background)
+      
+    /**
+     * Build a SwingIO with a new background color
+     *
+     * @param color The new background color
+     * @return a new builder
+     */
     def withBackgroundColor(color: Color): SwingIOBuilder =
       SwingIOBuilder(builder.title, builder.size, builder.pixelsPerUnit, builder.center, color)
