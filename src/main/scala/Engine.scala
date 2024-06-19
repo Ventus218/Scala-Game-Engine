@@ -63,7 +63,10 @@ object Engine:
         tt: TypeTest[Behaviour, B]
     )(): Iterable[B] = ???
 
-    override def deltaTimeNanos: Long = 0
+    private var dt: Long = 0
+
+    def deltaTimeNanos: Long = dt
+    private def deltaTimeNanos_=(dt: Long) = this.dt = dt
 
     override def destroy(gameObject: Behaviour): Unit = ???
 
@@ -74,6 +77,8 @@ object Engine:
     private var shouldStop = false
 
     override def run(): Unit =
+      shouldStop = false
+      deltaTimeNanos = 0
       gameObjects.foreach(_.onInit(this))
 
       enabledGameObjects.foreach(_.onEnabled(this))
@@ -81,12 +86,16 @@ object Engine:
       enabledGameObjects.foreach(_.onStart(this))
 
       while !shouldStop && currentStep < numSteps do
+        val start = System.nanoTime()
+
         enabledGameObjects.foreach(_.onEarlyUpdate(this))
 
         enabledGameObjects.foreach(_.onUpdate(this))
 
         enabledGameObjects.foreach(_.onLateUpdate(this))
         currentStep = currentStep + 1
+
+        deltaTimeNanos = System.nanoTime() - start
 
       gameObjects.foreach(_.onDeinit(this))
       currentStep = 0
