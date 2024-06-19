@@ -29,3 +29,19 @@ object Behaviours:
 
     def height_=(h: Double): Unit = 
       if h >= 0 then this.h = h
+
+  /** A game object mixed with this behaviour will stop the engine after the
+    * given amount of frame has been run
+    *
+    * @param nFramesToRun
+    */
+  trait NFrameStopper(val nFramesToRun: Int) extends Behaviour:
+    require(nFramesToRun > 0)
+
+    private var frameCounter: Int = 1
+
+    override def onUpdate: Engine => Unit = (engine) =>
+      frameCounter match
+        case `nFramesToRun` => engine.stop()
+        case _              => frameCounter += 1
+      super.onUpdate(engine)
