@@ -223,7 +223,7 @@ object SwingIO:
      */
     def withCenter(center: (Double, Double)): SwingIOBuilder =
       SwingIOBuilder(builder.title, builder.size, builder.pixelsPerUnit, center, builder.background)
-      
+
     /**
      * Build a SwingIO with a new background color
      *
