@@ -1,11 +1,10 @@
 # Implementazione
 
 ## Engine
-L'engine dovrà essere instanziato una singola volta dal framework attraverso `Engine.instantiate`, a cui verranno passati la IO e lo storage. Se si prova ad instanziarlo una seconda volta verrà lanciata un'eccezione del tipo `Illegal State Exception`.
-Per recuperare l'istanza dell'engine bisogna utilizzare il metodo `Engine.apply`, che lancia un'eccezzione anch'essa di tipo `Illegal State Exception` se chiamato prima di instanziare l'engine.
+L'engine ha un'implementazione di default attraverso `Engine.apply()` che accetta come parametri una IO e uno Storage.
 
 ### Game Loop (run() e stop())
-Una volta avviato il game loop attraverso il metodo `Engine().run()`, il game loop per prima cosa chiamerà gli handler dei behaviors nel seguente ordine:
+Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop per prima cosa chiamerà gli handler dei behaviors nel seguente ordine:
 
     - onInit
     - onEnabled (solo sui behaviours abilitati)
@@ -16,7 +15,10 @@ Una volta avviato il game loop attraverso il metodo `Engine().run()`, il game lo
         - onLateUpdate (solo sui behaviours abilitati)
     -onDeinit
 
-Chiamando il metodo `Engine().stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
+Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
+
+### Delta time nanos
+L'engine offre la possibilità di ricavare il tempo trascorso dallo scorso frame al frame corrente attraverso `engine.deltaTimeNanos`.
 
 ## Scene
 Scene ha una implementazione di default attraverso `Scene.apply`.

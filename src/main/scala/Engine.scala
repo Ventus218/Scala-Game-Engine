@@ -14,6 +14,7 @@ trait Engine:
 
   /** The Storage that the engine will use to store values between scenes */
   val storage: Storage
+
   def loadScene(scene: Scene): Unit
   def enable(gameObject: Behaviour): Unit
   def disable(gameObject: Behaviour): Unit
@@ -26,6 +27,8 @@ trait Engine:
   /** Tells to the engine to stop the game loop */
   def stop(): Unit
 
+  /** Returns the time passed between the previous frame and the current frame in nanoseconds
+    */
   def deltaTimeNanos: Long
 
   import scala.reflect.TypeTest
@@ -102,10 +105,7 @@ object Engine:
 
     override def stop(): Unit = shouldStop = true
 
-  var engine: Engine = null
-
-  /** Instantiate the engine. Throws Illegal State Excpetion if it is called
-    * more than one time.
+  /** Creates the engine.
     *
     * @param io
     *   The IO of the engine, used to render the view to the monitor and getting
@@ -113,26 +113,15 @@ object Engine:
     * @param storage
     *   The Storage that the engine will use to store values between scenes
     */
-  def intantiate(
+  def apply(
       io: IO,
       storage: Storage,
       gameObjects: Iterable[Behaviour],
       numSteps: Int
-  ): Unit =
-    if engine == null then
-      engine = new EngineImpl(
-        io = io,
-        storage = storage,
-        gameObjects = gameObjects,
-        numSteps = numSteps
-      )
-    else throw new IllegalStateException("Engine alrady instantiated")
-
-  /** Returns always the same instance of the engine if instantiated, otherwise
-    * throws an IllegalStateException
-    *
-    * @return
-    *   the instance of the engine
-    */
-  def apply(): Engine = if engine != null then engine
-  else throw new IllegalStateException("Engine not yet instantiated")
+  ): Engine =
+    new EngineImpl(
+      io = io,
+      storage = storage,
+      gameObjects = gameObjects,
+      numSteps = numSteps
+    )

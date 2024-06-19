@@ -31,37 +31,19 @@ class EngineTest extends AnyFlatSpec with BeforeAndAfterEach:
     deltaTime
   )
 
-  Engine.intantiate(
+  val engine = Engine(
     io = new IO() {},
     storage = new StorageMock(),
     gameObjects,
     numSteps
   )
 
-  val engine = Engine()
-
   override protected def beforeEach(): Unit = 
     gameObjectStop.step = numSteps
     deltaTime.toStopBeforeUpdates = false
     deltaTime.toStopUpdates = false
 
-  "Engine" should "be instantiated only one time" in:
-    assertThrows[IllegalStateException](
-      Engine.intantiate(
-        io = new IO() {},
-        storage = new StorageMock(),
-        null,
-        1
-      )
-    )
-  
-  it should "be instantiated before getting the instance" in:
-    assertThrows[IllegalStateException](
-      Engine.engine = null,
-      Engine()
-    )
-
-  it should "start with delta time nanos at 0" in:
+  "Engine" should "start with delta time nanos at 0" in:
     engine.deltaTimeNanos shouldBe 0
 
   it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
