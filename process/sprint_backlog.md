@@ -28,7 +28,7 @@
 |6|Implementazione **SceneManager**|Alessandro|X|||
 |7|Implementazione **Storage**|Alessandro||X||
 |9|Implementazione **Engine** (game loop)|Corrado|||X|
-|9|Implementazione **Engine** (metodi find...)|Alessandro|X|||
+|9|Implementazione **Engine** (metodi find...)|Alessandro|||X|
 |9|Implementazione **Engine** (altri metodi (caricamento scena, distruzione/creazione, run/stop, delta time))|Michele||X||
 |10|Behaviour **Positionable**|Corrado|||X|
 |10|Behaviour **Dimensionable**|Corrado||X||
