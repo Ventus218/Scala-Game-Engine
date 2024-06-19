@@ -15,7 +15,7 @@ trait SwingIO extends IO:
     (size._1/2 + (pixelsPerUnit*(scenePosition._1 - center._1)).toInt, size._2/2 - (pixelsPerUnit*(scenePosition._2 - center._2)).toInt)
   def scenePosition(pixelPosition: (Int, Int)): (Double, Double) =
     (center._1 + (pixelPosition._1 - size._1/2)/pixelsPerUnit, center._2 - (pixelPosition._2 - size._2/2)/pixelsPerUnit)
-    
+
 
 object SwingIO:
   def apply(title: String, size: (Int, Int), pixelsPerUnit: Int = 100, center: (Double, Double) = (0, 0), background: Color = Color.white): SwingIO =
