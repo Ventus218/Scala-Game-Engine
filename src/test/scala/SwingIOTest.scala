@@ -40,7 +40,7 @@ object SwingIOTest:
     for i <- 0 to 300 by 10 do
       frame.draw(rectRenderer(i, i))
       frame.show()
-      Thread.sleep(1000)
+      Thread.sleep(150)
 
   @main def testSwingIOMultipleRendering(): Unit =
     // it should draw multiple renderers
