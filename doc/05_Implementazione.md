@@ -67,8 +67,11 @@ println(collider.collides(collider2)) //true
 println(collider.collides(collider3)) //false
 println(collider2.collides(collider3)) //true
 
-collider3.colliderWidth = 10
+collider3.y = -5
+collider3.x = 0
+collider3.colliderHeight = 5
 
-println(collider2.collides(collider3)) //false
+println(collider3.collides(collider)) //true
+println(collider3.collides(collider2)) //false
 
 ```
