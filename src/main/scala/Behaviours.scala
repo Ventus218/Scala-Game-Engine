@@ -37,17 +37,35 @@ object Behaviours:
   trait Collider(private var w: Double = -1, private var h: Double = -1)
       extends Positionable:
     dimensionable: Dimensionable =>
-    def colliderWidth: Double = if w < 0 then dimensionable.width else w
-    def colliderHeight: Double = if h < 0 then dimensionable.height else h
+      def colliderWidth: Double = if w <= 0 then width else w
+      def colliderHeight: Double = if h <= 0 then height else h
 
-    def colliderWidth_=(width: Double): Unit = if width >= 0 then w = width
-    def colliderHeight_=(height: Double): Unit = if height >= 0 then h = height
+    def colliderWidth_=(width: Double): Unit = if width > 0 then w = width
+    def colliderHeight_=(height: Double): Unit = if height > 0 then h = height
+
+    private var _collisionDetected = false
+    
+    def collisionDetected: Boolean = _collisionDetected
+    override def onEarlyUpdate: Engine => Unit = 
+      engine =>
+        super.onEarlyUpdate(engine)
+        import CollisionTesting.*
+        allColliders().filter(_ != this).foreach(other =>
+          _collisionDetected = this.y <= other.y + other.colliderHeight
+        )
+
 
   object Collider:
-    def apply(width: Double, height: Double)(
+    def apply(width: Double, height: Double, x: Double = 0, y: Double = 0)(
         colliderWidth: Double = -1,
         colliderHeight: Double = -1
     ): Collider = new Behaviour
       with Collider(colliderWidth, colliderHeight)
       with Dimensionable(width, height)
-      with Positionable
+      with Positionable(x, y)
+
+  object CollisionTesting:
+    val collider = Collider(width = 5, height = 3)()
+    val collider2 = Collider(width = 1, height = 2, x = 2, y = -2)()
+
+    def allColliders() = Seq(collider, collider2)
