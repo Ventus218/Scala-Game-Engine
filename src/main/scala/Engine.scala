@@ -1,5 +1,6 @@
 import scala.annotation.targetName
 import Behaviours.*
+import BehaviourUtils.*
 import scala.reflect.TypeTest
 
 /** Takes care of starting and stopping the game loop, enable/disable Behaviours
@@ -27,22 +28,35 @@ trait Engine:
   /** Tells to the engine to stop the game loop */
   def stop(): Unit
 
-  /** Returns the time passed between the previous frame and the current frame in nanoseconds
+  /** Returns the time passed between the previous frame and the current frame
+    * in nanoseconds
     */
   def deltaTimeNanos: Long
 
   import scala.reflect.TypeTest
 
+  /** Retrieves all the objects having behaviour `B`
+    *
+    * @param tt
+    * @return
+    */
   def find[B <: Behaviour](using
       tt: TypeTest[Behaviour, B]
   )(): Iterable[B]
 
+  /** Retrieves the first found Identifiable object having behaviour `B` and
+    * matching identifier
+    *
+    * @param tt
+    * @param id
+    * @return
+    */
   def find[B <: Identifiable](using
       tt: TypeTest[Behaviour, B]
   )(id: String): Option[B]
 
 object Engine:
-  // gameObjects and numSteps are used just to test the Engine until other Interfaces are implemented
+  // gameObjects is used just to test the Engine until other Interfaces are implemented
   private class EngineImpl(
       override val io: IO,
       override val storage: Storage,
@@ -59,11 +73,13 @@ object Engine:
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
         id: String
-    ): Option[B] = ???
+    ): Option[B] =
+      find[B]().find(_.id == id)
 
     override def find[B <: Behaviour](using
         tt: TypeTest[Behaviour, B]
-    )(): Iterable[B] = ???
+    )(): Iterable[B] =
+      gameObjects.filter[B]()
 
     private var _deltaTimeNanos: Long = 0
 

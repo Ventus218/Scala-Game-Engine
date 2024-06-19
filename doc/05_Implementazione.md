@@ -20,6 +20,17 @@ Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una 
 ### Delta time nanos
 L'engine offre la possibilità di ricavare il tempo trascorso dallo scorso frame al frame corrente attraverso `engine.deltaTimeNanos`.
 
+### Metodi per trovare oggetti
+L'engine offre due metodi per ricercare oggetti nel gioco:
+```scala
+// Restituisce tutti gli oggetti trovati che implementano il behaviour B
+def find[B <: Behaviour](using tt: TypeTest[Behaviour, B])(): Iterable[B]
+// Restituisce un oggetto con l'identificatore dato che implementi il behaviour B
+def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(id: String): Option[B]
+```
+Siccome l'informazione riguardante i tipi dei behaviour viene persa a runtime a causa della type erasure di Java si è dovuto utilizzare il sistema di reflection per implementare questi due metodi.
+`TypeTest` serve permette di potersi "portare dietro" le informazioni necessarie per poter controllare a runtime i tipi degli oggetti.
+
 ## Scene
 Scene ha una implementazione di default attraverso `Scene.apply`.
 
