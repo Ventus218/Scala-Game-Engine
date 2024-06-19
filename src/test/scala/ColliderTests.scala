@@ -70,49 +70,61 @@ class ColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "collide with another collider on top" in:
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
 
     collider2.x = 2
     collider2.y = -2
 
     collider.collides(collider2) shouldBe true
+    collider2.collides(collider) shouldBe true
 
     collider2.y = -3
 
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
 
   it should "collide with another collider on left" in:
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
 
     collider2.y = 0
     collider2.x = -1
 
     collider.collides(collider2) shouldBe true
+    collider2.collides(collider) shouldBe true
 
     collider2.x = -2
 
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
 
   it should "collide with another collider on bottom" in:
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
 
     collider2.y = 3
     collider2.x = 2
 
     collider.collides(collider2) shouldBe true
+    collider2.collides(collider) shouldBe true
 
     collider2.y = 4
 
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
 
   it should "collide with another collider on right" in:
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
 
     collider2.y = 0
     collider2.x = 5
 
     collider.collides(collider2) shouldBe true
+    collider2.collides(collider) shouldBe true
 
     collider2.x = 6
 
     collider.collides(collider2) shouldBe false
+    collider2.collides(collider) shouldBe false
     

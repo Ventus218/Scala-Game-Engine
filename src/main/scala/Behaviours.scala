@@ -49,7 +49,8 @@ object Behaviours:
     def colliderWidth_=(width: Double): Unit = if width > 0 then w = width
     def colliderHeight_=(height: Double): Unit = if height > 0 then h = height
 
-    /** Detect if this Behaviour collided with another Behaviour that extends Collider
+    /** Detect if this Behaviour collided with another Behaviour that extends Collider 
+      * using an AABB collision detection algorithm
       *
       * @param other
       * @return true if a collision is detected, false otherwise
