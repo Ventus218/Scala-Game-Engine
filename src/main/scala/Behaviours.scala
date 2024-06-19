@@ -29,3 +29,5 @@ object Behaviours:
 
     def height_=(h: Double): Unit = 
       if h >= 0 then this.h = h
+
+  trait Collider extends Behaviour with Dimensionable with Positionable
