@@ -64,12 +64,15 @@ object SwingIO:
     new SwingIOImpl(title, size, pixelsPerUnit, center, background)
 
   private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Double, Double), val backgroundColor: Color) extends SwingIO:
-
-    val canvas: DrawableCanvas = initCanvas()
+    require(size._1 > 0 && size._2 > 0, "size must be positive")
+    require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
+    
+    private val canvas: DrawableCanvas = initCanvas()
 
     override def onFrameEnd: Engine => Unit =
       engine =>
         super.onFrameEnd(engine)
+        canvas.drawRenderers()
 
     private def initCanvas(): DrawableCanvas =
       val canvas: DrawableCanvas = createCanvas()
