@@ -25,7 +25,7 @@
 |4|Specifica|Tutti|||X|
 |15|Refactor Behaviour|Tutti|||X|
 |5|Implementazione **Scene**|Alessandro|||X|
-|6|Implementazione **SceneManager**|Alessandro|X|||
+|6|Implementazione **SceneManager**|Alessandro|||X|
 |7|Implementazione **Storage**|Alessandro|||X|
 |9|Implementazione **Engine** (game loop)|Corrado||X||
 |9|Implementazione **Engine** (metodi find...)|Alessandro|X|||

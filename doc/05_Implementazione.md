@@ -8,9 +8,68 @@ La natura di questo componente costringe a lavorare con il tipo Any nell'impleme
 L'implementazione di default, che viene restituita da `Storage.apply` è `StorageImmutableMapImpl` che sfrutta al suo interno una `Map` immutabile, nel caso si necessiti di migliorare le prestazioni è suggerito creare una nuova implementazione con una struttura dati mutabile.
 
 ## Scene
-Scene ha una implementazione di default attraverso `Scene.apply`.
+Scene è un type alias per una funzione 0-aria che ritorna un `Iterable[Behaviour]`.
+L'utilizzatore del framework può definire le sue scene principalmente in due modi diversi:
 
-Il motivo per cui Scene prende in input una funzione che crea i game object e non direttamente i game object è che Scene è solo un template per gli oggetti e questi andranno creati solo quando la scena verrà caricata dall'engine.
+**Come object**:
+```scala
+object BallsScene extends Scene:
+    def apply(): Iterable[Behaviour] =
+        Seq(
+            BallGameObject(
+                jumping = true,
+                id = "ball_1",
+                x = 0,
+                y = 0
+            ),
+            BallGameObject(
+                enabled = false,
+                jumping = false,
+                id = "ball_2",
+                x = 10,
+                y = 10
+            )
+        )
+// Caricamento di BallsScene
+engine.loadScene(BallsScene)
+```
+**Come def**:
+```scala
+def ballsScene(): Iterable[Behaviour] =
+    Seq(
+        BallGameObject(
+            jumping = true,
+            id = "ball_1",
+            x = 0,
+            y = 0
+        ),
+        BallGameObject(
+            enabled = false,
+            jumping = false,
+            id = "ball_2",
+            x = 10,
+            y = 10
+        )
+    )
+// Caricamento di ballsScene
+engine.loadScene(ballsScene)
+```
+### Motivazioni dietro a questo approccio
+Si vuole che Scene sia una funzione in quanto deve essere solo un template per gli oggetti in quanto questi andranno creati solo quando la scena verrà caricata dall'engine.
+
+Inoltre il fatto di definire le scene come `object` o `def` permette all'utente di utilizzare rispettivamente il type system oppure i nomi dei metodi come identificatori delle scene definite.
+Se queste vengono poi inserite in un `object` "raccoglitore" permette un utilizzo veramente semplice ed intuitivo:
+```scala
+object Scenes:
+    object MenuScene:
+        // ...
+    object GameScene:
+        // ...
+
+// From the point of view of engine/behaviours:
+engine.loadScene(Scenes.MenuScene)
+engine.loadScene(Scenes.GameScene)
+```
 
 ## Built-in behaviours
 
