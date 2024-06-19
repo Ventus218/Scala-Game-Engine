@@ -4,22 +4,31 @@ import Behaviours.*
 
 class ColliderTests extends AnyFlatSpec:
   
-  val collider = new Behaviour with Collider with Positionable with Dimensionable(5, 3)
+  val collider = Collider(width = 5, height = 3)()
 
   "collider" should "initially have its width and height set to dimensionable width and height" in:
-    collider.cWidth shouldBe collider.width
-    collider.cHeight shouldBe collider.height
+    collider.colliderWidth shouldBe 5
+    collider.colliderHeight shouldBe 3
 
-    collider.width = 10
-    collider.cWidth shouldBe 10
+  it should "if initially its width and height are negative set them to dimensionable width and height" in:
+    val collider = Collider(width = 1, height = 8)(colliderWidth = -5, colliderHeight = 4)
+    collider.colliderWidth shouldBe 1
+    collider.colliderHeight shouldBe 4
 
-    collider.height = 20
-    collider.cHeight shouldBe 20
+  it should "be able to create a collider with different width and height of dimensionable" in:
+    val collider = Collider(width = 5, height = 3)(colliderWidth = 4, colliderHeight = 2)
+    collider.colliderWidth shouldBe 4
+    collider.colliderHeight shouldBe 2
 
-  it should "be able to create a collider with different width and height" in:
-    val collider2 = new Behaviour with Collider(4, 2) with Positionable with Dimensionable(5, 3)
-    collider2.cWidth shouldBe 4
-    collider2.cHeight shouldBe 2
+  it should "be able to change its width and height but not accept negative values" in:
+    collider.colliderWidth = 10
+    collider.colliderHeight = 20
 
-    collider2.width = 10
-    collider2 shouldNot be(10)
+    collider.colliderWidth shouldBe 10
+    collider.colliderHeight shouldBe 20
+
+    collider.colliderWidth = 30
+    collider.colliderHeight = -7
+
+    collider.colliderWidth shouldBe 30
+    collider.colliderHeight shouldBe 20
