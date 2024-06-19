@@ -46,8 +46,7 @@ object Engine:
   private class EngineImpl(
       override val io: IO,
       override val storage: Storage,
-      gameObjects: Iterable[Behaviour],
-      numSteps: Int
+      gameObjects: Iterable[Behaviour]
   ) extends Engine:
 
     override def loadScene(scene: Scene): Unit = ???
@@ -76,7 +75,6 @@ object Engine:
     private def enabledGameObjects =
       gameObjects.filter(_.enabled)
 
-    private var currentStep = 0
     private var shouldStop = false
 
     override def run(): Unit =
@@ -88,7 +86,7 @@ object Engine:
 
       enabledGameObjects.foreach(_.onStart(this))
 
-      while !shouldStop && currentStep < numSteps do
+      while !shouldStop do
         val start = System.nanoTime()
 
         enabledGameObjects.foreach(_.onEarlyUpdate(this))
@@ -96,12 +94,10 @@ object Engine:
         enabledGameObjects.foreach(_.onUpdate(this))
 
         enabledGameObjects.foreach(_.onLateUpdate(this))
-        currentStep = currentStep + 1
 
         deltaTimeNanos = System.nanoTime() - start
 
       gameObjects.foreach(_.onDeinit(this))
-      currentStep = 0
 
     override def stop(): Unit = shouldStop = true
 
@@ -116,12 +112,10 @@ object Engine:
   def apply(
       io: IO,
       storage: Storage,
-      gameObjects: Iterable[Behaviour],
-      numSteps: Int
+      gameObjects: Iterable[Behaviour]
   ): Engine =
     new EngineImpl(
       io = io,
       storage = storage,
-      gameObjects = gameObjects,
-      numSteps = numSteps
+      gameObjects = gameObjects
     )

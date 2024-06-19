@@ -17,7 +17,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
   private val gameObject2 = getMockB()
   private val gameObject3 = getMockB(false)
   private val gameObject4 = getMockB(false)
-  private val gameObjectStop = new Behaviour with StopMockB(step = numSteps)
+  private val gameObjectStop = new Behaviour with StopMockB(step = numSteps - 1)
   private val deltaTime = new Behaviour with DeltaTimeMockB
 
   val numSteps = 3
@@ -34,14 +34,14 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
   val engine = Engine(
     io = new IO() {},
     storage = new StorageMock(),
-    gameObjects,
-    numSteps
+    gameObjects
   )
 
   override protected def beforeEach(): Unit = 
-    gameObjectStop.step = numSteps
+    gameObjectStop.step = numSteps - 1
     deltaTime.toStopBeforeUpdates = false
     deltaTime.toStopUpdates = false
+    gameObjectStop.state = "Active"
 
   "Engine" should "start with delta time nanos at 0" in:
     engine.deltaTimeNanos shouldBe 0
