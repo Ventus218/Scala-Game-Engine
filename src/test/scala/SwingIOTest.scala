@@ -2,15 +2,23 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 
 import java.awt.{Color, Graphics2D}
+import scala.reflect.TypeTest
 
 private def rectRenderer(posX: Int, posY: Int): Graphics2D => Unit = g =>
   g.setColor(Color.red)
   g.fillRect(posX, posY, 50, 50)
 
+private def circleRenderer(posX: Int, posY: Int): Graphics2D => Unit = g =>
+  g.setColor(Color.blue)
+  g.fillOval(posX, posY, 60, 60)
+
+
 @main def testSwingIOCreation(): Unit =
+  // it should create a visual interface
   SwingIO("Swing Test", size = (800, 800))
 
 @main def testSwingIORendering(): Unit =
+  // it should allow to draw on the UI
   val frame: SwingIO =
     SwingIO
       .withSize((400, 400))
@@ -21,6 +29,7 @@ private def rectRenderer(posX: Int, posY: Int): Graphics2D => Unit = g =>
   frame.show()
 
 @main def testSwingIOUpdate(): Unit =
+  // it should allow to render multiple times in sequence
   val frame: SwingIO =
     SwingIO
       .withSize((400, 400))
@@ -31,6 +40,20 @@ private def rectRenderer(posX: Int, posY: Int): Graphics2D => Unit = g =>
     frame.draw(rectRenderer(i, i))
     frame.show()
     Thread.sleep(1000)
+
+@main def testSwingIOMultipleRendering(): Unit =
+  // it should draw multiple renderers
+  val frame: SwingIO =
+    SwingIO
+      .withSize((400, 400))
+      .withTitle("Swing Test")
+      .build()
+
+  frame.draw(rectRenderer(0, 0))
+  frame.draw(circleRenderer(100, 100))
+  frame.draw(rectRenderer(300, 0))
+  frame.draw(circleRenderer(50, 200))
+  frame.show()
 
 class SwingIOTest extends AnyFlatSpec:
 
