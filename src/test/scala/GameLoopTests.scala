@@ -3,7 +3,7 @@ import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import org.scalatest.BeforeAndAfterEach
 
-class EngineTest extends AnyFlatSpec with BeforeAndAfterEach:
+class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
   private def getMockB(enable: Boolean = true): MockB = new Behaviour(enable)
     with MockB
 

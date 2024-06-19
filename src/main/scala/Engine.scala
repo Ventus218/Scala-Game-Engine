@@ -66,10 +66,10 @@ object Engine:
         tt: TypeTest[Behaviour, B]
     )(): Iterable[B] = ???
 
-    private var dt: Long = 0
+    private var _deltaTimeNanos: Long = 0
 
-    def deltaTimeNanos: Long = dt
-    private def deltaTimeNanos_=(dt: Long) = this.dt = dt
+    def deltaTimeNanos: Long = _deltaTimeNanos
+    private def deltaTimeNanos_=(dt: Long) = this._deltaTimeNanos = dt
 
     override def destroy(gameObject: Behaviour): Unit = ???
 
