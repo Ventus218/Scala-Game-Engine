@@ -22,6 +22,8 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   val numSteps = 3
 
+  private def testScene(): Iterable[Behaviour] = gameObjects
+
   private val gameObjects = Iterable(
     gameObject1,
     gameObject2,
@@ -33,11 +35,10 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   val engine = Engine(
     io = new IO() {},
-    storage = new StorageMock(),
-    gameObjects
+    storage = new StorageMock()
   )
 
-  override protected def beforeEach(): Unit = 
+  override protected def beforeEach(): Unit =
     gameObjectStop.step = numSteps - 1
     deltaTime.toStopBeforeUpdates = false
     deltaTime.toStopUpdates = false
@@ -47,68 +48,73 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     engine.deltaTimeNanos shouldBe 0
 
   it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
-    engine.run()
+    engine.run(testScene)
 
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects.filter(_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe sequenceOfActions :+ "deinit"
-    )
+    gameObjects
+      .filter(_.enabled)
+      .foreach(gameObject =>
+        gameObject.list shouldBe sequenceOfActions :+ "deinit"
+      )
 
-    gameObjects.filter(!_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe Seq("init", "deinit")
-    )
+    gameObjects
+      .filter(!_.enabled)
+      .foreach(gameObject => gameObject.list shouldBe Seq("init", "deinit"))
 
   it should "stop when engine.stop() is called" in:
     val stepToStop = 1
     gameObjectStop.step = stepToStop
     gameObjectStop.state shouldBe "Active"
-    
-    engine.run()
+
+    engine.run(testScene)
 
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 to stepToStop do
-      sequenceOfActions =
-        sequenceOfActions ++ getUpdatesSequenceOfActions()
+      sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects.filter(_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe sequenceOfActions :+ "deinit"
-    )
+    gameObjects
+      .filter(_.enabled)
+      .foreach(gameObject =>
+        gameObject.list shouldBe sequenceOfActions :+ "deinit"
+      )
 
     gameObjectStop.state shouldBe "Stopped"
-  
+
   it should "do the loop again if called run after being stopped" in:
     engine.stop()
-    engine.run()
+    engine.run(testScene)
 
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects.filter(_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe sequenceOfActions :+ "deinit"
-    )
+    gameObjects
+      .filter(_.enabled)
+      .foreach(gameObject =>
+        gameObject.list shouldBe sequenceOfActions :+ "deinit"
+      )
 
-    gameObjects.filter(!_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe Seq("init", "deinit")
-    )
+    gameObjects
+      .filter(!_.enabled)
+      .foreach(gameObject => gameObject.list shouldBe Seq("init", "deinit"))
 
   it should "have delta time nanos at 0 before update" in:
-    engine.run()
+    engine.run(testScene)
     deltaTime.dt shouldBe 0
 
   it should "have delta time at 0 if the loop of updates is not executed" in:
     deltaTime.toStopBeforeUpdates = true
-    engine.run()
+    engine.run(testScene)
     engine.deltaTimeNanos shouldBe 0
 
   it should "have delta time nanos higher than 0 after a run with updates" in:
-    engine.run()
+    engine.run(testScene)
     engine.deltaTimeNanos > 0 shouldBe true
 
   it should "have delta time nanos higher than time stopped inside updates" in:
@@ -117,13 +123,15 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     deltaTime.toStopUpdates = true
     deltaTime.secondsToStop = 0.01
 
-    engine.run()
-    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math.pow(10, 9) shouldBe true
+    engine.run(testScene)
+    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math
+      .pow(10, 9) shouldBe true
 
     deltaTime.secondsToStop = 0.02
 
-    engine.run()
-    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math.pow(10, 9) shouldBe true
+    engine.run(testScene)
+    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math
+      .pow(10, 9) shouldBe true
 
   private trait DeltaTimeMockB extends MockB:
     var dt: Long = 0
@@ -131,17 +139,17 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     var toStopUpdates: Boolean = false
     var secondsToStop: Double = 0
 
-    override def onInit: Engine => Unit = 
-      engine => 
+    override def onInit: Engine => Unit =
+      engine =>
         super.onInit(engine)
         dt = dt + engine.deltaTimeNanos
 
-    override def onEnabled: Engine => Unit = 
+    override def onEnabled: Engine => Unit =
       engine =>
         super.onEnabled(engine)
         dt = dt + engine.deltaTimeNanos
 
-    override def onStart: Engine => Unit = 
+    override def onStart: Engine => Unit =
       engine =>
         super.onStart(engine)
         dt = dt + engine.deltaTimeNanos
@@ -150,23 +158,23 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     override def onEarlyUpdate: Engine => Unit =
       engine =>
         super.onEarlyUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000). toInt)
+        if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
 
     override def onUpdate: Engine => Unit =
       engine =>
         super.onUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000). toInt)
+        if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
 
     override def onLateUpdate: Engine => Unit =
       engine =>
         super.onLateUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000). toInt)
+        if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
 
   private trait StopMockB(var step: Int) extends MockB:
     var state: String = "Active"
     var counter: Int = -1
 
-    override def onInit: Engine => Unit = 
+    override def onInit: Engine => Unit =
       engine =>
         super.onInit(engine)
         counter = 0
@@ -177,8 +185,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
         if counter == step then
           engine.stop()
           state = "Stopped"
-        else
-          counter = counter + 1
+        else counter = counter + 1
 
   private trait MockB extends Behaviour:
     var list: Seq[String] = Seq()

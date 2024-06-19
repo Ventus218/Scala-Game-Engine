@@ -23,7 +23,7 @@ trait Engine:
   def destroy(gameObject: Behaviour): Unit
 
   /** Starts the game loop of the engine */
-  def run(): Unit
+  def run(initialScene: Scene): Unit
 
   /** Tells to the engine to stop the game loop */
   def stop(): Unit
@@ -57,11 +57,10 @@ trait Engine:
 
 object Engine:
   // gameObjects is used just to test the Engine until other Interfaces are implemented
-  private class EngineImpl(
-      override val io: IO,
-      override val storage: Storage,
-      gameObjects: Iterable[Behaviour]
-  ) extends Engine:
+  private class EngineImpl(override val io: IO, override val storage: Storage)
+      extends Engine:
+
+    private var gameObjects: Iterable[Behaviour] = Seq()
 
     override def loadScene(scene: Scene): Unit = ???
 
@@ -93,7 +92,8 @@ object Engine:
 
     private var shouldStop = false
 
-    override def run(): Unit =
+    override def run(initialScene: Scene): Unit =
+      gameObjects = initialScene()
       shouldStop = false
       deltaTimeNanos = 0
       gameObjects.foreach(_.onInit(this))
@@ -125,13 +125,5 @@ object Engine:
     * @param storage
     *   The Storage that the engine will use to store values between scenes
     */
-  def apply(
-      io: IO,
-      storage: Storage,
-      gameObjects: Iterable[Behaviour]
-  ): Engine =
-    new EngineImpl(
-      io = io,
-      storage = storage,
-      gameObjects = gameObjects
-    )
+  def apply(io: IO, storage: Storage): Engine =
+    new EngineImpl(io = io, storage = storage)
