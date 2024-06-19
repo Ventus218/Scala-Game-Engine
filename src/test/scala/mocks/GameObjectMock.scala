@@ -6,4 +6,4 @@ private class StorageMock() extends Storage:
   def getOption[T](using tt: TypeTest[Any, T])(key: String): Option[T] = ???
   def unset(key: String): Unit = ???
 
-private case class GameObjectMock() extends Behaviour(enabled = true)
+private class GameObjectMock() extends Behaviour(enabled = true)
