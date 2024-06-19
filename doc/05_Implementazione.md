@@ -45,10 +45,10 @@ println(dimensionable.height) // 3
 ```
 
 ### Collider
-Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anche **Dimensionable** e **Positionable**. Al **Collider** potranno essere passati due valori, `w` e `h`, rispettivamente la larghezza e l'altezza del **Collider**.
-Un valore inferiore o uguale a 0 per `w` o `h` (valori di default dei campi) comporta che larghezza e altezza del **Collider** siano gli stessi del **Dimensionable**.
+Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anche **Dimensionable** e **Positionable**. Al **Collider** potranno essere passati due valori, `w` e `h`, rispettivamente la sua larghezza e la sua altezza.
+Un valore inferiore o uguale a 0 per i due campi (valore di default = 0) comporta che larghezza e altezza del **Collider** siano gli stessi del **Dimensionable**.
 
-Il valore dell'altezza e della larghezza potranno poi essere recuperati dall'esterno attraverso i campi `colliderWidth` e `colliderHeight` che non potranno essere cambiati in valori negativi o uguali a 0.
+Questi due valori potranno poi essere recuperati dall'esterno attraverso i campi `colliderWidth` e `colliderHeight` che non potranno essere cambiati in valori negativi o uguali a 0.
 
 Infine il metodo `collides(other)` accetta in input un **Collider** e torna `true` se si verifica una collisione tra `other` e `this`, altrimenti torna `false`. Per l'algoritmo di collisione si è usato l'algoritmo [AABB collision detection](https://stackoverflow.com/tags/aabb/info).
 
@@ -66,4 +66,9 @@ val collider3: Collider = new Behaviour with Collider(2, 2) with Dimensionable(5
 println(collider.collides(collider2)) //true
 println(collider.collides(collider3)) //false
 println(collider2.collides(collider3)) //true
+
+collider3.colliderWidth = 10
+
+println(collider2.collides(collider3)) //false
+
 ```
