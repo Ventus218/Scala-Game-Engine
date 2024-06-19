@@ -30,4 +30,6 @@ object Behaviours:
     def height_=(h: Double): Unit = 
       if h >= 0 then this.h = h
 
-  trait Collider extends Behaviour with Dimensionable with Positionable
+  trait Collider(width: Double = -1, height: Double = -1) extends Dimensionable with Positionable:
+    def cWidth: Double = if width < 0 then super.width else width
+    def cHeight: Double = if height < 0 then super.height else height
