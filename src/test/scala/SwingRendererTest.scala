@@ -28,6 +28,11 @@ object SwingRendererTest:
       with SwingSquareRenderable(size, color, offset)
       with Positionable(position._1, position._2)
 
+  def circleRenderer(radius: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingCircleRenderable =
+    new Behaviour
+      with SwingCircleRenderable(radius, color, offset)
+      with Positionable(position._1, position._2)
+
   /* test for shape renderable */
   def testShapeRenderableProperties(renderer: SwingShapeRenderable): Unit =
     renderer.shapeWidth = 2
@@ -104,6 +109,19 @@ object SwingRendererTest:
       centered = squareRenderer(s, color = Color.red, offset = (0, 0), position = (0, 0)),
       topLeft = squareRenderer(s, color = Color.blue, offset = (0, 0), position = (-2 + s / 2, 2 - s / 2)),
       topRight = squareRenderer(s, color = Color.green, offset = (2 - s / 2, 2 - s / 2), position = (0, 0))
+    )
+
+  @main def testSwingRendererCircle(): Unit =
+    // it should display a circle
+    testSwingRenderable:
+      circleRenderer(radius = 0.7, color = Color.magenta, offset = (0, 0), position = (0, 0))
+
+  @main def testSwingRendererCirclePlacement(): Unit =
+    val r: Double = 0.3
+    testSwingRenderablePlacement(
+      centered = circleRenderer(r, color = Color.red, offset = (0, 0), position = (0, 0)),
+      topLeft = circleRenderer(r, color = Color.blue, offset = (0, 0), position = (-2 + r, 2 - r)),
+      topRight = circleRenderer(r, color = Color.green, offset = (2 - r, 2 - r), position = (0, 0))
     )
 
 class SwingRectRenderableTest extends AnyFlatSpec:
@@ -201,3 +219,47 @@ class SwingSquareRenderableTest extends AnyFlatSpec:
   "Swing Square" should "not be able to change its properties to invalid values" in:
     val square = SwingRendererTest.squareRenderer(size = 1, color = Color.red, offset = (0, 0))
     SwingRendererTest.testShapeRenderableInvalidValues(square)
+
+  "Swing Square" should "always have the same width and height" in:
+    val square = SwingRendererTest.squareRenderer(size = 1, color = Color.red)
+    for i <- 1 to 10 do
+      square.shapeWidth = i
+      square.shapeWidth shouldBe square.shapeHeight
+
+class SwingCircleRenderableTest extends AnyFlatSpec:
+
+  "Swing Circle" should "be initialized correctly" in:
+    val circle = SwingRendererTest.circleRenderer(radius = 1, color = Color.red, offset = (0, 0))
+    circle.shapeWidth shouldBe 2
+    circle.shapeHeight shouldBe 2
+    circle.shapeRadius shouldBe 1
+    circle.shapeColor shouldBe Color.red
+    circle.renderOffset shouldBe (0, 0)
+
+  "Swing Circle" should "not be initialized with negative sizes" in:
+    an [IllegalArgumentException] shouldBe thrownBy {
+      SwingRendererTest.circleRenderer(radius = 0, color = Color.red)
+    }
+    an [IllegalArgumentException] shouldBe thrownBy {
+      SwingRendererTest.circleRenderer(radius = -4, color = Color.red)
+    }
+
+  "Swing Circle" should "not be initialized with null color" in:
+    an [IllegalArgumentException] shouldBe thrownBy {
+      SwingRendererTest.circleRenderer(radius = 1, color = null)
+    }
+
+  "Swing Circle" should "be able to change its properties" in:
+    val circle = SwingRendererTest.circleRenderer(radius = 1, color = Color.red, offset = (0, 0))
+    SwingRendererTest.testShapeRenderableProperties(circle)
+
+  "Swing Circle" should "not be able to change its properties to invalid values" in:
+    val circle = SwingRendererTest.circleRenderer(radius = 1, color = Color.red, offset = (0, 0))
+    SwingRendererTest.testShapeRenderableInvalidValues(circle)
+
+  "Swing Circle" should "always have the radius be half the width and height" in :
+    val circle = SwingRendererTest.circleRenderer(radius = 1, color = Color.red)
+    for i <- 1 to 10 do
+      circle.shapeRadius = i
+      circle.shapeRadius shouldBe circle.shapeWidth / 2
+      circle.shapeRadius shouldBe circle.shapeHeight / 2

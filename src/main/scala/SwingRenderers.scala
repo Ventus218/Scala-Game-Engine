@@ -5,6 +5,22 @@ import scala.util.Try
 
 object SwingRenderers:
 
+  /**
+   * Behaviour for rendering an object on a SwingIO.
+   */
+  trait SwingRenderable extends Behaviour:
+    /**
+     * The function defining the operation to apply on the graphic context of the Swing GUI.
+     * It accepts in input a Swing IO, and the graphic context of the window.
+     */
+    def renderer: SwingIO => Graphics2D => Unit
+
+    override def onLateUpdate: Engine => Unit =
+      engine =>
+        super.onLateUpdate(engine)
+        Try(engine.io.asInstanceOf[SwingIO]).foreach(io => io.draw(renderer(io)))
+  
+  
   object Shapes:
     /**
      * Basic trait for manipulating and drawing geometric shapes using Swing.
@@ -55,6 +71,12 @@ object SwingRenderers:
        */
       def drawShape: Graphics2D => (Int, Int, Int, Int) => Unit
 
+    /**
+     * Base implementation of SwingShape.
+     * @param width the width. It can't be negative or 0.
+     * @param height the height. It can't be negative or 0.
+     * @param color the color. It can't be null.
+     */
     private abstract class BaseSwingShape(private var width: Double, private var height: Double, private var color: Color) extends SwingShape:
       shapeWidth = width
       shapeHeight = height
@@ -101,29 +123,36 @@ object SwingRenderers:
           g2d.setColor(shapeColor)
           g2d.fillOval(posX, posY, w, h)
 
+    /**
+     * A circular shape.
+     */
+    trait SwingCircle extends SwingOval:
+      /**
+       * The radius of the circle in game units.
+       * @return the radius
+       */
+      def shapeRadius: Double = shapeWidth/2
+      /**
+       * Set the radius of the circle.
+       * @param r the new radius. It can't be negative or 0.
+       */
+      def shapeRadius_=(r: Double): Unit =
+        require(r > 0, "radius must be positive")
+        shapeWidth = r*2
+      override def shapeHeight: Double = shapeWidth
+      override def shapeHeight_=(h: Double): Unit = shapeWidth = h
+
     def rect(width: Double, height: Double, color: Color): SwingRect =
       new BaseSwingShape(width, height, color) with SwingRect
     def square(size: Double, color: Color): SwingSquare =
       new BaseSwingShape(size, size, color) with SwingSquare
     def oval(width: Double, height: Double, color: Color): SwingOval =
       new BaseSwingShape(width, height, color) with SwingOval
-
+    def circle(radius: Double, color: Color): SwingCircle =
+      new BaseSwingShape(radius*2, radius*2, color) with SwingCircle
+  
 
   import Shapes.*
-
-  /**
-   * Behaviour for rendering an object on a SwingIO.
-   */
-  trait SwingRenderable extends Behaviour:
-    /**
-     * The function defining the operation to apply on the graphic context of the Swing GUI.
-     * It accepts in input a Swing IO, and the graphic context of the window.
-     */
-    def renderer: SwingIO => Graphics2D => Unit
-    override def onLateUpdate: Engine => Unit =
-      engine =>
-        super.onLateUpdate(engine)
-        Try(engine.io.asInstanceOf[SwingIO]).foreach(io => io.draw(renderer(io)))
 
   /**
    * Behaviour for rendering geometric shapes on a SwingIO.
@@ -166,4 +195,12 @@ object SwingRenderers:
    */
   trait SwingOvalRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
     override val shape: SwingOval = Shapes.oval(width, height, color)
+    this.renderOffset = offset
+
+  /**
+   * Behaviour for rendering a circle on a SwingIO. Radius must be > 0. The circle is centered at the position of the behaviour, then moved by offset units.
+   */
+  trait SwingCircleRenderable(radius: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
+    override val shape: SwingCircle = Shapes.circle(radius, color)
+    export shape.{shapeRadius, shapeRadius_=}
     this.renderOffset = offset
