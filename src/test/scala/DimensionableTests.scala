@@ -3,7 +3,7 @@ import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import org.scalatest.BeforeAndAfterEach
 
-class DimensionableTest extends AnyFlatSpec with BeforeAndAfterEach:
+class DimensionableTests extends AnyFlatSpec with BeforeAndAfterEach:
     private val width: Long = 1
     private val height: Long = 5
 
