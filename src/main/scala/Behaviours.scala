@@ -36,12 +36,19 @@ object Behaviours:
     * @param nFramesToRun
     */
   trait NFrameStopper(val nFramesToRun: Int) extends Behaviour:
-    require(nFramesToRun > 0)
+    require(nFramesToRun >= 0)
 
-    private var frameCounter: Int = 1
+    private var frameCounter: Int = 0
+
+    private def stopEngineIfNeeded(engine: Engine): Unit =
+      if frameCounter > nFramesToRun then engine.stop()
+
+    override def onStart: Engine => Unit = (engine) =>
+      frameCounter += 1
+      stopEngineIfNeeded(engine)
+      super.onStart(engine)
 
     override def onUpdate: Engine => Unit = (engine) =>
-      frameCounter match
-        case `nFramesToRun` => engine.stop()
-        case _              => frameCounter += 1
+      frameCounter += 1
+      stopEngineIfNeeded(engine)
       super.onUpdate(engine)
