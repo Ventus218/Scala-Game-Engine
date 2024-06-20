@@ -5,15 +5,14 @@ import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
 import LifecycleTester.*
 import LifecycleEvent.*
+import TestUtils.Testers.*
 
-class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
+class GameLoopTests extends AnyFlatSpec:
   private def getSequenceOfActions(): Seq[LifecycleEvent] =
     Seq(Init, Enable, Start)
 
   private def getUpdatesSequenceOfActions(): Seq[LifecycleEvent] =
     Seq(EarlyUpdate, Update, LateUpdate)
-
-  private val deltaTime = new Behaviour with DeltaTimeMockB
 
   val numSteps = 3
 
@@ -22,8 +21,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
       new Behaviour with LifecycleTester,
       new Behaviour with LifecycleTester,
       new Behaviour(enabled = false) with LifecycleTester,
-      new Behaviour(enabled = false) with LifecycleTester,
-      deltaTime
+      new Behaviour(enabled = false) with LifecycleTester
     )
 
   val engine = Engine(
@@ -31,14 +29,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     storage = new StorageMock()
   )
 
-  override protected def beforeEach(): Unit =
-    deltaTime.toStopBeforeUpdates = false
-    deltaTime.toStopUpdates = false
-
-  "Engine" should "start with delta time nanos at 0" in:
-    engine.deltaTimeNanos shouldBe 0
-
-  it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
+  "Engine" should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
@@ -131,72 +122,41 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
         )
 
-  it should "have delta time nanos at 0 before update" in:
-    engine.testOnUpdate(testScene):
-      {}
-    deltaTime.dt shouldBe 0
+  "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
+    engine.testOnEarlyUpdate(testScene):
+      engine.deltaTimeNanos shouldBe 0
 
-  it should "have delta time at 0 if the loop of updates is not executed" in:
-    deltaTime.toStopBeforeUpdates = true
     engine.testOnUpdate(testScene):
-      {}
+      engine.deltaTimeNanos shouldBe 0
+
+    engine.testOnLateUpdate(testScene):
+      engine.deltaTimeNanos shouldBe 0
+
+  it should "be 0 if the game loop is not executed" in:
+    engine.testOnDeinit(testScene, nFramesToRun = 0):
+      engine.deltaTimeNanos shouldBe 0
+
     engine.deltaTimeNanos shouldBe 0
 
-  it should "have delta time nanos higher than 0 after a run with updates" in:
-    engine.testOnUpdate(testScene):
-      {}
-    engine.deltaTimeNanos > 0 shouldBe true
+  it should "be higher than 0 after a game loop iteration" in:
+    engine.testOnDeinit(testScene):
+      engine.deltaTimeNanos should be > 0L
 
-  it should "have delta time nanos higher than time stopped inside updates" in:
-    deltaTime.toStopUpdates = true
-    deltaTime.secondsToStop = 0.01
+  it should "be higher than time elapsed inside updates (but not too much higher)" in:
+    val slowDownDurationMillis: Long = 10
+    val expectedElapsedTimeNanos =
+      (slowDownDurationMillis * Math.pow(10, 6)).toLong * 3
+    val testerFunction: (TestingContext) => Unit = (testingContext) =>
+      // Approximately between the expected value and it's double
+      testingContext.engine.deltaTimeNanos should (
+        be >= expectedElapsedTimeNanos and
+          be < expectedElapsedTimeNanos * 2
+      )
 
-    engine.testOnDeinit(testScene, nFramesToRun = 1):
-      {}
-
-    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math
-      .pow(10, 9) shouldBe true
-
-    deltaTime.secondsToStop = 0.02
-
-    engine.testOnDeinit(testScene, nFramesToRun = 1):
-      {}
-    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math
-      .pow(10, 9) shouldBe true
-
-  private trait DeltaTimeMockB extends LifecycleTester:
-    var dt: Long = 0
-    var toStopBeforeUpdates: Boolean = false
-    var toStopUpdates: Boolean = false
-    var secondsToStop: Double = 0
-
-    override def onInit: Engine => Unit =
-      engine =>
-        super.onInit(engine)
-        dt = dt + engine.deltaTimeNanos
-
-    override def onEnabled: Engine => Unit =
-      engine =>
-        super.onEnabled(engine)
-        dt = dt + engine.deltaTimeNanos
-
-    override def onStart: Engine => Unit =
-      engine =>
-        super.onStart(engine)
-        dt = dt + engine.deltaTimeNanos
-        if toStopBeforeUpdates then engine.stop()
-
-    override def onEarlyUpdate: Engine => Unit =
-      engine =>
-        super.onEarlyUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
-
-    override def onUpdate: Engine => Unit =
-      engine =>
-        super.onUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
-
-    override def onLateUpdate: Engine => Unit =
-      engine =>
-        super.onLateUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
+    // Testing on an empty scene to be more accurate
+    engine.testWithTesterObject():
+      new DeinitTester(testerFunction)
+        with NFrameStopper(1)
+        with SlowEarlyUpdater(slowDownDurationMillis)
+        with SlowUpdater(slowDownDurationMillis)
+        with SlowLateUpdater(slowDownDurationMillis)
