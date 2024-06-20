@@ -25,8 +25,8 @@ object TestUtils:
       * @param testerObject
       */
     private def runTest(scene: Scene, testerObject: Behaviour): Unit =
-      val testScene = () => scene() ++ Seq(testerObject)
-      engine.run(testScene)
+      engine.run(scene.joined: () =>
+        Seq(testerObject))
 
     /** Runs the engine and calls `testFunction` on every EarlyUpdate
       * @param scene
