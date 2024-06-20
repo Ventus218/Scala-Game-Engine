@@ -19,7 +19,7 @@ object SwingRenderers:
    * Behaviour for rendering a rectangle on a SwingIO. Sizes must be > 0. The rectangle is centered at the position of the behaviour, then moved by offset units.
    */
   trait SwingRectRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingRenderable with Positionable:
-    require(width > 0 && height > 0)
+    require(width > 0 && height > 0, "sizes must be positive")
     
     var rectWidth: Double = width
     var rectHeight: Double = height
@@ -35,7 +35,7 @@ object SwingRenderers:
         g2d.fillRect(pos._1, pos._2, w, h)
 
   trait SwingOvalRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingRenderable with Positionable:
-    require(width > 0 && height > 0)
+    require(width > 0 && height > 0, "sizes must be positive")
 
     var ovalWidth: Double = width
     var ovalHeight: Double = height
