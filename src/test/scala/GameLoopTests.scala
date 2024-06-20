@@ -1,6 +1,7 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
+import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
 
 class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
@@ -17,21 +18,18 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
   private val gameObject2 = getMockB()
   private val gameObject3 = getMockB(false)
   private val gameObject4 = getMockB(false)
-  private val gameObjectStop = new Behaviour with StopMockB(step = numSteps - 1)
   private val deltaTime = new Behaviour with DeltaTimeMockB
 
   val numSteps = 3
 
-  private def testScene(): Iterable[Behaviour] = gameObjects
-
-  private val gameObjects = Iterable(
-    gameObject1,
-    gameObject2,
-    gameObject3,
-    gameObject4,
-    gameObjectStop,
-    deltaTime
-  )
+  private def testScene: Scene = () =>
+    Iterable(
+      getMockB(),
+      getMockB(),
+      getMockB(false),
+      getMockB(false),
+      deltaTime
+    )
 
   val engine = Engine(
     io = new IO() {},
@@ -39,97 +37,111 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
   )
 
   override protected def beforeEach(): Unit =
-    gameObjectStop.step = numSteps - 1
     deltaTime.toStopBeforeUpdates = false
     deltaTime.toStopUpdates = false
-    gameObjectStop.state = "Active"
 
   "Engine" should "start with delta time nanos at 0" in:
     engine.deltaTimeNanos shouldBe 0
 
   it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
-    engine.run(testScene)
-
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects
-      .filter(_.enabled)
-      .foreach(gameObject =>
-        gameObject.list shouldBe sequenceOfActions :+ "deinit"
-      )
-
-    gameObjects
-      .filter(!_.enabled)
-      .foreach(gameObject => gameObject.list shouldBe Seq("init", "deinit"))
+    // TODO: works only because of the order in which objects are kept inside engine
+    engine.testOnDeinitWithContext(testScene, nFramesToRun = numSteps):
+      (testingContext) =>
+        engine
+          .find[MockB]()
+          .filter(_.enabled)
+          .filter(_ != testingContext.testerObject)
+          .foreach(
+            _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          )
+        engine
+          .find[MockB]()
+          .filter(!_.enabled)
+          .filter(_ != testingContext.testerObject)
+          .foreach(
+            _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
+          )
 
   it should "stop when engine.stop() is called" in:
-    val stepToStop = 1
-    gameObjectStop.step = stepToStop
-    gameObjectStop.state shouldBe "Active"
+    val oneFrameScene = testScene.joined: () =>
+      Seq(new Behaviour with NFrameStopper(1))
 
-    engine.run(testScene)
+    var sequenceOfActions =
+      getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
-    var sequenceOfActions = getSequenceOfActions()
-
-    for i <- 0 to stepToStop do
-      sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
-
-    gameObjects
-      .filter(_.enabled)
-      .foreach(gameObject =>
-        gameObject.list shouldBe sequenceOfActions :+ "deinit"
-      )
-
-    gameObjectStop.state shouldBe "Stopped"
+    // TODO: works only because of the order in which objects are kept inside engine
+    // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
+    engine.testOnDeinit(oneFrameScene, nFramesToRun = 5):
+      engine
+        .find[MockB]()
+        .filter(_.enabled)
+        .foreach(
+          _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+        )
 
   it should "do the loop again if called run after being stopped" in:
+    engine.testOnUpdate(testScene):
+      {}
     engine.stop()
-    engine.run(testScene)
 
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects
-      .filter(_.enabled)
-      .foreach(gameObject =>
-        gameObject.list shouldBe sequenceOfActions :+ "deinit"
-      )
-
-    gameObjects
-      .filter(!_.enabled)
-      .foreach(gameObject => gameObject.list shouldBe Seq("init", "deinit"))
+    // TODO: works only because of the order in which objects are kept inside engine
+    engine.testOnDeinitWithContext(testScene, nFramesToRun = numSteps):
+      (testingContext) =>
+        engine
+          .find[MockB]()
+          .filter(_.enabled)
+          .filter(_ != testingContext.testerObject)
+          .foreach(
+            _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          )
+        engine
+          .find[MockB]()
+          .filter(!_.enabled)
+          .filter(_ != testingContext.testerObject)
+          .foreach(
+            _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
+          )
 
   it should "have delta time nanos at 0 before update" in:
-    engine.run(testScene)
+    engine.testOnUpdate(testScene):
+      {}
     deltaTime.dt shouldBe 0
 
   it should "have delta time at 0 if the loop of updates is not executed" in:
     deltaTime.toStopBeforeUpdates = true
-    engine.run(testScene)
+    engine.testOnUpdate(testScene):
+      {}
     engine.deltaTimeNanos shouldBe 0
 
   it should "have delta time nanos higher than 0 after a run with updates" in:
-    engine.run(testScene)
+    engine.testOnUpdate(testScene):
+      {}
     engine.deltaTimeNanos > 0 shouldBe true
 
   it should "have delta time nanos higher than time stopped inside updates" in:
-    var stepToStop = 0
-    gameObjectStop.step = stepToStop
     deltaTime.toStopUpdates = true
     deltaTime.secondsToStop = 0.01
 
-    engine.run(testScene)
+    engine.testOnDeinit(testScene, nFramesToRun = 1):
+      {}
+
     engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math
       .pow(10, 9) shouldBe true
 
     deltaTime.secondsToStop = 0.02
 
-    engine.run(testScene)
+    engine.testOnDeinit(testScene, nFramesToRun = 1):
+      {}
     engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math
       .pow(10, 9) shouldBe true
 
@@ -169,23 +181,6 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
       engine =>
         super.onLateUpdate(engine)
         if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
-
-  private trait StopMockB(var step: Int) extends MockB:
-    var state: String = "Active"
-    var counter: Int = -1
-
-    override def onInit: Engine => Unit =
-      engine =>
-        super.onInit(engine)
-        counter = 0
-
-    override def onUpdate: Engine => Unit =
-      engine =>
-        super.onUpdate(engine)
-        if counter == step then
-          engine.stop()
-          state = "Stopped"
-        else counter = counter + 1
 
   private trait MockB extends Behaviour:
     var list: Seq[String] = Seq()
