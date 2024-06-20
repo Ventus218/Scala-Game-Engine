@@ -50,22 +50,19 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
     // TODO: works only because of the order in which objects are kept inside engine
-    engine.testOnDeinitWithContext(testScene, nFramesToRun = numSteps):
-      (testingContext) =>
-        engine
-          .find[MockB]()
-          .filter(_.enabled)
-          .filter(_ != testingContext.testerObject)
-          .foreach(
-            _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
-          )
-        engine
-          .find[MockB]()
-          .filter(!_.enabled)
-          .filter(_ != testingContext.testerObject)
-          .foreach(
-            _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
-          )
+    engine.testOnDeinit(testScene, nFramesToRun = numSteps):
+      engine
+        .find[MockB]()
+        .filter(_.enabled)
+        .foreach(
+          _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+        )
+      engine
+        .find[MockB]()
+        .filter(!_.enabled)
+        .foreach(
+          _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
+        )
 
   it should "stop when engine.stop() is called" in:
     val oneFrameScene = testScene.joined: () =>
@@ -95,22 +92,19 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
     // TODO: works only because of the order in which objects are kept inside engine
-    engine.testOnDeinitWithContext(testScene, nFramesToRun = numSteps):
-      (testingContext) =>
-        engine
-          .find[MockB]()
-          .filter(_.enabled)
-          .filter(_ != testingContext.testerObject)
-          .foreach(
-            _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
-          )
-        engine
-          .find[MockB]()
-          .filter(!_.enabled)
-          .filter(_ != testingContext.testerObject)
-          .foreach(
-            _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
-          )
+    engine.testOnDeinit(testScene, nFramesToRun = numSteps):
+      engine
+        .find[MockB]()
+        .filter(_.enabled)
+        .foreach(
+          _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+        )
+      engine
+        .find[MockB]()
+        .filter(!_.enabled)
+        .foreach(
+          _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
+        )
 
   it should "have delta time nanos at 0 before update" in:
     engine.testOnUpdate(testScene):
