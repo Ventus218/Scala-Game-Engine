@@ -106,6 +106,32 @@ object TestUtils:
       engine.testOnLateUpdateWithContext(scene, nFramesToRun): (_) =>
         testFunction
 
+    /** Runs the engine and calls `testFunction` on Deinit
+      * @param scene
+      * @param nFramesToRun
+      *   number of frames the engine will run, defaults to 1
+      * @param testFunction
+      *   provides the current `TestingContext`
+      */
+    def testOnDeinitWithContext(scene: Scene, nFramesToRun: Int = 1)(
+        testFunction: (TestingContext) => Unit
+    ): Unit =
+      val testerObject = new DeinitTester(testFunction)
+        with NFrameStopper(nFramesToRun)
+      engine.runTest(scene, testerObject)
+
+    /** Runs the engine and calls `testFunction` on Deinit
+      * @param scene
+      * @param nFramesToRun
+      *   number of frames the engine will run, defaults to 1
+      * @param testFunction
+      */
+    def testOnDeinit(scene: Scene, nFramesToRun: Int = 1)(
+        testFunction: => Unit
+    ): Unit =
+      engine.testOnDeinitWithContext(scene, nFramesToRun): (_) =>
+        testFunction
+
   /** Provides multiple concrete behaviours for testing
     */
   object Testers:
@@ -127,3 +153,9 @@ object TestUtils:
       override def onLateUpdate: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
         super.onLateUpdate(engine)
+
+    class DeinitTester(testFunction: (TestingContext) => Unit)
+        extends Behaviour:
+      override def onDeinit: Engine => Unit = (engine) =>
+        testFunction(TestingContext(engine, this))
+        super.onDeinit(engine)
