@@ -16,6 +16,10 @@ object SwingRenderers:
       def drawShape: Graphics2D => (Int, Int, Int, Int) => Unit
 
     private abstract class BaseSwingShape(private var width: Double, private var height: Double, private var color: Color) extends SwingShape:
+      shapeWidth = width
+      shapeHeight = height
+      shapeColor = color
+      
       override def shapeWidth: Double = width
       override def shapeWidth_=(w: Double): Unit = 
         require(w > 0, "width must be positive")
@@ -85,21 +89,15 @@ object SwingRenderers:
    * Behaviour for rendering a rectangle on a SwingIO. Sizes must be > 0. The rectangle is centered at the position of the behaviour, then moved by offset units.
    */
   trait SwingRectRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
-    require(width > 0 && height > 0, "sizes must be positive")
-
     override val shape: SwingRect = Shapes.rect(width, height, color)
     this.renderOffset = offset
 
 
-  trait SwingSquareRenderable(private var size: Double, private var color: Color, private var offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
-    require(size > 0, "size must be positive")
-
+  trait SwingSquareRenderable(size: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
     override val shape: SwingSquare = Shapes.square(size, color)
     this.renderOffset = offset
 
 
   trait SwingOvalRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
-    require(width > 0 && height > 0, "sizes must be positive")
-
     override val shape: SwingOval = Shapes.oval(width, height, color)
     this.renderOffset = offset
