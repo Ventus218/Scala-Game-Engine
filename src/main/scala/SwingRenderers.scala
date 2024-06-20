@@ -27,7 +27,9 @@ object SwingRenderers:
         height = h
 
       override def shapeColor: Color = color
-      override def shapeColor_=(c: Color): Unit = color = c
+      override def shapeColor_=(c: Color): Unit = 
+        require(c != null, "color can't be null")
+        color = c
 
 
     trait SwingRect extends SwingShape:
@@ -49,7 +51,7 @@ object SwingRenderers:
 
     def rect(width: Double, height: Double, color: Color): SwingRect =
       new BaseSwingShape(width, height, color) with SwingRect
-    def square(size: Double, color: Color): SwingRect =
+    def square(size: Double, color: Color): SwingSquare =
       new BaseSwingShape(size, size, color) with SwingSquare
     def oval(width: Double, height: Double, color: Color): SwingOval = 
       new BaseSwingShape(width, height, color) with SwingOval
@@ -89,10 +91,11 @@ object SwingRenderers:
     this.renderOffset = offset
 
 
-  trait SwingSquareRenderable(private var size: Double, private var color: Color, private var offset: (Double, Double) = (0, 0)) extends SwingRectRenderable:
+  trait SwingSquareRenderable(private var size: Double, private var color: Color, private var offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
     require(size > 0, "size must be positive")
 
-    var squareSize: Double = size
+    override val shape: SwingSquare = Shapes.square(size, color)
+    this.renderOffset = offset
 
 
   trait SwingOvalRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:

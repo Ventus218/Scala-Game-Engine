@@ -23,10 +23,10 @@ object SwingRendererTest:
       with SwingOvalRenderable(width, height, color, offset)
       with Positionable(position._1, position._2)
 
-//  def squareRenderer(size: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingSquareRenderable =
-//    new Behaviour
-//      with SwingSquareRenderable(size, color, offset)
-//      with Positionable(position._1, position._2)
+  def squareRenderer(size: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingSquareRenderable =
+    new Behaviour
+      with SwingSquareRenderable(size, color, offset)
+      with Positionable(position._1, position._2)
 
   private def testSwingRenderable(renderer: SwingRenderable): Unit =
     val frame: SwingIO = io.build()
@@ -68,29 +68,42 @@ object SwingRendererTest:
       topRight = ovalRenderer(w, h, color = Color.green, offset = (2 - w / 2, 2 - h / 2), position = (0, 0))
     )
 
-//  @main def testSwingRendererSquare(): Unit =
-//    // it should display a square
-//    testSwingRenderable:
-//      squareRenderer(size = 2, color = Color.orange, offset = (0, 0), position = (0, 0))
+  @main def testSwingRendererSquare(): Unit =
+    // it should display a square
+    testSwingRenderable:
+      squareRenderer(size = 2, color = Color.orange, offset = (0, 0), position = (0, 0))
 
 class SwingRendererTest extends AnyFlatSpec:
 
-  "Swing Rectangle" should "change its properties" in:
+  private def testShapeRenderable(renderer: SwingShapeRenderable): Unit =
+    renderer.shapeWidth = 2
+    renderer.shapeWidth shouldBe 2
+    renderer.shapeHeight = 1.5
+    renderer.shapeHeight shouldBe 1.5
+    renderer.shapeColor = Color.blue
+    renderer.shapeColor shouldBe Color.blue
+    renderer.renderOffset = (1, 9)
+    renderer.renderOffset shouldBe (1, 9)
+
+    an [IllegalArgumentException] shouldBe thrownBy {
+      renderer.shapeWidth = -2
+    }
+    an [IllegalArgumentException] shouldBe thrownBy {
+      renderer.shapeHeight = 0
+    }
+    an [IllegalArgumentException] shouldBe thrownBy {
+      renderer.shapeColor = null
+    }
+
+
+  "Swing Rectangle" should "safely change its properties" in:
     val rect = SwingRendererTest.rectRenderer(width = 1, height = 2, color = Color.red, offset = (0, 0), position = (0, 0))
 
     rect.shapeWidth shouldBe 1
     rect.shapeHeight shouldBe 2
     rect.shapeColor shouldBe Color.red
 
-    rect.shapeWidth = 2
-    rect.shapeWidth shouldBe 2
-    rect.shapeHeight = 1.5
-    rect.shapeHeight shouldBe 1.5
-    rect.shapeColor = Color.blue
-    rect.shapeColor shouldBe Color.blue
-    rect.renderOffset = (1, 9)
-    rect.renderOffset shouldBe (1, 9)
-
+    testShapeRenderable(rect)
 
   "Swing Rectangle" should "have positive sizes" in :
     an [IllegalArgumentException] shouldBe thrownBy {
@@ -102,26 +115,18 @@ class SwingRendererTest extends AnyFlatSpec:
     an [IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTest.rectRenderer(width = 2, height = -6, color = Color.red)
     }
-    val rect = SwingRendererTest.rectRenderer(width = 1, height = 2, color = Color.red)
-    an [IllegalArgumentException] shouldBe thrownBy {
-      rect.shapeWidth = -2
-    }
-    an [IllegalArgumentException] shouldBe thrownBy {
-      rect.shapeHeight = 0
-    }
 
 
   "Swing Oval" should "have positive sizes" in :
     an [IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTest.ovalRenderer(width = 0, height = 1, color = Color.red, offset = (0, 0), position = (0, 0))
+      SwingRendererTest.ovalRenderer(width = 0, height = 1, color = Color.red)
     }
     an [IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTest.ovalRenderer(width = -4, height = 5, color = Color.red, offset = (0, 0), position = (0, 0))
+      SwingRendererTest.ovalRenderer(width = -4, height = 5, color = Color.red)
     }
     an [IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTest.ovalRenderer(width = 2, height = -6, color = Color.red, offset = (0, 0), position = (0, 0))
+      SwingRendererTest.ovalRenderer(width = 2, height = -6, color = Color.red)
     }
-
 
   "Swing Oval" should "change its properties" in :
     val oval = SwingRendererTest.ovalRenderer(width = 1, height = 2, color = Color.blue, offset = (0, 0), position = (0, 0))
@@ -130,11 +135,4 @@ class SwingRendererTest extends AnyFlatSpec:
     oval.shapeHeight shouldBe 2
     oval.shapeColor shouldBe Color.blue
 
-    oval.shapeWidth = 2
-    oval.shapeWidth shouldBe 2
-    oval.shapeHeight = 1.5
-    oval.shapeHeight shouldBe 1.5
-    oval.shapeColor = Color.blue
-    oval.shapeColor shouldBe Color.blue
-    oval.renderOffset = (1, 9)
-    oval.renderOffset shouldBe(1, 9)
+    testShapeRenderable(oval)
