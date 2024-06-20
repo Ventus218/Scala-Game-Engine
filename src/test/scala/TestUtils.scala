@@ -24,9 +24,10 @@ object TestUtils:
       * @param scene
       * @param testerObject
       */
-    private def runTest(scene: Scene, testerObject: Behaviour): Unit =
-      engine.run(scene.joined: () =>
-        Seq(testerObject))
+    def testWithTesterObject(scene: Scene = () => Seq.empty)(
+        testerObject: Behaviour
+    ): Unit =
+      engine.run(scene.joined(() => Seq(testerObject)))
 
     /** Runs the engine and calls `testFunction` on every EarlyUpdate
       * @param scene
@@ -35,12 +36,15 @@ object TestUtils:
       * @param testFunction
       *   provides the current `TestingContext`
       */
-    def testOnEarlyUpdateWithContext(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnEarlyUpdateWithContext(
+        scene: Scene = () => Seq.empty,
+        nFramesToRun: Int = 1
+    )(
         testFunction: (TestingContext) => Unit
     ): Unit =
       val testerObject = new EarlyUpdateTester(testFunction)
         with NFrameStopper(nFramesToRun)
-      engine.runTest(scene, testerObject)
+      engine.testWithTesterObject(scene)(testerObject)
 
     /** Runs the engine and calls `testFunction` on every EarlyUpdate
       * @param scene
@@ -48,7 +52,10 @@ object TestUtils:
       *   number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testOnEarlyUpdate(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnEarlyUpdate(
+        scene: Scene = () => Seq.empty,
+        nFramesToRun: Int = 1
+    )(
         testFunction: => Unit
     ): Unit =
       engine.testOnEarlyUpdateWithContext(scene, nFramesToRun): (_) =>
@@ -61,12 +68,15 @@ object TestUtils:
       * @param testFunction
       *   provides the current `TestingContext`
       */
-    def testOnUpdateWithContext(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnUpdateWithContext(
+        scene: Scene = () => Seq.empty,
+        nFramesToRun: Int = 1
+    )(
         testFunction: (TestingContext) => Unit
     ): Unit =
       val testerObject = new UpdateTester(testFunction)
         with NFrameStopper(nFramesToRun)
-      engine.runTest(scene, testerObject)
+      engine.testWithTesterObject(scene)(testerObject)
 
     /** Runs the engine and calls `testFunction` on every Update
       * @param scene
@@ -74,7 +84,7 @@ object TestUtils:
       *   number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testOnUpdate(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnUpdate(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
         testFunction: => Unit
     ): Unit =
       engine.testOnUpdateWithContext(scene, nFramesToRun): (_) =>
@@ -87,12 +97,15 @@ object TestUtils:
       * @param testFunction
       *   provides the current `TestingContext`
       */
-    def testOnLateUpdateWithContext(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnLateUpdateWithContext(
+        scene: Scene = () => Seq.empty,
+        nFramesToRun: Int = 1
+    )(
         testFunction: (TestingContext) => Unit
     ): Unit =
       val testerObject = new LateUpdateTester(testFunction)
         with NFrameStopper(nFramesToRun)
-      engine.runTest(scene, testerObject)
+      engine.testWithTesterObject(scene)(testerObject)
 
     /** Runs the engine and calls `testFunction` on every LateUpdate
       * @param scene
@@ -100,7 +113,7 @@ object TestUtils:
       *   number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testOnLateUpdate(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnLateUpdate(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
         testFunction: => Unit
     ): Unit =
       engine.testOnLateUpdateWithContext(scene, nFramesToRun): (_) =>
@@ -113,12 +126,15 @@ object TestUtils:
       * @param testFunction
       *   provides the current `TestingContext`
       */
-    def testOnDeinitWithContext(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnDeinitWithContext(
+        scene: Scene = () => Seq.empty,
+        nFramesToRun: Int = 1
+    )(
         testFunction: (TestingContext) => Unit
     ): Unit =
       val testerObject = new DeinitTester(testFunction)
         with NFrameStopper(nFramesToRun)
-      engine.runTest(scene, testerObject)
+      engine.testWithTesterObject(scene)(testerObject)
 
     /** Runs the engine and calls `testFunction` on Deinit
       * @param scene
@@ -126,7 +142,7 @@ object TestUtils:
       *   number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testOnDeinit(scene: Scene, nFramesToRun: Int = 1)(
+    def testOnDeinit(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
         testFunction: => Unit
     ): Unit =
       engine.testOnDeinitWithContext(scene, nFramesToRun): (_) =>
