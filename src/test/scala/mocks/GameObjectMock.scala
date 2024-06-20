@@ -1,7 +1,9 @@
-private case class StorageMock() extends Storage:
+import scala.reflect.TypeTest
+
+private class StorageMock() extends Storage:
   def set[T](key: String, value: T): Unit = ???
-  def get[T](key: String): T = ???
-  def getOption[T](key: String): Option[T] = ???
+  def get[T](using tt: TypeTest[Any, T])(key: String): T = ???
+  def getOption[T](using tt: TypeTest[Any, T])(key: String): Option[T] = ???
   def unset(key: String): Unit = ???
 
-private case class GameObjectMock() extends Behaviour(enabled = true)
+private class GameObjectMock() extends Behaviour(enabled = true)

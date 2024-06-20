@@ -1,204 +1,164 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
+import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
+import LifecycleTester.*
+import LifecycleEvent.*
+import TestUtils.Testers.*
 
-class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
-  private def getMockB(enable: Boolean = true): MockB = new Behaviour(enable)
-    with MockB
+class GameLoopTests extends AnyFlatSpec:
+  private def getSequenceOfActions(): Seq[LifecycleEvent] =
+    Seq(Init, Enable, Start)
 
-  private def getSequenceOfActions(): Seq[String] =
-    Seq("init", "enable", "start")
-
-  private def getUpdatesSequenceOfActions(): Seq[String] =
-    Seq("earlyUpdate", "update", "lateUpdate")
-
-  private val gameObject1 = getMockB()
-  private val gameObject2 = getMockB()
-  private val gameObject3 = getMockB(false)
-  private val gameObject4 = getMockB(false)
-  private val gameObjectStop = new Behaviour with StopMockB(step = numSteps - 1)
-  private val deltaTime = new Behaviour with DeltaTimeMockB
+  private def getUpdatesSequenceOfActions(): Seq[LifecycleEvent] =
+    Seq(EarlyUpdate, Update, LateUpdate)
 
   val numSteps = 3
 
-  private val gameObjects = Iterable(
-    gameObject1,
-    gameObject2,
-    gameObject3,
-    gameObject4,
-    gameObjectStop,
-    deltaTime
-  )
+  private def testScene: Scene = () =>
+    Iterable(
+      new Behaviour with LifecycleTester,
+      new Behaviour with LifecycleTester,
+      new Behaviour(enabled = false) with LifecycleTester,
+      new Behaviour(enabled = false) with LifecycleTester
+    )
 
   val engine = Engine(
     io = new IO() {},
-    storage = new StorageMock(),
-    gameObjects
+    storage = new StorageMock()
   )
 
-  override protected def beforeEach(): Unit = 
-    gameObjectStop.step = numSteps - 1
-    deltaTime.toStopBeforeUpdates = false
-    deltaTime.toStopUpdates = false
-    gameObjectStop.state = "Active"
-
-  "Engine" should "start with delta time nanos at 0" in:
-    engine.deltaTimeNanos shouldBe 0
-
-  it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
-    engine.run()
-
+  "Engine" should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects.filter(_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe sequenceOfActions :+ "deinit"
-    )
-
-    gameObjects.filter(!_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe Seq("init", "deinit")
-    )
+    engine.testOnDeinit(testScene, nFramesToRun = numSteps):
+      /** This tests has to deal with undeterministic behaviour:
+        *
+        * Given the fact that the order of objects is not defined. The tester
+        * object may run its test while other objects "onDeinit" may not have
+        * been called yet. This is why the test succedes in both cases.
+        */
+      engine
+        .find[LifecycleTester]()
+        .filter(_.enabled)
+        .foreach(
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
+              or contain theSameElementsInOrderAs sequenceOfActions
+          )
+        )
+      engine
+        .find[LifecycleTester]()
+        .filter(!_.enabled)
+        .foreach(
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs Seq(Init) :+ Deinit
+              or contain theSameElementsInOrderAs Seq(Init)
+          )
+        )
 
   it should "stop when engine.stop() is called" in:
-    val stepToStop = 1
-    gameObjectStop.step = stepToStop
-    gameObjectStop.state shouldBe "Active"
-    
-    engine.run()
+    val oneFrameScene = testScene.joined: () =>
+      Seq(new Behaviour with NFrameStopper(1))
 
-    var sequenceOfActions = getSequenceOfActions()
+    var sequenceOfActions =
+      getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
-    for i <- 0 to stepToStop do
-      sequenceOfActions =
-        sequenceOfActions ++ getUpdatesSequenceOfActions()
+    // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
+    engine.testOnDeinit(oneFrameScene, nFramesToRun = 5):
+      /** This tests has to deal with undeterministic behaviour:
+        *
+        * Given the fact that the order of objects is not defined. The tester
+        * object may run its test while other objects "onDeinit" may not have
+        * been called yet. This is why the test succedes in both cases.
+        */
+      engine
+        .find[LifecycleTester]()
+        .filter(_.enabled)
+        .foreach(
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
+              or contain theSameElementsInOrderAs sequenceOfActions
+          )
+        )
 
-    gameObjects.filter(_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe sequenceOfActions :+ "deinit"
-    )
-
-    gameObjectStop.state shouldBe "Stopped"
-  
   it should "do the loop again if called run after being stopped" in:
+    engine.testOnUpdate(testScene):
+      {}
     engine.stop()
-    engine.run()
 
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    gameObjects.filter(_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe sequenceOfActions :+ "deinit"
-    )
+    engine.testOnDeinit(testScene, nFramesToRun = numSteps):
+      /** This tests has to deal with undeterministic behaviour:
+        *
+        * Given the fact that the order of objects is not defined. The tester
+        * object may run its test while other objects "onDeinit" may not have
+        * been called yet. This is why the test succedes in both cases.
+        */
+      engine
+        .find[LifecycleTester]()
+        .filter(_.enabled)
+        .foreach(
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
+              or contain theSameElementsInOrderAs sequenceOfActions
+          )
+        )
+      engine
+        .find[LifecycleTester]()
+        .filter(!_.enabled)
+        .foreach(
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs Seq(Init) :+ Deinit
+              or contain theSameElementsInOrderAs Seq(Init)
+          )
+        )
 
-    gameObjects.filter(!_.enabled).foreach(gameObject =>
-      gameObject.list shouldBe Seq("init", "deinit")
-    )
+  "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
+    engine.testOnEarlyUpdate(testScene):
+      engine.deltaTimeNanos shouldBe 0
 
-  it should "have delta time nanos at 0 before update" in:
-    engine.run()
-    deltaTime.dt shouldBe 0
+    engine.testOnUpdate(testScene):
+      engine.deltaTimeNanos shouldBe 0
 
-  it should "have delta time at 0 if the loop of updates is not executed" in:
-    deltaTime.toStopBeforeUpdates = true
-    engine.run()
+    engine.testOnLateUpdate(testScene):
+      engine.deltaTimeNanos shouldBe 0
+
+  it should "be 0 if the game loop is not executed" in:
+    engine.testOnDeinit(testScene, nFramesToRun = 0):
+      engine.deltaTimeNanos shouldBe 0
+
     engine.deltaTimeNanos shouldBe 0
 
-  it should "have delta time nanos higher than 0 after a run with updates" in:
-    engine.run()
-    engine.deltaTimeNanos > 0 shouldBe true
+  it should "be higher than 0 after a game loop iteration" in:
+    engine.testOnDeinit(testScene):
+      engine.deltaTimeNanos should be > 0L
 
-  it should "have delta time nanos higher than time stopped inside updates" in:
-    var stepToStop = 0
-    gameObjectStop.step = stepToStop
-    deltaTime.toStopUpdates = true
-    deltaTime.secondsToStop = 0.01
+  it should "be higher than time elapsed inside updates (but not too much higher)" in:
+    val slowDownDurationMillis: Long = 10
+    val expectedElapsedTimeNanos =
+      (slowDownDurationMillis * Math.pow(10, 6)).toLong * 3
 
-    engine.run()
-    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math.pow(10, 9) shouldBe true
+    val deinitTesterFunction: (TestingContext) => Unit = (testingContext) =>
+      // Approximately between the expected value and it's double
+      testingContext.engine.deltaTimeNanos should (
+        be >= expectedElapsedTimeNanos and
+          be < expectedElapsedTimeNanos * 2
+      )
 
-    deltaTime.secondsToStop = 0.02
-
-    engine.run()
-    engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math.pow(10, 9) shouldBe true
-
-  private trait DeltaTimeMockB extends MockB:
-    var dt: Long = 0
-    var toStopBeforeUpdates: Boolean = false
-    var toStopUpdates: Boolean = false
-    var secondsToStop: Double = 0
-
-    override def onInit: Engine => Unit = 
-      engine => 
-        super.onInit(engine)
-        dt = dt + engine.deltaTimeNanos
-
-    override def onEnabled: Engine => Unit = 
-      engine =>
-        super.onEnabled(engine)
-        dt = dt + engine.deltaTimeNanos
-
-    override def onStart: Engine => Unit = 
-      engine =>
-        super.onStart(engine)
-        dt = dt + engine.deltaTimeNanos
-        if toStopBeforeUpdates then engine.stop()
-
-    override def onEarlyUpdate: Engine => Unit =
-      engine =>
-        super.onEarlyUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000). toInt)
-
-    override def onUpdate: Engine => Unit =
-      engine =>
-        super.onUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000). toInt)
-
-    override def onLateUpdate: Engine => Unit =
-      engine =>
-        super.onLateUpdate(engine)
-        if toStopUpdates then Thread.sleep((secondsToStop * 1000). toInt)
-
-  private trait StopMockB(var step: Int) extends MockB:
-    var state: String = "Active"
-    var counter: Int = -1
-
-    override def onInit: Engine => Unit = 
-      engine =>
-        super.onInit(engine)
-        counter = 0
-
-    override def onUpdate: Engine => Unit =
-      engine =>
-        super.onUpdate(engine)
-        if counter == step then
-          engine.stop()
-          state = "Stopped"
-        else
-          counter = counter + 1
-
-  private trait MockB extends Behaviour:
-    var list: Seq[String] = Seq()
-    override def onInit: Engine => Unit =
-      _ => list = Seq() :+ "init"
-
-    override def onEnabled: Engine => Unit =
-      _ => list = list :+ "enable"
-
-    override def onStart: Engine => Unit =
-      _ => list = list :+ "start"
-
-    override def onEarlyUpdate: Engine => Unit =
-      _ => list = list :+ "earlyUpdate"
-
-    override def onUpdate: Engine => Unit =
-      _ => list = list :+ "update"
-
-    override def onLateUpdate: Engine => Unit =
-      _ => list = list :+ "lateUpdate"
-
-    override def onDeinit: Engine => Unit =
-      _ => list = list :+ "deinit"
+    // Testing on an empty scene to be more accurate
+    engine.testWithTesterObject():
+      new Behaviour
+        with DeinitTester(deinitTesterFunction)
+        with NFrameStopper(1)
+        with SlowEarlyUpdater(slowDownDurationMillis)
+        with SlowUpdater(slowDownDurationMillis)
+        with SlowLateUpdater(slowDownDurationMillis)

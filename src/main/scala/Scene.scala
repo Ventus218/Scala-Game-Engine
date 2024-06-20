@@ -2,3 +2,5 @@
   * a new scene.
   */
 type Scene = () => Iterable[Behaviour]
+
+extension (s: Scene) def joined(scene: Scene): Scene = () => s() ++ scene()
