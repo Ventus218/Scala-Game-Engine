@@ -3,31 +3,26 @@ import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
+import LifecycleTester.*
+import LifecycleEvent.*
 
 class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
-  private def getMockB(enable: Boolean = true): MockB = new Behaviour(enable)
-    with MockB
+  private def getSequenceOfActions(): Seq[LifecycleEvent] =
+    Seq(Init, Enable, Start)
 
-  private def getSequenceOfActions(): Seq[String] =
-    Seq("init", "enable", "start")
+  private def getUpdatesSequenceOfActions(): Seq[LifecycleEvent] =
+    Seq(EarlyUpdate, Update, LateUpdate)
 
-  private def getUpdatesSequenceOfActions(): Seq[String] =
-    Seq("earlyUpdate", "update", "lateUpdate")
-
-  private val gameObject1 = getMockB()
-  private val gameObject2 = getMockB()
-  private val gameObject3 = getMockB(false)
-  private val gameObject4 = getMockB(false)
   private val deltaTime = new Behaviour with DeltaTimeMockB
 
   val numSteps = 3
 
   private def testScene: Scene = () =>
     Iterable(
-      getMockB(),
-      getMockB(),
-      getMockB(false),
-      getMockB(false),
+      new Behaviour with LifecycleTester,
+      new Behaviour with LifecycleTester,
+      new Behaviour(enabled = false) with LifecycleTester,
+      new Behaviour(enabled = false) with LifecycleTester,
       deltaTime
     )
 
@@ -57,21 +52,21 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
         * been called yet. This is why the test succedes in both cases.
         */
       engine
-        .find[MockB]()
+        .find[LifecycleTester]()
         .filter(_.enabled)
         .foreach(
-          _.list should (
-            contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
               or contain theSameElementsInOrderAs sequenceOfActions
           )
         )
       engine
-        .find[MockB]()
+        .find[LifecycleTester]()
         .filter(!_.enabled)
         .foreach(
-          _.list should (
-            contain theSameElementsInOrderAs Seq("init") :+ "deinit"
-              or contain theSameElementsInOrderAs Seq("init")
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs Seq(Init) :+ Deinit
+              or contain theSameElementsInOrderAs Seq(Init)
           )
         )
 
@@ -91,11 +86,11 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
         * been called yet. This is why the test succedes in both cases.
         */
       engine
-        .find[MockB]()
+        .find[LifecycleTester]()
         .filter(_.enabled)
         .foreach(
-          _.list should (
-            contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
               or contain theSameElementsInOrderAs sequenceOfActions
           )
         )
@@ -118,21 +113,21 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
         * been called yet. This is why the test succedes in both cases.
         */
       engine
-        .find[MockB]()
+        .find[LifecycleTester]()
         .filter(_.enabled)
         .foreach(
-          _.list should (
-            contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
               or contain theSameElementsInOrderAs sequenceOfActions
           )
         )
       engine
-        .find[MockB]()
+        .find[LifecycleTester]()
         .filter(!_.enabled)
         .foreach(
-          _.list should (
-            contain theSameElementsInOrderAs Seq("init") :+ "deinit"
-              or contain theSameElementsInOrderAs Seq("init")
+          _.happenedEvents should (
+            contain theSameElementsInOrderAs Seq(Init) :+ Deinit
+              or contain theSameElementsInOrderAs Seq(Init)
           )
         )
 
@@ -169,7 +164,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     engine.deltaTimeNanos >= (deltaTime.secondsToStop * 3 * deltaTime.secondsToStop) * Math
       .pow(10, 9) shouldBe true
 
-  private trait DeltaTimeMockB extends MockB:
+  private trait DeltaTimeMockB extends LifecycleTester:
     var dt: Long = 0
     var toStopBeforeUpdates: Boolean = false
     var toStopUpdates: Boolean = false
@@ -205,26 +200,3 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
       engine =>
         super.onLateUpdate(engine)
         if toStopUpdates then Thread.sleep((secondsToStop * 1000).toInt)
-
-  private trait MockB extends Behaviour:
-    var list: Seq[String] = Seq()
-    override def onInit: Engine => Unit =
-      _ => list = Seq() :+ "init"
-
-    override def onEnabled: Engine => Unit =
-      _ => list = list :+ "enable"
-
-    override def onStart: Engine => Unit =
-      _ => list = list :+ "start"
-
-    override def onEarlyUpdate: Engine => Unit =
-      _ => list = list :+ "earlyUpdate"
-
-    override def onUpdate: Engine => Unit =
-      _ => list = list :+ "update"
-
-    override def onLateUpdate: Engine => Unit =
-      _ => list = list :+ "lateUpdate"
-
-    override def onDeinit: Engine => Unit =
-      _ => list = list :+ "deinit"
