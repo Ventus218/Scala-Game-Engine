@@ -146,7 +146,8 @@ class GameLoopTests extends AnyFlatSpec:
     val slowDownDurationMillis: Long = 10
     val expectedElapsedTimeNanos =
       (slowDownDurationMillis * Math.pow(10, 6)).toLong * 3
-    val testerFunction: (TestingContext) => Unit = (testingContext) =>
+
+    val deinitTesterFunction: (TestingContext) => Unit = (testingContext) =>
       // Approximately between the expected value and it's double
       testingContext.engine.deltaTimeNanos should (
         be >= expectedElapsedTimeNanos and
@@ -155,7 +156,8 @@ class GameLoopTests extends AnyFlatSpec:
 
     // Testing on an empty scene to be more accurate
     engine.testWithTesterObject():
-      new DeinitTester(testerFunction)
+      new Behaviour
+        with DeinitTester(deinitTesterFunction)
         with NFrameStopper(1)
         with SlowEarlyUpdater(slowDownDurationMillis)
         with SlowUpdater(slowDownDurationMillis)

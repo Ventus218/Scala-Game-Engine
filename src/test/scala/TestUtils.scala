@@ -42,7 +42,8 @@ object TestUtils:
     )(
         testFunction: (TestingContext) => Unit
     ): Unit =
-      val testerObject = new EarlyUpdateTester(testFunction)
+      val testerObject = new Behaviour
+        with EarlyUpdateTester(testFunction)
         with NFrameStopper(nFramesToRun)
       engine.testWithTesterObject(scene)(testerObject)
 
@@ -74,7 +75,8 @@ object TestUtils:
     )(
         testFunction: (TestingContext) => Unit
     ): Unit =
-      val testerObject = new UpdateTester(testFunction)
+      val testerObject = new Behaviour
+        with UpdateTester(testFunction)
         with NFrameStopper(nFramesToRun)
       engine.testWithTesterObject(scene)(testerObject)
 
@@ -103,7 +105,8 @@ object TestUtils:
     )(
         testFunction: (TestingContext) => Unit
     ): Unit =
-      val testerObject = new LateUpdateTester(testFunction)
+      val testerObject = new Behaviour
+        with LateUpdateTester(testFunction)
         with NFrameStopper(nFramesToRun)
       engine.testWithTesterObject(scene)(testerObject)
 
@@ -132,7 +135,8 @@ object TestUtils:
     )(
         testFunction: (TestingContext) => Unit
     ): Unit =
-      val testerObject = new DeinitTester(testFunction)
+      val testerObject = new Behaviour
+        with DeinitTester(testFunction)
         with NFrameStopper(nFramesToRun)
       engine.testWithTesterObject(scene)(testerObject)
 
@@ -152,25 +156,25 @@ object TestUtils:
     */
   object Testers:
 
-    class EarlyUpdateTester(testFunction: (TestingContext) => Unit)
+    trait EarlyUpdateTester(testFunction: (TestingContext) => Unit)
         extends Behaviour:
       override def onEarlyUpdate: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
         super.onEarlyUpdate(engine)
 
-    class UpdateTester(testFunction: (TestingContext) => Unit)
+    trait UpdateTester(testFunction: (TestingContext) => Unit)
         extends Behaviour:
       override def onUpdate: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
         super.onUpdate(engine)
 
-    class LateUpdateTester(testFunction: (TestingContext) => Unit)
+    trait LateUpdateTester(testFunction: (TestingContext) => Unit)
         extends Behaviour:
       override def onLateUpdate: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
         super.onLateUpdate(engine)
 
-    class DeinitTester(testFunction: (TestingContext) => Unit)
+    trait DeinitTester(testFunction: (TestingContext) => Unit)
         extends Behaviour:
       override def onDeinit: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
