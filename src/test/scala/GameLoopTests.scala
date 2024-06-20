@@ -49,19 +49,30 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    // TODO: works only because of the order in which objects are kept inside engine
     engine.testOnDeinit(testScene, nFramesToRun = numSteps):
+      /** This tests has to deal with undeterministic behaviour:
+        *
+        * Given the fact that the order of objects is not defined. The tester
+        * object may run its test while other objects "onDeinit" may not have
+        * been called yet. This is why the test succedes in both cases.
+        */
       engine
         .find[MockB]()
         .filter(_.enabled)
         .foreach(
-          _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          _.list should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+              or contain theSameElementsInOrderAs sequenceOfActions
+          )
         )
       engine
         .find[MockB]()
         .filter(!_.enabled)
         .foreach(
-          _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
+          _.list should (
+            contain theSameElementsInOrderAs Seq("init") :+ "deinit"
+              or contain theSameElementsInOrderAs Seq("init")
+          )
         )
 
   it should "stop when engine.stop() is called" in:
@@ -71,14 +82,22 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     var sequenceOfActions =
       getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
-    // TODO: works only because of the order in which objects are kept inside engine
     // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
     engine.testOnDeinit(oneFrameScene, nFramesToRun = 5):
+      /** This tests has to deal with undeterministic behaviour:
+        *
+        * Given the fact that the order of objects is not defined. The tester
+        * object may run its test while other objects "onDeinit" may not have
+        * been called yet. This is why the test succedes in both cases.
+        */
       engine
         .find[MockB]()
         .filter(_.enabled)
         .foreach(
-          _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          _.list should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+              or contain theSameElementsInOrderAs sequenceOfActions
+          )
         )
 
   it should "do the loop again if called run after being stopped" in:
@@ -91,19 +110,30 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    // TODO: works only because of the order in which objects are kept inside engine
     engine.testOnDeinit(testScene, nFramesToRun = numSteps):
+      /** This tests has to deal with undeterministic behaviour:
+        *
+        * Given the fact that the order of objects is not defined. The tester
+        * object may run its test while other objects "onDeinit" may not have
+        * been called yet. This is why the test succedes in both cases.
+        */
       engine
         .find[MockB]()
         .filter(_.enabled)
         .foreach(
-          _.list should contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+          _.list should (
+            contain theSameElementsInOrderAs sequenceOfActions :+ "deinit"
+              or contain theSameElementsInOrderAs sequenceOfActions
+          )
         )
       engine
         .find[MockB]()
         .filter(!_.enabled)
         .foreach(
-          _.list should contain theSameElementsInOrderAs Seq("init", "deinit")
+          _.list should (
+            contain theSameElementsInOrderAs Seq("init") :+ "deinit"
+              or contain theSameElementsInOrderAs Seq("init")
+          )
         )
 
   it should "have delta time nanos at 0 before update" in:
