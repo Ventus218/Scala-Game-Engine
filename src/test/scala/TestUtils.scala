@@ -29,6 +29,8 @@ object TestUtils:
     ): Unit =
       engine.run(scene.joined(() => Seq(testerObject)))
 
+    // Add new test utilities here if needed.
+
     /** Runs the engine and calls `testFunction` on every EarlyUpdate
       * @param scene
       * @param nFramesToRun
@@ -155,6 +157,8 @@ object TestUtils:
   /** Provides multiple concrete behaviours for testing
     */
   object Testers:
+
+    // Add new testers here if needed.
 
     trait EarlyUpdateTester(testFunction: (TestingContext) => Unit)
         extends Behaviour:
