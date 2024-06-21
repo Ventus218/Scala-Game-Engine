@@ -4,9 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import SwingRenderers.*
 
-import java.awt.{Color, Image}
-import java.io.File
-import javax.imageio.ImageIO
+import java.awt.{Color}
 
 object SwingRendererTest:
 
@@ -15,33 +13,33 @@ object SwingRendererTest:
     .withPixelsPerUnitRatio(100)
     .withTitle("Swing Test")
 
-  def rectRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingRectRenderable =
+  def rectRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingRectRenderer =
     new Behaviour
-      with SwingRectRenderable(width, height, color, offset)
+      with SwingRectRenderer(width, height, color, offset)
       with Positionable(position._1, position._2)
 
-  def ovalRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingOvalRenderable =
+  def ovalRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingOvalRenderer =
     new Behaviour
-      with SwingOvalRenderable(width, height, color, offset)
+      with SwingOvalRenderer(width, height, color, offset)
       with Positionable(position._1, position._2)
 
-  def squareRenderer(size: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingSquareRenderable =
+  def squareRenderer(size: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingSquareRenderer =
     new Behaviour
-      with SwingSquareRenderable(size, color, offset)
+      with SwingSquareRenderer(size, color, offset)
       with Positionable(position._1, position._2)
 
-  def circleRenderer(radius: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingCircleRenderable =
+  def circleRenderer(radius: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingCircleRenderer =
     new Behaviour
-      with SwingCircleRenderable(radius, color, offset)
+      with SwingCircleRenderer(radius, color, offset)
       with Positionable(position._1, position._2)
 
-  def imageRenderer(imagePath: String, width: Double, height: Double, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingImageRenderable =
+  def imageRenderer(imagePath: String, width: Double, height: Double, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingImageRenderer =
     new Behaviour
-      with SwingImageRenderable(imagePath, width, height, offset)
+      with SwingImageRenderer(imagePath, width, height, offset)
       with Positionable(position._1, position._2)
 
   /* test for shape renderable */
-  def testShapeProperties(renderer: SwingShapeRenderable): Unit =
+  def testShapeProperties(renderer: SwingShapeRenderer): Unit =
     renderer.shapeWidth = 2
     renderer.shapeWidth shouldBe 2
     renderer.shapeHeight = 1.5
@@ -52,7 +50,7 @@ object SwingRendererTest:
     renderer.renderOffset shouldBe(1, 9)
 
   /* test for shape renderable */
-  def testShapeInvalidValues(renderer: SwingShapeRenderable): Unit =
+  def testShapeInvalidValues(renderer: SwingShapeRenderer): Unit =
     an[IllegalArgumentException] shouldBe thrownBy {
       renderer.shapeWidth = -2
     }
@@ -64,13 +62,13 @@ object SwingRendererTest:
     }
 
   /* visual test for swing renderable */
-  private def testSwingRenderable(renderer: SwingRenderable): Unit =
+  private def testSwingRenderable(renderer: SwingRenderer): Unit =
     val frame: SwingIO = io.build()
     frame.draw(renderer.renderer(frame))
     frame.show()
 
   /* visual test for swing renderable */
-  private def testSwingRenderablePlacement(centered: SwingRenderable, topLeft: SwingRenderable, topRight: SwingRenderable): Unit =
+  private def testSwingRenderablePlacement(centered: SwingRenderer, topLeft: SwingRenderer, topRight: SwingRenderer): Unit =
     val frame: SwingIO = io.build()
     frame.draw(centered.renderer(frame))
     frame.draw(topLeft.renderer(frame))

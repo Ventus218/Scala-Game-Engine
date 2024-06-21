@@ -11,7 +11,7 @@ object SwingRenderers:
   /**
    * Behaviour for rendering an object on a SwingIO.
    */
-  trait SwingRenderable extends Behaviour:
+  trait SwingRenderer extends Behaviour:
     /**
      * The function defining the operation to apply on the graphic context of the Swing GUI.
      * It accepts in input a Swing IO, and the graphic context of the window.
@@ -193,7 +193,7 @@ object SwingRenderers:
   import Shapes.*
   import Images.*
 
-  trait SwingGameElementRenderable extends SwingRenderable with Positionable:
+  trait SwingGameElementRenderer extends SwingRenderer with Positionable:
     /**
      * The offset of the element. it is used to translate the element
      * starting from the position of the Positionable.
@@ -213,7 +213,7 @@ object SwingRenderers:
   /**
    * Behaviour for rendering geometric shapes on a SwingIO.
    */
-  trait SwingShapeRenderable extends SwingGameElementRenderable:
+  trait SwingShapeRenderer extends SwingGameElementRenderer:
     protected val element: SwingShape
     export element.{
       elementWidth as shapeWidth, elementWidth_= as shapeWidth_=,
@@ -225,34 +225,34 @@ object SwingRenderers:
   /**
    * Behaviour for rendering a rectangle on a SwingIO. Sizes must be > 0. The rectangle is centered at the position of the behaviour, then moved by offset units.
    */
-  trait SwingRectRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
+  trait SwingRectRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderer:
     override protected val element: SwingRect = Shapes.rect(width, height, color)
     this.renderOffset = offset
 
   /**
    * Behaviour for rendering a square on a SwingIO. Size must be > 0. The square is centered at the position of the behaviour, then moved by offset units.
    */
-  trait SwingSquareRenderable(size: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
+  trait SwingSquareRenderer(size: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderer:
     override protected val element: SwingSquare = Shapes.square(size, color)
     this.renderOffset = offset
 
   /**
    * Behaviour for rendering an oval on a SwingIO. Sizes must be > 0. The oval is centered at the position of the behaviour, then moved by offset units.
    */
-  trait SwingOvalRenderable(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
+  trait SwingOvalRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderer:
     override protected val element: SwingOval = Shapes.oval(width, height, color)
     this.renderOffset = offset
 
   /**
    * Behaviour for rendering a circle on a SwingIO. Radius must be > 0. The circle is centered at the position of the behaviour, then moved by offset units.
    */
-  trait SwingCircleRenderable(radius: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderable:
+  trait SwingCircleRenderer(radius: Double, color: Color, offset: (Double, Double) = (0, 0)) extends SwingShapeRenderer:
     override protected val element: SwingCircle = Shapes.circle(radius, color)
     export element.{shapeRadius, shapeRadius_=}
     this.renderOffset = offset
 
 
-  trait SwingImageRenderable(imagePath: String, width: Double, height: Double, offset: (Double, Double) = (0, 0)) extends SwingGameElementRenderable:
+  trait SwingImageRenderer(imagePath: String, width: Double, height: Double, offset: (Double, Double) = (0, 0)) extends SwingGameElementRenderer:
     protected val element: SwingImage = Images.singleImage(imagePath, width, height)
     export element.{
       elementWidth as imageWidth, elementWidth_= as imageWidth_=,
