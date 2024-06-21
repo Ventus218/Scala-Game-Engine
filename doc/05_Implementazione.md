@@ -159,3 +159,34 @@ println(collider3.collides(collider)) //true
 println(collider3.collides(collider2)) //false
 
 ```
+
+### SwingRenderer
+Un behaviour con **SwingRenderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
+Il rendering avviene nell'evento di `onLateUpdate` del game loop, e viene fatto invocando la funzione `renderer`, che contiene l'operazione da eseguire sul SwingIO e sul suo contesto grafico.
+
+SwingRenderable è esteso dal trait **SwingGameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
+Questo a sua volta è esteso dai trait **SwingShapeRenderer**, che rappresenta una forma geometrica, e **SwingImageRenderer**, che rappresenta un'immagine.
+Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli.
+Questi renderer hanno anche un `renderOffset`, che indica di quanto il disegno debba essere traslato rispetto alla posizione attuale del behaviour.
+
+*Esempio*
+```scala
+// Disegna un rettangolo in LateUpdate
+val rect: SwingShapeRenderer = new Behaviour with SwingRectRenderer(width=1, height=2, color=Color.blue) with Positionable(0, 0)
+
+rect.shapeWidth = 2           // cambia le dimensioni
+rect.shapeHeight = 1
+rect.renderOffset = (1, 0)    // cambia l'offset
+
+// Disegna un cerchio in LateUpdate, con offset settato in input
+val circle: SwingCircleRenderer = new Behaviour with SwingCircleRenderer(radius=2, offset=(1,0)) with Positionable(0, 0)
+
+circle.shapeRadius = 3        // cambia il raggio di un CircleRenderer
+
+// Disegna un'immagine in LateUpdate
+val image: SwingImageRenderer = new Behaviour with SwingImageRenderer("icon.png", width=1.5, height=1.5) with Positionable(0, 0)
+
+image.imageHeight = 2         // cambia le dimensioni
+image.imageWidth = 2
+
+```
