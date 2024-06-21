@@ -108,3 +108,41 @@ class SwingIOTest extends AnyFlatSpec:
     frame.scenePosition((400, 400)) shouldBe (2, -2)
     frame.scenePosition((0, 400)) shouldBe (-2, -2)
     frame.scenePosition((400, 0)) shouldBe (2, 2)
+    
+  it should "change its pixel/unit ratio at runtime" in:
+    val frame: SwingIO =
+      SwingIO
+        .withSize((400, 400))
+        .withPixelsPerUnitRatio(100)
+        .build()
+      
+    frame.pixelsPerUnit = 10
+    frame.pixelsPerUnit shouldBe 10
+    frame.pixelsPerUnit = 50
+    frame.pixelsPerUnit shouldBe 50
+
+  it should "not change its pixel/unit ratio to negative or 0 values" in :
+    val frame: SwingIO =
+      SwingIO
+        .withSize((400, 400))
+        .withPixelsPerUnitRatio(100)
+        .build()
+
+    an [IllegalArgumentException] shouldBe thrownBy {
+      frame.pixelsPerUnit = 0
+    }
+    an [IllegalArgumentException] shouldBe thrownBy {
+      frame.pixelsPerUnit = -100
+    }
+
+  it should "change its center position at runtime" in :
+    val frame: SwingIO =
+      SwingIO
+        .withSize((400, 400))
+        .withCenter((0, 0))
+        .build()
+
+    frame.center = (10, 0.5)
+    frame.center shouldBe (10, 0.5)
+    frame.center = (11.2, -20)
+    frame.center shouldBe (11.2, -20)

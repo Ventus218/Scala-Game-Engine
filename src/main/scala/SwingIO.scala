@@ -11,23 +11,37 @@ trait SwingIO extends IO:
   /**
    * The title of the window frame
    */
-  val title: String
+  def title: String
   /**
    * The size in pixels of the window frame
    */
-  val size: (Int, Int)
+  def size: (Int, Int)
   /**
-   * The ratio of pixels over game unit. Game unit is the unit of the coordinate system of the game scene
+   * The ratio of pixels over game unit. Game unit is the unit of the coordinate system of the game scene.
+   * Can be modified at runtime
    */
-  val pixelsPerUnit: Int
+  def pixelsPerUnit: Int
+
   /**
-   * The position of the center of the window translated to game coordinates
+   * Set the pixel/unit ratio to a new value
+   * @param p the new ratio. It can't be negative or 0
    */
-  val center: (Double, Double)
+  def pixelsPerUnit_=(p: Int): Unit
+  /**
+   * The position of the center of the window translated to game coordinates.
+   * Can be modified at runtime
+   */
+  def center: (Double, Double)
+
+  /**
+   * Set the center to a new position
+   * @param pos the new center position
+   */
+  def center_=(pos: (Double, Double)): Unit
   /**
    * The background color of the window frame
    */
-  val backgroundColor: Color
+  def backgroundColor: Color
 
   /**
    * Register an operation over the graphic context of the window frame. The operation will be executed when show() is called
@@ -79,13 +93,18 @@ object SwingIO:
   /**
    * private implementation of the SwingIO trait. It uses a DrawableCanvas to paint the window.
    */
-  private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Double, Double), val backgroundColor: Color) extends SwingIO:
+  private class SwingIOImpl(val title: String, val size: (Int, Int), private var _pixelsPerUnit: Int, var center: (Double, Double), val backgroundColor: Color) extends SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
 
     private val canvas: DrawableCanvas = createCanvas()
 
     initCanvas()
+
+    override def pixelsPerUnit: Int = _pixelsPerUnit
+    override def pixelsPerUnit_=(p: Int): Unit =
+      require(p > 0, "pixels/unit ratio must be positive")
+      _pixelsPerUnit = p
 
     override def onFrameEnd: Engine => Unit =
       engine =>
