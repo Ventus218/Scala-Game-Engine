@@ -6,7 +6,7 @@ Testare un loop non è sicuramente banale, per questo si sono preparati degli st
 
 Per testare il game loop si è scelto di utilizzare degli oggetti di gioco (Behaviour).
 
-L'idea è che l'oggetto di gioco offre la possibilità ti eseguire test in ogni punto del lifecycle del game loop e proprio per questo è possibile iniettare nell'engine degli oggetti e utilizzarli come tester.
+L'idea è che l'oggetto di gioco offre la possibilità di eseguire test in ogni punto del lifecycle del game loop e proprio per questo è possibile iniettare nell'engine degli oggetti e utilizzarli come tester.
 
 ## TestUtils
 Per semplificare il testing si sono creati dei trait e metodi di utilità.
@@ -45,10 +45,10 @@ E' un trait che può essere mixato ad un oggetto che accetta ed esegue la funzio
 - `testOnEarlyUpdateWithContext` metodo specifico per testare l'update, sfrutta un `UpdateTester` e permette di definire per quanti frame eseguire l'engine.
 
 A molti dei metodi è possibile passare un parametro *nFramesToRun* che indica per quanti frame eseguire l'engine prima di fermarlo.
-In caso di tester personalizzati è possibile utilizzare mixare il trait `NFrameStopper`
+In caso di tester personalizzati è possibile utilizzare in mixin il trait `NFrameStopper`
     
 ### TestingContext
-Alcuni metodi accettano come funzioni di test del tipo `(TestingContext) => Unit` testing context contiene riferimenti utili, in particolare un riferimento all'oggetto tester, questo permette di riconoscerlo ed escluderlo da alcune logiche di test.
+Alcuni metodi accettano come funzioni di test del tipo `(TestingContext) => Unit`. `TestingContext` contiene riferimenti utili, in particolare un riferimento all'oggetto tester permettendo di riconoscerlo ed escluderlo da alcune logiche di test.
 
 ## Come utilizzare TestUtils
 Si è cercato di rendere l'esperienza di testing il più semplice ed intuitiva possibile, di seguito alcuni esempi su come è possibile utilizzare gli strumenti forniti.
@@ -93,8 +93,8 @@ Si è cercato di rendere l'esperienza di testing il più semplice ed intuitiva p
     var sequenceOfActions =
         getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
-    // The idea is that the test should run the engine for 5 frames but since
-    // a NFrameStopper(1) has been added it should stop only after one frame
+    // L'idea è che i test facciano girare l'engine per 5 volte, ma dato che
+    // un NFrameStopper(1) è stato aggiunto, si fermerà dopo un solo frame
     engine.testOnDeinit(oneFrameScene, nFramesToRun = 5):
         /** This tests has to deal with undeterministic behaviour:
         *

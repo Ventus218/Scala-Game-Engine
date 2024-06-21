@@ -29,11 +29,7 @@ def find[B <: Behaviour](using tt: TypeTest[Behaviour, B])(): Iterable[B]
 def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(id: String): Option[B]
 ```
 Siccome l'informazione riguardante i tipi dei behaviour viene persa a runtime a causa della type erasure di Java si è dovuto utilizzare il sistema di reflection per implementare questi due metodi.
-`TypeTest` serve permette di potersi "portare dietro" le informazioni necessarie per poter controllare a runtime i tipi degli oggetti.
-
-## Scene
-Scene ha una implementazione di default attraverso `Scene.apply`.
-
+`TypeTest` permette di potersi "portare dietro" le informazioni necessarie per controllare a runtime i tipi degli oggetti.
 
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.
