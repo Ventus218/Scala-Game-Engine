@@ -30,9 +30,6 @@ Il caso nel quale l'utente volesse implementare più di un tipo di IO contempora
 ## [Scene](../src/main/scala/Scene.scala)
 Siccome l'engine non ha i concetti di scene o di scena attiva, ma solo di game object, allora Scene rappresenta una struttura dati che memorizza come gli oggetti andranno creati quando questa verrà caricata dall'engine.
 
-## [SceneManager](../src/main/scala/SceneManager.scala)
-SceneManager è dove sono contenute le diverse Scene definite dall'utente (ognuna con associato un nome che la identifichi).
-
 ## [Storage](../src/main/scala/Storage.scala)
 Storage fornisce la possibilità all'utente di salvare coppie chiave valore in modo da permettere la persistenza di alcuni dati, cosa molto utile nel caso di passaggio da una scena all'altra.
 - set
