@@ -71,6 +71,31 @@ engine.loadScene(Scenes.MenuScene)
 engine.loadScene(Scenes.GameScene)
 ```
 
+## SwingIO
+SwingIO è il componente grafico dell'engine, e implementa il trait IO utilizzando le funzionalità del framework Swing.
+
+Il metodo `draw` di SwingIO permette di registrare una funzione `Graphics2D => Unit`, ovvero l'operazione da applicare al contesto grafico della finestra.
+In questo modo, l'utente e i renderer possono aggiornare liberamente il proprio stato grafico semplicemente chiamando questo metodo.
+Il vero aggiornamento della finestra avviene alla chiamata del metodo `show`, che esegue tutte le operazioni di rendering registrate precedentemente, ridisegnando così l'interfaccia.
+
+SwingIO permette di definire la dimensione in pixel della finestra di gioco (`size`), il nome della finestra (`title`), e il colore di background (`background`). 
+Inoltre, permette di lavorare con coordinate espresse non in pixels, ma in unità logiche di gioco, così da astrarre la logica dei behaviours dalla loro effettiva rappresentazione grafica.
+SwingIO fornisce quindi metodi per impostare la posizione della finestra all'interno del gioco (`center`) e il numero di pixel da rappresentare per unità di gioco (`pixelsPerUnit`).
+Le estensioni `pixelPosition` e `scenePosition` permettono di mappare le posizioni da coordinate in pixels a coordinate in unità di gioco, e viceversa.
+
+Per facilitare la costruzione del SwingIO, è stato implementato un builder che offre metodi per personalizzare a piacimento l'interfaccia.
+
+*Esempio*
+```scala
+val io: SwingIO = SwingIO
+  .withTitle("title")                 // imposta il nome della finestra
+  .withSize((800, 900))               // imposta la dimensione della finestra
+  .withBackgroundColor(Color.red)     // imposta il colore di sfondo
+  .withCenter((0, 0))                 // imposta la posizione logica della finestra all'interno del gioco
+  .withPixelsPerUnitRatio(100)        // imposta il rapporto #pixels/unità
+  .build()                            // costruisce la SwingIO
+```
+
 ## Built-in behaviours
 Di seguito sono descritte le implementazioni dei vari Behaviours built-in del SGE.
 Da notare che ogni behaviour built-in è un mixin di Behaviour.

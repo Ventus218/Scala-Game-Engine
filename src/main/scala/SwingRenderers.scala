@@ -8,21 +8,6 @@ import scala.util.Try
 
 object SwingRenderers:
 
-  /**
-   * Behaviour for rendering an object on a SwingIO.
-   */
-  trait SwingRenderer extends Behaviour:
-    /**
-     * The function defining the operation to apply on the graphic context of the Swing GUI.
-     * It accepts in input a Swing IO, and the graphic context of the window.
-     */
-    def renderer: SwingIO => Graphics2D => Unit
-
-    override def onLateUpdate: Engine => Unit =
-      engine =>
-        super.onLateUpdate(engine)
-        Try(engine.io.asInstanceOf[SwingIO]).foreach(io => io.draw(renderer(io)))
-
   object GameElements:
     /**
      * Basic trait for manipulating and drawing game entities using Swing.
@@ -163,20 +148,56 @@ object SwingRenderers:
       override def elementHeight: Double = elementWidth
       override def elementHeight_=(h: Double): Unit = elementWidth = h
 
+    /**
+     * Create a rectangular SwingShape.
+     * @param width the width in game units
+     * @param height the height in game units
+     * @param color the color of the shape
+     * @return a new SwingRect
+     */
     def rect(width: Double, height: Double, color: Color): SwingRect =
       new BaseSwingShape(width, height, color) with SwingRect
+
+    /**
+     * Create a square SwingShape.
+     * @param size the size in game units
+     * @param color  the color of the shape
+     * @return a new SwingSquare
+     */
     def square(size: Double, color: Color): SwingSquare =
       new BaseSwingShape(size, size, color) with SwingSquare
+
+    /**
+     * Create an oval SwingShape.
+     * @param width  the width in game units
+     * @param height the height in game units
+     * @param color  the color of the shape
+     * @return a new SwingOval
+     */
     def oval(width: Double, height: Double, color: Color): SwingOval =
       new BaseSwingShape(width, height, color) with SwingOval
+
+    /**
+     * Create a circular SwingShape.
+     * @param radius  the radius in game units
+     * @param color the color of the shape
+     * @return a new SwingCircle
+     */
     def circle(radius: Double, color: Color): SwingCircle =
       new BaseSwingShape(radius*2, radius*2, color) with SwingCircle
 
   /* Utility object for images */
   object Images:
     import GameElements.*
-    
+
+    /**
+     * Basic trait for manipulating and drawing images using Swing.
+     * The main properties of the element (width, height) are mutable, and are represented in game units.
+     */
     trait SwingImage extends SwingGameElement:
+      /**
+       * The image to draw
+       */
       val image: Image
       override def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit =
         g2d => (posX, posY, w, h) =>
@@ -185,7 +206,14 @@ object SwingRenderers:
 
     private class SingleSwingImage(override val image: Image, width: Double, height: Double) extends BaseSwingGameElement(width, height) with SwingImage
 
-    def singleImage(imgPath: String, width: Double, height: Double): SwingImage =
+    /**
+     * Create a SwingImage from an image path
+     * @param imgPath the path of the image file. Must be in a resource folder
+     * @param width the wanted width of the image in game units
+     * @param height the wanted height of the image in game units
+     * @return a new SwingImage
+     */
+    def simpleImage(imgPath: String, width: Double, height: Double): SwingImage =
       SingleSwingImage(ImageIO.read(getClass.getResourceAsStream(imgPath)), width, height)
 
 
@@ -193,6 +221,25 @@ object SwingRenderers:
   import Shapes.*
   import Images.*
 
+
+  /**
+   * Behaviour for rendering an object on a SwingIO.
+   */
+  trait SwingRenderer extends Behaviour:
+    /**
+     * The function defining the operation to apply on the graphic context of the Swing GUI.
+     * It accepts in input a Swing IO, and the graphic context of the window.
+     */
+    def renderer: SwingIO => Graphics2D => Unit
+
+    override def onLateUpdate: Engine => Unit =
+      engine =>
+        super.onLateUpdate(engine)
+        Try(engine.io.asInstanceOf[SwingIO]).foreach(io => io.draw(renderer(io)))
+
+  /**
+   * Behaviour for rendering a generic swing game element on a SwingIO
+   */
   trait SwingGameElementRenderer extends SwingRenderer with Positionable:
     /**
      * The offset of the element. it is used to translate the element
@@ -209,7 +256,7 @@ object SwingRenderers:
         val w = (element.elementWidth * io.pixelsPerUnit).toInt
         val h = (element.elementHeight * io.pixelsPerUnit).toInt
         element.drawElement(g2d)(pos._1, pos._2, w, h)
-  
+
   /**
    * Behaviour for rendering geometric shapes on a SwingIO.
    */
@@ -220,7 +267,6 @@ object SwingRenderers:
       elementHeight as shapeHeight, elementHeight_= as shapeHeight_=,
       shapeColor, shapeColor_=
     }
-
 
   /**
    * Behaviour for rendering a rectangle on a SwingIO. Sizes must be > 0. The rectangle is centered at the position of the behaviour, then moved by offset units.
@@ -251,9 +297,12 @@ object SwingRenderers:
     export element.{shapeRadius, shapeRadius_=}
     this.renderOffset = offset
 
-
+  /**
+   * Behaviour for rendering an image on a SwingIO. Sizes must be > 0, and the image must be located in a resource folder.
+   * The image is centered at the position of the behaviour, then moved by offset units.
+   */
   trait SwingImageRenderer(imagePath: String, width: Double, height: Double, offset: (Double, Double) = (0, 0)) extends SwingGameElementRenderer:
-    protected val element: SwingImage = Images.singleImage(imagePath, width, height)
+    protected val element: SwingImage = Images.simpleImage(imagePath, width, height)
     export element.{
       elementWidth as imageWidth, elementWidth_= as imageWidth_=,
       elementHeight as imageHeight, elementHeight_= as imageHeight_=,

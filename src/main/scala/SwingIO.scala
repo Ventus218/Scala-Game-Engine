@@ -54,7 +54,8 @@ trait SwingIO extends IO:
    * Update the windows, executing all the registered operations over the graphics context
    */
   def show(): Unit
-
+  
+extension (io: SwingIO)
   /**
    * Converts game-coordinates positions to screen-coordinates positions
    *
@@ -62,7 +63,7 @@ trait SwingIO extends IO:
    * @return The screen-coordinates position
    */
   def pixelPosition(scenePosition: (Double, Double)): (Int, Int) =
-    (size._1/2 + (pixelsPerUnit*(scenePosition._1 - center._1)).toInt, size._2/2 - (pixelsPerUnit*(scenePosition._2 - center._2)).toInt)
+    (io.size._1/2 + (io.pixelsPerUnit*(scenePosition._1 - io.center._1)).toInt, io.size._2/2 - (io.pixelsPerUnit*(scenePosition._2 - io.center._2)).toInt)
 
   /**
    * Converts screen-coordinates positions to game-coordinates positions
@@ -71,7 +72,7 @@ trait SwingIO extends IO:
    * @return The game-coordinates position
    */
   def scenePosition(pixelPosition: (Int, Int)): (Double, Double) =
-    (center._1 + (pixelPosition._1 - size._1/2)/pixelsPerUnit, center._2 - (pixelPosition._2 - size._2/2)/pixelsPerUnit)
+    (io.center._1 + (pixelPosition._1 - io.size._1/2)/io.pixelsPerUnit, io.center._2 - (pixelPosition._2 - io.size._2/2)/io.pixelsPerUnit)
 
 
 /**
