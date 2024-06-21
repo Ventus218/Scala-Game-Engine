@@ -13,27 +13,55 @@ object SwingRendererTestUtilities:
     .withPixelsPerUnitRatio(100)
     .withTitle("Swing Test")
 
-  def rectRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingRectRenderer =
+  def rectRenderer(
+      width: Double,
+      height: Double,
+      color: Color,
+      offset: (Double, Double) = (0, 0),
+      position: (Double, Double) = (0, 0)
+  ): SwingRectRenderer =
     new Behaviour
       with SwingRectRenderer(width, height, color, offset)
       with Positionable(position._1, position._2)
 
-  def ovalRenderer(width: Double, height: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingOvalRenderer =
+  def ovalRenderer(
+      width: Double,
+      height: Double,
+      color: Color,
+      offset: (Double, Double) = (0, 0),
+      position: (Double, Double) = (0, 0)
+  ): SwingOvalRenderer =
     new Behaviour
       with SwingOvalRenderer(width, height, color, offset)
       with Positionable(position._1, position._2)
 
-  def squareRenderer(size: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingSquareRenderer =
+  def squareRenderer(
+      size: Double,
+      color: Color,
+      offset: (Double, Double) = (0, 0),
+      position: (Double, Double) = (0, 0)
+  ): SwingSquareRenderer =
     new Behaviour
       with SwingSquareRenderer(size, color, offset)
       with Positionable(position._1, position._2)
 
-  def circleRenderer(radius: Double, color: Color, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingCircleRenderer =
+  def circleRenderer(
+      radius: Double,
+      color: Color,
+      offset: (Double, Double) = (0, 0),
+      position: (Double, Double) = (0, 0)
+  ): SwingCircleRenderer =
     new Behaviour
       with SwingCircleRenderer(radius, color, offset)
       with Positionable(position._1, position._2)
 
-  def imageRenderer(imagePath: String, width: Double, height: Double, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingImageRenderer =
+  def imageRenderer(
+      imagePath: String,
+      width: Double,
+      height: Double,
+      offset: (Double, Double) = (0, 0),
+      position: (Double, Double) = (0, 0)
+  ): SwingImageRenderer =
     new Behaviour
       with SwingImageRenderer(imagePath, width, height, offset)
       with Positionable(position._1, position._2)
@@ -47,7 +75,7 @@ object SwingRendererTestUtilities:
     renderer.shapeColor = Color.blue
     renderer.shapeColor shouldBe Color.blue
     renderer.renderOffset = (1, 9)
-    renderer.renderOffset shouldBe(1, 9)
+    renderer.renderOffset shouldBe (1, 9)
 
   /* test for shape renderable */
   def testShapeInvalidValues(renderer: SwingShapeRenderer): Unit =
@@ -68,7 +96,11 @@ object SwingRendererTestUtilities:
     frame.show()
 
   /* visual test for swing renderable */
-  def testSwingRendererPlacement(centered: SwingRenderer, topLeft: SwingRenderer, topRight: SwingRenderer): Unit =
+  def testSwingRendererPlacement(
+      centered: SwingRenderer,
+      topLeft: SwingRenderer,
+      topRight: SwingRenderer
+  ): Unit =
     val frame: SwingIO = io.build()
     frame.draw(centered.renderer(frame))
     frame.draw(topLeft.renderer(frame))

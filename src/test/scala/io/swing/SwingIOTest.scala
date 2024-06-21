@@ -13,7 +13,6 @@ object SwingIOTest:
     g.setColor(Color.blue)
     g.fillOval(posX, posY, 60, 60)
 
-
   @main def testSwingIOCreation(): Unit =
     // it should create a visual interface
     SwingIO("Swing Test", size = (800, 800))
@@ -59,18 +58,18 @@ object SwingIOTest:
 class SwingIOTest extends AnyFlatSpec:
 
   "SwingIO" should "be an IO class" in:
-    SwingIO("SwingTest", size = (500, 500)) shouldBe a [IO]
+    SwingIO("SwingTest", size = (500, 500)) shouldBe a[IO]
 
   it should "always have positive size" in:
-    an [IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy {
       SwingIO("SwingTest", size = (-100, 500))
     }
 
-  it should "always have positive pixels/unit ratio" in :
-    an [IllegalArgumentException] shouldBe thrownBy {
+  it should "always have positive pixels/unit ratio" in:
+    an[IllegalArgumentException] shouldBe thrownBy {
       SwingIO("SwingTest", size = (500, 500), pixelsPerUnit = -20)
     }
-    an [IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy {
       SwingIO("SwingTest", size = (500, 500), pixelsPerUnit = 0)
     }
 
@@ -108,34 +107,34 @@ class SwingIOTest extends AnyFlatSpec:
     frame.scenePosition((400, 400)) shouldBe (2, -2)
     frame.scenePosition((0, 400)) shouldBe (-2, -2)
     frame.scenePosition((400, 0)) shouldBe (2, 2)
-    
+
   it should "change its pixel/unit ratio at runtime" in:
     val frame: SwingIO =
       SwingIO
         .withSize((400, 400))
         .withPixelsPerUnitRatio(100)
         .build()
-      
+
     frame.pixelsPerUnit = 10
     frame.pixelsPerUnit shouldBe 10
     frame.pixelsPerUnit = 50
     frame.pixelsPerUnit shouldBe 50
 
-  it should "not change its pixel/unit ratio to negative or 0 values" in :
+  it should "not change its pixel/unit ratio to negative or 0 values" in:
     val frame: SwingIO =
       SwingIO
         .withSize((400, 400))
         .withPixelsPerUnitRatio(100)
         .build()
 
-    an [IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy {
       frame.pixelsPerUnit = 0
     }
-    an [IllegalArgumentException] shouldBe thrownBy {
+    an[IllegalArgumentException] shouldBe thrownBy {
       frame.pixelsPerUnit = -100
     }
 
-  it should "change its center position at runtime" in :
+  it should "change its center position at runtime" in:
     val frame: SwingIO =
       SwingIO
         .withSize((400, 400))
