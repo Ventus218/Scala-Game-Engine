@@ -4,7 +4,9 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import SwingRenderers.*
 
-import java.awt.Color
+import java.awt.{Color, Image}
+import java.io.File
+import javax.imageio.ImageIO
 
 object SwingRendererTest:
 
@@ -33,8 +35,13 @@ object SwingRendererTest:
       with SwingCircleRenderable(radius, color, offset)
       with Positionable(position._1, position._2)
 
+  def imageRenderer(imagePath: String, width: Double, height: Double, offset: (Double, Double) = (0, 0), position: (Double, Double) = (0, 0)): SwingImageRenderable =
+    new Behaviour
+      with SwingImageRenderable(imagePath, width, height, offset)
+      with Positionable(position._1, position._2)
+
   /* test for shape renderable */
-  def testShapeRenderableProperties(renderer: SwingShapeRenderable): Unit =
+  def testShapeProperties(renderer: SwingShapeRenderable): Unit =
     renderer.shapeWidth = 2
     renderer.shapeWidth shouldBe 2
     renderer.shapeHeight = 1.5
@@ -45,7 +52,7 @@ object SwingRendererTest:
     renderer.renderOffset shouldBe(1, 9)
 
   /* test for shape renderable */
-  def testShapeRenderableInvalidValues(renderer: SwingShapeRenderable): Unit =
+  def testShapeInvalidValues(renderer: SwingShapeRenderable): Unit =
     an[IllegalArgumentException] shouldBe thrownBy {
       renderer.shapeWidth = -2
     }
@@ -124,6 +131,20 @@ object SwingRendererTest:
       topRight = circleRenderer(r, color = Color.green, offset = (2 - r, 2 - r), position = (0, 0))
     )
 
+  @main def testSwingRendererImagePlacement(): Unit =
+    val img: String = "epic-crocodile.png"
+    val w: Double = 1
+    val h: Double = 1
+    testSwingRenderablePlacement(
+      centered = imageRenderer(img, w, h, offset = (0, 0), position = (0, 0)),
+      topLeft = imageRenderer(img, w, h, offset = (0, 0), position = (-2 + w / 2, 2 - h / 2)),
+      topRight = imageRenderer(img, w, h, offset = (2 - w / 2, 2 - h / 2), position = (0, 0))
+    )
+  @main def testSwingRendererImage(): Unit =
+    // it should display an image
+    testSwingRenderable:
+      imageRenderer("epic-crocodile.png", width = 3, height = 3, offset = (0, 0), position = (0, 0))
+
 class SwingRectRenderableTest extends AnyFlatSpec:
 
   "Swing Rectangle" should "be initialized correctly" in:
@@ -151,11 +172,11 @@ class SwingRectRenderableTest extends AnyFlatSpec:
 
   "Swing Rectangle" should "be able to change its properties" in:
     val rect = SwingRendererTest.rectRenderer(width = 1, height = 2, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableProperties(rect)
+    SwingRendererTest.testShapeProperties(rect)
 
   "Swing Rectangle" should "not be able to change its properties to invalid values" in:
     val rect = SwingRendererTest.rectRenderer(width = 1, height = 2, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableInvalidValues(rect)
+    SwingRendererTest.testShapeInvalidValues(rect)
 
 class SwingOvalRenderableTest extends AnyFlatSpec:
 
@@ -184,11 +205,11 @@ class SwingOvalRenderableTest extends AnyFlatSpec:
 
   "Swing Oval" should "be able to change its properties" in :
     val oval = SwingRendererTest.ovalRenderer(width = 1, height = 2, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableProperties(oval)
+    SwingRendererTest.testShapeProperties(oval)
 
   "Swing Oval" should "not be able to change its properties to invalid values" in :
     val oval = SwingRendererTest.ovalRenderer(width = 1, height = 2, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableInvalidValues(oval)
+    SwingRendererTest.testShapeInvalidValues(oval)
 
 class SwingSquareRenderableTest extends AnyFlatSpec:
 
@@ -214,11 +235,11 @@ class SwingSquareRenderableTest extends AnyFlatSpec:
 
   "Swing Square" should "be able to change its properties" in:
     val square = SwingRendererTest.squareRenderer(size = 1, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableProperties(square)
+    SwingRendererTest.testShapeProperties(square)
 
   "Swing Square" should "not be able to change its properties to invalid values" in:
     val square = SwingRendererTest.squareRenderer(size = 1, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableInvalidValues(square)
+    SwingRendererTest.testShapeInvalidValues(square)
 
   "Swing Square" should "always have the same width and height" in:
     val square = SwingRendererTest.squareRenderer(size = 1, color = Color.red)
@@ -251,11 +272,11 @@ class SwingCircleRenderableTest extends AnyFlatSpec:
 
   "Swing Circle" should "be able to change its properties" in:
     val circle = SwingRendererTest.circleRenderer(radius = 1, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableProperties(circle)
+    SwingRendererTest.testShapeProperties(circle)
 
   "Swing Circle" should "not be able to change its properties to invalid values" in:
     val circle = SwingRendererTest.circleRenderer(radius = 1, color = Color.red, offset = (0, 0))
-    SwingRendererTest.testShapeRenderableInvalidValues(circle)
+    SwingRendererTest.testShapeInvalidValues(circle)
 
   "Swing Circle" should "always have the radius be half the width and height" in :
     val circle = SwingRendererTest.circleRenderer(radius = 1, color = Color.red)
@@ -263,3 +284,41 @@ class SwingCircleRenderableTest extends AnyFlatSpec:
       circle.shapeRadius = i
       circle.shapeRadius shouldBe circle.shapeWidth / 2
       circle.shapeRadius shouldBe circle.shapeHeight / 2
+
+class SwingImageRenderableTest extends AnyFlatSpec:
+
+  "Swing Image" should "be initialized correctly" in:
+    val image = SwingRendererTest.imageRenderer("epic-crocodile.png", width = 3, height = 3, offset = (0, 0))
+    image.imageWidth shouldBe 3
+    image.imageHeight shouldBe 3
+    image.renderOffset shouldBe (0, 0)
+    image.image shouldNot be theSameInstanceAs null
+
+  "Swing Image" should "not be initialized with negative sizes" in :
+    an [IllegalArgumentException] shouldBe thrownBy {
+      SwingRendererTest.imageRenderer("epic-crocodile.png", width = 0, height = 0)
+    }
+    an [IllegalArgumentException] shouldBe thrownBy {
+      SwingRendererTest.imageRenderer("epic-crocodile.png", width = -4, height = 5)
+    }
+    an [IllegalArgumentException] shouldBe thrownBy {
+      SwingRendererTest.imageRenderer("epic-crocodile.png", width = 2, height = -6)
+    }
+
+  "Swing Image" should "be able to change its properties" in :
+    val image = SwingRendererTest.imageRenderer("epic-crocodile.png", width = 3, height = 3, offset = (0, 0))
+    image.imageWidth = 2
+    image.imageWidth shouldBe 2
+    image.imageHeight = 1.5
+    image.imageHeight shouldBe 1.5
+    image.renderOffset = (1, 9)
+    image.renderOffset shouldBe(1, 9)
+
+  "Swing Rectangle" should "not be able to change its properties to invalid values" in :
+    val image = SwingRendererTest.imageRenderer("epic-crocodile.png", width = 3, height = 3, offset = (0, 0))
+    an[IllegalArgumentException] shouldBe thrownBy {
+      image.imageWidth = -2
+    }
+    an[IllegalArgumentException] shouldBe thrownBy {
+      image.imageHeight = 0
+    }
