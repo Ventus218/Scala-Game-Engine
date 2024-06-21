@@ -60,10 +60,25 @@ trait SwingIO extends IO:
     (center._1 + (pixelPosition._1 - size._1/2)/pixelsPerUnit, center._2 - (pixelPosition._2 - size._2/2)/pixelsPerUnit)
 
 
+/**
+ * Utility object for SwingIO
+ */
 object SwingIO:
+  /**
+   * Create a new SwingIO class.
+   * @param title the title of the window frame
+   * @param size the pixel size of the window frame
+   * @param pixelsPerUnit the ratio of pixels over game unit
+   * @param center the position of the center of the window translated to game coordinates
+   * @param background the background color of the window
+   * @return a new SwingIO
+   */
   def apply(title: String, size: (Int, Int), pixelsPerUnit: Int = 100, center: (Double, Double) = (0, 0), background: Color = Color.white): SwingIO =
     new SwingIOImpl(title, size, pixelsPerUnit, center, background)
 
+  /**
+   * private implementation of the SwingIO trait. It uses a DrawableCanvas to paint the window.
+   */
   private class SwingIOImpl(val title: String, val size: (Int, Int), val pixelsPerUnit: Int, val center: (Double, Double), val backgroundColor: Color) extends SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
