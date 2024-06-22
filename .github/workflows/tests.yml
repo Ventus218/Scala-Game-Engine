@@ -6,7 +6,8 @@
 name: Tests
 
 on:
-  pull_request
+  pull_request:
+    branches: [ "main", "develop" ]
 
 permissions:
   contents: read
