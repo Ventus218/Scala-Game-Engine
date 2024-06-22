@@ -266,9 +266,8 @@ object SwingRenderers:
     override def onLateUpdate: Engine => Unit =
       engine =>
         super.onLateUpdate(engine)
-        Try(engine.io.asInstanceOf[SwingIO]).foreach(io =>
-          io.draw(renderer(io))
-        )
+        val io: SwingIO = engine.io.asInstanceOf[SwingIO]
+        io.draw(renderer(io))
 
   /** Behaviour for rendering a generic swing game element on a SwingIO
     */
