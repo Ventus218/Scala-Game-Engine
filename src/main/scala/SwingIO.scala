@@ -120,10 +120,9 @@ object SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
 
-    private val frame: JFrame = createFrame()
-    private val canvas: DrawableCanvas = createCanvas()
-
-    initCanvas()
+    private var initialized: Boolean = false
+    private lazy val frame: JFrame = createFrame()
+    private lazy val canvas: DrawableCanvas = createCanvas()
 
     override def pixelsPerUnit: Int = _pixelsPerUnit
     override def pixelsPerUnit_=(p: Int): Unit =
@@ -156,7 +155,11 @@ object SwingIO:
       canvas.add(renderer)
 
     override def show(): Unit =
-      if !frame.isVisible then SwingUtilities.invokeAndWait(() => frame.setVisible(true))
+      if !initialized then
+        initialized = true
+        initCanvas()
+      if !frame.isVisible then
+        SwingUtilities.invokeAndWait(() => frame.setVisible(true))
       canvas.showRenderers()
 
   /** Class used as canvas for SwingIOImpl
