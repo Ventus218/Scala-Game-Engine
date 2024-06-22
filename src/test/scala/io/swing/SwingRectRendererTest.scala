@@ -56,7 +56,7 @@ class SwingRectRendererTest extends AnyFlatSpec:
     rect.shapeColor shouldBe Color.red
     rect.renderOffset shouldBe (0, 0)
 
-  "Swing Rectangle" should "not be initialized with negative sizes" in:
+  it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.rectRenderer(
         width = 0,
@@ -79,7 +79,7 @@ class SwingRectRendererTest extends AnyFlatSpec:
       )
     }
 
-  "Swing Rectangle" should "not be initialized with null color" in:
+  it should "not be initialized with null color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.rectRenderer(
         width = 1,
@@ -88,7 +88,7 @@ class SwingRectRendererTest extends AnyFlatSpec:
       )
     }
 
-  "Swing Rectangle" should "be able to change its properties" in:
+  it should "be able to change its properties" in:
     val rect = SwingRendererTestUtilities.rectRenderer(
       width = 1,
       height = 2,
@@ -97,7 +97,7 @@ class SwingRectRendererTest extends AnyFlatSpec:
     )
     SwingRendererTestUtilities.testShapeProperties(rect)
 
-  "Swing Rectangle" should "not be able to change its properties to invalid values" in:
+  it should "not be able to change its properties to invalid values" in:
     val rect = SwingRendererTestUtilities.rectRenderer(
       width = 1,
       height = 2,

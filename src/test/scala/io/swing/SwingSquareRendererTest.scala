@@ -51,7 +51,7 @@ class SwingSquareRendererTest extends AnyFlatSpec:
     square.shapeColor shouldBe Color.red
     square.renderOffset shouldBe (0, 0)
 
-  "Swing Square" should "not be initialized with negative sizes" in:
+  it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.squareRenderer(size = 0, color = Color.red)
     }
@@ -59,12 +59,12 @@ class SwingSquareRendererTest extends AnyFlatSpec:
       SwingRendererTestUtilities.squareRenderer(size = -4, color = Color.red)
     }
 
-  "Swing Square" should "not be initialized with null color" in:
+  it should "not be initialized with null color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.squareRenderer(size = 1, color = null)
     }
 
-  "Swing Square" should "be able to change its properties" in:
+  it should "be able to change its properties" in:
     val square = SwingRendererTestUtilities.squareRenderer(
       size = 1,
       color = Color.red,
@@ -72,7 +72,7 @@ class SwingSquareRendererTest extends AnyFlatSpec:
     )
     SwingRendererTestUtilities.testShapeProperties(square)
 
-  "Swing Square" should "not be able to change its properties to invalid values" in:
+  it should "not be able to change its properties to invalid values" in:
     val square = SwingRendererTestUtilities.squareRenderer(
       size = 1,
       color = Color.red,
@@ -80,7 +80,7 @@ class SwingSquareRendererTest extends AnyFlatSpec:
     )
     SwingRendererTestUtilities.testShapeInvalidValues(square)
 
-  "Swing Square" should "always have the same width and height" in:
+  it should "always have the same width and height" in:
     val square =
       SwingRendererTestUtilities.squareRenderer(size = 1, color = Color.red)
     for i <- 1 to 10 do

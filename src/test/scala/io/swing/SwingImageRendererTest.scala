@@ -50,7 +50,7 @@ class SwingImageRendererTest extends AnyFlatSpec:
     image.renderOffset shouldBe (0, 0)
     image.image shouldNot be theSameInstanceAs null
 
-  "Swing Image" should "not be initialized with negative sizes" in:
+  it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.imageRenderer(
         "epic-crocodile.png",
@@ -73,7 +73,7 @@ class SwingImageRendererTest extends AnyFlatSpec:
       )
     }
 
-  "Swing Image" should "be able to change its properties" in:
+  it should "be able to change its properties" in:
     val image = SwingRendererTestUtilities.imageRenderer(
       "epic-crocodile.png",
       width = 3,
@@ -87,7 +87,7 @@ class SwingImageRendererTest extends AnyFlatSpec:
     image.renderOffset = (1, 9)
     image.renderOffset shouldBe (1, 9)
 
-  "Swing Rectangle" should "not be able to change its properties to invalid values" in:
+  it should "not be able to change its properties to invalid values" in:
     val image = SwingRendererTestUtilities.imageRenderer(
       "epic-crocodile.png",
       width = 3,

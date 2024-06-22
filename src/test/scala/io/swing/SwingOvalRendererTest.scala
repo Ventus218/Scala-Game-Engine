@@ -57,7 +57,7 @@ class SwingOvalRendererTest extends AnyFlatSpec:
     oval.shapeColor shouldBe Color.blue
     oval.renderOffset shouldBe (0, 0)
 
-  "Swing Oval" should "not be initialized with negative sizes" in:
+  it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.ovalRenderer(
         width = 0,
@@ -80,7 +80,7 @@ class SwingOvalRendererTest extends AnyFlatSpec:
       )
     }
 
-  "Swing Oval" should "not be initialized with null color" in:
+  it should "not be initialized with null color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.ovalRenderer(
         width = 1,
@@ -89,7 +89,7 @@ class SwingOvalRendererTest extends AnyFlatSpec:
       )
     }
 
-  "Swing Oval" should "be able to change its properties" in:
+  it should "be able to change its properties" in:
     val oval = SwingRendererTestUtilities.ovalRenderer(
       width = 1,
       height = 2,
@@ -98,7 +98,7 @@ class SwingOvalRendererTest extends AnyFlatSpec:
     )
     SwingRendererTestUtilities.testShapeProperties(oval)
 
-  "Swing Oval" should "not be able to change its properties to invalid values" in:
+  it should "not be able to change its properties to invalid values" in:
     val oval = SwingRendererTestUtilities.ovalRenderer(
       width = 1,
       height = 2,

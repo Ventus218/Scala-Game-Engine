@@ -52,7 +52,7 @@ class SwingCircleRendererTest extends AnyFlatSpec:
     circle.shapeColor shouldBe Color.red
     circle.renderOffset shouldBe (0, 0)
 
-  "Swing Circle" should "not be initialized with negative sizes" in:
+  it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.circleRenderer(radius = 0, color = Color.red)
     }
@@ -60,12 +60,12 @@ class SwingCircleRendererTest extends AnyFlatSpec:
       SwingRendererTestUtilities.circleRenderer(radius = -4, color = Color.red)
     }
 
-  "Swing Circle" should "not be initialized with null color" in:
+  it should "not be initialized with null color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       SwingRendererTestUtilities.circleRenderer(radius = 1, color = null)
     }
 
-  "Swing Circle" should "be able to change its properties" in:
+  it should "be able to change its properties" in:
     val circle = SwingRendererTestUtilities.circleRenderer(
       radius = 1,
       color = Color.red,
@@ -73,7 +73,7 @@ class SwingCircleRendererTest extends AnyFlatSpec:
     )
     SwingRendererTestUtilities.testShapeProperties(circle)
 
-  "Swing Circle" should "not be able to change its properties to invalid values" in:
+  it should "not be able to change its properties to invalid values" in:
     val circle = SwingRendererTestUtilities.circleRenderer(
       radius = 1,
       color = Color.red,
@@ -81,7 +81,7 @@ class SwingCircleRendererTest extends AnyFlatSpec:
     )
     SwingRendererTestUtilities.testShapeInvalidValues(circle)
 
-  "Swing Circle" should "always have the radius be half the width and height" in:
+  it should "always have the radius be half the width and height" in:
     val circle =
       SwingRendererTestUtilities.circleRenderer(radius = 1, color = Color.red)
     for i <- 1 to 10 do
