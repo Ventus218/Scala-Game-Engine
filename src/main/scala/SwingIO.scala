@@ -3,6 +3,7 @@ import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D}
 import java.util.function.Consumer
 import javax.swing
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
+import SwingIO.Key
 
 /** An implementation of IO trait using Java Swing
   */
@@ -53,6 +54,13 @@ trait SwingIO extends IO:
     * graphics context
     */
   def show(): Unit
+
+  /** Determines if a key was pressed in the last frame.
+    *
+    * @param key
+    * @return
+    */
+  def keyWasPressed(key: Key): Boolean
 
 extension (io: SwingIO)
   /** Converts game-coordinates positions to screen-coordinates positions
@@ -139,6 +147,7 @@ object SwingIO:
     private var initialized: Boolean = false
     private lazy val frame: JFrame = createFrame()
     private lazy val canvas: DrawableCanvas = createCanvas()
+    private val keyEventsAccumulator = SwingKeyEventsAccumulator()
 
     override def pixelsPerUnit: Int = _pixelsPerUnit
     override def pixelsPerUnit_=(p: Int): Unit =
@@ -149,11 +158,13 @@ object SwingIO:
       engine =>
         super.onFrameEnd(engine)
         show()
+        keyEventsAccumulator.onFrameEnd()
 
     private def initCanvas(): Unit =
       SwingUtilities.invokeAndWait(() => {
         frame.add(canvas)
         frame.pack()
+        frame.addKeyListener(keyEventsAccumulator)
       })
 
     private def createCanvas(): DrawableCanvas =
@@ -177,6 +188,14 @@ object SwingIO:
       if !frame.isVisible then
         SwingUtilities.invokeAndWait(() => frame.setVisible(true))
       canvas.showRenderers()
+
+    override def keyWasPressed(key: Key): Boolean =
+      keyEventsAccumulator.lastFrameKeyEvents.get(key) match
+        case Some(events) => events.contains(KeyEvent.Pressed)
+        case None =>
+          keyEventsAccumulator.lastKeyEventBeforeLastFrame.get(key) == Some(
+            KeyEvent.Pressed
+          )
 
   /** Class used as canvas for SwingIOImpl
     * @param size
