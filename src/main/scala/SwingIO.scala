@@ -84,6 +84,22 @@ extension (io: SwingIO)
 /** Utility object for SwingIO
   */
 object SwingIO:
+  import java.awt.event.KeyEvent.*
+  enum KeyEvent(val eventId: Int):
+    case Pressed extends KeyEvent(KEY_PRESSED)
+    case Released extends KeyEvent(KEY_RELEASED)
+  enum Key(val keyCode: Int):
+    case N_0 extends Key(VK_0)
+    case N_1 extends Key(VK_1)
+    case N_2 extends Key(VK_2)
+    case N_3 extends Key(VK_3)
+    case N_4 extends Key(VK_4)
+    case N_5 extends Key(VK_5)
+    case N_6 extends Key(VK_6)
+    case N_7 extends Key(VK_7)
+    case N_8 extends Key(VK_8)
+    case N_9 extends Key(VK_9)
+
   /** Create a new SwingIO class.
     * @param title
     *   the title of the window frame
