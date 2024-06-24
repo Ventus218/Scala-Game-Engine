@@ -38,6 +38,16 @@ class EngineObjectCreationTests extends AnyFlatSpec:
         engine.find[GameObjectMock]() should contain only (obj1, obj2, obj3)
     )
 
+  it should "not instantiate a game object already present in the scene" in:
+    engine.testOnLifecycleEvent(scene)(
+      onUpdate =
+        engine.find[GameObjectMock]() should contain (obj1)
+        engine.find[GameObjectMock]() should have size (3)
+        engine.create(obj1),
+      onLateUpdate =
+        engine.find[GameObjectMock]() should have size (3)
+    )
+
   "destroy" should "remove a game object from the scene" in:
     engine.testOnLifecycleEvent(scene)(
       onEarlyUpdate =
@@ -49,7 +59,20 @@ class EngineObjectCreationTests extends AnyFlatSpec:
         engine.find[GameObjectMock]() should contain theSameElementsAs objectsWithoutRemoved
     )
 
-  it should "allow to remove multiple objects" in:
+  it should "allow to remove multiple objects in every phase of the loop" in:
+    engine.testOnLifecycleEvent(scene)(
+      onInit =
+        engine.find[GameObjectMock]() should contain theSameElementsAs Seq()
+        engine.create(obj1),
+      onStart =
+        engine.find[GameObjectMock]() should contain only (obj1)
+        engine.create(obj2),
+      onUpdate =
+        engine.find[GameObjectMock]() should contain only(obj1, obj2)
+        engine.create(obj3),
+      onDeInit =
+        engine.find[GameObjectMock]() should contain only(obj1, obj2, obj3)
+    )
     engine.testOnUpdate(scene):
       objectsWithoutRemoved.foreach(engine.destroy)
       engine.find[GameObjectMock]() should contain theSameElementsAs Seq(obj1)

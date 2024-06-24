@@ -97,7 +97,7 @@ object Engine:
 
     private def computeEvent(event: Behaviour => Unit, onlyEnabled: Boolean = true): Unit =
       gameObjects.filter(_.enabled || !onlyEnabled).foreach(event)
-      gameObjects = gameObjects ++ gameObjectsToAdd
+      gameObjects = gameObjects ++ gameObjectsToAdd.filterNot(o => gameObjects.exists(_ eq o))
       gameObjectsToAdd = Seq()
 
     private var shouldStop = false
