@@ -1,5 +1,36 @@
 # Implementazione
 
+## Engine
+L'engine ha un'implementazione di default attraverso `Engine.apply()` che accetta come parametri una IO e uno Storage.
+
+### Game Loop (run() e stop())
+Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop per prima cosa chiamerà gli handler dei behaviors nel seguente ordine:
+
+    - onInit
+    - onEnabled (solo sui behaviours abilitati)
+    - onStart (solo sui behaviours abilitati)
+    Loop until stopped
+        - onEarlyUpdate (solo sui behaviours abilitati)
+        - onUpdate (solo sui behaviours abilitati)
+        - onLateUpdate (solo sui behaviours abilitati)
+    -onDeinit
+
+Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
+
+### Delta time nanos
+L'engine offre la possibilità di ricavare il tempo trascorso dallo scorso frame al frame corrente attraverso `engine.deltaTimeNanos`.
+
+### Metodi per trovare oggetti
+L'engine offre due metodi per ricercare oggetti nel gioco:
+```scala
+// Restituisce tutti gli oggetti trovati che implementano il behaviour B
+def find[B <: Behaviour](using tt: TypeTest[Behaviour, B])(): Iterable[B]
+// Restituisce un oggetto con l'identificatore dato che implementi il behaviour B
+def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(id: String): Option[B]
+```
+Siccome l'informazione riguardante i tipi dei behaviour viene persa a runtime a causa della type erasure di Java si è dovuto utilizzare il sistema di reflection per implementare questi due metodi.
+`TypeTest` permette di potersi "portare dietro" le informazioni necessarie per controllare a runtime i tipi degli oggetti.
+
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.
 

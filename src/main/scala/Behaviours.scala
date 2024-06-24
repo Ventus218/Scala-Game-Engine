@@ -36,27 +36,55 @@ object Behaviours:
 
   /** Gives the capability to detect an AABB collision to a Behaviour.
     *
-    * @param w width of the collider, if omitted or less/equal than 0 it is equal to Positionable.width
-    * @param h height of the collider, if omitted or less/equal than 0 it is equal to Positionable.height
+    * @param w
+    *   width of the collider, if omitted or less/equal than 0 it is equal to
+    *   Positionable.width
+    * @param h
+    *   height of the collider, if omitted or less/equal than 0 it is equal to
+    *   Positionable.height
     */
   trait Collider(private var w: Double = 0, private var h: Double = 0)
       extends Positionable:
 
     dimensionable: Dimensionable =>
-      def colliderWidth: Double = if w <= 0 then width else w
-      def colliderHeight: Double = if h <= 0 then height else h
+    def colliderWidth: Double = if w <= 0 then width else w
+    def colliderHeight: Double = if h <= 0 then height else h
 
     def colliderWidth_=(width: Double): Unit = if width > 0 then w = width
     def colliderHeight_=(height: Double): Unit = if height > 0 then h = height
 
-    /** Detect if this Behaviour collided with another Behaviour that extends Collider 
-      * using an AABB collision detection algorithm
+    /** Detect if this Behaviour collided with another Behaviour that extends
+      * Collider using an AABB collision detection algorithm
       *
       * @param other
-      * @return true if a collision is detected, false otherwise
+      * @return
+      *   true if a collision is detected, false otherwise
       */
     def collides(other: Collider): Boolean =
-        this.y <= other.y + other.colliderHeight &&
+      this.y <= other.y + other.colliderHeight &&
         this.x <= other.x + other.colliderWidth &&
         this.y + this.colliderHeight >= other.y &&
         this.x + this.colliderWidth >= other.x
+
+  /** A game object mixed with this behaviour will stop the engine after the
+    * given amount of frame has been run
+    *
+    * @param nFramesToRun
+    */
+  trait NFrameStopper(val nFramesToRun: Int) extends Behaviour:
+    require(nFramesToRun >= 0)
+
+    private var frameCounter: Int = 0
+
+    private def stopEngineIfNeeded(engine: Engine): Unit =
+      if frameCounter > nFramesToRun then engine.stop()
+
+    override def onStart: Engine => Unit = (engine) =>
+      frameCounter += 1
+      stopEngineIfNeeded(engine)
+      super.onStart(engine)
+
+    override def onUpdate: Engine => Unit = (engine) =>
+      frameCounter += 1
+      stopEngineIfNeeded(engine)
+      super.onUpdate(engine)

@@ -2,7 +2,7 @@
 
 È stato realizzato un engine che eseguirà il gameloop su tutti gli oggetti della scena attiva.
 
-L'utente definise la logica del suo videogioco attraverso oggetti di gioco e composizione di comportamenti che possono essere assegnati a questi oggetti.
+L'utente definise la logica del suo videogioco attraverso la composizione di comportamenti.
 
 L'utente che utilizza il framework ne ha la seguente visione a strati:
 

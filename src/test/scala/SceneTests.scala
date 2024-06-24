@@ -1,6 +1,7 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
+import BehaviourUtils.*
 
 class SceneTests extends AnyFlatSpec:
   private def makeMockWithId(id: String) =
@@ -15,6 +16,6 @@ class SceneTests extends AnyFlatSpec:
 
   "Scene" should "instantiate game objects" in:
     val instantiatedObjects = scene()
-    instantiatedObjects.exists(_ == makeMockWithId("1")) shouldBe true
-    instantiatedObjects.exists(_ == makeMockWithId("2")) shouldBe true
-    instantiatedObjects.exists(_ == makeMockWithId("3")) shouldBe true
+    instantiatedObjects.find[Identifiable]("1").isDefined shouldBe true
+    instantiatedObjects.find[Identifiable]("2").isDefined shouldBe true
+    instantiatedObjects.find[Identifiable]("3").isDefined shouldBe true
