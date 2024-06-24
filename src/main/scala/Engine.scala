@@ -61,8 +61,10 @@ object Engine:
       extends Engine:
 
     private var gameObjects: Iterable[Behaviour] = Seq()
+    private var sceneToChange: Option[Scene] = Option.empty
 
-    override def loadScene(scene: Scene): Unit = ???
+    override def loadScene(scene: Scene): Unit = 
+      sceneToChange = Option(scene)
 
     override def enable(gameObject: Behaviour): Unit = ???
 
@@ -93,27 +95,32 @@ object Engine:
     private var shouldStop = false
 
     override def run(initialScene: Scene): Unit =
-      gameObjects = initialScene()
       shouldStop = false
       deltaTimeNanos = 0
-      gameObjects.foreach(_.onInit(this))
-
-      enabledGameObjects.foreach(_.onEnabled(this))
-
-      enabledGameObjects.foreach(_.onStart(this))
+      loadScene(initialScene)
 
       while !shouldStop do
-        val start = System.nanoTime()
-
-        enabledGameObjects.foreach(_.onEarlyUpdate(this))
-
-        enabledGameObjects.foreach(_.onUpdate(this))
-
-        enabledGameObjects.foreach(_.onLateUpdate(this))
-
-        deltaTimeNanos = System.nanoTime() - start
-
-      gameObjects.foreach(_.onDeinit(this))
+        gameObjects = sceneToChange.get()
+        sceneToChange = Option.empty
+        
+        gameObjects.foreach(_.onInit(this))
+  
+        enabledGameObjects.foreach(_.onEnabled(this))
+  
+        enabledGameObjects.foreach(_.onStart(this))
+  
+        while !shouldStop || sceneToChange.isEmpty do
+          val start = System.nanoTime()
+  
+          enabledGameObjects.foreach(_.onEarlyUpdate(this))
+  
+          enabledGameObjects.foreach(_.onUpdate(this))
+  
+          enabledGameObjects.foreach(_.onLateUpdate(this))
+  
+          deltaTimeNanos = System.nanoTime() - start
+  
+        gameObjects.foreach(_.onDeinit(this))
 
     override def stop(): Unit = shouldStop = true
 

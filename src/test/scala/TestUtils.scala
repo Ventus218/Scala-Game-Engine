@@ -93,7 +93,22 @@ object TestUtils:
     ): Unit =
       engine.testOnUpdateWithContext(scene, nFramesToRun): (_) =>
         testFunction
-
+        
+    /** Loads a new scene and calls `testFunction` on every Update
+      *
+      * @param newScene
+      * @param nFramesToRun
+      * number of frames the engine will run, defaults to 1
+      * @param testFunction
+      */
+    def testLoadSceneOnUpdate(newScene: Scene, nFramesToRun: Int = 1)(
+        testFunction: => Unit
+    ): Unit =
+      val testerObject = new Behaviour
+        with UpdateTester((_) => testFunction)
+        with NFrameStopper(nFramesToRun)
+      engine.loadScene(newScene.joined(() => Seq(testerObject)))
+      
     /** Runs the engine and calls `testFunction` on every LateUpdate
       * @param scene
       * @param nFramesToRun
