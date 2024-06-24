@@ -64,6 +64,7 @@ object Engine:
     private var sceneToChange: Option[Scene] = Option.empty
 
     private var gameObjectsToAdd: Seq[Behaviour] = Seq()
+    private var gameObjectsToRemove: Seq[Behaviour] = Seq()
 
     override def loadScene(scene: Scene): Unit =
       sceneToChange = Option(scene)
@@ -73,7 +74,8 @@ object Engine:
     override def disable(gameObject: Behaviour): Unit = ???
 
     override def create(gameObject: Behaviour): Unit =
-      gameObjectsToAdd = gameObjectsToAdd :+ gameObject
+      if !gameObjects.exists(_ eq gameObject) then
+        gameObjectsToAdd = gameObjectsToAdd :+ gameObject
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
         id: String
@@ -90,15 +92,19 @@ object Engine:
     def deltaTimeNanos: Long = _deltaTimeNanos
     private def deltaTimeNanos_=(dt: Long) = this._deltaTimeNanos = dt
 
-    override def destroy(gameObject: Behaviour): Unit = ???
+    override def destroy(gameObject: Behaviour): Unit =
+      if gameObjects.exists(_ eq gameObject) then
+        gameObjectsToRemove = gameObjectsToRemove :+ gameObject
 
     private def enabledGameObjects =
       gameObjects.filter(_.enabled)
 
     private def computeEvent(event: Behaviour => Unit, onlyEnabled: Boolean = true): Unit =
       gameObjects.filter(_.enabled || !onlyEnabled).foreach(event)
-      gameObjects = gameObjects ++ gameObjectsToAdd.filterNot(o => gameObjects.exists(_ eq o))
+      gameObjects = gameObjects ++ gameObjectsToAdd
+      gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
       gameObjectsToAdd = Seq()
+      gameObjectsToRemove = Seq()
 
     private var shouldStop = false
 
