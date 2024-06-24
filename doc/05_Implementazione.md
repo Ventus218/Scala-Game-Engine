@@ -31,6 +31,12 @@ def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(id: String): Optio
 Siccome l'informazione riguardante i tipi dei behaviour viene persa a runtime a causa della type erasure di Java si è dovuto utilizzare il sistema di reflection per implementare questi due metodi.
 `TypeTest` permette di potersi "portare dietro" le informazioni necessarie per controllare a runtime i tipi degli oggetti.
 
+### Caricamento scene
+L'engine implementa il metodo `engine.loadScene(scene: Scene)` per poter cambiare la scena durante il gioco. Quando una nuova scena viene caricata, su tutti gli oggetti della vecchia scena viene invocato il metodo `onDeinit`, mentre su
+quelli appena aggiunti viene chiamato il metodo `onInit` e, se sono abilitati, anche i metodi `onEnabled` e `onStart`.
+
+L'inserimento effettivo dei game object presenti nella scena da caricare avviene alla fine del frame corrente, tra il _LateUpdate_ del frame precedente e l'_EarlyUpdate_ del frame successivo.
+
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.
 

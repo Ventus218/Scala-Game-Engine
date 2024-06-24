@@ -96,9 +96,6 @@ object Engine:
       if gameObjects.exists(_ eq gameObject) then
         gameObjectsToRemove = gameObjectsToRemove :+ gameObject
 
-    private def enabledGameObjects =
-      gameObjects.filter(_.enabled)
-
     private def computeEvent(event: Behaviour => Unit, onlyEnabled: Boolean = true): Unit =
       gameObjects.filter(_.enabled || !onlyEnabled).foreach(event)
       gameObjects = gameObjects ++ gameObjectsToAdd
