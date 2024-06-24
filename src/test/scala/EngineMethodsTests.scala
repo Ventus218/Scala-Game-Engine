@@ -15,10 +15,20 @@ class EngineMethodsTests extends AnyFlatSpec:
   val scene1: Scene = () => Seq(id0, id1)
   val scene2: Scene = () => Seq(id2, id3)
 
-  "loadScene" should "change the active scene at the end of the frame" in:
-    engine.testOnUpdate(scene1, nFramesToRun = 2):
+  "loadScene" should "change the active scene" in:
+    engine.testOnUpdate(scene1):
       engine.find[Identifiable]() should contain theSameElementsAs scene1()
-      
+
       engine.testLoadSceneOnUpdate(scene2):
         engine.find[Identifiable]() should contain theSameElementsAs scene2()
 
+  it should "change the scene after finishing the current frame" in:
+    engine.testOnLifecycleEvent(scene1)(
+      onEarlyUpdate =
+        engine.testLoadSceneOnUpdate(scene2):
+          engine.find[Identifiable]() should contain theSameElementsAs scene2(),
+
+      onLateUpdate =
+        engine.find[Identifiable]() should contain theSameElementsAs scene1()
+    )
+  

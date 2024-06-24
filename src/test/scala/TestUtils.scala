@@ -168,6 +168,25 @@ object TestUtils:
     ): Unit =
       engine.testOnDeinitWithContext(scene, nFramesToRun): (_) =>
         testFunction
+        
+    def testOnLifecycleEvent(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
+        onInit: => Unit = (),
+        onStart: => Unit = (),
+        onEarlyUpdate: => Unit = (),
+        onUpdate: => Unit = (),
+        onLateUpdate: => Unit = (),
+        onDeInit: => Unit = ()
+    ): Unit =
+      engine.testWithTesterObject(scene)(
+        new Behaviour
+          with InitTester((_) => onInit)
+          with StartTester((_) => onStart)
+          with EarlyUpdateTester((_) => onEarlyUpdate)
+          with UpdateTester((_) => onUpdate)
+          with LateUpdateTester((_) => onLateUpdate)
+          with DeinitTester((_) => onDeInit)
+          with NFrameStopper(nFramesToRun)
+      )
 
   /** Provides multiple concrete behaviours for testing
     */
@@ -175,6 +194,18 @@ object TestUtils:
 
     // Add new testers here if needed.
 
+    trait InitTester(testFunction: (TestingContext) => Unit)
+      extends Behaviour:
+      override def onInit: Engine => Unit = (engine) =>
+        testFunction(TestingContext(engine, this))
+        super.onDeinit(engine)
+
+    trait StartTester(testFunction: (TestingContext) => Unit)
+      extends Behaviour:
+      override def onStart: Engine => Unit = (engine) =>
+        testFunction(TestingContext(engine, this))
+        super.onDeinit(engine)
+        
     trait EarlyUpdateTester(testFunction: (TestingContext) => Unit)
         extends Behaviour:
       override def onEarlyUpdate: Engine => Unit = (engine) =>
