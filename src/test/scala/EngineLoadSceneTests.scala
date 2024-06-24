@@ -4,7 +4,7 @@ import Behaviours.*
 import TestUtils.*
 import TestUtils.Testers.*
 
-class EngineMethodsTests extends AnyFlatSpec:
+class EngineLoadSceneTests extends AnyFlatSpec:
   val id0 = new Behaviour with Identifiable("0")
   val id1 = new Behaviour with Identifiable("1")
   val id2 = new Behaviour with Identifiable("2")
@@ -31,4 +31,14 @@ class EngineMethodsTests extends AnyFlatSpec:
       onLateUpdate =
         engine.find[Identifiable]() should contain theSameElementsAs scene1()
     )
-  
+
+  it should "deinitialize all the game objects before swapping scenes" in:
+    var hasCalledDeinit = false
+    engine.testOnLifecycleEvent(scene1)(
+      onStart =
+        engine.testLoadSceneOnUpdate(scene2)(testFunction = ()),
+
+      onDeInit =
+        hasCalledDeinit = true
+    )
+    hasCalledDeinit shouldBe true

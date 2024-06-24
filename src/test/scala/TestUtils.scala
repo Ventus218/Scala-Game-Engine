@@ -168,7 +168,14 @@ object TestUtils:
     ): Unit =
       engine.testOnDeinitWithContext(scene, nFramesToRun): (_) =>
         testFunction
-        
+
+    /** Runs the engine and calls the given test function on the corresponding events
+      *
+      * @param scene
+      * @param nFramesToRun
+      * number of frames the engine will run, defaults to 1
+      * @param onEvent
+      */
     def testOnLifecycleEvent(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
         onInit: => Unit = (),
         onStart: => Unit = (),
