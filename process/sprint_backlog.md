@@ -29,10 +29,23 @@
 |7|Implementazione **Storage**|Alessandro|||X|
 |9|Implementazione **Engine** (game loop)|Corrado||X||
 |9|Implementazione **Engine** (metodi find...)|Alessandro|X|||
-|9|Implementazione **Engine** (altri metodi (caricamento scena, distruzione/creazione, run/stop, delta time))|Michele||X||
+|9|Implementazione **Engine** (altri metodi (caricamento scena, distruzione/creazione))|Michele||X||
 |10|Behaviour **Positionable**|Corrado|||X|
 |10|Behaviour **Dimensionable**|Corrado|||X|
 |10|Behaviour **Collider** (di diverse forme)|Corrado|||X|
-|11|Implementazione **IO (Swing)**|Michele||X||
-|11|Implementazione **SwingRendererB**|Michele|X|||
-|11|Implementazione **SwingInputB**|Alessandro|X|||
+|11|Implementazione **IO (Swing)**|Michele|||X|
+|11|Implementazione **SwingRendererB**|Michele|||X|
+|11|Implementazione **SwingInputB**|Alessandro||X||
+
+## Sprint 2 (inizio 24/06/2024)
+|Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
+|------------|-----------|------------|:-:|:-:|:-:|
+|9|Implementazione **Engine** caricamento scena e distruzione/creazione|Michele|X|||
+|9|Implementazione **Engine** conversione delta time in secondi|Alessandro|X|||
+|9|Implementazione **Engine** abilitazione e disabilitazione degli oggetti|Alessandro|X|||
+|11|Implementazione **SwingInputB**|Alessandro||X||
+|16|Refactor: Dimensionable -> Scalable|Corrado|X|||
+|17|Refactor: Collider con più shape - Rettangolo|Corrado|X|||
+|17|Refactor: Collider con più shape - Cerchio|Corrado|X|||
+|18|Fix: Sovrapposizione di figure in IO|Michele|X|||
+|19|Definizione priorità di rendering|Michele|X|||
