@@ -14,25 +14,40 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   val objectsWithoutRemoved = Seq(obj2, obj3)
 
   "create" should "instantiate a game object in the scene" in:
-    engine.testOnUpdate():
-      engine.find[GameObjectMock]() should contain theSameElementsAs Seq()
+    engine.testOnLifecycleEvent()(
+      onEarlyUpdate =
+        engine.find[GameObjectMock]() should contain theSameElementsAs Seq(),
+      onUpdate =
+        engine.create(obj1),
+      onLateUpdate =
+        engine.find[GameObjectMock]() should contain only (obj1)
+    )
 
-      val obj = new GameObjectMock() with Identifiable("obj")
-      engine.create(obj)
-      engine.find[GameObjectMock]() should contain theSameElementsAs Seq(obj)
-
-  it should "allow to instantiate multiple objects" in:
-    engine.testOnUpdate():
-      scene().foreach(engine.create)
-      engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+  it should "allow to instantiate multiple objects in every phase of the loop" in:
+    engine.testOnLifecycleEvent()(
+      onInit =
+        engine.find[GameObjectMock]() should contain theSameElementsAs Seq()
+        engine.create(obj1),
+      onStart =
+        engine.find[GameObjectMock]() should contain only (obj1)
+        engine.create(obj2),
+      onUpdate =
+        engine.find[GameObjectMock]() should contain only (obj1, obj2)
+        engine.create(obj3),
+      onDeInit =
+        engine.find[GameObjectMock]() should contain only (obj1, obj2, obj3)
+    )
 
   "destroy" should "remove a game object from the scene" in:
-    engine.testOnUpdate(scene):
-      engine.find[GameObjectMock]() should contain theSameElementsAs scene()
-
-      val removed = engine.find[Identifiable]("1").get
-      engine.destroy(removed)
-      engine.find[GameObjectMock]() should contain theSameElementsAs objectsWithoutRemoved
+    engine.testOnLifecycleEvent(scene)(
+      onEarlyUpdate =
+        engine.find[GameObjectMock]() should contain theSameElementsAs scene(),
+      onUpdate =
+        val removed = engine.find[Identifiable]("1").get
+        engine.destroy(removed),
+      onLateUpdate =
+        engine.find[GameObjectMock]() should contain theSameElementsAs objectsWithoutRemoved
+    )
 
   it should "allow to remove multiple objects" in:
     engine.testOnUpdate(scene):

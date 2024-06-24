@@ -63,6 +63,8 @@ object Engine:
     private var gameObjects: Iterable[Behaviour] = Seq()
     private var sceneToChange: Option[Scene] = Option.empty
 
+    private var gameObjectsToAdd: Seq[Behaviour] = Seq()
+
     override def loadScene(scene: Scene): Unit =
       sceneToChange = Option(scene)
 
@@ -70,7 +72,8 @@ object Engine:
 
     override def disable(gameObject: Behaviour): Unit = ???
 
-    override def create(gameObject: Behaviour): Unit = ???
+    override def create(gameObject: Behaviour): Unit =
+      gameObjectsToAdd = gameObjectsToAdd :+ gameObject
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
         id: String
@@ -92,6 +95,11 @@ object Engine:
     private def enabledGameObjects =
       gameObjects.filter(_.enabled)
 
+    private def computeEvent(event: Behaviour => Unit, onlyEnabled: Boolean = true): Unit =
+      gameObjects.filter(_.enabled || !onlyEnabled).foreach(event)
+      gameObjects = gameObjects ++ gameObjectsToAdd
+      gameObjectsToAdd = Seq()
+
     private var shouldStop = false
 
     override def run(initialScene: Scene): Unit =
@@ -103,24 +111,24 @@ object Engine:
         gameObjects = sceneToChange.get()
         sceneToChange = Option.empty
 
-        gameObjects.foreach(_.onInit(this))
+        computeEvent(_.onInit(this), onlyEnabled = false)
 
-        enabledGameObjects.foreach(_.onEnabled(this))
+        computeEvent(_.onEnabled(this))
 
-        enabledGameObjects.foreach(_.onStart(this))
+        computeEvent(_.onStart(this))
 
-        while !shouldStop || sceneToChange.isEmpty do
+        while !shouldStop && sceneToChange.isEmpty do
           val start = System.nanoTime()
 
-          enabledGameObjects.foreach(_.onEarlyUpdate(this))
+          computeEvent(_.onEarlyUpdate(this))
 
-          enabledGameObjects.foreach(_.onUpdate(this))
+          computeEvent(_.onUpdate(this))
 
-          enabledGameObjects.foreach(_.onLateUpdate(this))
+          computeEvent(_.onLateUpdate(this))
 
           deltaTimeNanos = System.nanoTime() - start
 
-        gameObjects.foreach(_.onDeinit(this))
+        computeEvent(_.onDeinit(this), onlyEnabled = false)
 
     override def stop(): Unit = shouldStop = true
 
