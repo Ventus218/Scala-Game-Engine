@@ -11,7 +11,6 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   val engine = Engine(new IO() {}, StorageMock())
 
   val scene: Scene = () => Seq(obj1, obj2, obj3)
-  val objectsWithoutRemoved = Seq(obj2, obj3)
 
   "create" should "instantiate a game object in the scene" in:
     engine.testOnLifecycleEvent()(
@@ -56,29 +55,29 @@ class EngineObjectCreationTests extends AnyFlatSpec:
         val removed = engine.find[Identifiable]("1").get
         engine.destroy(removed),
       onLateUpdate =
-        engine.find[GameObjectMock]() should contain theSameElementsAs objectsWithoutRemoved
+        engine.find[GameObjectMock]() should contain only (obj2, obj3)
     )
 
   it should "allow to remove multiple objects in every phase of the loop" in:
     engine.testOnLifecycleEvent(scene)(
       onInit =
-        engine.find[GameObjectMock]() should contain theSameElementsAs Seq()
-        engine.create(obj1),
+        engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+        engine.destroy(obj1),
       onStart =
-        engine.find[GameObjectMock]() should contain only (obj1)
-        engine.create(obj2),
+        engine.find[GameObjectMock]() should contain only (obj2, obj3)
+        engine.destroy(obj2),
       onUpdate =
-        engine.find[GameObjectMock]() should contain only(obj1, obj2)
-        engine.create(obj3),
+        engine.find[GameObjectMock]() should contain only (obj3)
+        engine.destroy(obj3),
       onDeInit =
-        engine.find[GameObjectMock]() should contain only(obj1, obj2, obj3)
+        engine.find[GameObjectMock]() should have size (0)
     )
-    engine.testOnUpdate(scene):
-      objectsWithoutRemoved.foreach(engine.destroy)
-      engine.find[GameObjectMock]() should contain theSameElementsAs Seq(obj1)
 
-  it should "remove an object only if present" in:
-    engine.testOnUpdate(scene):
-      engine.destroy(new GameObjectMock())
-      engine.destroy(new GameObjectMock() with Identifiable("1"))
-      engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+  it should "remove an object only if already instantiated in the scene" in:
+    engine.testOnLifecycleEvent(scene)(
+      onUpdate =
+        engine.destroy(new GameObjectMock())
+        engine.destroy(new GameObjectMock() with Identifiable("1")),
+      onDeInit =
+        engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+    )
