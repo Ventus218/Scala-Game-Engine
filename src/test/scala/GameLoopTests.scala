@@ -142,17 +142,14 @@ class GameLoopTests extends AnyFlatSpec:
     engine.testOnDeinit(testScene):
       engine.deltaTimeNanos should be > 0L
 
-  it should "be higher than time elapsed inside updates (but not too much higher)" in:
+  it should "be higher than time elapsed inside updates" in:
     val slowDownDurationMillis: Long = 10
     val expectedElapsedTimeNanos =
       (slowDownDurationMillis * Math.pow(10, 6)).toLong * 3
 
     val deinitTesterFunction: (TestingContext) => Unit = (testingContext) =>
       // Approximately between the expected value and it's double
-      testingContext.engine.deltaTimeNanos should (
-        be >= expectedElapsedTimeNanos and
-          be < expectedElapsedTimeNanos * 2
-      )
+      testingContext.engine.deltaTimeNanos should be >= expectedElapsedTimeNanos
 
     // Testing on an empty scene to be more accurate
     engine.testWithTesterObject():

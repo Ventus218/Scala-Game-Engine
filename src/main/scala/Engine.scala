@@ -138,6 +138,8 @@ object Engine:
 
           enabledObjects.foreach(_.onLateUpdate(this))
 
+          io.onFrameEnd(this)
+
           deltaTimeNanos = System.nanoTime() - start
 
         gameObjects.foreach(_.onDeinit(this))
