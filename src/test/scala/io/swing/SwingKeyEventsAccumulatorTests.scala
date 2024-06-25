@@ -20,18 +20,19 @@ class SwingKeyEventsAccumulatorTests extends AnyFlatSpec:
   ): SwingKeyEvent =
     SwingKeyEvent(
       component,
-      event.eventId,
+      if event == Pressed then SwingKeyEvent.KEY_PRESSED
+      else SwingKeyEvent.KEY_RELEASED,
       System.currentTimeMillis(),
       0,
-      key.keyCode
+      key.id
     )
 
   extension (event: SwingKeyEvent)
     def fireOn(accumulator: SwingKeyEventsAccumulator): Unit =
       event.getID() match
-        case Pressed.eventId  => accumulator.keyPressed(event)
-        case Released.eventId => accumulator.keyReleased(event)
-        case _                => {}
+        case SwingKeyEvent.KEY_PRESSED  => accumulator.keyPressed(event)
+        case SwingKeyEvent.KEY_RELEASED => accumulator.keyReleased(event)
+        case _                          => {}
 
   "SwingKeyEventsAccumulator" should "implement KeyListener interface" in:
     SwingKeyEventsAccumulator().isInstanceOf[KeyListener] shouldBe true
@@ -62,6 +63,6 @@ class SwingKeyEventsAccumulatorTests extends AnyFlatSpec:
 
     accumulator.onFrameEnd()
     accumulator.lastKeyEventBeforeLastFrame(testKey) shouldBe Released
-    
+
     accumulator.onFrameEnd()
     accumulator.lastKeyEventBeforeLastFrame(testKey) shouldBe Released

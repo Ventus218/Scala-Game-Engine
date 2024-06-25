@@ -4,6 +4,7 @@ import java.util.function.Consumer
 import javax.swing
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
 import SwingIO.Key
+import java.awt.event.MouseEvent
 
 /** An implementation of IO trait using Java Swing
   */
@@ -93,10 +94,10 @@ extension (io: SwingIO)
   */
 object SwingIO:
   import java.awt.event.KeyEvent.*
-  enum KeyEvent(val eventId: Int):
-    case Pressed extends KeyEvent(KEY_PRESSED)
-    case Released extends KeyEvent(KEY_RELEASED)
-  enum Key(val keyCode: Int):
+  enum KeyEvent:
+    case Pressed
+    case Released
+  enum Key(val id: Int):
     case N_0 extends Key(VK_0)
     case N_1 extends Key(VK_1)
     case N_2 extends Key(VK_2)
@@ -107,6 +108,18 @@ object SwingIO:
     case N_7 extends Key(VK_7)
     case N_8 extends Key(VK_8)
     case N_9 extends Key(VK_9)
+
+    /** Usually the left mouse button
+      */
+    case MOUSE_BUTTON1 extends Key(MouseEvent.BUTTON1)
+
+    /** Usually the right mouse button
+      */
+    case MOUSE_BUTTON2 extends Key(MouseEvent.BUTTON2)
+
+    /** Usually the scrollwheel button
+      */
+    case MOUSE_BUTTON3 extends Key(MouseEvent.BUTTON3)
 
   /** Create a new SwingIO class.
     * @param title

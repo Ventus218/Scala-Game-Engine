@@ -1,5 +1,6 @@
 import java.awt.event.KeyListener
 import java.awt.event.{KeyEvent as SwingKeyEvent}
+import java.awt.event.{MouseEvent as SwingMouseEvent}
 import SwingIO.*
 import SwingIO.Key.*
 import SwingIO.KeyEvent.*
@@ -40,10 +41,12 @@ class SwingKeyEventsAccumulator extends KeyListener:
 
   private def processKeyEvent(e: SwingKeyEvent): Unit =
     val event = e.getID() match
-      case Pressed.eventId  => Pressed
-      case Released.eventId => Released
+      case SwingKeyEvent.KEY_PRESSED      => Pressed
+      case SwingMouseEvent.MOUSE_PRESSED  => Pressed
+      case SwingKeyEvent.KEY_RELEASED     => Released
+      case SwingMouseEvent.MOUSE_RELEASED => Released
 
-    Key.values.find(_.keyCode == e.getKeyCode()) match
+    Key.values.find(_.id == e.getKeyCode()) match
       case Some(key) =>
         currentFrameKeyEvents = currentFrameKeyEvents.updatedWith(key)(_ match
           case Some(seq) => Some(seq :+ event)
