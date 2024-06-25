@@ -113,6 +113,8 @@ object Engine:
 
         io.onFrameEnd(this)
 
+        Thread.sleep(16) // REMOVE THIS -- simple frame limiter for testing SwingIO
+
         deltaTimeNanos = System.nanoTime() - start
 
       gameObjects.foreach(_.onDeinit(this))

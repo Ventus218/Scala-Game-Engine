@@ -138,6 +138,7 @@ object SwingIO:
       SwingUtilities.invokeAndWait(() => {
         frame.add(activeCanvas)
         frame.pack()
+        frame.setVisible(true)
       })
 
     private def createCanvas(): DrawableCanvas =
@@ -162,7 +163,7 @@ object SwingIO:
     override def show(): Unit =
       if !frame.isVisible then
         initCanvas()
-        SwingUtilities.invokeAndWait(() => frame.setVisible(true))
+
       bufferCanvas.showRenderers()
       swapCanvases()
 
