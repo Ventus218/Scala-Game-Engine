@@ -120,7 +120,7 @@ object SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
 
-    private lazy val frame: JFrame = createFrame()
+    private val frame: JFrame = createFrame()
     private var bufferCanvas: DrawableCanvas = createCanvas()
     private var activeCanvas: DrawableCanvas = createCanvas()
 
@@ -137,6 +137,7 @@ object SwingIO:
     private def initCanvas(): Unit =
       SwingUtilities.invokeAndWait(() => {
         frame.add(activeCanvas)
+        frame.add(bufferCanvas)
         frame.pack()
         frame.setVisible(true)
       })

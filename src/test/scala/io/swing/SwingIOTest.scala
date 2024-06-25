@@ -48,7 +48,7 @@ object SwingIOTest:
         .withSize((400, 400))
         .withTitle("Swing Test")
         .build()
-
+    
     frame.draw(rectRenderer(0, 0))
     frame.draw(circleRenderer(100, 100))
     frame.draw(rectRenderer(300, 0))
