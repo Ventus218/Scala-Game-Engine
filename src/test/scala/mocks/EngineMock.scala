@@ -19,7 +19,7 @@ class EngineMock(val io: IO, val storage: Storage) extends Engine:
 
   override def loadScene(scene: Scene): Unit = ???
 
-  override def run(): Unit = ???
+  override def run(initialScene: Scene): Unit = ???
 
   override def deltaTimeNanos: Long = ???
 
