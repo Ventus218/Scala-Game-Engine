@@ -25,14 +25,14 @@ object Behaviours:
   trait Scalable(private var x: Double, private var y: Double)
       extends Behaviour:
 
-    def scaleX: Double = if x >= 0 then x else 0
-    def scaleY: Double = if y >= 0 then y else 0
+    def scaleX: Double = if x > 0 then x else 1
+    def scaleY: Double = if y > 0 then y else 1
 
     def scaleX_=(w: Double): Unit =
-      if w >= 0 then this.x = w
+      if w > 0 then this.x = w
 
     def scaleY_=(h: Double): Unit =
-      if h >= 0 then this.y = h
+      if h > 0 then this.y = h
 
   /** Gives the capability to detect an AABB collision to a Behaviour.
     *
