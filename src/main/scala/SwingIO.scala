@@ -151,6 +151,11 @@ object SwingIO:
       frame.setLocationRelativeTo(null)
       frame
 
+    private def swapCanvases(): Unit =
+      val temp = activeCanvas
+      activeCanvas = bufferCanvas
+      bufferCanvas = temp
+
     override def draw(renderer: Graphics2D => Unit): Unit =
       bufferCanvas.add(renderer)
 
@@ -159,9 +164,7 @@ object SwingIO:
         initCanvas()
         SwingUtilities.invokeAndWait(() => frame.setVisible(true))
       bufferCanvas.showRenderers()
-      val temp = activeCanvas
-      activeCanvas = bufferCanvas
-      bufferCanvas = temp
+      swapCanvases()
 
   /** Class used as canvas for SwingIOImpl
     * @param size
