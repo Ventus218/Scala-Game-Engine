@@ -1,17 +1,17 @@
-import SwingIO.Key
+import SwingIO.InputButton
 
 object SwingInputHandler:
 
-  type Handler = (Key) => Unit
+  type Handler = (InputButton) => Unit
 
   trait SwingInputHandler extends Behaviour:
-    var keyHandlers: Map[Key, Handler]
+    var inputHandlers: Map[InputButton, Handler]
 
     override def onEarlyUpdate: Engine => Unit = (engine) =>
       val io = engine.io.asInstanceOf[SwingIO]
 
-      keyHandlers
-        .filterKeys(io.keyWasPressed(_))
+      inputHandlers
+        .filterKeys(io.inputButtonWasPressed(_))
         .foreachEntry((key, handler) => handler(key))
 
       super.onEarlyUpdate(engine)

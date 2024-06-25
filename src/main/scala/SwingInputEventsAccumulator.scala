@@ -3,39 +3,43 @@ import java.awt.event.{InputEvent as SwingInputEvent}
 import java.awt.event.{KeyEvent as SwingKeyEvent}
 import java.awt.event.{MouseEvent as SwingMouseEvent}
 import SwingIO.*
-import SwingIO.Key.*
-import SwingIO.KeyEvent.*
+import SwingIO.InputButton.*
+import SwingIO.InputEvent.*
 import java.awt.event.MouseListener
 
-class SwingKeyEventsAccumulator extends KeyListener, MouseListener:
+class SwingInputEventsAccumulator extends KeyListener, MouseListener:
 
-  private var _lastKeyEventBeforeLastFrame: Map[Key, KeyEvent] = Map()
-  def lastKeyEventBeforeLastFrame: Map[Key, KeyEvent] =
-    _lastKeyEventBeforeLastFrame
-  private def lastKeyEventBeforeLastFrame_=(
-      newValue: Map[Key, KeyEvent]
-  ) = _lastKeyEventBeforeLastFrame = newValue
+  private var _lastInputEventBeforeLastFrame: Map[InputButton, InputEvent] =
+    Map()
+  def lastInputEventBeforeLastFrame: Map[InputButton, InputEvent] =
+    _lastInputEventBeforeLastFrame
+  private def lastInputEventBeforeLastFrame_=(
+      newValue: Map[InputButton, InputEvent]
+  ) = _lastInputEventBeforeLastFrame = newValue
 
-  private var _lastFrameKeyEvents: Map[Key, Seq[KeyEvent]] = Map()
-  def lastFrameKeyEvents: Map[Key, Seq[KeyEvent]] = _lastFrameKeyEvents
-  private def lastFrameKeyEvents_=(newValue: Map[Key, Seq[KeyEvent]]) =
-    _lastFrameKeyEvents = newValue
+  private var _lastFrameInputEvents: Map[InputButton, Seq[InputEvent]] = Map()
+  def lastFrameInputEvents: Map[InputButton, Seq[InputEvent]] =
+    _lastFrameInputEvents
+  private def lastFrameInputEvents_=(
+      newValue: Map[InputButton, Seq[InputEvent]]
+  ) =
+    _lastFrameInputEvents = newValue
 
-  private var currentFrameKeyEvents: Map[Key, Seq[KeyEvent]] = Map()
+  private var currentFrameInputEvents: Map[InputButton, Seq[InputEvent]] = Map()
 
   def onFrameEnd(): Unit =
-    lastFrameKeyEvents.toSeq
+    lastFrameInputEvents.toSeq
       .flatMap((k, seq) =>
         seq.lastOption match
           case None        => Seq()
           case Some(value) => Seq((k, value))
       )
       .foreach((k, lastEvent) =>
-        lastKeyEventBeforeLastFrame =
-          lastKeyEventBeforeLastFrame.updated(k, lastEvent)
+        lastInputEventBeforeLastFrame =
+          lastInputEventBeforeLastFrame.updated(k, lastEvent)
       )
-    lastFrameKeyEvents = currentFrameKeyEvents
-    currentFrameKeyEvents = currentFrameKeyEvents.empty
+    lastFrameInputEvents = currentFrameInputEvents
+    currentFrameInputEvents = currentFrameInputEvents.empty
 
   override def keyTyped(e: SwingKeyEvent): Unit = {}
   override def keyPressed(e: SwingKeyEvent): Unit = processInputEvent(e)
@@ -58,14 +62,14 @@ class SwingKeyEventsAccumulator extends KeyListener, MouseListener:
       case e: SwingKeyEvent   => e.getKeyCode()
       case e: SwingMouseEvent => e.getButton()
 
-    Key.values.find(_.id == id) match
-      case Some(key) =>
-        currentFrameKeyEvents = currentFrameKeyEvents.updatedWith(key)(_ match
+    InputButton.values.find(_.id == id) match
+      case Some(inputButton) =>
+        currentFrameInputEvents = currentFrameInputEvents.updatedWith(inputButton)(_ match
           case Some(seq) => Some(seq :+ event)
           case None      => Some(Seq(event))
         )
       case None =>
         // Logging instead of throwing may be a better choice
         throw Exception(
-          s"Missing $Key enum value for received Swing KeyEvent: $e"
+          s"Missing $InputButton enum value for received Swing KeyEvent: $e"
         )

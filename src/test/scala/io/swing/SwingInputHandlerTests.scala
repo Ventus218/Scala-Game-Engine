@@ -1,7 +1,7 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import SwingIO.Key
-import SwingIO.Key.*
+import SwingIO.InputButton
+import SwingIO.InputButton.*
 import SwingInputHandler.*
 import java.awt.Color
 import java.awt.Graphics2D
@@ -10,18 +10,18 @@ import TestUtils.*
 
 class SwingInputHandlerTests extends AnyFlatSpec:
 
-  "SwingInputHandler" should "accept a mapping between key events and handlers" in:
-    val f: Handler = (key: Key) => {}
-    val h: Handler = (key: Key) => {}
-    val initialKeyHandlers = Map(
+  "SwingInputHandler" should "accept a mapping between input events and handlers" in:
+    val f: Handler = (_: InputButton) => {}
+    val h: Handler = (_: InputButton) => {}
+    val initialInputHandlers = Map(
       N_0 -> f,
       N_1 -> h
     )
 
     val handler = new Behaviour with SwingInputHandler {
-      var keyHandlers: Map[Key, Handler] = initialKeyHandlers
+      var inputHandlers: Map[InputButton, Handler] = initialInputHandlers
     }
-    handler.keyHandlers should contain theSameElementsAs initialKeyHandlers
+    handler.inputHandlers should contain theSameElementsAs initialInputHandlers
 
   it should "fire handlers on early update" in:
     val engine = Engine(InputIOMock(), Storage())
@@ -44,18 +44,19 @@ class SwingInputHandlerTests extends AnyFlatSpec:
     var jumped = false
     var fired = false
 
-    var keyHandlers: Map[Key, Handler] = Map(
+    var inputHandlers: Map[InputButton, Handler] = Map(
       N_0 -> onJump,
       N_1 -> onFire
     )
 
-    private def onJump(key: Key): Unit =
+    private def onJump(inputButton: InputButton): Unit =
       jumped = true
-    private def onFire(key: Key): Unit =
+    private def onFire(inputButton: InputButton): Unit =
       fired = true
 
   private class InputIOMock extends SwingIO:
-    override def keyWasPressed(key: Key): Boolean = return key == N_0
+    override def inputButtonWasPressed(inputButton: InputButton): Boolean =
+      return inputButton == N_0
 
     override def title: String = ???
     override def pixelsPerUnit: Int = ???

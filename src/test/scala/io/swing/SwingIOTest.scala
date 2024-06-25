@@ -67,7 +67,7 @@ object SwingIOTest:
       // Change this sleep time for debugging
       Thread.sleep(10)
       io.onFrameEnd(engine)
-      println(s"Frame $frame:\t${io.keyWasPressed(Key.N_0)}")
+      println(s"Frame $frame:\t${io.inputButtonWasPressed(InputButton.N_0)}")
       frame += 1
 
 class SwingIOTest extends AnyFlatSpec:

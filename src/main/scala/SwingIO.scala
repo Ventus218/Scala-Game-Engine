@@ -3,7 +3,7 @@ import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D}
 import java.util.function.Consumer
 import javax.swing
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
-import SwingIO.Key
+import SwingIO.InputButton
 import java.awt.event.MouseEvent
 
 /** An implementation of IO trait using Java Swing
@@ -56,12 +56,12 @@ trait SwingIO extends IO:
     */
   def show(): Unit
 
-  /** Determines if a key was pressed in the last frame.
+  /** Determines if a inputButton was pressed in the last frame.
     *
-    * @param key
+    * @param inputButton
     * @return
     */
-  def keyWasPressed(key: Key): Boolean
+  def inputButtonWasPressed(inputButton: InputButton): Boolean
 
 extension (io: SwingIO)
   /** Converts game-coordinates positions to screen-coordinates positions
@@ -94,32 +94,32 @@ extension (io: SwingIO)
   */
 object SwingIO:
   import java.awt.event.KeyEvent.*
-  enum KeyEvent:
+  enum InputEvent:
     case Pressed
     case Released
-  enum Key(val id: Int):
-    case N_0 extends Key(VK_0)
-    case N_1 extends Key(VK_1)
-    case N_2 extends Key(VK_2)
-    case N_3 extends Key(VK_3)
-    case N_4 extends Key(VK_4)
-    case N_5 extends Key(VK_5)
-    case N_6 extends Key(VK_6)
-    case N_7 extends Key(VK_7)
-    case N_8 extends Key(VK_8)
-    case N_9 extends Key(VK_9)
+  enum InputButton(val id: Int):
+    case N_0 extends InputButton(VK_0)
+    case N_1 extends InputButton(VK_1)
+    case N_2 extends InputButton(VK_2)
+    case N_3 extends InputButton(VK_3)
+    case N_4 extends InputButton(VK_4)
+    case N_5 extends InputButton(VK_5)
+    case N_6 extends InputButton(VK_6)
+    case N_7 extends InputButton(VK_7)
+    case N_8 extends InputButton(VK_8)
+    case N_9 extends InputButton(VK_9)
 
     /** Usually the left mouse button
       */
-    case MOUSE_BUTTON1 extends Key(MouseEvent.BUTTON1)
+    case MOUSE_BUTTON1 extends InputButton(MouseEvent.BUTTON1)
 
     /** Usually the right mouse button
       */
-    case MOUSE_BUTTON2 extends Key(MouseEvent.BUTTON2)
+    case MOUSE_BUTTON2 extends InputButton(MouseEvent.BUTTON2)
 
     /** Usually the scrollwheel button
       */
-    case MOUSE_BUTTON3 extends Key(MouseEvent.BUTTON3)
+    case MOUSE_BUTTON3 extends InputButton(MouseEvent.BUTTON3)
 
   /** Create a new SwingIO class.
     * @param title
@@ -160,7 +160,7 @@ object SwingIO:
     private var initialized: Boolean = false
     private lazy val frame: JFrame = createFrame()
     private lazy val canvas: DrawableCanvas = createCanvas()
-    private val keyEventsAccumulator = SwingKeyEventsAccumulator()
+    private val inputEventsAccumulator = SwingInputEventsAccumulator()
 
     override def pixelsPerUnit: Int = _pixelsPerUnit
     override def pixelsPerUnit_=(p: Int): Unit =
@@ -171,13 +171,14 @@ object SwingIO:
       engine =>
         super.onFrameEnd(engine)
         show()
-        keyEventsAccumulator.onFrameEnd()
+        inputEventsAccumulator.onFrameEnd()
 
     private def initCanvas(): Unit =
       SwingUtilities.invokeAndWait(() => {
         frame.add(canvas)
         frame.pack()
-        frame.addKeyListener(keyEventsAccumulator)
+        frame.addKeyListener(inputEventsAccumulator)
+        frame.addMouseListener(inputEventsAccumulator)
       })
 
     private def createCanvas(): DrawableCanvas =
@@ -202,12 +203,12 @@ object SwingIO:
         SwingUtilities.invokeAndWait(() => frame.setVisible(true))
       canvas.showRenderers()
 
-    override def keyWasPressed(key: Key): Boolean =
-      keyEventsAccumulator.lastFrameKeyEvents.get(key) match
-        case Some(events) => events.contains(KeyEvent.Pressed)
+    override def inputButtonWasPressed(inputButton: InputButton): Boolean =
+      inputEventsAccumulator.lastFrameInputEvents.get(inputButton) match
+        case Some(events) => events.contains(InputEvent.Pressed)
         case None =>
-          keyEventsAccumulator.lastKeyEventBeforeLastFrame.get(key) == Some(
-            KeyEvent.Pressed
+          inputEventsAccumulator.lastInputEventBeforeLastFrame.get(inputButton) == Some(
+            InputEvent.Pressed
           )
 
   /** Class used as canvas for SwingIOImpl
