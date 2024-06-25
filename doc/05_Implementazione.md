@@ -37,6 +37,17 @@ quelli appena aggiunti viene chiamato il metodo `onInit` e, se sono abilitati, a
 
 L'inserimento effettivo dei game object presenti nella scena da caricare avviene alla fine del frame corrente, tra il _LateUpdate_ del frame precedente e l'_EarlyUpdate_ del frame successivo.
 
+### Creazione/Distruzione degli oggetti
+L'engine offre la possibilità di aggiungere e togliere oggetti dalla scena dinamicamente, tramite i metodi `engine.create(object: Behaviour)` e `engine.destroy(object: Behaviour)`. Qualsiasi behavior può utilizzare queste due funzioni per
+modificare gli oggetti attivi durante il gioco, senza alterare le fasi del game loop. Questi due metodi non vengono però applicati immediatamente sull'engine, per cui se si crea/distrugge un oggetto in una fase di update, il cambiamento
+potrà essere visibile solamente dal frame successivo.
+
+La creazione di un game object comporta la chiamata immediata del metodo `onInit` su quest'ultimo e del metodo `onEnabled` se abilitato. Verrà chiamato anche il metodo `onStart` all'inizio del nuovo frame, prima dell'_EarlyUpdate_.
+In questo modo, anche gli oggetti creati dinamicamente durante il gioco rispettano le fasi del ciclo di vita dei behaviour, così da non avere side-effect indesiderati.
+Se si vuole creare un oggetto che esiste già nella scena, viene lanciata una `IllegalArgumentException`.
+
+La creazione di un game object comporta la chiamata immediata del metodo `onInit` su quest'ultimo. Se si vuole distruggere un oggetto che non è presente nella scena, viene lanciata una `IllegalArgumentException`.
+
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.
 
