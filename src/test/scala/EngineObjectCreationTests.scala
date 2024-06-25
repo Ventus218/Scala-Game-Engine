@@ -46,6 +46,10 @@ class EngineObjectCreationTests extends AnyFlatSpec:
       onLateUpdate =
         engine.find[GameObjectMock]() should have size (3)
     )
+    
+  it should "invoke the method onInit on the game object" in:
+    ???
+    
 
   "destroy" should "remove a game object from the scene" in:
     engine.testOnLifecycleEvent(scene)(

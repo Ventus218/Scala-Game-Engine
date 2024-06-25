@@ -30,6 +30,51 @@ object TestUtils:
       engine.run(scene.joined(() => Seq(testerObject)))
 
     // Add new test utilities here if needed.
+    
+    /** Loads a new scene and calls `testFunction` on every Init
+      *
+      * @param newScene
+      * @param nFramesToRun
+      * number of frames the engine will run, defaults to 1
+      * @param testFunction
+      */
+    def testLoadSceneOnInit(newScene: Scene, nFramesToRun: Int = 1)(
+      testFunction: => Unit
+    ): Unit =
+      val testerObject = new Behaviour
+        with InitTester((_) => testFunction)
+        with NFrameStopper(nFramesToRun)
+      engine.loadScene(newScene.joined(() => Seq(testerObject)))
+
+    /** Loads a new scene and calls `testFunction` on every Enabled
+      *
+      * @param newScene
+      * @param nFramesToRun
+      * number of frames the engine will run, defaults to 1
+      * @param testFunction
+      */
+    def testLoadSceneOnEnabled(newScene: Scene, nFramesToRun: Int = 1)(
+      testFunction: => Unit
+    ): Unit =
+      val testerObject = new Behaviour
+        with EnabledTester((_) => testFunction)
+        with NFrameStopper(nFramesToRun)
+      engine.loadScene(newScene.joined(() => Seq(testerObject)))
+        
+    /** Loads a new scene and calls `testFunction` on every Start
+      *
+      * @param newScene
+      * @param nFramesToRun
+      * number of frames the engine will run, defaults to 1
+      * @param testFunction
+      */
+    def testLoadSceneOnStart(newScene: Scene, nFramesToRun: Int = 1)(
+      testFunction: => Unit
+    ): Unit =
+      val testerObject = new Behaviour
+        with StartTester((_) => testFunction)
+        with NFrameStopper(nFramesToRun)
+      engine.loadScene(newScene.joined(() => Seq(testerObject)))
 
     /** Runs the engine and calls `testFunction` on every EarlyUpdate
       * @param scene
@@ -178,6 +223,7 @@ object TestUtils:
       */
     def testOnLifecycleEvent(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
         onInit: => Unit = (),
+        onEnabled: => Unit = (),
         onStart: => Unit = (),
         onEarlyUpdate: => Unit = (),
         onUpdate: => Unit = (),
@@ -187,6 +233,7 @@ object TestUtils:
       engine.testWithTesterObject(scene)(
         new Behaviour
           with InitTester((_) => onInit)
+          with EnabledTester((_) => onInit)
           with StartTester((_) => onStart)
           with EarlyUpdateTester((_) => onEarlyUpdate)
           with UpdateTester((_) => onUpdate)
@@ -205,13 +252,19 @@ object TestUtils:
       extends Behaviour:
       override def onInit: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
-        super.onDeinit(engine)
+        super.onInit(engine)
+
+    trait EnabledTester(testFunction: (TestingContext) => Unit)
+      extends Behaviour:
+      override def onEnabled: Engine => Unit = (engine) =>
+        testFunction(TestingContext(engine, this))
+        super.onEnabled(engine)
 
     trait StartTester(testFunction: (TestingContext) => Unit)
       extends Behaviour:
       override def onStart: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
-        super.onDeinit(engine)
+        super.onStart(engine)
         
     trait EarlyUpdateTester(testFunction: (TestingContext) => Unit)
         extends Behaviour:

@@ -84,7 +84,7 @@ object Behaviours:
       stopEngineIfNeeded(engine)
       super.onStart(engine)
 
-    override def onEarlyUpdate: Engine => Unit = (engine) =>
+    override def onLateUpdate: Engine => Unit = (engine) =>
       frameCounter += 1
       stopEngineIfNeeded(engine)
-      super.onEarlyUpdate(engine)
+      super.onLateUpdate(engine)

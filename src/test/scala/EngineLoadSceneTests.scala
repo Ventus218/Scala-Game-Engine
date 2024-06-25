@@ -36,9 +36,30 @@ class EngineLoadSceneTests extends AnyFlatSpec:
     var hasCalledDeinit = false
     engine.testOnLifecycleEvent(scene1)(
       onStart =
-        engine.testLoadSceneOnUpdate(scene2)(testFunction = ()),
+        engine.testLoadSceneOnInit(scene2)(testFunction = ()),
 
       onDeInit =
         hasCalledDeinit = true
     )
     hasCalledDeinit shouldBe true
+
+  it should "initialize all the game objects after swapping scenes" in:
+    var hasCalledInit = false
+    engine.testOnUpdate(scene1, nFramesToRun = 2):
+        engine.testLoadSceneOnInit(scene2):
+          hasCalledInit = true
+    hasCalledInit shouldBe true
+
+  it should "invoke onEnabled on the new game objects if enabled" in :
+    var hasCalledEnabled = false
+    engine.testOnUpdate(scene1, nFramesToRun = 2):
+      engine.testLoadSceneOnEnabled(scene2):
+        hasCalledEnabled = true
+    hasCalledEnabled shouldBe true
+
+  it should "invoke onStart on the new game objects if enabled" in :
+    var hasCalledStart = false
+    engine.testOnUpdate(scene1, nFramesToRun = 2):
+      engine.testLoadSceneOnStart(scene2):
+        hasCalledStart = true
+    hasCalledStart shouldBe true
