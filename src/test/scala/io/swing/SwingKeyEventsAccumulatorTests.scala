@@ -1,5 +1,6 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import java.awt.event.KeyListener
+import java.awt.event.MouseListener
 import java.awt.event.{KeyEvent as SwingKeyEvent}
 import org.scalatest.matchers.should.Matchers.*
 import SwingIO.*
@@ -36,6 +37,9 @@ class SwingKeyEventsAccumulatorTests extends AnyFlatSpec:
 
   "SwingKeyEventsAccumulator" should "implement KeyListener interface" in:
     SwingKeyEventsAccumulator().isInstanceOf[KeyListener] shouldBe true
+
+  it should "implement MouseListener interface" in:
+    SwingKeyEventsAccumulator().isInstanceOf[MouseListener] shouldBe true
 
   it should "have last frame key events empty when initialized" in:
     SwingKeyEventsAccumulator().lastFrameKeyEvents.isEmpty shouldBe true

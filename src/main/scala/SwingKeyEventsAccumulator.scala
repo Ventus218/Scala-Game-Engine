@@ -1,11 +1,13 @@
 import java.awt.event.KeyListener
+import java.awt.event.{InputEvent as SwingInputEvent}
 import java.awt.event.{KeyEvent as SwingKeyEvent}
 import java.awt.event.{MouseEvent as SwingMouseEvent}
 import SwingIO.*
 import SwingIO.Key.*
 import SwingIO.KeyEvent.*
+import java.awt.event.MouseListener
 
-class SwingKeyEventsAccumulator extends KeyListener:
+class SwingKeyEventsAccumulator extends KeyListener, MouseListener:
 
   private var _lastKeyEventBeforeLastFrame: Map[Key, KeyEvent] = Map()
   def lastKeyEventBeforeLastFrame: Map[Key, KeyEvent] =
@@ -36,17 +38,27 @@ class SwingKeyEventsAccumulator extends KeyListener:
     currentFrameKeyEvents = currentFrameKeyEvents.empty
 
   override def keyTyped(e: SwingKeyEvent): Unit = {}
-  override def keyPressed(e: SwingKeyEvent): Unit = processKeyEvent(e)
-  override def keyReleased(e: SwingKeyEvent): Unit = processKeyEvent(e)
+  override def keyPressed(e: SwingKeyEvent): Unit = processInputEvent(e)
+  override def keyReleased(e: SwingKeyEvent): Unit = processInputEvent(e)
 
-  private def processKeyEvent(e: SwingKeyEvent): Unit =
+  override def mouseClicked(e: SwingMouseEvent): Unit = {}
+  override def mouseExited(e: SwingMouseEvent): Unit = {}
+  override def mouseEntered(e: SwingMouseEvent): Unit = {}
+  override def mousePressed(e: SwingMouseEvent): Unit = processInputEvent(e)
+  override def mouseReleased(e: SwingMouseEvent): Unit = processInputEvent(e)
+
+  private def processInputEvent(e: SwingInputEvent): Unit =
     val event = e.getID() match
       case SwingKeyEvent.KEY_PRESSED      => Pressed
       case SwingMouseEvent.MOUSE_PRESSED  => Pressed
       case SwingKeyEvent.KEY_RELEASED     => Released
       case SwingMouseEvent.MOUSE_RELEASED => Released
 
-    Key.values.find(_.id == e.getKeyCode()) match
+    val id = e match
+      case e: SwingKeyEvent   => e.getKeyCode()
+      case e: SwingMouseEvent => e.getButton()
+
+    Key.values.find(_.id == id) match
       case Some(key) =>
         currentFrameKeyEvents = currentFrameKeyEvents.updatedWith(key)(_ match
           case Some(seq) => Some(seq :+ event)
@@ -55,5 +67,5 @@ class SwingKeyEventsAccumulator extends KeyListener:
       case None =>
         // Logging instead of throwing may be a better choice
         throw Exception(
-          s"Missing $Key enum value for received Swing KeyEvent: ${e.getKeyChar()}"
+          s"Missing $Key enum value for received Swing KeyEvent: $e"
         )
