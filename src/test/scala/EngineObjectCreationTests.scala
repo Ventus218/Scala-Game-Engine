@@ -13,75 +13,101 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   val scene: Scene = () => Seq(obj1, obj2, obj3)
 
   "create" should "instantiate a game object in the scene" in:
-    engine.testOnLifecycleEvent()(
-      onEarlyUpdate =
-        engine.find[GameObjectMock]() should contain theSameElementsAs Seq(),
-      onUpdate =
-        engine.create(obj1),
-      onLateUpdate =
-        engine.find[GameObjectMock]() should contain only (obj1)
-    )
+    engine.testOnStart():
+      engine.create(obj1)
+    engine.find[GameObjectMock]() should contain only (obj1)
 
-  it should "allow to instantiate multiple objects in every phase of the loop" in:
-    engine.testOnLifecycleEvent()(
-      onInit =
-        engine.find[GameObjectMock]() should contain theSameElementsAs Seq()
-        engine.create(obj1),
-      onStart =
-        engine.find[GameObjectMock]() should contain only (obj1)
-        engine.create(obj2),
+  it should "not instantiate a game object between EarlyUpdate, Update and LateUpdate, but after" in:
+    var frame = 0
+    engine.testOnLifecycleEvent(nFramesToRun = 2)(
+      onEarlyUpdate =
+        frame += 1
+        if frame > 1 then
+          engine.find[GameObjectMock]() should contain only (obj1, obj2, obj3)
+        else
+          engine.find[GameObjectMock]() shouldBe empty
+          engine.create(obj1),
       onUpdate =
-        engine.find[GameObjectMock]() should contain only (obj1, obj2)
-        engine.create(obj3),
-      onDeInit =
-        engine.find[GameObjectMock]() should contain only (obj1, obj2, obj3)
+        if frame <= 1 then
+          engine.find[GameObjectMock]() shouldBe empty
+          engine.create(obj2),
+      onLateUpdate =
+        if frame <= 1 then
+          engine.find[GameObjectMock]() shouldBe empty
+          engine.create(obj3),
     )
 
   it should "not instantiate a game object already present in the scene" in:
+    engine.testOnUpdate(scene):
+      engine.find[GameObjectMock]() should contain (obj1)
+      an[IllegalArgumentException] shouldBe thrownBy {
+        engine.create(obj1)
+      }
+
+  it should "invoke the method onInit on the game object" in:
+    var hasCalledInit = false
+    val objInit: Behaviour =
+      new Behaviour with InitTester((_) => hasCalledInit = true)
     engine.testOnLifecycleEvent(scene)(
       onUpdate =
-        engine.find[GameObjectMock]() should contain (obj1)
-        engine.find[GameObjectMock]() should have size (3)
-        engine.create(obj1),
+        engine.create(objInit),
       onLateUpdate =
-        engine.find[GameObjectMock]() should have size (3)
+        hasCalledInit shouldBe true
     )
-    
-  it should "invoke the method onInit on the game object" in:
-    ???
-    
+
+  it should "invoke the event methods in the correct order" in :
+    import LifecycleTester.*
+    import LifecycleEvent.*
+    val objTester: LifecycleTester =
+      new Behaviour with LifecycleTester
+    engine.testOnStart():
+      engine.create(objTester)
+
+    objTester.happenedEvents should contain theSameElementsInOrderAs
+      Seq(Init, Enable, Start, EarlyUpdate, Update, LateUpdate, Deinit)
+
 
   "destroy" should "remove a game object from the scene" in:
-    engine.testOnLifecycleEvent(scene)(
-      onEarlyUpdate =
-        engine.find[GameObjectMock]() should contain theSameElementsAs scene(),
-      onUpdate =
-        val removed = engine.find[Identifiable]("1").get
-        engine.destroy(removed),
-      onLateUpdate =
-        engine.find[GameObjectMock]() should contain only (obj2, obj3)
-    )
+    engine.testOnStart(scene):
+      engine.destroy(obj1)
+    engine.find[GameObjectMock]() should contain only(obj2, obj3)
 
-  it should "allow to remove multiple objects in every phase of the loop" in:
-    engine.testOnLifecycleEvent(scene)(
-      onInit =
-        engine.find[GameObjectMock]() should contain theSameElementsAs scene()
-        engine.destroy(obj1),
-      onStart =
-        engine.find[GameObjectMock]() should contain only (obj2, obj3)
-        engine.destroy(obj2),
+  it should "not remove a game object between EarlyUpdate, Update and LateUpdate, but after" in:
+    var frame = 0
+    engine.testOnLifecycleEvent(scene, nFramesToRun = 2)(
+      onEarlyUpdate =
+        frame += 1
+        if frame > 1 then
+          engine.find[GameObjectMock]() shouldBe empty
+        else
+          engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+          engine.destroy(obj1),
       onUpdate =
-        engine.find[GameObjectMock]() should contain only (obj3)
-        engine.destroy(obj3),
-      onDeInit =
-        engine.find[GameObjectMock]() should have size (0)
+        if frame <= 1 then
+          engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+          engine.destroy(obj2),
+      onLateUpdate =
+        if frame <= 1 then
+          engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+          engine.destroy(obj3),
     )
 
   it should "remove an object only if already instantiated in the scene" in:
-    engine.testOnLifecycleEvent(scene)(
-      onUpdate =
+    engine.testOnStart(scene):
+      an[IllegalArgumentException] shouldBe thrownBy {
         engine.destroy(new GameObjectMock())
-        engine.destroy(new GameObjectMock() with Identifiable("1")),
-      onDeInit =
-        engine.find[GameObjectMock]() should contain theSameElementsAs scene()
+      }
+      an[IllegalArgumentException] shouldBe thrownBy {
+        engine.destroy(new GameObjectMock() with Identifiable("1"))
+      }
+
+  it should "invoke the method onDeinit on the game object" in:
+    var hasCalledDeinit = false
+    val objDeinit: Behaviour =
+      new Behaviour with DeinitTester((_) => hasCalledDeinit = true)
+    engine.testOnLifecycleEvent(() => Seq(objDeinit))(
+      onUpdate =
+        engine.destroy(objDeinit),
+      onLateUpdate =
+        hasCalledDeinit shouldBe true
     )

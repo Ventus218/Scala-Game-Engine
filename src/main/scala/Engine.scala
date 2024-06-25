@@ -74,8 +74,11 @@ object Engine:
     override def disable(gameObject: Behaviour): Unit = ???
 
     override def create(gameObject: Behaviour): Unit =
-      if !gameObjects.exists(_ eq gameObject) then
-        gameObjectsToAdd = gameObjectsToAdd :+ gameObject
+      if gameObjects.exists(_ eq gameObject) then
+        throw IllegalArgumentException("Cannot instantiate an object already instantiated")
+      gameObjectsToAdd = gameObjectsToAdd :+ gameObject
+      gameObject.onInit(this)
+      if gameObject.enabled then gameObject.onEnabled(this)
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
         id: String
@@ -93,14 +96,18 @@ object Engine:
     private def deltaTimeNanos_=(dt: Long) = this._deltaTimeNanos = dt
 
     override def destroy(gameObject: Behaviour): Unit =
-      if gameObjects.exists(_ eq gameObject) then
-        gameObjectsToRemove = gameObjectsToRemove :+ gameObject
+      if !gameObjects.exists(_ eq gameObject) then
+        throw IllegalArgumentException("Cannot destroy an object not instantiated")
+      gameObjectsToRemove = gameObjectsToRemove :+ gameObject
+      gameObject.onDeinit(this)
 
-    private def computeEvent(event: Behaviour => Unit, onlyEnabled: Boolean = true): Unit =
-      gameObjects.filter(_.enabled || !onlyEnabled).foreach(event)
+    private def enabledObjects = gameObjects.filter(_.enabled)
+    private def applyCreateAndDestroy(): Unit =
       gameObjects = gameObjects ++ gameObjectsToAdd
-      gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
+      gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
       gameObjectsToAdd = Seq()
+
+      gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
       gameObjectsToRemove = Seq()
 
     private var shouldStop = false
@@ -114,24 +121,26 @@ object Engine:
         gameObjects = sceneToChange.get()
         sceneToChange = Option.empty
 
-        computeEvent(_.onInit(this), onlyEnabled = false)
+        gameObjects.foreach(_.onInit(this))
 
-        computeEvent(_.onEnabled(this))
+        enabledObjects.foreach(_.onEnabled(this))
 
-        computeEvent(_.onStart(this))
+        enabledObjects.foreach(_.onStart(this))
 
         while !shouldStop && sceneToChange.isEmpty do
           val start = System.nanoTime()
 
-          computeEvent(_.onEarlyUpdate(this))
+          applyCreateAndDestroy()
 
-          computeEvent(_.onUpdate(this))
+          enabledObjects.foreach(_.onEarlyUpdate(this))
 
-          computeEvent(_.onLateUpdate(this))
+          enabledObjects.foreach(_.onUpdate(this))
+
+          enabledObjects.foreach(_.onLateUpdate(this))
 
           deltaTimeNanos = System.nanoTime() - start
 
-        computeEvent(_.onDeinit(this), onlyEnabled = false)
+        gameObjects.foreach(_.onDeinit(this))
 
     override def stop(): Unit = shouldStop = true
 
