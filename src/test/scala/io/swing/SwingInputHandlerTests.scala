@@ -57,7 +57,7 @@ class SwingInputHandlerTests extends AnyFlatSpec:
   private class InputIOMock extends SwingIO:
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
       return inputButton == N_0
-
+    override def scenePointerPosition(): (Double, Double) = ???
     override def title: String = ???
     override def pixelsPerUnit: Int = ???
     override def pixelsPerUnit_=(p: Int): Unit = ???

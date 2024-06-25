@@ -5,6 +5,7 @@ import javax.swing
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
 import SwingIO.InputButton
 import java.awt.event.MouseEvent
+import java.awt.MouseInfo
 
 /** An implementation of IO trait using Java Swing
   */
@@ -62,6 +63,8 @@ trait SwingIO extends IO:
     * @return
     */
   def inputButtonWasPressed(inputButton: InputButton): Boolean
+
+  def scenePointerPosition(): (Double, Double)
 
 extension (io: SwingIO)
   /** Converts game-coordinates positions to screen-coordinates positions
@@ -207,9 +210,19 @@ object SwingIO:
       inputEventsAccumulator.lastFrameInputEvents.get(inputButton) match
         case Some(events) => events.contains(InputEvent.Pressed)
         case None =>
-          inputEventsAccumulator.lastInputEventBeforeLastFrame.get(inputButton) == Some(
+          inputEventsAccumulator.lastInputEventBeforeLastFrame.get(
+            inputButton
+          ) == Some(
             InputEvent.Pressed
           )
+
+    override def scenePointerPosition(): (Double, Double) =
+      if !initialized then
+        throw IllegalStateException:
+          "pointerPosition cannot be queried before the GUI is initialized"
+      val absolutePointerPosition = MouseInfo.getPointerInfo().getLocation()
+      SwingUtilities.convertPointFromScreen(absolutePointerPosition, canvas)
+      this.scenePosition((absolutePointerPosition.x, absolutePointerPosition.y))
 
   /** Class used as canvas for SwingIOImpl
     * @param size

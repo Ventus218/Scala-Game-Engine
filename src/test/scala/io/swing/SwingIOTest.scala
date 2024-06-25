@@ -4,6 +4,7 @@ import org.scalatest.matchers.should.Matchers.*
 import java.awt.{Color, Graphics2D}
 import scala.reflect.TypeTest
 import SwingIO.*
+import scala.compiletime.ops.double
 
 object SwingIOTest:
   private def rectRenderer(posX: Int, posY: Int): Graphics2D => Unit = g =>
@@ -69,6 +70,18 @@ object SwingIOTest:
       io.onFrameEnd(engine)
       println(s"Frame $frame:\t${io.inputButtonWasPressed(InputButton.N_0)}")
       frame += 1
+
+  @main def testSwingPointerPosition(): Unit =
+    val io = SwingIO
+      .withTitle("Swing Test")
+      .withSize(800, 800)
+      .withPixelsPerUnitRatio(10)
+      .build()
+    io.show()
+
+    while true do
+      println(io.scenePointerPosition())
+      Thread.sleep(200)
 
 class SwingIOTest extends AnyFlatSpec:
 
@@ -160,3 +173,12 @@ class SwingIOTest extends AnyFlatSpec:
     frame.center shouldBe (10, 0.5)
     frame.center = (11.2, -20)
     frame.center shouldBe (11.2, -20)
+
+  it should "throw if pointerPosition is queried before the GUI is initialized" in:
+    val io = SwingIO
+      .withSize((400, 400))
+      .withCenter((0, 0))
+      .build()
+
+    assertThrows[IllegalStateException]:
+      io.scenePointerPosition()
