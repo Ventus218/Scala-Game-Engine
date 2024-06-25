@@ -44,7 +44,7 @@
 |9|Implementazione **Engine** conversione delta time in secondi|Alessandro|X|||
 |9|Implementazione **Engine** abilitazione e disabilitazione degli oggetti|Alessandro|X|||
 |11|Implementazione **SwingInputB**|Alessandro||X||
-|16|Refactor: Dimensionable -> Scalable|Corrado||X||
+|16|Refactor: Dimensionable -> Scalable|Corrado|||X|
 |17|Refactor: Collider con più shape - Rettangolo|Corrado|X|||
 |17|Refactor: Collider con più shape - Cerchio|Corrado|X|||
 |18|Fix: Sovrapposizione di figure in IO|Michele|X|||
