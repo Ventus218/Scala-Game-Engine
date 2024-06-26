@@ -28,18 +28,19 @@ class SwingInputEventsAccumulator extends KeyListener, MouseListener:
   private var currentFrameInputEvents: Map[InputButton, Seq[InputEvent]] = Map()
 
   def onFrameEnd(): Unit =
-    lastFrameInputEvents.toSeq
-      .flatMap((k, seq) =>
-        seq.lastOption match
-          case None        => Seq()
-          case Some(value) => Seq((k, value))
-      )
-      .foreach((k, lastEvent) =>
-        lastInputEventBeforeLastFrame =
-          lastInputEventBeforeLastFrame.updated(k, lastEvent)
-      )
-    lastFrameInputEvents = currentFrameInputEvents
-    currentFrameInputEvents = currentFrameInputEvents.empty
+    this.synchronized:
+      lastFrameInputEvents.toSeq
+        .flatMap((k, seq) =>
+          seq.lastOption match
+            case None        => Seq()
+            case Some(value) => Seq((k, value))
+        )
+        .foreach((k, lastEvent) =>
+          lastInputEventBeforeLastFrame =
+            lastInputEventBeforeLastFrame.updated(k, lastEvent)
+        )
+      lastFrameInputEvents = currentFrameInputEvents
+      currentFrameInputEvents = currentFrameInputEvents.empty
 
   override def keyTyped(e: SwingKeyEvent): Unit = {}
   override def keyPressed(e: SwingKeyEvent): Unit = processInputEvent(e)
@@ -52,24 +53,26 @@ class SwingInputEventsAccumulator extends KeyListener, MouseListener:
   override def mouseReleased(e: SwingMouseEvent): Unit = processInputEvent(e)
 
   private def processInputEvent(e: SwingInputEvent): Unit =
-    val event = e.getID() match
-      case SwingKeyEvent.KEY_PRESSED      => Pressed
-      case SwingMouseEvent.MOUSE_PRESSED  => Pressed
-      case SwingKeyEvent.KEY_RELEASED     => Released
-      case SwingMouseEvent.MOUSE_RELEASED => Released
+    this.synchronized:
+      val event = e.getID() match
+        case SwingKeyEvent.KEY_PRESSED      => Pressed
+        case SwingMouseEvent.MOUSE_PRESSED  => Pressed
+        case SwingKeyEvent.KEY_RELEASED     => Released
+        case SwingMouseEvent.MOUSE_RELEASED => Released
 
-    val id = e match
-      case e: SwingKeyEvent   => e.getKeyCode()
-      case e: SwingMouseEvent => e.getButton()
+      val id = e match
+        case e: SwingKeyEvent   => e.getKeyCode()
+        case e: SwingMouseEvent => e.getButton()
 
-    InputButton.values.find(_.id == id) match
-      case Some(inputButton) =>
-        currentFrameInputEvents = currentFrameInputEvents.updatedWith(inputButton)(_ match
-          case Some(seq) => Some(seq :+ event)
-          case None      => Some(Seq(event))
-        )
-      case None =>
-        // Logging instead of throwing may be a better choice
-        throw Exception(
-          s"Missing $InputButton enum value for received Swing KeyEvent: $e"
-        )
+      InputButton.values.find(_.id == id) match
+        case Some(inputButton) =>
+          currentFrameInputEvents =
+            currentFrameInputEvents.updatedWith(inputButton)(_ match
+              case Some(seq) => Some(seq :+ event)
+              case None      => Some(Seq(event))
+            )
+        case None =>
+          // Logging instead of throwing may be a better choice
+          throw Exception(
+            s"Missing $InputButton enum value for received Swing KeyEvent: $e"
+          )
