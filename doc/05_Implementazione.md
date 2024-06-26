@@ -20,6 +20,11 @@ Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una 
 ### Delta time nanos
 L'engine offre la possibilità di ricavare il tempo trascorso dallo scorso frame al frame corrente attraverso `engine.deltaTimeNanos`.
 
+### Limite agli FPS (Frames Per Second)
+L'engine supporta la definizione di un limite al numero massimo di fotogrammi al secondo da elaborare.
+
+Questo viene realizzato grazie ad `FPSLimiter` che effettua una stima di quanto ogni frame dovrebbe durare, e fa aspettare l'engine in modo da rispettare questa stima.
+
 ### Metodi per trovare oggetti
 L'engine offre due metodi per ricercare oggetti nel gioco:
 ```scala

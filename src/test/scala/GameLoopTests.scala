@@ -122,6 +122,20 @@ class GameLoopTests extends AnyFlatSpec:
           )
         )
 
+  it should "allow to set an fps limit" in:
+    val fpsLimit = 60
+    val expectedTimeSeconds = 1d
+
+    val engine = Engine(new IO {}, Storage(), fpsLimit)
+
+    val start = System.currentTimeMillis()
+    engine.testOnUpdate(nFramesToRun = fpsLimit):
+      {}
+    val end = System.currentTimeMillis()
+
+    val elapsedTimeSeconds = (end - start) / 1_000d
+    Math.abs(elapsedTimeSeconds - expectedTimeSeconds) should be <= 0.2
+
   "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
     engine.testOnEarlyUpdate(testScene):
       engine.deltaTimeNanos shouldBe 0
