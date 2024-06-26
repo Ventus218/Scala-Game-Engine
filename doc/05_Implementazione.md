@@ -145,6 +145,7 @@ Si possono passare i valori iniziali di `x` e `y` se non si vuole inizializzarle
 val positionable: Positionable = new Behaviour with Positionable(5)
 positionable.y = 3
 ```
+
 ### Scalable
 Un behaviour con **Scalable** come mixin ha accesso a due campi, `scaleX` e `scaleY`, che rappresentano rispettivamente quanto il behaviour dovrà essere scalato sulla X e sulla Y rispettivamente.
 Il behaviour va inizializzato con entrambi i campi e se sono negativi o uguali a zero verranno settati automaticamente ad 1, mentre, se una volta che il behaviour è stato inizializzato si provano a cambiare i campi in valori negativi o uguali ad 1, essi non cambieranno.
@@ -161,23 +162,23 @@ println(scalable.scaleY) // 3
 ```
 
 ### Collider
-Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anche **scalable** e **Positionable**. Al **Collider** potranno essere passati due valori, `w` e `h`, rispettivamente la sua larghezza e la sua altezza.
-Un valore inferiore o uguale a 0 per i due campi (valore di default = 0) comporta che larghezza e altezza del **Collider** siano gli stessi del **scalable**.
+Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anche **Positionable**.
+**Collider** è una semplice interfaccia che racchiude tutti i metodi `collides` che le varie forme di collider dovranno implementare estendendola. Chiamando tali metodi su un Collider si potrà verificare se esso ha avuto una collisione oppure no con il **Collider** passato come parametro.
 
-Questi due valori potranno poi essere recuperati dall'esterno attraverso i campi `colliderWidth` e `colliderHeight` che non potranno essere cambiati in valori negativi o uguali a 0.
-
-Infine il metodo `collides(other)` accetta in input un **Collider** e torna `true` se si verifica una collisione tra `other` e `this`, altrimenti torna `false`. Per l'algoritmo di collisione si è usato l'algoritmo [AABB collision detection](https://stackoverflow.com/tags/aabb/info).
+#### RectCollider
+**RectCollider** è un mixin che aggiunge ad un oggetto un collider rettangolare con il centro in `(Positionable.x, Positionable.y)` e dimensione data da `colliderWidth` e `colliderHeight` passati in input.
+La sua dimensione scala in base ai valori `scaleX` e `scaleY` di **Scalable**.
 
 *Esempio*
 ```scala
 // Creation of a collider with dimension 5x5 at x = 0, y = 0
-val collider: Collider = new Behaviour with Collider with scalable(5, 5) with Positionable(0, 0)
+val collider = new Behaviour with RectCollider(5, 5) with Scalable with Positionable
 
 // Creation of a collider with dimension 5x5 at x = 4, y = 4
-val collider2: Collider = new Behaviour with Collider with scalable(5, 5) with Positionable(4, 4)
+val collider2 = new Behaviour with RectCollider(5, 5) with Scalable with Positionable(4, 4)
 
-// Creation of a collider with dimension 2x2 at x = 10, y = 10
-val collider3: Collider = new Behaviour with Collider(2, 2) with scalable(5, 5) with Positionable(6, 6)
+// Creation of a collider with dimension 2x2 at x = 6, y = 6
+val collider3 = new Behaviour with RectCollider(2, 2) with Scalable with Positionable(6, 6)
 
 println(collider.collides(collider2)) //true
 println(collider.collides(collider3)) //false
@@ -191,6 +192,11 @@ println(collider3.collides(collider)) //true
 println(collider3.collides(collider2)) //false
 
 ```
+
+#### CircleCollider
+**CircleCollider** è un mixin che aggiunge ad un oggetto un collider tondo con il centro in `(Positionable.x, Positionable.y)` e raggio passato in input.
+Il suo raggio scala in base allo `scale` di **SingleScalable**.
+
 
 ### SwingRenderer
 Un behaviour con **SwingRenderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
