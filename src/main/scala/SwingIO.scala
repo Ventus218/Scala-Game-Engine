@@ -64,6 +64,10 @@ trait SwingIO extends IO:
     */
   def inputButtonWasPressed(inputButton: InputButton): Boolean
 
+  /** Retrieves the current pointer position in the scene coordinate space
+    *
+    * @return
+    */
   def scenePointerPosition(): (Double, Double)
 
 extension (io: SwingIO)
@@ -97,9 +101,18 @@ extension (io: SwingIO)
   */
 object SwingIO:
   import java.awt.event.KeyEvent.*
+
+  /** The type of input event (like Pressed or Released)
+    */
   enum InputEvent:
     case Pressed
     case Released
+
+  /** The buttons that can generate an input.
+    *
+    * @param id
+    *   The Java AWT enum int value that identifies the button
+    */
   enum InputButton(val id: Int):
     case N_0 extends InputButton(VK_0)
     case N_1 extends InputButton(VK_1)
