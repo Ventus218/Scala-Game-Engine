@@ -50,7 +50,7 @@ object SwingIOTest:
         .withSize((400, 400))
         .withTitle("Swing Test")
         .build()
-    
+
     frame.draw(rectRenderer(0, 0))
     frame.draw(circleRenderer(100, 100))
     frame.draw(rectRenderer(300, 0))
@@ -173,12 +173,3 @@ class SwingIOTest extends AnyFlatSpec:
     frame.center shouldBe (10, 0.5)
     frame.center = (11.2, -20)
     frame.center shouldBe (11.2, -20)
-
-  it should "throw if pointerPosition is queried before the GUI is initialized" in:
-    val io = SwingIO
-      .withSize((400, 400))
-      .withCenter((0, 0))
-      .build()
-
-    assertThrows[IllegalStateException]:
-      io.scenePointerPosition()

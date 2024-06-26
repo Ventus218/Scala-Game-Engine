@@ -247,8 +247,7 @@ object SwingIO:
       bufferCanvas.add(renderer)
 
     override def show(): Unit =
-      if !frame.isVisible then
-        initCanvas()
+      if !frame.isVisible then initCanvas()
 
       bufferCanvas.showRenderers()
       swapCanvases()
@@ -264,12 +263,9 @@ object SwingIO:
           )
 
     override def scenePointerPosition(): (Double, Double) =
-      if !initialized then
-        throw IllegalStateException:
-          "pointerPosition cannot be queried before the GUI is initialized"
-      val absolutePointerPosition = MouseInfo.getPointerInfo().getLocation()
-      SwingUtilities.convertPointFromScreen(absolutePointerPosition, canvas)
-      this.scenePosition((absolutePointerPosition.x, absolutePointerPosition.y))
+      val absolutePointerPos = MouseInfo.getPointerInfo().getLocation()
+      SwingUtilities.convertPointFromScreen(absolutePointerPos, activeCanvas)
+      this.scenePosition((absolutePointerPos.x, absolutePointerPos.y))
 
   /** Class used as canvas for SwingIOImpl
     * @param size
