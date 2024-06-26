@@ -61,13 +61,13 @@ object Engine:
       extends Engine:
 
     private var gameObjects: Iterable[Behaviour] = Seq()
-    private var sceneToChange: Option[Scene] = Option.empty
+    private var sceneToLoad: Option[Scene] = Option.empty
 
     private var gameObjectsToAdd: Seq[Behaviour] = Seq()
     private var gameObjectsToRemove: Seq[Behaviour] = Seq()
 
     override def loadScene(scene: Scene): Unit =
-      sceneToChange = Option(scene)
+      sceneToLoad = Option(scene)
 
     override def enable(gameObject: Behaviour): Unit = ???
 
@@ -99,15 +99,17 @@ object Engine:
       if !gameObjects.exists(_ eq gameObject) then
         throw IllegalArgumentException("Cannot destroy an object not instantiated")
       gameObjectsToRemove = gameObjectsToRemove :+ gameObject
-      gameObject.onDeinit(this)
 
     private def enabledObjects = gameObjects.filter(_.enabled)
-    private def applyCreateAndDestroy(): Unit =
+      
+    private def applyCreate(): Unit =
       gameObjects = gameObjects ++ gameObjectsToAdd
       gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
       gameObjectsToAdd = Seq()
-
+      
+    private def applyDestroy(): Unit =
       gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
+      gameObjectsToRemove.foreach(_.onDeinit(this))
       gameObjectsToRemove = Seq()
 
     private var shouldStop = false
@@ -118,8 +120,8 @@ object Engine:
       loadScene(initialScene)
 
       while !shouldStop do
-        gameObjects = sceneToChange.get()
-        sceneToChange = Option.empty
+        gameObjects = sceneToLoad.get()
+        sceneToLoad = Option.empty
 
         gameObjects.foreach(_.onInit(this))
 
@@ -127,10 +129,10 @@ object Engine:
 
         enabledObjects.foreach(_.onStart(this))
 
-        while !shouldStop && sceneToChange.isEmpty do
+        while !shouldStop && sceneToLoad.isEmpty do
           val start = System.nanoTime()
 
-          applyCreateAndDestroy()
+          applyCreate()
 
           enabledObjects.foreach(_.onEarlyUpdate(this))
 
@@ -138,7 +140,10 @@ object Engine:
 
           enabledObjects.foreach(_.onLateUpdate(this))
 
+          applyDestroy()
+          
           io.onFrameEnd(this)
+          
 
           deltaTimeNanos = System.nanoTime() - start
 

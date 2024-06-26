@@ -38,7 +38,7 @@ object TestUtils:
       * number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testLoadSceneOnInit(newScene: Scene, nFramesToRun: Int = 1)(
+    def loadSceneAndTestOnInit(newScene: Scene, nFramesToRun: Int = 1)(
       testFunction: => Unit
     ): Unit =
       val testerObject = new Behaviour
@@ -53,7 +53,7 @@ object TestUtils:
       * number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testLoadSceneOnEnabled(newScene: Scene, nFramesToRun: Int = 1)(
+    def loadSceneAndTestOnEnabled(newScene: Scene, nFramesToRun: Int = 1)(
       testFunction: => Unit
     ): Unit =
       val testerObject = new Behaviour
@@ -100,7 +100,7 @@ object TestUtils:
       * number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testLoadSceneOnStart(newScene: Scene, nFramesToRun: Int = 1)(
+    def loadSceneAndTestOnStart(newScene: Scene, nFramesToRun: Int = 1)(
       testFunction: => Unit
     ): Unit =
       val testerObject = new Behaviour
@@ -178,7 +178,7 @@ object TestUtils:
       * number of frames the engine will run, defaults to 1
       * @param testFunction
       */
-    def testLoadSceneOnUpdate(newScene: Scene, nFramesToRun: Int = 1)(
+    def loadSceneAndTestOnUpdate(newScene: Scene, nFramesToRun: Int = 1)(
         testFunction: => Unit
     ): Unit =
       val testerObject = new Behaviour

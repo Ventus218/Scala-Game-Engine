@@ -46,7 +46,7 @@ La creazione di un game object comporta la chiamata immediata del metodo `onInit
 In questo modo, anche gli oggetti creati dinamicamente durante il gioco rispettano le fasi del ciclo di vita dei behaviour, così da non avere side-effect indesiderati.
 Se si vuole creare un oggetto che esiste già nella scena, viene lanciata una `IllegalArgumentException`.
 
-La creazione di un game object comporta la chiamata immediata del metodo `onInit` su quest'ultimo. Se si vuole distruggere un oggetto che non è presente nella scena, viene lanciata una `IllegalArgumentException`.
+La distruzione di un game object comporta la chiamata del metodo `onDeinit` su quest'ultimo alla fine del frame corrente. Se si vuole distruggere un oggetto che non è presente nella scena, viene lanciata una `IllegalArgumentException`.
 
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.

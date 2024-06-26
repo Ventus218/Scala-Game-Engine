@@ -19,13 +19,13 @@ class EngineLoadSceneTests extends AnyFlatSpec:
     engine.testOnUpdate(scene1):
       engine.find[Identifiable]() should contain theSameElementsAs scene1()
 
-      engine.testLoadSceneOnUpdate(scene2):
+      engine.loadSceneAndTestOnUpdate(scene2):
         engine.find[Identifiable]() should contain theSameElementsAs scene2()
 
   it should "change the scene after finishing the current frame" in:
     engine.testOnLifecycleEvent(scene1)(
       onEarlyUpdate =
-        engine.testLoadSceneOnUpdate(scene2):
+        engine.loadSceneAndTestOnUpdate(scene2):
           engine.find[Identifiable]() should contain theSameElementsAs scene2(),
 
       onLateUpdate =
@@ -36,7 +36,7 @@ class EngineLoadSceneTests extends AnyFlatSpec:
     var hasCalledDeinit = false
     engine.testOnLifecycleEvent(scene1)(
       onStart =
-        engine.testLoadSceneOnInit(scene2)(testFunction = ()),
+        engine.loadSceneAndTestOnInit(scene2)(testFunction = ()),
 
       onDeInit =
         hasCalledDeinit = true
@@ -46,20 +46,20 @@ class EngineLoadSceneTests extends AnyFlatSpec:
   it should "initialize all the game objects after swapping scenes" in:
     var hasCalledInit = false
     engine.testOnUpdate(scene1, nFramesToRun = 2):
-        engine.testLoadSceneOnInit(scene2):
+        engine.loadSceneAndTestOnInit(scene2):
           hasCalledInit = true
     hasCalledInit shouldBe true
 
   it should "invoke onEnabled on the new game objects if enabled" in :
     var hasCalledEnabled = false
     engine.testOnUpdate(scene1, nFramesToRun = 2):
-      engine.testLoadSceneOnEnabled(scene2):
+      engine.loadSceneAndTestOnEnabled(scene2):
         hasCalledEnabled = true
     hasCalledEnabled shouldBe true
 
   it should "invoke onStart on the new game objects if enabled" in :
     var hasCalledStart = false
     engine.testOnUpdate(scene1, nFramesToRun = 2):
-      engine.testLoadSceneOnStart(scene2):
+      engine.loadSceneAndTestOnStart(scene2):
         hasCalledStart = true
     hasCalledStart shouldBe true

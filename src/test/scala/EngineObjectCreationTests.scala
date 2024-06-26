@@ -44,7 +44,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
         engine.create(obj1)
       }
 
-  it should "invoke the method onInit on the game object" in:
+  it should "immediately invoke the method onInit on the game object" in:
     var hasCalledInit = false
     val objInit: Behaviour =
       new Behaviour with InitTester((_) => hasCalledInit = true)
@@ -101,13 +101,12 @@ class EngineObjectCreationTests extends AnyFlatSpec:
         engine.destroy(new GameObjectMock() with Identifiable("1"))
       }
 
-  it should "invoke the method onDeinit on the game object" in:
+  it should "invoke the method onDeinit on the game object at the end of the frame" in:
     var hasCalledDeinit = false
     val objDeinit: Behaviour =
       new Behaviour with DeinitTester((_) => hasCalledDeinit = true)
-    engine.testOnLifecycleEvent(() => Seq(objDeinit))(
-      onUpdate =
-        engine.destroy(objDeinit),
-      onLateUpdate =
-        hasCalledDeinit shouldBe true
-    )
+
+    engine.testOnUpdate(() => Seq(objDeinit)):
+      engine.destroy(objDeinit)
+
+    hasCalledDeinit shouldBe true
