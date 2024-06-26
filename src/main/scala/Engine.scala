@@ -113,6 +113,8 @@ object Engine:
 
         io.onFrameEnd(this)
 
+        Thread.sleep(16) // REMOVE THIS -- simple frame limiter for testing SwingIO
+
         deltaTimeNanos = System.nanoTime() - start
 
       gameObjects.foreach(_.onDeinit(this))
@@ -129,3 +131,9 @@ object Engine:
     */
   def apply(io: IO, storage: Storage): Engine =
     new EngineImpl(io = io, storage = storage)
+
+  extension (e: Engine)
+    /** The amount of time elapsed between the last frame and the current one in
+      * seconds
+      */
+    def deltaTimeSeconds: Double = e.deltaTimeNanos / Math.pow(10, 9)
