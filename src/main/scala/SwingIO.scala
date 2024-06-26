@@ -137,19 +137,19 @@ object SwingIO:
     case B extends InputButton(VK_B)
     case N extends InputButton(VK_N)
     case M extends InputButton(VK_M)
-    case SPACE extends InputButton(VK_SPACE)
+    case Space extends InputButton(VK_SPACE)
 
     /** Usually the left mouse button
       */
-    case MOUSE_BUTTON1 extends InputButton(MouseEvent.BUTTON1)
+    case MouseButton1 extends InputButton(MouseEvent.BUTTON1)
 
     /** Usually the right mouse button
       */
-    case MOUSE_BUTTON2 extends InputButton(MouseEvent.BUTTON2)
+    case MouseButton2 extends InputButton(MouseEvent.BUTTON2)
 
     /** Usually the scrollwheel button
       */
-    case MOUSE_BUTTON3 extends InputButton(MouseEvent.BUTTON3)
+    case MouseButton3 extends InputButton(MouseEvent.BUTTON3)
 
   /** Create a new SwingIO class.
     * @param title
