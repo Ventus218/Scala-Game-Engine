@@ -5,14 +5,21 @@ object Physics2D:
     * with other colliders
     */
   trait Collider extends Positionable with Scalable:
-    /** Use AABB collision detection algorithm to detect a collision with a
-      * Rectangle
+    /** Detect if there was a collision with a Rectangle
       *
       * @param other
       * @return
       *   true if a detection is detected, false otherwise
       */
     def collides(other: RectCollider): Boolean
+
+    /** Detect if there was a collision with a Circle
+      *
+      * @param other
+      * @return
+      *   true if a detection is detected, false otherwise
+      */
+    def collides(other: CircleCollider): Boolean
 
   /** Gives the capability to detect an AABB collision to a Behaviour. Width and
     * Height are scaled based on ScaleX and ScaleY of the Dimensions2D.Scalable
@@ -37,16 +44,28 @@ object Physics2D:
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
 
-    private def rightCorner: Double = x + width / 2
-    private def bottomCorner: Double = y + height / 2
-    private def leftCorner: Double = x - width / 2
-    private def topCorner: Double = y - height / 2
+    private def right: Double = x + width / 2
+    private def bottom: Double = y + height / 2
+    private def left: Double = x - width / 2
+    private def top: Double = y - height / 2
 
     override def collides(other: RectCollider): Boolean =
-      this.topCorner <= other.bottomCorner &&
-        this.leftCorner <= other.rightCorner &&
-        this.rightCorner >= other.leftCorner &&
-        this.bottomCorner >= other.topCorner
+      this.top <= other.bottom &&
+        this.left <= other.right &&
+        this.right >= other.left &&
+        this.bottom >= other.top
+
+    override def collides(other: CircleCollider): Boolean =
+      val cx = other.x
+      val cy = other.y
+
+      val dx =
+        if cx < left then left - cx else if cx > right then cx - right else 0
+      val dy =
+        if cy < top then top - cy else if cy > bottom then cy - bottom else 0
+
+      val distance = Math.sqrt(dx * dx + dy * dy)
+      distance <= other.radius
 
   trait CircleCollider(private var r: Double) extends Collider:
     require(r > 0)
@@ -54,4 +73,12 @@ object Physics2D:
     def radius: Double = r
     def radius_=(radius: Double) = if radius > 0 then r = radius
 
-    override def collides(other: RectCollider): Boolean = ???
+    override def collides(other: RectCollider): Boolean = other.collides(this)
+
+    override def collides(other: CircleCollider): Boolean =
+      val dx = x - other.x
+      val dy = y - other.y
+
+      val distance = Math.sqrt(dx * dx + dy * dy)
+
+      distance <= radius + other.radius

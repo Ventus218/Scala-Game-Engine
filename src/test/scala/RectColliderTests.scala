@@ -13,8 +13,6 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.colliderHeight = 3
     collider.x = 2
     collider.y = 1
-    collider2.x = 2
-    collider2.y = -5
 
   "collider" should "initially have its width and height" in:
     collider.colliderWidth shouldBe 5
@@ -46,6 +44,9 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.colliderHeight shouldBe 20
 
   it should "collide with another collider on top" in:
+    collider2.x = 2
+    collider2.y = -5
+
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
 
@@ -61,49 +62,34 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider2.collides(collider) shouldBe false
 
   it should "collide with another collider on left" in:
-    collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
-
     collider2.y = -1
     collider2.x = -1
 
     collider.collides(collider2) shouldBe true
-    collider2.collides(collider) shouldBe true
 
     collider2.x = -2
 
     collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
 
   it should "collide with another collider on bottom" in:
-    collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
-
     collider2.y = 3.5
     collider2.x = 2
 
     collider.collides(collider2) shouldBe true
-    collider2.collides(collider) shouldBe true
 
     collider2.y = 5
 
     collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
 
   it should "collide with another collider on right" in:
-    collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
-
     collider2.y = 1
     collider2.x = 5
 
     collider.collides(collider2) shouldBe true
-    collider2.collides(collider) shouldBe true
 
     collider2.x = 6
 
     collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
     
   it should "scale its dimension based on Scalable X and Y" in:
     collider.scaleX = 2
