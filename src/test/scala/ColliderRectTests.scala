@@ -2,11 +2,11 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.*
 import org.scalatest.BeforeAndAfterEach
-import Physics2D.Collider
+import Physics2D.RectCollider
 
-class ColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
-  val collider = new Behaviour with Collider(5, 3) with Positionable with Scalable
-  val collider2 = new Behaviour with Collider(1, 2) with Positionable with Scalable
+class ColliderRectTests extends AnyFlatSpec with BeforeAndAfterEach:
+  val collider = new Behaviour with RectCollider(5, 3) with Positionable with Scalable
+  val collider2 = new Behaviour with RectCollider(1, 2) with Positionable with Scalable
 
   override protected def beforeEach(): Unit = 
     collider.colliderWidth = 5
@@ -22,10 +22,10 @@ class ColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "throws an exception if initially its width and height are less or equal to zero" in:
     assertThrows[IllegalArgumentException]:
-      new Behaviour with Collider(-1, 1) with Positionable with Scalable
+      new Behaviour with RectCollider(-1, 1) with Positionable with Scalable
 
     assertThrows[IllegalArgumentException]:
-      new Behaviour with Collider(5, 0) with Positionable with Scalable
+      new Behaviour with RectCollider(5, 0) with Positionable with Scalable
 
   it should "be able to change its width and height but not accept negative values" in:
     collider.colliderWidth = 10

@@ -1,5 +1,5 @@
 object Dimensions2D :
-    /** Add 2D position to a Behaviour
+  /** Add 2D position to a Behaviour
     *
     * @param x
     *   position of the Behaviour on the X axis
