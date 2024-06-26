@@ -182,6 +182,7 @@ class GameLoopTests extends AnyFlatSpec:
         override val io: IO = new IO {}
         override def disable(gameObject: Behaviour): Unit = ???
         override val storage: Storage = Storage()
+        override val fpsLimiter: FPSLimiter = FPSLimiter(Int.MaxValue)
         override def find[B <: Identifiable](using
             tt: TypeTest[Behaviour, B]
         )(id: String): Option[B] = ???
