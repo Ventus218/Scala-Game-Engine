@@ -11,8 +11,8 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   override protected def beforeEach(): Unit = 
     collider.colliderWidth = 5
     collider.colliderHeight = 3
-    collider.x = 0
-    collider.y = 0
+    collider.x = 2
+    collider.y = 1
     collider2.x = 2
     collider2.y = -5
 
@@ -50,12 +50,12 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider2.collides(collider) shouldBe false
 
     collider2.x = 2
-    collider2.y = -2
+    collider2.y = -1.5
 
     collider.collides(collider2) shouldBe true
     collider2.collides(collider) shouldBe true
 
-    collider2.y = -3
+    collider2.y = -2
 
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
@@ -64,7 +64,7 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
 
-    collider2.y = 0
+    collider2.y = -1
     collider2.x = -1
 
     collider.collides(collider2) shouldBe true
@@ -79,13 +79,13 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
 
-    collider2.y = 3
+    collider2.y = 3.5
     collider2.x = 2
 
     collider.collides(collider2) shouldBe true
     collider2.collides(collider) shouldBe true
 
-    collider2.y = 4
+    collider2.y = 5
 
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
@@ -94,7 +94,7 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
 
-    collider2.y = 0
+    collider2.y = 1
     collider2.x = 5
 
     collider.collides(collider2) shouldBe true

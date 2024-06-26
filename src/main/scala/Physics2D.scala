@@ -8,8 +8,9 @@ object Physics2D:
     def collides(other: RectCollider): Boolean
   
   /** Gives the capability to detect an AABB collision to a Behaviour.
-    * Width and Height are scaled based on ScaleX and ScaleY of the Dimensions2D.Scalable trait
-    * The shape of this collider is Rectangle
+    * Width and Height are scaled based on ScaleX and ScaleY of the Dimensions2D.Scalable trait.
+    * The shape of this collider is a Rectangle.
+    * The center of the collider is based on X and Y of Positionable.
     *
     * @param width
     *   width of the collider, must be greater than zero otherwise throws an IllegalArgumentException
@@ -27,6 +28,11 @@ object Physics2D:
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
 
+    private def rightCorner: Double = x + width / 2
+    private def bottomCorner: Double = y + height / 2
+    private def leftCorner: Double = x - width / 2
+    private def topCorner: Double = y - height / 2
+
     /** Detect if this Behaviour collided with another Collider
       *  using an AABB collision detection algorithm
       *
@@ -35,10 +41,10 @@ object Physics2D:
       *   true if a collision is detected, false otherwise
       */
     def collides(other: RectCollider): Boolean =
-        this.y <= other.y + other.height &&
-        this.x <= other.x + other.width &&
-        this.y + this.height >= other.y &&
-        this.x + this.width >= other.x
+        this.topCorner <= other.bottomCorner &&
+        this.leftCorner <= other.rightCorner &&
+        this.rightCorner >= other.leftCorner &&
+        this.bottomCorner >= other.topCorner
   
   trait CircleCollider(r: Double) extends Collider:
-    def collides(other: RectCollider): Boolean = ???
+    override def collides(other: RectCollider): Boolean = ???
