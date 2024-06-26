@@ -27,7 +27,7 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     assertThrows[IllegalArgumentException]:
       new Behaviour with RectCollider(5, 0) with Positionable with Scalable
 
-  it should "be able to change its width and height but not accept negative values" in:
+  it should "be able to change its width and height but not accept negative or zero values" in:
     collider.colliderWidth = 10
     collider.colliderHeight = 20
 

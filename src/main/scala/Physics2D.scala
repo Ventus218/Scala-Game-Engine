@@ -48,7 +48,10 @@ object Physics2D:
         this.rightCorner >= other.leftCorner &&
         this.bottomCorner >= other.topCorner
 
-  trait CircleCollider(r: Double) extends Collider:
-    override def collides(other: RectCollider): Boolean = ???
+  trait CircleCollider(private var r: Double) extends Collider:
+    require(r > 0)
 
-    val radius = r
+    def radius: Double = r
+    def radius_=(radius: Double) = if radius > 0 then r = radius
+
+    override def collides(other: RectCollider): Boolean = ???
