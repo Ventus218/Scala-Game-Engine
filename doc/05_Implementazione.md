@@ -7,13 +7,14 @@ L'engine ha un'implementazione di default attraverso `Engine.apply()` che accett
 Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop per prima cosa chiamerà gli handler dei behaviors nel seguente ordine:
 
     - onInit
-    - onEnabled (solo sui behaviours abilitati)
     - onStart (solo sui behaviours abilitati)
     Loop until stopped
         - onEarlyUpdate (solo sui behaviours abilitati)
         - onUpdate (solo sui behaviours abilitati)
         - onLateUpdate (solo sui behaviours abilitati)
     -onDeinit
+
+I metodi `onEnabled` e `onDisabled` vengono invece invocati non appena un behaviour modifica il proprio stato da abilitato a disabilitato, e viceversa.
 
 Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
 
