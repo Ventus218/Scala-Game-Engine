@@ -105,7 +105,7 @@ engine.loadScene(Scenes.GameScene)
 ## SwingIO
 SwingIO è il componente grafico dell'engine, e implementa il trait IO utilizzando le funzionalità del framework Swing.
 
-Il metodo `draw` di SwingIO permette di registrare una funzione `Graphics2D => Unit`, ovvero l'operazione da applicare al contesto grafico della finestra.
+Il metodo `draw` di SwingIO permette di registrare una funzione `Graphics2D => Unit`, ovvero l'operazione da applicare al contesto grafico della finestra, e la sua priorità, ovvero l'ordine con il quale queste operazioni vengono applicate.
 In questo modo, l'utente e i renderer possono aggiornare liberamente il proprio stato grafico semplicemente chiamando questo metodo.
 Il vero aggiornamento della finestra avviene alla chiamata del metodo `show`, che esegue tutte le operazioni di rendering registrate precedentemente, ridisegnando così l'interfaccia.
 Se non si chiama `show` almeno una volta, la finestra rimane nascosta.
@@ -198,7 +198,7 @@ println(collider3.collides(collider2)) //false
 
 ### SwingRenderer
 Un behaviour con **SwingRenderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
-Il rendering avviene nell'evento di `onLateUpdate` del game loop, e viene fatto invocando la funzione `renderer`, che contiene l'operazione da eseguire sul SwingIO e sul suo contesto grafico.
+Il rendering avviene nell'evento di `onLateUpdate` del game loop, e viene fatto invocando la funzione `renderer`, che contiene l'operazione da eseguire sul SwingIO e sul suo contesto grafico, insieme con la `rendereringPriority` che indica la priorità da passare allo SwingIO.
 Se l'engine non contiene un IO di tipo SwingIO, allora SwingRenderer lancia un'eccezione di tipo `ClassCastException`.
 
 SwingRenderable è esteso dal trait **SwingGameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
