@@ -1,21 +1,30 @@
 import Dimensions2D.*
 
 object Physics2D:
-  /** Gives the colliders the methods to implement in order to detect the collisions with other colliders
-    * 
+  /** Gives colliders the methods to implement in order to detect the collisions
+    * with other colliders
     */
   trait Collider extends Positionable with Scalable:
+    /** Use AABB collision detection algorithm to detect a collision with a
+      * Rectangle
+      *
+      * @param other
+      * @return
+      *   true if a detection is detected, false otherwise
+      */
     def collides(other: RectCollider): Boolean
-  
-  /** Gives the capability to detect an AABB collision to a Behaviour.
-    * Width and Height are scaled based on ScaleX and ScaleY of the Dimensions2D.Scalable trait.
-    * The shape of this collider is a Rectangle.
-    * The center of the collider is based on X and Y of Positionable.
+
+  /** Gives the capability to detect an AABB collision to a Behaviour. Width and
+    * Height are scaled based on ScaleX and ScaleY of the Dimensions2D.Scalable
+    * trait. The shape of this collider is a Rectangle. The center of the
+    * collider is based on X and Y of Positionable.
     *
     * @param width
-    *   width of the collider, must be greater than zero otherwise throws an IllegalArgumentException
+    *   width of the collider, must be greater than zero otherwise throws an
+    *   IllegalArgumentException
     * @param height
-    *   height of the collider, must be greater than zero otherwise throws an IllegalArgumentException
+    *   height of the collider, must be greater than zero otherwise throws an
+    *   IllegalArgumentException
     */
   trait RectCollider(private var width: Double, private var height: Double)
       extends Collider:
@@ -33,18 +42,13 @@ object Physics2D:
     private def leftCorner: Double = x - width / 2
     private def topCorner: Double = y - height / 2
 
-    /** Detect if this Behaviour collided with another Collider
-      *  using an AABB collision detection algorithm
-      *
-      * @param other
-      * @return
-      *   true if a collision is detected, false otherwise
-      */
-    def collides(other: RectCollider): Boolean =
-        this.topCorner <= other.bottomCorner &&
+    override def collides(other: RectCollider): Boolean =
+      this.topCorner <= other.bottomCorner &&
         this.leftCorner <= other.rightCorner &&
         this.rightCorner >= other.leftCorner &&
         this.bottomCorner >= other.topCorner
-  
+
   trait CircleCollider(r: Double) extends Collider:
     override def collides(other: RectCollider): Boolean = ???
+
+    val radius = r
