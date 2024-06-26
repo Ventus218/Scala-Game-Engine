@@ -8,7 +8,7 @@ object SwingInputHandler:
     * specific inputs are received.
     *
     * All the handlers that need to be fired are executed automatically during
-    * the LateUpdate phase of the game loop.
+    * the EarlyUpdate phase of the game loop.
     */
   trait SwingInputHandler extends Behaviour:
     /** A mapping between input buttons and their handlers.

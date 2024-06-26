@@ -133,7 +133,7 @@ val io: SwingIO = SwingIO
 Si è implementata la seguente architettura:
 - SwingIO registra gli eventi di input generati dall'utente.
 - Per gestire la concorrenza della ricezione degli eventi si è deciso di accumularli durante l'esecuzione di un frame e gestirli solo nel frame successivo.
-- Il behaviour SwingInputListener permette all'utente di definire delle associazioni `tasto premuto -> azione da eseguire`, queste azioni verrano eseguite durante la fase di LateUpdate. Questo permette un approccio event driven piuttosto che a polling.
+- Il behaviour SwingInputHandler permette all'utente di definire delle associazioni `tasto premuto -> azione da eseguire`, queste azioni verrano eseguite durante la fase di EarlyUpdate. Questo permette un approccio event driven piuttosto che a polling.
   
   Le azioni devono essere eseguite ad ogni frame se il bottone è stato premuto e rilasciato, premuto o tenuto premuto.
 
