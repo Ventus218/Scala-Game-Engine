@@ -4,7 +4,7 @@ import Dimensions2D.*
 import org.scalatest.BeforeAndAfterEach
 import Physics2D.RectCollider
 
-class ColliderRectTests extends AnyFlatSpec with BeforeAndAfterEach:
+class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   val collider = new Behaviour with RectCollider(5, 3) with Positionable with Scalable
   val collider2 = new Behaviour with RectCollider(1, 2) with Positionable with Scalable
 
