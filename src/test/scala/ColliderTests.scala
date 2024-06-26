@@ -1,7 +1,8 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
+import Dimensions2D.*
 import org.scalatest.BeforeAndAfterEach
+import Physics2D.Collider
 
 class ColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   

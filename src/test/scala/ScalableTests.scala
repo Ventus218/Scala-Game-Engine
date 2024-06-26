@@ -2,6 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import org.scalatest.BeforeAndAfterEach
+import Dimensions2D.Scalable
 
 class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
     private val scaleX: Double = 0.5
