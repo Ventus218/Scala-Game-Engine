@@ -77,8 +77,6 @@ object Engine:
       if gameObjects.exists(_ eq gameObject) then
         throw IllegalArgumentException("Cannot instantiate an object already instantiated")
       gameObjectsToAdd = gameObjectsToAdd :+ gameObject
-      gameObject.onInit(this)
-      if gameObject.enabled then gameObject.onEnabled(this)
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
         id: String
@@ -104,6 +102,7 @@ object Engine:
       
     private def applyCreate(): Unit =
       gameObjects = gameObjects ++ gameObjectsToAdd
+      gameObjectsToAdd.foreach(_.onInit(this))
       gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
       gameObjectsToAdd = Seq()
       
@@ -124,8 +123,6 @@ object Engine:
         sceneToLoad = Option.empty
 
         gameObjects.foreach(_.onInit(this))
-
-        enabledObjects.foreach(_.onEnabled(this))
 
         enabledObjects.foreach(_.onStart(this))
 

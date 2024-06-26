@@ -44,16 +44,15 @@ class EngineObjectCreationTests extends AnyFlatSpec:
         engine.create(obj1)
       }
 
-  it should "immediately invoke the method onInit on the game object" in:
+  it should "invoke the method onInit on the game object" in:
     var hasCalledInit = false
     val objInit: Behaviour =
       new Behaviour with InitTester((_) => hasCalledInit = true)
-    engine.testOnLifecycleEvent(scene)(
-      onUpdate =
-        engine.create(objInit),
-      onLateUpdate =
-        hasCalledInit shouldBe true
-    )
+
+    engine.testOnStart(scene):
+      engine.create(objInit)
+
+    hasCalledInit shouldBe true
 
   it should "invoke the event methods in the correct order" in :
     import LifecycleTester.*
@@ -64,7 +63,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
       engine.create(objTester)
 
     objTester.happenedEvents should contain theSameElementsInOrderAs
-      Seq(Init, Enable, Start, EarlyUpdate, Update, LateUpdate, Deinit)
+      Seq(Init, Start, EarlyUpdate, Update, LateUpdate, Deinit)
 
 
   "destroy" should "remove a game object from the scene" in:
