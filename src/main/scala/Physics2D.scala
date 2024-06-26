@@ -69,14 +69,17 @@ object Physics2D:
       distance <= other.radius
 
   /** Gives the capability to detect a collision to a Behaviour. The shape of
-    * the collider is a Circle. The center of the collider is based on its X and
-    * Y.
+    * the collider is a Circle. Radius is scaled based on scale of
+    * Dimensions2D.SingleScalable trait. The center of the collider is based on
+    * its X and Y.
     *
     * @param r
     *   radius of the collider, must be greater than zero otherwise throws an
     *   IllegalArgumentException
     */
-  trait CircleCollider(private var r: Double) extends Collider with SingleScalable:
+  trait CircleCollider(private var r: Double)
+      extends Collider
+      with SingleScalable:
     require(r > 0)
 
     def radius: Double = scale * r
