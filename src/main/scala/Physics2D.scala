@@ -10,15 +10,16 @@ object Physics2D:
     *   height of the collider, if omitted or less/equal than 0 it is equal to
     *   Positionable.height
     */
-  trait Collider(private var w: Double = 0, private var h: Double = 0)
-      extends Positionable:
+  trait Collider(private var width: Double, private var height: Double)
+      extends Positionable with Scalable:
+    require(width > 0)
+    require(height > 0)
 
-    dimensionable: Scalable =>
-    def colliderWidth: Double = if w <= 0 then scaleX else w
-    def colliderHeight: Double = if h <= 0 then scaleY else h
+    def colliderWidth: Double = width * scaleX
+    def colliderHeight: Double = height * scaleY
 
-    def colliderWidth_=(width: Double): Unit = if width > 0 then w = width
-    def colliderHeight_=(height: Double): Unit = if height > 0 then h = height
+    def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
+    def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
 
     /** Detect if this Behaviour collided with another Behaviour that extends
       * Collider using an AABB collision detection algorithm
@@ -28,7 +29,7 @@ object Physics2D:
       *   true if a collision is detected, false otherwise
       */
     def collides(other: Collider): Boolean =
-      this.y <= other.y + other.colliderHeight &&
-        this.x <= other.x + other.colliderWidth &&
-        this.y + this.colliderHeight >= other.y &&
-        this.x + this.colliderWidth >= other.x
+      this.y <= other.y + other.height &&
+        this.x <= other.x + other.width &&
+        this.y + this.height >= other.y &&
+        this.x + this.width >= other.x

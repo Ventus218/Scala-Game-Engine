@@ -5,51 +5,27 @@ import org.scalatest.BeforeAndAfterEach
 import Physics2D.Collider
 
 class ColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
-  
-
-  //After working engine this can be refactored and moved inside ColliderTest.scala
-  object Collider:
-    def apply(width: Double, height: Double, x: Double = 0, y: Double = 0)(
-        colliderWidth: Double = -1,
-        colliderHeight: Double = -1
-    ): Collider = new Behaviour
-      with Collider(colliderWidth, colliderHeight)
-      with Scalable(width, height)
-      with Positionable(x, y)
-  import Collider.*
-
-  val collider = Collider(width = 5, height = 3)()
-  val collider2 = Collider(width = 1, height = 2, x = 2, y = -5)()
+  val collider = new Behaviour with Collider(5, 3) with Positionable with Scalable
+  val collider2 = new Behaviour with Collider(1, 2) with Positionable with Scalable
 
   override protected def beforeEach(): Unit = 
-    collider.colliderHeight = 3
     collider.colliderWidth = 5
+    collider.colliderHeight = 3
     collider.x = 0
     collider.y = 0
     collider2.x = 2
     collider2.y = -5
 
-  "collider" should "initially have its width and height set to dimensionable width and height" in:
+  "collider" should "initially have its width and height" in:
     collider.colliderWidth shouldBe 5
     collider.colliderHeight shouldBe 3
 
-  it should "if initially its width and height are less or equal to zero set them to dimensionable width and height" in:
-    val collider = Collider(width = 1, height = 8)(colliderWidth = -5, colliderHeight = 0)
-    collider.colliderWidth shouldBe 1
-    collider.colliderHeight shouldBe 8
+  it should "throws an exception if initially its width and height are less or equal to zero" in:
+    assertThrows[IllegalArgumentException]:
+      new Behaviour with Collider(-1, 1) with Positionable with Scalable
 
-  it should "be able to create a collider in a different position" in:
-    val collider2 = Collider(width = 5, height = 3, x = 10, y = -7)()
-    collider2.x shouldBe 10
-    collider2.y shouldBe -7
-    
-    collider.x shouldBe 0
-    collider.y shouldBe 0
-
-  it should "be able to create a collider with different width and height of dimensionable" in:
-    val collider = Collider(width = 5, height = 3)(colliderWidth = 4, colliderHeight = 2)
-    collider.colliderWidth shouldBe 4
-    collider.colliderHeight shouldBe 2
+    assertThrows[IllegalArgumentException]:
+      new Behaviour with Collider(5, 0) with Positionable with Scalable
 
   it should "be able to change its width and height but not accept negative values" in:
     collider.colliderWidth = 10
@@ -129,3 +105,12 @@ class ColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
     
+  it should "scale its dimension based on Scalable X and Y" in:
+    collider.scaleX = 2
+    collider.colliderWidth shouldBe 10
+
+    collider.scaleX = 3
+    collider.colliderWidth shouldBe 15
+
+    collider.scaleY = 3
+    collider.colliderHeight shouldBe 9

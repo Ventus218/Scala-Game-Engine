@@ -15,7 +15,7 @@ object Dimensions2D :
     * @param y
     *   multiplier of the height, must be greater than 0.
     */
-  trait Scalable(private var x: Double, private var y: Double)
+  trait Scalable(private var x: Double = 1, private var y: Double = 1)
       extends Behaviour:
 
     def scaleX: Double = if x > 0 then x else 1
