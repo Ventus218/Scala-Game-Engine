@@ -9,7 +9,7 @@ import TestUtils.Testers.*
 
 class GameLoopTests extends AnyFlatSpec:
   private def getSequenceOfActions(): Seq[LifecycleEvent] =
-    Seq(Init, Enable, Start)
+    Seq(Init, Start)
 
   private def getUpdatesSequenceOfActions(): Seq[LifecycleEvent] =
     Seq(EarlyUpdate, Update, LateUpdate)
