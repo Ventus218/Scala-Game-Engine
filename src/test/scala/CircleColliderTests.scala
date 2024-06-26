@@ -35,10 +35,16 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "throws an exception if initially its radius is less or equal to zero" in:
     assertThrows[IllegalArgumentException]:
-      new Behaviour with CircleCollider(r = 0) with Positionable with SingleScalable
+      new Behaviour
+        with CircleCollider(r = 0)
+        with Positionable
+        with SingleScalable
 
     assertThrows[IllegalArgumentException]:
-      new Behaviour with CircleCollider(r = -5) with Positionable with SingleScalable
+      new Behaviour
+        with CircleCollider(r = -5)
+        with Positionable
+        with SingleScalable
 
   it should "be able to change its radius but not accept negative or zero values" in:
     collider.radius = 20
@@ -139,9 +145,9 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
     collider.collides(collider2) shouldBe false
 
-    it should "scale its radius based on SingleScalable" in:
-        collider.scale = 2
-        collider.radius shouldBe 4
+  it should "scale its radius based on SingleScalable" in:
+    collider.scale = 2
+    collider.radius shouldBe 4
 
-        collider.scale = 3
-        collider.radius shouldBe 6
+    collider.scale = 3
+    collider.radius shouldBe 6
