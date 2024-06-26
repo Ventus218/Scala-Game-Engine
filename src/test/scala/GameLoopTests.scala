@@ -148,7 +148,7 @@ class GameLoopTests extends AnyFlatSpec:
       (slowDownDurationMillis * Math.pow(10, 6)).toLong * 3
 
     val deinitTesterFunction: (TestingContext) => Unit = (testingContext) =>
-      // Approximately between the expected value and it's double
+      // More the expected value
       testingContext.engine.deltaTimeNanos should be >= expectedElapsedTimeNanos
 
     // Testing on an empty scene to be more accurate
@@ -159,3 +159,30 @@ class GameLoopTests extends AnyFlatSpec:
         with SlowEarlyUpdater(slowDownDurationMillis)
         with SlowUpdater(slowDownDurationMillis)
         with SlowLateUpdater(slowDownDurationMillis)
+
+  "deltaTimeSeconds" should "represent deltaTimeNanos in seconds" in:
+    val engineMock = (nanoseconds: Long) =>
+      import scala.reflect.TypeTest
+      new Engine() {
+        override def deltaTimeNanos: Long = nanoseconds
+        override val io: IO = new IO {}
+        override def disable(gameObject: Behaviour): Unit = ???
+        override val storage: Storage = Storage()
+        override def find[B <: Identifiable](using
+            tt: TypeTest[Behaviour, B]
+        )(id: String): Option[B] = ???
+        override def find[B <: Behaviour](using
+            tt: TypeTest[Behaviour, B]
+        )(): Iterable[B] = ???
+        override def loadScene(scene: Scene): Unit = ???
+        override def destroy(gameObject: Behaviour): Unit = ???
+        override def run(initialScene: Scene): Unit = ???
+        override def enable(gameObject: Behaviour): Unit = ???
+        override def stop(): Unit = ???
+        override def create(gameObject: Behaviour): Unit = ???
+      }
+
+    engineMock(10_000_000).deltaTimeSeconds shouldBe 0.01
+    engineMock(15_000_000).deltaTimeSeconds shouldBe 0.015
+    engineMock(166_000_005).deltaTimeSeconds shouldBe 0.166000005
+    engineMock(1_000_000_000).deltaTimeSeconds shouldBe 1

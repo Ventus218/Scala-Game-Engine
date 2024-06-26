@@ -13,7 +13,7 @@ class ColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
         colliderHeight: Double = -1
     ): Collider = new Behaviour
       with Collider(colliderWidth, colliderHeight)
-      with Dimensionable(width, height)
+      with Scalable(width, height)
       with Positionable(x, y)
   import Collider.*
 
