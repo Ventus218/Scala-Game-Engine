@@ -15,24 +15,24 @@ object Behaviours:
     */
   trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
 
-  /** Add 2D dimension to a Behaviour. Does not work with negative values.
+  /** Gives to other behaviours a scale on X and Y of their dimension.
     *
-    * @param w
-    *   width of the Behaviour. If w < 0 when created, width will be 0
-    * @param h
-    *   height of the Behaviour. If h < 0 when created, height will be 0
+    * @param x
+    *   multiplier of the width, must be greater than 0.
+    * @param y
+    *   multiplier of the height, must be greater than 0.
     */
-  trait Dimensionable(private var w: Double, private var h: Double)
+  trait Scalable(private var x: Double, private var y: Double)
       extends Behaviour:
 
-    def width: Double = if w >= 0 then w else 0
-    def height: Double = if h >= 0 then h else 0
+    def scaleX: Double = if x > 0 then x else 1
+    def scaleY: Double = if y > 0 then y else 1
 
-    def width_=(w: Double): Unit =
-      if w >= 0 then this.w = w
+    def scaleX_=(w: Double): Unit =
+      if w > 0 then this.x = w
 
-    def height_=(h: Double): Unit =
-      if h >= 0 then this.h = h
+    def scaleY_=(h: Double): Unit =
+      if h > 0 then this.y = h
 
   /** Gives the capability to detect an AABB collision to a Behaviour.
     *
@@ -46,9 +46,9 @@ object Behaviours:
   trait Collider(private var w: Double = 0, private var h: Double = 0)
       extends Positionable:
 
-    dimensionable: Dimensionable =>
-    def colliderWidth: Double = if w <= 0 then width else w
-    def colliderHeight: Double = if h <= 0 then height else h
+    dimensionable: Scalable =>
+    def colliderWidth: Double = if w <= 0 then scaleX else w
+    def colliderHeight: Double = if h <= 0 then scaleY else h
 
     def colliderWidth_=(width: Double): Unit = if width > 0 then w = width
     def colliderHeight_=(height: Double): Unit = if height > 0 then h = height
