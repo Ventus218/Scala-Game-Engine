@@ -4,7 +4,7 @@ object Physics2D:
   /** Gives colliders the methods to implement in order to detect the collisions
     * with other colliders
     */
-  trait Collider extends Positionable with Scalable:
+  trait Collider extends Positionable:
     /** Detect if there was a collision with a Rectangle
       *
       * @param other
@@ -21,7 +21,7 @@ object Physics2D:
       */
     def collides(other: CircleCollider): Boolean
 
-  /** Gives the capability to detect an AABB collision to a Behaviour. Width and
+  /** Gives the capability to detect a collision to a Behaviour. Width and
     * Height are scaled based on ScaleX and ScaleY of the Dimensions2D.Scalable
     * trait. The shape of this collider is a Rectangle. The center of the
     * collider is based on X and Y of Positionable.
@@ -34,7 +34,8 @@ object Physics2D:
     *   IllegalArgumentException
     */
   trait RectCollider(private var width: Double, private var height: Double)
-      extends Collider:
+      extends Collider
+      with Scalable:
     require(width > 0)
     require(height > 0)
 
@@ -67,6 +68,14 @@ object Physics2D:
       val distance = Math.sqrt(dx * dx + dy * dy)
       distance <= other.radius
 
+  /** Gives the capability to detect a collision to a Behaviour. The shape of
+    * the collider is a Circle. The center of the collider is based on its X and
+    * Y.
+    *
+    * @param r
+    *   radius of the collider, must be greater than zero otherwise throws an
+    *   IllegalArgumentException
+    */
   trait CircleCollider(private var r: Double) extends Collider:
     require(r > 0)
 
