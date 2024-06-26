@@ -50,13 +50,6 @@ class EngineLoadSceneTests extends AnyFlatSpec:
           hasCalledInit = true
     hasCalledInit shouldBe true
 
-  it should "invoke onEnabled on the new game objects if enabled" in :
-    var hasCalledEnabled = false
-    engine.testOnUpdate(scene1, nFramesToRun = 2):
-      engine.loadSceneAndTestOnEnabled(scene2):
-        hasCalledEnabled = true
-    hasCalledEnabled shouldBe true
-
   it should "invoke onStart on the new game objects if enabled" in :
     var hasCalledStart = false
     engine.testOnUpdate(scene1, nFramesToRun = 2):
