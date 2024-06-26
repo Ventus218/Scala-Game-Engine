@@ -5,12 +5,13 @@ import Dimensions2D.Positionable
 import Dimensions2D.Scalable
 import Physics2D.CircleCollider
 import Physics2D.RectCollider
+import Dimensions2D.SingleScalable
 
 class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   val collider = new Behaviour
     with CircleCollider(r = 2)
     with Positionable
-    with Scalable
+    with SingleScalable
 
   val collider2 = new Behaviour
     with RectCollider(2, 2)
@@ -28,16 +29,16 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     val collider2 = new Behaviour
       with CircleCollider(r = 3.5)
       with Positionable
-      with Scalable
+      with SingleScalable
 
     collider2.radius shouldBe 3.5
 
   it should "throws an exception if initially its radius is less or equal to zero" in:
     assertThrows[IllegalArgumentException]:
-      new Behaviour with CircleCollider(r = 0) with Positionable with Scalable
+      new Behaviour with CircleCollider(r = 0) with Positionable with SingleScalable
 
     assertThrows[IllegalArgumentException]:
-      new Behaviour with CircleCollider(r = -5) with Positionable with Scalable
+      new Behaviour with CircleCollider(r = -5) with Positionable with SingleScalable
 
   it should "be able to change its radius but not accept negative or zero values" in:
     collider.radius = 20
@@ -117,7 +118,7 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     val collider2 = new Behaviour
       with CircleCollider(2)
       with Positionable(-6, -6)
-      with Scalable
+      with SingleScalable
 
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
@@ -137,3 +138,10 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider2.y = collider2.y + 0.1
 
     collider.collides(collider2) shouldBe false
+
+    it should "scale its radius based on SingleScalable" in:
+        collider.scale = 2
+        collider.radius shouldBe 4
+
+        collider.scale = 3
+        collider.radius shouldBe 6
