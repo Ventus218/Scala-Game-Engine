@@ -1,5 +1,5 @@
 import java.awt
-import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D}
+import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D, RenderingHints}
 import java.util.function.Consumer
 import javax.swing
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
@@ -123,9 +123,9 @@ object SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
 
-    private var initialized: Boolean = false
     private lazy val frame: JFrame = createFrame()
-    private lazy val canvas: DrawableCanvas = createCanvas()
+    private var bufferCanvas: DrawableCanvas = createCanvas()
+    private var activeCanvas: DrawableCanvas = createCanvas()
 
     override def pixelsPerUnit: Int = _pixelsPerUnit
     override def pixelsPerUnit_=(p: Int): Unit =
@@ -139,8 +139,10 @@ object SwingIO:
 
     private def initCanvas(): Unit =
       SwingUtilities.invokeAndWait(() => {
-        frame.add(canvas)
+        frame.add(activeCanvas)
+        frame.add(bufferCanvas)
         frame.pack()
+        frame.setVisible(true)
       })
 
     private def createCanvas(): DrawableCanvas =
@@ -153,17 +155,21 @@ object SwingIO:
       frame.setResizable(false)
       frame.setLocationRelativeTo(null)
       frame
+    
+    private def swapCanvases(): Unit =
+      val temp = activeCanvas
+      activeCanvas = bufferCanvas
+      bufferCanvas = temp
 
     override def draw(renderer: Graphics2D => Unit, priority: Int): Unit =
-      canvas.add((renderer, priority))
+      bufferCanvas.add((renderer, priority))
 
     override def show(): Unit =
-      if !initialized then
-        initialized = true
-        initCanvas()
       if !frame.isVisible then
-        SwingUtilities.invokeAndWait(() => frame.setVisible(true))
-      canvas.showRenderers()
+        initCanvas()
+
+      bufferCanvas.showRenderers()
+      swapCanvases()
 
   /** Class used as canvas for SwingIOImpl
     * @param size
@@ -175,18 +181,22 @@ object SwingIO:
 
     setPreferredSize(new Dimension(size._1, size._2))
     setBackground(color)
+    
+    def add(renderer: (Graphics2D => Unit, Int)): Unit =
+      renderers = renderers :+ renderer
 
-    def add(renderer: (Graphics2D => Unit, Int)): Unit = renderers =
-      renderers :+ renderer
     def showRenderers(): Unit = SwingUtilities.invokeLater(() => {
       show = true; repaint()
     })
     override def paintComponent(g: Graphics): Unit =
       super.paintComponent(g)
-      if !show then return
-      renderers.sortBy((f, ord) => ord).foreach((f, ord) => f(g.asInstanceOf[Graphics2D]))
-      renderers = Seq.empty
-      show = false
+      if show then
+        val g2: Graphics2D = g.asInstanceOf[Graphics2D]
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        renderers.sortBy((f, ord) => ord).foreach((f, ord) => f(g2))
+        renderers = Seq.empty
+        show = false
+
 
   /* builder class for SwingIO, with defaults */
 
