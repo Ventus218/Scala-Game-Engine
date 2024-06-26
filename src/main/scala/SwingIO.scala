@@ -287,7 +287,10 @@ object SwingIO:
       super.paintComponent(g)
       if show then
         val g2: Graphics2D = g.asInstanceOf[Graphics2D]
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
+        g2.setRenderingHint(
+          RenderingHints.KEY_ANTIALIASING,
+          RenderingHints.VALUE_ANTIALIAS_ON
+        )
         renderers.foreach(_(g2))
         renderers = Seq.empty
         show = false
