@@ -82,56 +82,53 @@ class SwingInputHandlerTests extends AnyFlatSpec:
   val engine = Engine(io, Storage())
 
   engine.run: () =>
-    Seq(
-      new Behaviour
-        with Positionable
-        with SwingSquareRenderer(2, Color.blue)
-        with SwingInputHandler {
+    Seq(GameObject())
 
-        val v = 20
-
-        var inputHandlers: Map[InputButton, Handler] = Map(
-          D -> moveRight,
-          A -> moveLeft,
-          W -> moveUp,
-          S -> moveDown,
-          MouseButton1 -> onTeleport
-        )
-
-        var shouldTeleport = false
-        var moveRight = false
-        var moveLeft = false
-        var moveUp = false
-        var moveDown = false
-
-        private def onTeleport(inputButton: InputButton): Unit =
-          shouldTeleport = true
-        private def moveRight(input: InputButton): Unit =
-          moveRight = true
-        private def moveLeft(input: InputButton): Unit =
-          moveLeft = true
-        private def moveUp(input: InputButton): Unit =
-          moveUp = true
-        private def moveDown(input: InputButton): Unit =
-          moveDown = true
-
-        override def onUpdate: Engine => Unit = (engine) =>
-          if moveRight then x += v * engine.deltaTimeNanos * Math.pow(10, -9)
-          if moveLeft then x -= v * engine.deltaTimeNanos * Math.pow(10, -9)
-          if moveUp then y += v * engine.deltaTimeNanos * Math.pow(10, -9)
-          if moveDown then y -= v * engine.deltaTimeNanos * Math.pow(10, -9)
-          if shouldTeleport then
-            shouldTeleport = false
-            val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
-            x = pointer._1
-            y = pointer._2
-            println(pointer)
-
-          moveRight = false
-          moveLeft = false
-          moveUp = false
-          moveDown = false
-          Thread.sleep(20)
-
-      }
+  class GameObject
+      extends Behaviour
+      with Positionable
+      with SwingSquareRenderer(2, Color.blue)
+      with SwingInputHandler:
+    var inputHandlers: Map[InputButton, Handler] = Map(
+      D -> moveRight,
+      A -> moveLeft,
+      W -> moveUp,
+      S -> moveDown,
+      MouseButton1 -> onTeleport
     )
+
+    val v = 20
+    var shouldTeleport = false
+    var moveRight = false
+    var moveLeft = false
+    var moveUp = false
+    var moveDown = false
+
+    private def onTeleport(inputButton: InputButton): Unit =
+      shouldTeleport = true
+    private def moveRight(input: InputButton): Unit =
+      moveRight = true
+    private def moveLeft(input: InputButton): Unit =
+      moveLeft = true
+    private def moveUp(input: InputButton): Unit =
+      moveUp = true
+    private def moveDown(input: InputButton): Unit =
+      moveDown = true
+
+    override def onUpdate: Engine => Unit = (engine) =>
+      if moveRight then x += v * engine.deltaTimeNanos * Math.pow(10, -9)
+      if moveLeft then x -= v * engine.deltaTimeNanos * Math.pow(10, -9)
+      if moveUp then y += v * engine.deltaTimeNanos * Math.pow(10, -9)
+      if moveDown then y -= v * engine.deltaTimeNanos * Math.pow(10, -9)
+      if shouldTeleport then
+        shouldTeleport = false
+        val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
+        x = pointer._1
+        y = pointer._2
+        println(pointer)
+
+      moveRight = false
+      moveLeft = false
+      moveUp = false
+      moveDown = false
+      Thread.sleep(20)
