@@ -110,6 +110,10 @@ In questo modo, l'utente e i renderer possono aggiornare liberamente il proprio 
 Il vero aggiornamento della finestra avviene alla chiamata del metodo `show`, che esegue tutte le operazioni di rendering registrate precedentemente, ridisegnando così l'interfaccia.
 Se non si chiama `show` almeno una volta, la finestra rimane nascosta.
 
+Per disegnare su schermo i vari renderer, viene utilizzata la classe di utility `DrawableCanvas`, che è un JPanel di Swing con il metodo `paintComponent` modificato per poter applicare sul proprio oggetto grafico anche le operazioni
+registrate con la `draw`. Per ottimizzare le prestazioni ed evitare il lampeggiamento degli oggetti sulla scena, si usa una tecnica di buffering: SwingIO utilizza due buffer per disegnare, chiamati `activeCanvas` e `bufferCanvas`; `activeCanvas` è il canvas
+visibile all'utente, mentre `bufferCanvas` quello nascosto. Tutte le operazioni di rendering vengono eseguite sul `bufferCanvas` mentre non è visibile, e quando viene invocato il metodo `show`, i due canvas vengono scambiati, rendendo visibili i cambiamenti sulla view.
+
 SwingIO permette di definire la dimensione in pixel della finestra di gioco (`size`), il nome della finestra (`title`), e il colore di background (`background`). 
 Inoltre, permette di lavorare con coordinate espresse non in pixels, ma in unità logiche di gioco, così da astrarre la logica dei behaviours dalla loro effettiva rappresentazione grafica.
 SwingIO fornisce quindi metodi per impostare la posizione della finestra all'interno del gioco (`center`) e il numero di pixel da rappresentare per unità di gioco (`pixelsPerUnit`).
