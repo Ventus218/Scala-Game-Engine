@@ -284,21 +284,26 @@ class GameObject
       with SwingInputHandler:
 
     var inputHandlers: Map[InputButton, Handler] = Map(
-      D -> moveRight,
-      A -> moveLeft,
-      W -> moveUp,
-      S -> moveDown,
-      MouseButton1 -> onTeleport
+      D -> onMoveRight,
+      A -> onMoveLeft,
+      W -> onMoveUp,
+      S -> onMoveDown,
+      E -> (onMoveUp and onMoveRight),
+      MouseButton1 -> onTeleport.fireJustOnceIfHeld
     )
 
     private def onTeleport(inputButton: InputButton): Unit = // Teleport logic
-    private def moveRight(input: InputButton): Unit = // Move logic
-    private def moveLeft(input: InputButton): Unit = // Move logic
-    private def moveUp(input: InputButton): Unit = // Move logic
-    private def moveDown(input: InputButton): Unit = // Move logic
+    private def onMoveRight(input: InputButton): Unit = // Move logic
+    private def onMoveLeft(input: InputButton): Unit = // Move logic
+    private def onMoveUp(input: InputButton): Unit = // Move logic
+    private def onMoveDown(input: InputButton): Unit = // Move logic
 ```
 
 Il motivo per cui si obbliga la classe che implementa a definire inputHandlers piuttosto che accettare inputHandlers come parametro del mixin è che questo permette allo sviluppatore di avere i riferimenti ai metodi interni alla classe, altrimenti non sarebbe possibile avere una sintassi così espressiva.
+
+Come si può notare dall'esempio è anche possibile definire handler complessi:
+- è possibile definire un handler che esegue più funzioni tramite la sintassi `handler1 and handler2`
+- è possibile settare un handler in modo che venga eseguito solo al primo frame nel caso in cui l'evento si riproponga in maniera continua anche in quelli successivi: `handler.fireJustOnceIfHeld`
 
 Nel caso si preferisse comunque un approccio non event-driven è possibile utilizzare direttamente SwingIO senza SwingInputHandler:
 

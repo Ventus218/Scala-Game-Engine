@@ -2,30 +2,25 @@ import SwingIO.InputButton
 
 object SwingInputHandler:
 
-  opaque type Handler = HandlerImpl
-  private case class HandlerImpl(
+  /** A Handler represents what should be done in response of an input event */
+  opaque type Handler = Iterable[SingleHandlerImpl]
+  private case class SingleHandlerImpl(
       val handler: (InputButton) => Unit,
-      val shouldFireJustOnceIfHold: Boolean,
-      val nextHandler: Option[Handler]
+      val shouldFireJustOnceIfHold: Boolean
   )
 
-  extension (ih: Handler)
-    infix def and(otherHandler: Handler): Handler = ih match
-      case HandlerImpl(h, fireOnce, None) =>
-        HandlerImpl(h, fireOnce, Some(otherHandler))
-      case HandlerImpl(h, fireOnce, Some(other)) =>
-        HandlerImpl(h, fireOnce, Some(other and otherHandler))
+  extension (h: Handler)
+    /** Merges the current handler and another one into a signle Handler */
+    infix def and(otherHandler: Handler): Handler =
+      h ++ otherHandler
 
-    def fireJustOnceIfHold: Handler =
-      HandlerImpl(ih.handler, true, ih.nextHandler)
-
-    def fire(inputButton: InputButton): Unit =
-      ih.handler(inputButton)
-      ih.nextHandler.foreach(_.fire(inputButton))
+    /** Makes a handler fire only once for each sequence of emitted events */
+    def fireJustOnceIfHeld: Handler =
+      h.map(h => SingleHandlerImpl(h.handler, true))
 
   given Conversion[(InputButton) => Unit, Handler] with
-    def apply(x: InputButton => Unit): Handler =
-      HandlerImpl(x, false, None)
+    def apply(f: InputButton => Unit): Handler =
+      Seq(SingleHandlerImpl(f, false))
 
   /** A behaviour which enables to specify some event handlers to fire when
     * specific inputs are received.
@@ -50,9 +45,12 @@ object SwingInputHandler:
         .filterKeys(io.inputButtonWasPressed(_))
 
       receivedInputs
-        .foreachEntry((key, handler) =>
-          if !handler.shouldFireJustOnceIfHold || !lastFrameReceivedInputs.contains(key)
-          then handler.fire(key)
+        .foreachEntry((key, handlers) =>
+          handlers.foreach(h =>
+            if !h.shouldFireJustOnceIfHold || !lastFrameReceivedInputs
+                .contains(key)
+            then h.handler(key)
+          )
         )
 
       lastFrameReceivedInputs = receivedInputs.keys.toSet

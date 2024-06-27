@@ -9,6 +9,8 @@ import Behaviours.Identifiable
 import TestUtils.*
 
 class SwingInputHandlerTests extends AnyFlatSpec:
+  val engine = Engine(InputIOMock(), Storage())
+  val objId = "1"
 
   "SwingInputHandler" should "accept a mapping between input events and handlers" in:
     val f: Handler = (_: InputButton) => {}
@@ -24,35 +26,87 @@ class SwingInputHandlerTests extends AnyFlatSpec:
     handler.inputHandlers should contain theSameElementsAs initialInputHandlers
 
   it should "fire handlers on early update" in:
-    val engine = Engine(InputIOMock(), Storage())
-    val objId = "1"
-    val testScene = () => Seq(GameObject(objId))
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            N_0 -> a,
+            N_1 -> b
+          )
+      )
     engine.testOnStart(testScene):
-      val obj = engine.find[GameObject](objId).get
-      obj.jumped shouldBe false
-      obj.fired shouldBe false
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 0
+      obj.bRuns shouldBe 0
 
     engine.testOnUpdate(testScene):
-      val obj = engine.find[GameObject](objId).get
-      obj.jumped shouldBe true
-      obj.fired shouldBe false
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 1
+      obj.bRuns shouldBe 0
 
-  private class GameObject(id: String)
+  it should "allow to set multiple handlers for the same input events" in:
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            N_0 -> (a and b)
+          )
+      )
+    engine.testOnStart(testScene):
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 0
+      obj.bRuns shouldBe 0
+    engine.testOnUpdate(testScene):
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 1
+      obj.bRuns shouldBe 1
+
+  it should "allow to set a handler which fires only once while the input button is held pressed down" in:
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            N_0 -> (a and b.fireJustOnceIfHeld)
+          )
+      )
+    engine.testOnDeinit(testScene, nFramesToRun = 3):
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 3
+      obj.bRuns shouldBe 1
+
+  it should "fire the same handler multiple times if it is merged with itself" in:
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            N_0 -> (a and a)
+          )
+      )
+    engine.testOnDeinit(testScene):
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 2
+
+  "fireJustOnceIfHeld" should "make apply to every handler if applied on multiple once at the same time" in:
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            N_0 -> (a and b).fireJustOnceIfHeld
+          )
+      )
+    engine.testOnDeinit(testScene, nFramesToRun = 3):
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 1
+      obj.bRuns shouldBe 1
+
+  private abstract class InputCounterObject(id: String)
       extends Behaviour
       with Identifiable(id)
       with SwingInputHandler:
-    var jumped = false
-    var fired = false
-
-    var inputHandlers: Map[InputButton, Handler] = Map(
-      N_0 -> onJump,
-      N_1 -> onFire
-    )
-
-    private def onJump(inputButton: InputButton): Unit =
-      jumped = true
-    private def onFire(inputButton: InputButton): Unit =
-      fired = true
+    var aRuns = 0
+    var bRuns = 0
+    def a(i: InputButton): Unit = aRuns += 1
+    def b(i: InputButton): Unit = bRuns += 1
 
   private class InputIOMock extends SwingIO:
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
@@ -95,12 +149,9 @@ class SwingInputHandlerTests extends AnyFlatSpec:
       W -> onMoveUp,
       S -> onMoveDown,
       MouseButton3 -> (onMoveRight and onMoveUp),
-      MouseButton1 -> onTeleport.fireJustOnceIfHold,
-      MouseButton2 -> (f.fireJustOnceIfHold and h)
+      MouseButton1 -> onTeleport.fireJustOnceIfHeld,
+      MouseButton2 -> (onTeleport.fireJustOnceIfHeld and onMoveDown)
     )
-
-    def f(a: InputButton) = println("F")
-    def h(a: InputButton) = println("H")
 
     val v = 20
     var shouldTeleport = false
