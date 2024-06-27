@@ -34,7 +34,7 @@ Siccome l'informazione riguardante i tipi dei behaviour viene persa a runtime a 
 
 ### Caricamento scene
 L'engine implementa il metodo `engine.loadScene(scene: Scene)` per poter cambiare la scena durante il gioco. Quando una nuova scena viene caricata, su tutti gli oggetti della vecchia scena viene invocato il metodo `onDeinit`, mentre su
-quelli appena aggiunti viene chiamato il metodo `onInit` e, se sono abilitati, anche i metodi `onEnabled` e `onStart`.
+quelli appena aggiunti viene chiamato il metodo `onInit` e, se sono abilitati, anche il metodo `onStart`.
 
 L'inserimento effettivo dei game object presenti nella scena da caricare avviene alla fine del frame corrente, tra il _LateUpdate_ del frame precedente e l'_EarlyUpdate_ del frame successivo.
 
@@ -43,7 +43,7 @@ L'engine offre la possibilità di aggiungere e togliere oggetti dalla scena dina
 modificare gli oggetti attivi durante il gioco, senza alterare le fasi del game loop. Questi due metodi non vengono però applicati immediatamente sull'engine, per cui se si crea/distrugge un oggetto in una fase di update, il cambiamento
 potrà essere visibile solamente dal frame successivo.
 
-La creazione di un game object comporta la chiamata immediata del metodo `onInit` su quest'ultimo e del metodo `onEnabled` se abilitato. Verrà chiamato anche il metodo `onStart` all'inizio del nuovo frame, prima dell'_EarlyUpdate_.
+La creazione di un game object comporta la chiamata del metodo `onInit` su quest'ultimo all'inizio del frame successivo, prima dell'_EarlyUpdate_, e anche del metodo `onStart` se l'oggetto è abilitato.
 In questo modo, anche gli oggetti creati dinamicamente durante il gioco rispettano le fasi del ciclo di vita dei behaviour, così da non avere side-effect indesiderati.
 Se si vuole creare un oggetto che esiste già nella scena, viene lanciata una `IllegalArgumentException`.
 
