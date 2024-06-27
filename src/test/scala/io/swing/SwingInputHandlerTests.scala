@@ -2,7 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import SwingIO.InputButton
 import SwingIO.InputButton.*
-import SwingInputHandler.*
+import SwingInputHandler.{*, given}
 import java.awt.Color
 import java.awt.Graphics2D
 import Behaviours.Identifiable
@@ -90,12 +90,17 @@ class SwingInputHandlerTests extends AnyFlatSpec:
       with SwingSquareRenderer(2, Color.blue)
       with SwingInputHandler:
     var inputHandlers: Map[InputButton, Handler] = Map(
-      D -> moveRight,
-      A -> moveLeft,
-      W -> moveUp,
-      S -> moveDown,
-      MouseButton1 -> onTeleport
+      D -> onMoveRight,
+      A -> onMoveLeft,
+      W -> onMoveUp,
+      S -> onMoveDown,
+      MouseButton3 -> (onMoveRight and onMoveUp),
+      MouseButton1 -> onTeleport.fireJustOnceIfHold,
+      MouseButton2 -> (f.fireJustOnceIfHold and h)
     )
+
+    def f(a: InputButton) = println("F")
+    def h(a: InputButton) = println("H")
 
     val v = 20
     var shouldTeleport = false
@@ -106,13 +111,13 @@ class SwingInputHandlerTests extends AnyFlatSpec:
 
     private def onTeleport(inputButton: InputButton): Unit =
       shouldTeleport = true
-    private def moveRight(input: InputButton): Unit =
+    private def onMoveRight(input: InputButton): Unit =
       moveRight = true
-    private def moveLeft(input: InputButton): Unit =
+    private def onMoveLeft(input: InputButton): Unit =
       moveLeft = true
-    private def moveUp(input: InputButton): Unit =
+    private def onMoveUp(input: InputButton): Unit =
       moveUp = true
-    private def moveDown(input: InputButton): Unit =
+    private def onMoveDown(input: InputButton): Unit =
       moveDown = true
 
     override def onUpdate: Engine => Unit = (engine) =>
@@ -131,4 +136,3 @@ class SwingInputHandlerTests extends AnyFlatSpec:
       moveLeft = false
       moveUp = false
       moveDown = false
-      Thread.sleep(20)
