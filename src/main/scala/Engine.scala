@@ -113,7 +113,9 @@ object Engine:
 
     override def create(gameObject: Behaviour): Unit =
       if gameObjects.exists(_ eq gameObject) then
-        throw IllegalArgumentException("Cannot instantiate an object already instantiated")
+        throw IllegalArgumentException(
+          "Cannot instantiate an object already instantiated"
+        )
       gameObjectsToAdd = gameObjectsToAdd :+ gameObject
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
@@ -133,17 +135,19 @@ object Engine:
 
     override def destroy(gameObject: Behaviour): Unit =
       if !gameObjects.exists(_ eq gameObject) then
-        throw IllegalArgumentException("Cannot destroy an object not instantiated")
+        throw IllegalArgumentException(
+          "Cannot destroy an object not instantiated"
+        )
       gameObjectsToRemove = gameObjectsToRemove :+ gameObject
 
     private def enabledObjects = gameObjects.filter(_.enabled)
-      
+
     private def applyCreate(): Unit =
       gameObjects = gameObjects ++ gameObjectsToAdd
       gameObjectsToAdd.foreach(_.onInit(this))
       gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
       gameObjectsToAdd = Seq()
-      
+
     private def applyDestroy(): Unit =
       gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
       gameObjectsToRemove.foreach(_.onDeinit(this))
@@ -180,9 +184,9 @@ object Engine:
           disableObjectsToBeDisabled()
 
           applyDestroy()
-          
+
           io.onFrameEnd(this)
-          
+
           fpsLimiter.sleepToRespectFPSLimit(start)
           fpsLimiter.onFrameEnd()
 
