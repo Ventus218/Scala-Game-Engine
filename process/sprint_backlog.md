@@ -40,7 +40,7 @@
 ## Sprint 2 (inizio 24/06/2024)
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
-|9|Implementazione **Engine** caricamento scena e distruzione/creazione|Michele|X|||
+|9|Implementazione **Engine** caricamento scena e distruzione/creazione|Michele|||X|
 |9|Implementazione **Engine** conversione delta time in secondi|Alessandro|X|||
 |9|Implementazione **Engine** abilitazione e disabilitazione degli oggetti|Alessandro|X|||
 |11|Implementazione **SwingInputHandler** (old SwingInputB)|Alessandro|||X|

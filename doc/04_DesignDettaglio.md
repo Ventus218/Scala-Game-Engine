@@ -5,13 +5,13 @@ Behaviour rappresenta il comportamento di un oggetto ed è il punto principale n
 Può essere attivo o disattivo, questo implica che salterà o meno certe fasi del game loop.
 Ogni behaviour possiede dei metodi che vengono chiamati dall'engine in momenti specifici del game loop:
 - onInit
-- onEnable (saltato se disabilitato)
-- onDisable (saltato se disabilitato)
 - onStart (saltato se disabilitato)
 - onEarlyUpdate (saltato se disabilitato)
 - onUpdate (saltato se disabilitato)
 - onLateUpdate (saltato se disabilitato)
 - onDeinit
+- onEnabled (quando passa da disabilitato ad abilitato)
+- onDisabled (quando passa da abilitato a disabilitato)
 
 Questi metodi ricevono come parametro l'**Engine** in modo da poterci interagire.
 
@@ -48,8 +48,8 @@ L'utente può:
     - create
     - destroy
 - abilitare o disabilitare oggetti:
-    - enable
-    - disable
+    - enable (chiamare questo metodo su un oggetto disabilitato comporta l'invocazione del metodo _onEnabled_)
+    - disable (chiamare questo metodo su un oggetto abilitato comporta l'invocazione del metodo _onDisabled_)
 - caricare gli oggetti di una scena:
     - loadScene
 - cercare oggetti tra quelli presenti in gioco in base a:

@@ -7,13 +7,14 @@ L'engine ha un'implementazione di default attraverso `Engine.apply()` che accett
 Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop per prima cosa chiamerà gli handler dei behaviors nel seguente ordine:
 
     - onInit
-    - onEnabled (solo sui behaviours abilitati)
     - onStart (solo sui behaviours abilitati)
     Loop until stopped
         - onEarlyUpdate (solo sui behaviours abilitati)
         - onUpdate (solo sui behaviours abilitati)
         - onLateUpdate (solo sui behaviours abilitati)
     -onDeinit
+
+I metodi `onEnabled` e `onDisabled` vengono invece invocati non appena un behaviour modifica il proprio stato da abilitato a disabilitato, e viceversa.
 
 Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
 
@@ -39,6 +40,23 @@ def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(id: String): Optio
 ```
 Siccome l'informazione riguardante i tipi dei behaviour viene persa a runtime a causa della type erasure di Java si è dovuto utilizzare il sistema di reflection per implementare questi due metodi.
 `TypeTest` permette di potersi "portare dietro" le informazioni necessarie per controllare a runtime i tipi degli oggetti.
+
+### Caricamento scene
+L'engine implementa il metodo `engine.loadScene(scene: Scene)` per poter cambiare la scena durante il gioco. Quando una nuova scena viene caricata, su tutti gli oggetti della vecchia scena viene invocato il metodo `onDeinit`, mentre su
+quelli appena aggiunti viene chiamato il metodo `onInit` e, se sono abilitati, anche il metodo `onStart`.
+
+L'inserimento effettivo dei game object presenti nella scena da caricare avviene alla fine del frame corrente, tra il _LateUpdate_ del frame precedente e l'_EarlyUpdate_ del frame successivo.
+
+### Creazione/Distruzione degli oggetti
+L'engine offre la possibilità di aggiungere e togliere oggetti dalla scena dinamicamente, tramite i metodi `engine.create(object: Behaviour)` e `engine.destroy(object: Behaviour)`. Qualsiasi behavior può utilizzare queste due funzioni per
+modificare gli oggetti attivi durante il gioco, senza alterare le fasi del game loop. Questi due metodi non vengono però applicati immediatamente sull'engine, per cui se si crea/distrugge un oggetto in una fase di update, il cambiamento
+potrà essere visibile solamente dal frame successivo.
+
+La creazione di un game object comporta la chiamata del metodo `onInit` su quest'ultimo all'inizio del frame successivo, prima dell'_EarlyUpdate_, e anche del metodo `onStart` se l'oggetto è abilitato.
+In questo modo, anche gli oggetti creati dinamicamente durante il gioco rispettano le fasi del ciclo di vita dei behaviour, così da non avere side-effect indesiderati.
+Se si vuole creare un oggetto che esiste già nella scena, viene lanciata una `IllegalArgumentException`.
+
+La distruzione di un game object comporta la chiamata del metodo `onDeinit` su quest'ultimo alla fine del frame corrente. Se si vuole distruggere un oggetto che non è presente nella scena, viene lanciata una `IllegalArgumentException`.
 
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.

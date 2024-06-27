@@ -17,7 +17,7 @@ class NFrameStopperTests extends AnyFlatSpec:
 
     engine.run(testScene)
 
-    val correctEvents = Seq(Init, Enable, Start)
+    val correctEvents = Seq(Init, Start)
     val correctEventsWithDeinit = correctEvents ++ Seq(Deinit)
 
     lifecycleTester.happenedEvents should (
@@ -32,7 +32,7 @@ class NFrameStopperTests extends AnyFlatSpec:
 
     engine.run(testScene)
 
-    val correctEvents = Seq(Init, Enable, Start) ++ loopLifecycleEvents
+    val correctEvents = Seq(Init, Start) ++ loopLifecycleEvents
     val correctEventsWithDeinit = correctEvents ++ Seq(Deinit)
 
     lifecycleTester.happenedEvents should (
@@ -48,7 +48,7 @@ class NFrameStopperTests extends AnyFlatSpec:
 
     engine.run(testScene)
 
-    val correctEvents = Seq(Init, Enable, Start) ++ Iterator
+    val correctEvents = Seq(Init, Start) ++ Iterator
       .continually(loopLifecycleEvents)
       .take(nFramesToRun)
       .flatten

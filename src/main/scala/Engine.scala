@@ -67,16 +67,24 @@ object Engine:
   ) extends Engine:
 
     private var gameObjects: Iterable[Behaviour] = Seq()
+    private var sceneToLoad: Option[Scene] = Option.empty
+
+    private var gameObjectsToAdd: Seq[Behaviour] = Seq()
+    private var gameObjectsToRemove: Seq[Behaviour] = Seq()
+
+    override def loadScene(scene: Scene): Unit =
+      sceneToLoad = Option(scene)
 
     override val fpsLimiter: FPSLimiter = FPSLimiter(fpsLimit)
-
-    override def loadScene(scene: Scene): Unit = ???
 
     override def enable(gameObject: Behaviour): Unit = ???
 
     override def disable(gameObject: Behaviour): Unit = ???
 
-    override def create(gameObject: Behaviour): Unit = ???
+    override def create(gameObject: Behaviour): Unit =
+      if gameObjects.exists(_ eq gameObject) then
+        throw IllegalArgumentException("Cannot instantiate an object already instantiated")
+      gameObjectsToAdd = gameObjectsToAdd :+ gameObject
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
         id: String
@@ -93,40 +101,60 @@ object Engine:
     def deltaTimeNanos: Long = _deltaTimeNanos
     private def deltaTimeNanos_=(dt: Long) = this._deltaTimeNanos = dt
 
-    override def destroy(gameObject: Behaviour): Unit = ???
+    override def destroy(gameObject: Behaviour): Unit =
+      if !gameObjects.exists(_ eq gameObject) then
+        throw IllegalArgumentException("Cannot destroy an object not instantiated")
+      gameObjectsToRemove = gameObjectsToRemove :+ gameObject
 
-    private def enabledGameObjects =
-      gameObjects.filter(_.enabled)
+    private def enabledObjects = gameObjects.filter(_.enabled)
+      
+    private def applyCreate(): Unit =
+      gameObjects = gameObjects ++ gameObjectsToAdd
+      gameObjectsToAdd.foreach(_.onInit(this))
+      gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
+      gameObjectsToAdd = Seq()
+      
+    private def applyDestroy(): Unit =
+      gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
+      gameObjectsToRemove.foreach(_.onDeinit(this))
+      gameObjectsToRemove = Seq()
 
     private var shouldStop = false
 
     override def run(initialScene: Scene): Unit =
-      gameObjects = initialScene()
       shouldStop = false
       deltaTimeNanos = 0
-      gameObjects.foreach(_.onInit(this))
-
-      enabledGameObjects.foreach(_.onEnabled(this))
-
-      enabledGameObjects.foreach(_.onStart(this))
+      loadScene(initialScene)
 
       while !shouldStop do
-        val start = System.nanoTime()
+        gameObjects = sceneToLoad.get()
+        sceneToLoad = Option.empty
 
-        enabledGameObjects.foreach(_.onEarlyUpdate(this))
+        gameObjects.foreach(_.onInit(this))
 
-        enabledGameObjects.foreach(_.onUpdate(this))
+        enabledObjects.foreach(_.onStart(this))
 
-        enabledGameObjects.foreach(_.onLateUpdate(this))
+        while !shouldStop && sceneToLoad.isEmpty do
+          val start = System.nanoTime()
 
-        io.onFrameEnd(this)
+          applyCreate()
 
-        fpsLimiter.sleepToRespectFPSLimit(start)
-        fpsLimiter.onFrameEnd()
+          enabledObjects.foreach(_.onEarlyUpdate(this))
 
-        deltaTimeNanos = System.nanoTime() - start
+          enabledObjects.foreach(_.onUpdate(this))
 
-      gameObjects.foreach(_.onDeinit(this))
+          enabledObjects.foreach(_.onLateUpdate(this))
+
+          applyDestroy()
+          
+          io.onFrameEnd(this)
+          
+          fpsLimiter.sleepToRespectFPSLimit(start)
+          fpsLimiter.onFrameEnd()
+
+          deltaTimeNanos = System.nanoTime() - start
+
+        gameObjects.foreach(_.onDeinit(this))
 
     override def stop(): Unit = shouldStop = true
 
