@@ -49,3 +49,4 @@
 |17|Refactor: Collider con più shape - Cerchio|Corrado|X|||
 |18|Fix: Sovrapposizione di figure in IO|Michele|X|||
 |19|Definizione priorità di rendering|Michele|X|||
+|20|Possibilità di settare un limite di FPS|Alessandro|||X|
