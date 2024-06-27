@@ -20,7 +20,17 @@ trait Engine:
   val fpsLimiter: FPSLimiter
 
   def loadScene(scene: Scene): Unit
+
+  /** Enables the given object (only if not enabled). A call to the object
+    * onEnabled will be done immediately but the object will be set enabled only
+    * in the next frame
+    */
   def enable(gameObject: Behaviour): Unit
+
+  /** Disables the given object (only if enabled). The call to the object
+    * onDisabled will be done at the end of the frame and the object will be
+    * disabled only in the next frame
+    */
   def disable(gameObject: Behaviour): Unit
   def create(gameObject: Behaviour): Unit
   def destroy(gameObject: Behaviour): Unit
@@ -72,14 +82,34 @@ object Engine:
     private var gameObjectsToAdd: Seq[Behaviour] = Seq()
     private var gameObjectsToRemove: Seq[Behaviour] = Seq()
 
+    private var gameObjectsToEnable: Set[Behaviour] = Set()
+    private var gameObjectsToDisable: Set[Behaviour] = Set()
+
     override def loadScene(scene: Scene): Unit =
       sceneToLoad = Option(scene)
 
     override val fpsLimiter: FPSLimiter = FPSLimiter(fpsLimit)
 
-    override def enable(gameObject: Behaviour): Unit = ???
+    override def enable(gameObject: Behaviour): Unit =
+      if !gameObject.enabled then
+        gameObject.onEnabled(this)
+        gameObjectsToEnable = gameObjectsToEnable + gameObject
 
-    override def disable(gameObject: Behaviour): Unit = ???
+    private def enableObjectsToBeEnabled(): Unit =
+      gameObjectsToEnable.foreach: o =>
+        o.enabled = true
+        o.onStart(this)
+      gameObjectsToEnable = Set.empty
+
+    override def disable(gameObject: Behaviour): Unit =
+      if gameObject.enabled then
+        gameObjectsToDisable = gameObjectsToDisable + gameObject
+
+    private def disableObjectsToBeDisabled(): Unit =
+      gameObjectsToDisable.foreach: o =>
+        o.enabled = false
+        o.onDisabled(this)
+      gameObjectsToDisable = Set.empty
 
     override def create(gameObject: Behaviour): Unit =
       if gameObjects.exists(_ eq gameObject) then
@@ -139,11 +169,15 @@ object Engine:
 
           applyCreate()
 
+          enableObjectsToBeEnabled()
+
           enabledObjects.foreach(_.onEarlyUpdate(this))
 
           enabledObjects.foreach(_.onUpdate(this))
 
           enabledObjects.foreach(_.onLateUpdate(this))
+
+          disableObjectsToBeDisabled()
 
           applyDestroy()
           
