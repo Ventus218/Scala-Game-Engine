@@ -1,7 +1,11 @@
 import scala.reflect.TypeTest
 import Behaviours.Identifiable
 
-class EngineMock(val io: IO, val storage: Storage) extends Engine:
+class EngineMock(
+    val io: IO,
+    val storage: Storage,
+    val fpsLimiter: FPSLimiter = FPSLimiter(Int.MaxValue)
+) extends Engine:
 
   override def disable(gameObject: Behaviour): Unit = ???
 
