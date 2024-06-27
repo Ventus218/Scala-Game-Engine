@@ -58,6 +58,29 @@ Se si vuole creare un oggetto che esiste già nella scena, viene lanciata una `I
 
 La distruzione di un game object comporta la chiamata del metodo `onDeinit` su quest'ultimo alla fine del frame corrente. Se si vuole distruggere un oggetto che non è presente nella scena, viene lanciata una `IllegalArgumentException`.
 
+### Abilitazione e disabilitazione degli oggetti
+E' possibile abilitare e disabilitare gli oggetti di gioco in maniera dinamica.
+
+Abilitare un oggetto implica che venga chiamata la *onEnabled* sull'oggetto immediatamente e che questo venga effettivamente abilitato solo all'inizio del frame successivo:
+```scala
+val obj = engine.find[Identifiable]("id").get
+engine.enable(obj)
+```
+
+Si abilita l'oggetto solo nel frame successivo per dare consistenza, in quanto, se così non fosse, l'ordine di esecuzione degli oggetti potrerebbe alcuni oggetti ad essere disabilitati nel frame corrente e altri nel frame successivo. 
+
+Disabilitare un oggetto implica che venga chiamata la *onDisabled* sull'oggetto e che questo venga disabilitato solo alla fine del frame.
+```scala
+val obj = engine.find[Identifiable]("id").get
+engine.disable(obj)
+```
+
+Il motivo per cui *onDisabled* viene chiamata a fine frame e non immediatamente è che altrimenti sarebbe possibile che l'oggetto riceva delle chiamate a *onEarlyUpdate/onUpdate/onLateUpdate* dopo la chiamata a *onDisabled*.
+
+> **Nota:**
+>
+> *onEnabled* e *onDisabled* vengono invocate solo in caso di cambiamento di stato, e non se l'oggetto viene instanziato già abilitato o disabilitato.
+
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.
 

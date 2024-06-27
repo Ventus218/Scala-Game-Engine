@@ -42,7 +42,7 @@
 |------------|-----------|------------|:-:|:-:|:-:|
 |9|Implementazione **Engine** caricamento scena e distruzione/creazione|Michele|||X|
 |9|Implementazione **Engine** conversione delta time in secondi|Alessandro|X|||
-|9|Implementazione **Engine** abilitazione e disabilitazione degli oggetti|Alessandro||X||
+|9|Implementazione **Engine** abilitazione e disabilitazione degli oggetti|Alessandro|||X|
 |11|Implementazione **SwingInputB**|Alessandro||X||
 |16|Refactor: Dimensionable -> Scalable|Corrado|||X|
 |17|Refactor: Collider con più shape - Rettangolo|Corrado|X|||

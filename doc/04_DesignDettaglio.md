@@ -49,7 +49,7 @@ L'utente può:
     - destroy
 - abilitare o disabilitare oggetti:
     - enable (chiamare questo metodo su un oggetto disabilitato comporta l'invocazione del metodo _onEnabled_)
-    - disable (chiamare questo metodo su un oggetto abilitato comporta l'invocazione del metodo _onDisabled_)
+    - disable (chiamare questo metodo su un oggetto abilitato comporta l'invocazione del metodo _onDisabled_ alla fine del frame)
 - caricare gli oggetti di una scena:
     - loadScene
 - cercare oggetti tra quelli presenti in gioco in base a:
