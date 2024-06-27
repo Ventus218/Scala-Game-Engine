@@ -156,11 +156,11 @@ object SwingIO:
       */
     case MouseButton1 extends InputButton(MouseEvent.BUTTON1)
 
-    /** Usually the right mouse button
+    /** Usually the scrollwheel button
       */
     case MouseButton2 extends InputButton(MouseEvent.BUTTON2)
 
-    /** Usually the scrollwheel button
+    /** Usually the right mouse button
       */
     case MouseButton3 extends InputButton(MouseEvent.BUTTON3)
 
