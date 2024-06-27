@@ -16,6 +16,9 @@ trait Engine:
   /** The Storage that the engine will use to store values between scenes */
   val storage: Storage
 
+  /** An object which allows to limit the engine fps */
+  val fpsLimiter: FPSLimiter
+
   def loadScene(scene: Scene): Unit
   def enable(gameObject: Behaviour): Unit
   def disable(gameObject: Behaviour): Unit
@@ -57,10 +60,15 @@ trait Engine:
 
 object Engine:
   // gameObjects is used just to test the Engine until other Interfaces are implemented
-  private class EngineImpl(override val io: IO, override val storage: Storage)
-      extends Engine:
+  private class EngineImpl(
+      override val io: IO,
+      override val storage: Storage,
+      fpsLimit: Int
+  ) extends Engine:
 
     private var gameObjects: Iterable[Behaviour] = Seq()
+
+    override val fpsLimiter: FPSLimiter = FPSLimiter(fpsLimit)
 
     override def loadScene(scene: Scene): Unit = ???
 
@@ -113,7 +121,8 @@ object Engine:
 
         io.onFrameEnd(this)
 
-        Thread.sleep(16) // REMOVE THIS -- simple frame limiter for testing SwingIO
+        fpsLimiter.sleepToRespectFPSLimit(start)
+        fpsLimiter.onFrameEnd()
 
         deltaTimeNanos = System.nanoTime() - start
 
@@ -128,9 +137,12 @@ object Engine:
     *   inputs by the user
     * @param storage
     *   The Storage that the engine will use to store values between scenes
+    * @param fpsLimit
+    *   The maximum number of frames per second that the engine will compute
     */
-  def apply(io: IO, storage: Storage): Engine =
-    new EngineImpl(io = io, storage = storage)
+
+  def apply(io: IO, storage: Storage, fpsLimit: Int = 60): Engine =
+    new EngineImpl(io = io, storage = storage, fpsLimit = fpsLimit)
 
   extension (e: Engine)
     /** The amount of time elapsed between the last frame and the current one in
