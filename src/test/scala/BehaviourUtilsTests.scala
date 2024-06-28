@@ -1,5 +1,6 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
+import Dimensions2D.*
 import Behaviours.*
 import BehaviourUtils.*
 
