@@ -123,6 +123,12 @@ class GameLoopTests extends AnyFlatSpec:
           )
         )
 
+  it should "throw an exception if the user tries to run again the engine while it's already running" in:
+    engine.testOnLifecycleEvent(testScene)(
+      onStart = assertThrows[IllegalStateException]:
+        engine.run(() => Seq())
+    )
+
   it should "allow to set an fps limit" in:
     val fpsLimit = 60
     val expectedTimeSeconds = 1d

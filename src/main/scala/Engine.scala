@@ -153,9 +153,12 @@ object Engine:
       gameObjectsToRemove.foreach(_.onDeinit(this))
       gameObjectsToRemove = Seq()
 
-    private var shouldStop = false
+    private var shouldStop = true
 
     override def run(initialScene: Scene): Unit =
+      if !shouldStop then
+        throw IllegalStateException("Engine is already running")
+
       shouldStop = false
       deltaTimeNanos = 0
       loadScene(initialScene)

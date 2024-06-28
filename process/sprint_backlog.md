@@ -51,6 +51,6 @@
 |19|Definizione priorità di rendering|Michele|||X|
 |20|Possibilità di settare un limite di FPS|Alessandro|||X|
 |21|Usare Set al posto di Seq per la creazione/distruzione di oggetti|Tutti||X||
-|22|Impedire l'esecuzione di run quando l'engine è già partito|Tutti||X||
+|22|Impedire l'esecuzione di run quando l'engine è già partito|Tutti|||X|
 |23|Aggiungere un riferimento all'engine negli Handler di **SwingInputHandler**|Tutti|||X|
 |24|Inserire un main complesso di test|Tutti||X||
