@@ -72,7 +72,7 @@ object SwingIOTest:
       // Change this sleep time for debugging
       Thread.sleep(10)
       ioFrame.onFrameEnd(engine)
-      println(s"Frame $frame:\t${io.inputButtonWasPressed(InputButton.N_0)}")
+      println(s"Frame $frame:\t${ioFrame.inputButtonWasPressed(InputButton.N_0)}")
       frame += 1
 
   @main def testSwingPointerPosition(): Unit =
