@@ -9,6 +9,7 @@ Priority goes from top to bottom.
 |17|Refactor: Collider con più shape|Rettangolo e cerchio|
 |18|Fix: Sovrapposizione di figure in IO|Quando due figure si sovrappongono fanno uno strano effetto grafico|
 |19|Definizione priorità di rendering||
+|20|Possibilità di settare un limite di FPS||
 |12|Design DSL||
 |13|Scelta e design dei videogiochi di esempio||
 |14|Realizzazione dei videogiochi di esempio||
