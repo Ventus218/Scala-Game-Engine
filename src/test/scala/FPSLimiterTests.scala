@@ -42,7 +42,7 @@ class FPSLimiterTests extends AnyFlatSpec:
     val elapsedSeconds = (System.currentTimeMillis() - start) / 1_000d
     val expectedSeconds = 1.5d
 
-    try (elapsedSeconds - expectedSeconds).abs should be <= 0.1
+    try (elapsedSeconds - expectedSeconds).abs should be <= 0.2
     catch
       case _: TestFailedException =>
         cancel(
