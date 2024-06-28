@@ -17,21 +17,26 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
     )
 
   "Engine" should "allow to dinamically enable objects" in:
-    engine.testOnLifecycleEvent(testScene)(
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 2)(
       onUpdate =
         val obj = engine.find[TestObj](disabledId).get
-        engine.enable(obj)
+        if !obj.enabled then engine.enable(obj)
       ,
       onDeInit =
         val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents should contain(Enable)
     )
 
-  "Dinamically enabled objects" should "execute onEnabled immediately after being enabled" in:
-    engine.testOnLifecycleEvent(testScene)(
+  "Dinamically enabled objects" should "execute onEnabled only at the beginning of the next frame" in:
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 2)(
       onUpdate =
         val obj = engine.find[TestObj](disabledId).get
-        engine.enable(obj)
+        if !obj.enabled then
+          engine.enable(obj)
+          obj.happenedEvents should not contain (Enable)
+      ,
+      onDeInit =
+        val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents should contain(Enable)
     )
 

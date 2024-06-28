@@ -61,7 +61,7 @@ La distruzione di un game object comporta la chiamata del metodo `onDeinit` su q
 ### Abilitazione e disabilitazione degli oggetti
 E' possibile abilitare e disabilitare gli oggetti di gioco in maniera dinamica.
 
-Abilitare un oggetto implica che venga chiamata la *onEnabled* sull'oggetto immediatamente e che questo venga effettivamente abilitato solo all'inizio del frame successivo:
+Abilitare un oggetto implica che nel frame successivo venga chiamata la *onEnabled* sull'oggetto.:
 ```scala
 val obj = engine.find[Identifiable]("id").get
 engine.enable(obj)

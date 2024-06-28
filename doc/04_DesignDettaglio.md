@@ -48,7 +48,7 @@ L'utente può:
     - create
     - destroy
 - abilitare o disabilitare oggetti:
-    - enable (chiamare questo metodo su un oggetto disabilitato comporta l'invocazione del metodo _onEnabled_)
+    - enable (chiamare questo metodo su un oggetto disabilitato comporta l'invocazione del metodo _onEnabled_ all'inizio del frame successivo)
     - disable (chiamare questo metodo su un oggetto abilitato comporta l'invocazione del metodo _onDisabled_ alla fine del frame)
 - caricare gli oggetti di una scena:
     - loadScene

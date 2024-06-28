@@ -22,8 +22,7 @@ trait Engine:
   def loadScene(scene: Scene): Unit
 
   /** Enables the given object (only if not enabled). A call to the object
-    * onEnabled will be done immediately but the object will be set enabled only
-    * in the next frame
+    * onEnabled will be done at the beginning of the next frame
     */
   def enable(gameObject: Behaviour): Unit
 
@@ -92,12 +91,13 @@ object Engine:
 
     override def enable(gameObject: Behaviour): Unit =
       if !gameObject.enabled then
-        gameObject.onEnabled(this)
         gameObjectsToEnable = gameObjectsToEnable + gameObject
 
     private def enableObjectsToBeEnabled(): Unit =
       gameObjectsToEnable.foreach: o =>
         o.enabled = true
+        o.onEnabled(this)
+      gameObjectsToEnable.foreach: o =>
         o.onStart(this)
       gameObjectsToEnable = Set.empty
 
