@@ -3,6 +3,8 @@ import org.scalatest.matchers.should.Matchers.*
 
 import java.awt.{Color, Graphics2D}
 import scala.reflect.TypeTest
+import SwingIO.*
+import scala.compiletime.ops.double
 
 object SwingIOTest:
   private def rectRenderer(posX: Int, posY: Int): Graphics2D => Unit = g =>
@@ -48,12 +50,38 @@ object SwingIOTest:
         .withSize((400, 400))
         .withTitle("Swing Test")
         .build()
-    
+
     frame.draw(rectRenderer(0, 0))
     frame.draw(circleRenderer(100, 100))
     frame.draw(rectRenderer(300, 0))
     frame.draw(circleRenderer(50, 200))
     frame.show()
+
+  // ********** Input **********
+
+  @main def testSwingIOReceiveInputEvents(): Unit =
+    val io = SwingIO.withSize((400, 400)).build()
+    val engine = EngineMock(io = io, storage = Storage())
+    io.show()
+    var frame = 0
+    while true do
+      // Change this sleep time for debugging
+      Thread.sleep(10)
+      io.onFrameEnd(engine)
+      println(s"Frame $frame:\t${io.inputButtonWasPressed(InputButton.N_0)}")
+      frame += 1
+
+  @main def testSwingPointerPosition(): Unit =
+    val io = SwingIO
+      .withTitle("Swing Test")
+      .withSize(800, 800)
+      .withPixelsPerUnitRatio(10)
+      .build()
+    io.show()
+
+    while true do
+      println(io.scenePointerPosition())
+      Thread.sleep(200)
 
 class SwingIOTest extends AnyFlatSpec:
 

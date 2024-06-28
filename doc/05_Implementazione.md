@@ -7,7 +7,6 @@ L'engine ha un'implementazione di default attraverso `Engine.apply()` che accett
 Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop per prima cosa chiamerà gli handler dei behaviors nel seguente ordine:
 
     - onInit
-    - onEnabled (solo sui behaviours abilitati)
     - onStart (solo sui behaviours abilitati)
     Loop until stopped
         - onEarlyUpdate (solo sui behaviours abilitati)
@@ -15,10 +14,21 @@ Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop
         - onLateUpdate (solo sui behaviours abilitati)
     -onDeinit
 
+I metodi `onEnabled` e `onDisabled` vengono invece invocati non appena un behaviour modifica il proprio stato da abilitato a disabilitato, e viceversa.
+
 Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
 
 ### Delta time nanos
 L'engine offre la possibilità di ricavare il tempo trascorso dallo scorso frame al frame corrente attraverso `engine.deltaTimeNanos`.
+
+### Limite agli FPS (Frames Per Second)
+L'engine supporta la definizione di un limite al numero massimo di fotogrammi al secondo da elaborare.
+
+Questo viene realizzato grazie ad `FPSLimiter` che effettua una stima di quanto ogni frame dovrebbe durare, e fa aspettare l'engine in modo da rispettare questa stima.
+
+> **Nota**:
+>
+> I test relativi tengono conto del tempo di esecuzione del programma, questo li rende instabili e alcuni falliscono su specifiche configurazioni durante il testing effettuato tramite le GitHub Actions. I test nel caso di fallimento vengono quindi cancellati lasciando un messaggio che inviti a ricontrollare ma senza far fallire l'intera suite di test.
 
 ### Metodi per trovare oggetti
 L'engine offre due metodi per ricercare oggetti nel gioco:
@@ -30,6 +40,23 @@ def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(id: String): Optio
 ```
 Siccome l'informazione riguardante i tipi dei behaviour viene persa a runtime a causa della type erasure di Java si è dovuto utilizzare il sistema di reflection per implementare questi due metodi.
 `TypeTest` permette di potersi "portare dietro" le informazioni necessarie per controllare a runtime i tipi degli oggetti.
+
+### Caricamento scene
+L'engine implementa il metodo `engine.loadScene(scene: Scene)` per poter cambiare la scena durante il gioco. Quando una nuova scena viene caricata, su tutti gli oggetti della vecchia scena viene invocato il metodo `onDeinit`, mentre su
+quelli appena aggiunti viene chiamato il metodo `onInit` e, se sono abilitati, anche il metodo `onStart`.
+
+L'inserimento effettivo dei game object presenti nella scena da caricare avviene alla fine del frame corrente, tra il _LateUpdate_ del frame precedente e l'_EarlyUpdate_ del frame successivo.
+
+### Creazione/Distruzione degli oggetti
+L'engine offre la possibilità di aggiungere e togliere oggetti dalla scena dinamicamente, tramite i metodi `engine.create(object: Behaviour)` e `engine.destroy(object: Behaviour)`. Qualsiasi behavior può utilizzare queste due funzioni per
+modificare gli oggetti attivi durante il gioco, senza alterare le fasi del game loop. Questi due metodi non vengono però applicati immediatamente sull'engine, per cui se si crea/distrugge un oggetto in una fase di update, il cambiamento
+potrà essere visibile solamente dal frame successivo.
+
+La creazione di un game object comporta la chiamata del metodo `onInit` su quest'ultimo all'inizio del frame successivo, prima dell'_EarlyUpdate_, e anche del metodo `onStart` se l'oggetto è abilitato.
+In questo modo, anche gli oggetti creati dinamicamente durante il gioco rispettano le fasi del ciclo di vita dei behaviour, così da non avere side-effect indesiderati.
+Se si vuole creare un oggetto che esiste già nella scena, viene lanciata una `IllegalArgumentException`.
+
+La distruzione di un game object comporta la chiamata del metodo `onDeinit` su quest'ultimo alla fine del frame corrente. Se si vuole distruggere un oggetto che non è presente nella scena, viene lanciata una `IllegalArgumentException`.
 
 ## Storage
 Storage permette di salvare coppie chiave valore in memoria volatile.
@@ -132,6 +159,52 @@ val io: SwingIO = SwingIO
   .build()                            // costruisce la SwingIO
 ```
 
+## SwingIO (Input)
+### Architettura
+Si è implementata la seguente architettura:
+- SwingIO registra gli eventi di input generati dall'utente.
+- Per gestire la concorrenza della ricezione degli eventi si è deciso di accumularli durante l'esecuzione di un frame e gestirli solo nel frame successivo.
+- Il behaviour [SwingInputHandler](#swinginputhandler) permette all'utente di definire delle associazioni `tasto premuto -> azione da eseguire`, queste azioni verrano eseguite durante la fase di EarlyUpdate. Questo permette un approccio event driven piuttosto che a polling.
+  
+  Le azioni devono essere eseguite ad ogni frame se il bottone è stato premuto e rilasciato, premuto o tenuto premuto.
+
+### Implementazione
+SwingIO (in particolare SwingInputEventsAccumulator) accoda tutti gli eventi (pressioni e rilasci di tasti) inviati da Swing. Una volta raggiunta la fine del frame la coda degli eventi viene copiata (in modo da renderla persistente fino al prossimo frame) e svuotata cosicchè i nuovi eventi possano continuare ad essere accodati. 
+
+Per semplicità si immagini che gli eventi siano raggruppati per tasto.
+
+A questo punto è possibile analizzare gli eventi per ogni tasto e decidere se l'azione associata deve essere eseguita.
+
+Si prenda in considerazione un tasto T, gli eventi P = premuto e R = rilasciato, i casi di eventi accumulati possono essere i seguenti:
+|Ultimo evento registrato (prima della coda)|Coda eventi (a destra il più recente)|Interpretazione|Esecuzione dell'azione associata|
+|:----------------------:|-------------------------------------|-----------|:---------:|
+|| [ ]             |T non è mai stato premuto o rilasciato| |
+|| [ P ]           |T è stato premuto per la prima volta| X |
+|| [ R, P, ... ]        |T è stato premuto per la prima volta (il primo R si può ignorare in maniera sicura)| X |
+|| [ P, R, ... ]        |T è stato premuto e rilasciato nell'arco del frame per la prima volta| X |
+|P| [ ]             |T era stato premuto ed è ancora premuto| X |
+|P| [ R ]           |T era stato premuto e viene rilasciato| |
+|P| [ R, P, ... ]        |T era stato premuto e nell'arco del frame è stato rilasciato e premuto| X |
+|R| [ ]             |T era stato rilasciato| |
+|R| [ P ]           |T era stato rilasciato e viene premuto| X |
+|R| [ P, R, ... ]        |T era stato rilasciato e nell'arco del frame è stato premuto e rilasciato| X |
+
+> **Nota:**
+>
+> Si sono escluse configurazioni che possono essere ignorate in maniera sicura, ad esempio quelle in cui T era stato premuto prima dell'avvio dell'applicazione e rilasciato dopo.
+
+Per semplicità si considera al massimo una esecuzione per frame dell'azione associata, questo significa che in una coda più ripetizioni di P vengono combinate in una sola.
+In futuro, in caso di necessità rimane possibile modificare questo comportamento.
+
+Il tutto può essere condensato in una espressione più semplice, l'azione deve essere eseguita se:
+**E' presente almeno un P nella coda OR (La coda è vuota AND l'ultimo evento è P)**
+Il metodo che implementa tale logica è:
+```scala
+trait SwingIO extends IO:
+    // ...
+    def inputButtonWasPressed(inputButton: InputButton): Boolean
+```
+
 ## Built-in behaviours
 Di seguito sono descritte le implementazioni dei vari Behaviours built-in del SGE.
 Da notare che ogni behaviour built-in è un mixin di Behaviour.
@@ -232,4 +305,48 @@ val image: SwingImageRenderer = new Behaviour with SwingImageRenderer("icon.png"
 image.imageHeight = 2         // cambia le dimensioni
 image.imageWidth = 2
 
+```
+
+### SwingInputHandler
+Permette allo sviluppatore di definire associazioni del tipo `input -> azione`
+
+```scala
+class GameObject
+      extends Behaviour
+      // ...
+      with SwingInputHandler:
+
+    var inputHandlers: Map[InputButton, Handler] = Map(
+      D -> onMoveRight,
+      A -> onMoveLeft,
+      W -> onMoveUp,
+      S -> onMoveDown,
+      E -> (onMoveUp and onMoveRight),
+      MouseButton1 -> onTeleport.fireJustOnceIfHeld
+    )
+
+    private def onTeleport(inputButton: InputButton): Unit = // Teleport logic
+    private def onMoveRight(input: InputButton): Unit = // Move logic
+    private def onMoveLeft(input: InputButton): Unit = // Move logic
+    private def onMoveUp(input: InputButton): Unit = // Move logic
+    private def onMoveDown(input: InputButton): Unit = // Move logic
+```
+
+Il motivo per cui si obbliga la classe che implementa a definire inputHandlers piuttosto che accettare inputHandlers come parametro del mixin è che questo permette allo sviluppatore di avere i riferimenti ai metodi interni alla classe, altrimenti non sarebbe possibile avere una sintassi così espressiva.
+
+Come si può notare dall'esempio è anche possibile definire handler complessi:
+- è possibile definire un handler che esegue più funzioni tramite la sintassi `handler1 and handler2`
+- è possibile settare un handler in modo che venga eseguito solo al primo frame nel caso in cui l'evento si riproponga in maniera continua anche in quelli successivi: `handler.fireJustOnceIfHeld`
+
+Nel caso si preferisse comunque un approccio non event-driven è possibile utilizzare direttamente SwingIO senza SwingInputHandler:
+
+```scala
+class GameObject extends Behaviour
+    override def onUpdate: Engine => Unit = (engine) =>
+        val io: SwingIO = // ...
+
+        if io.inputButtonWasPressed(SPACE) then
+            // jump logic ...
+
+        super.onUpdate(engine)
 ```
