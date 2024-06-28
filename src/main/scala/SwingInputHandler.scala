@@ -5,7 +5,7 @@ object SwingInputHandler:
   /** A Handler represents what should be done in response of an input event */
   opaque type Handler = Iterable[SingleHandlerImpl]
   private case class SingleHandlerImpl(
-      val handler: (InputButton) => Unit,
+      val handler: InputButton => Engine => Unit,
       val shouldFireJustOnceIfHold: Boolean
   )
 
@@ -18,8 +18,8 @@ object SwingInputHandler:
     def fireJustOnceIfHeld: Handler =
       h.map(h => SingleHandlerImpl(h.handler, true))
 
-  given Conversion[(InputButton) => Unit, Handler] with
-    def apply(f: InputButton => Unit): Handler =
+  given Conversion[InputButton => Engine => Unit, Handler] with
+    def apply(f: InputButton => Engine => Unit): Handler =
       Seq(SingleHandlerImpl(f, false))
 
   /** A behaviour which enables to specify some event handlers to fire when
@@ -49,7 +49,7 @@ object SwingInputHandler:
           handlers.foreach(h =>
             if !h.shouldFireJustOnceIfHold || !lastFrameReceivedInputs
                 .contains(key)
-            then h.handler(key)
+            then h.handler(key)(engine)
           )
         )
 

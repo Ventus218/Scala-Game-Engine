@@ -78,8 +78,8 @@ object Engine:
     private var gameObjects: Iterable[Behaviour] = Seq()
     private var sceneToLoad: Option[Scene] = Option.empty
 
-    private var gameObjectsToAdd: Seq[Behaviour] = Seq()
-    private var gameObjectsToRemove: Seq[Behaviour] = Seq()
+    private var gameObjectsToAdd: Set[Behaviour] = Set()
+    private var gameObjectsToRemove: Set[Behaviour] = Set()
 
     private var gameObjectsToEnable: Set[Behaviour] = Set()
     private var gameObjectsToDisable: Set[Behaviour] = Set()
@@ -112,11 +112,12 @@ object Engine:
       gameObjectsToDisable = Set.empty
 
     override def create(gameObject: Behaviour): Unit =
-      if gameObjects.exists(_ eq gameObject) then
+      if gameObjects.exists(_ eq gameObject) || gameObjectsToAdd(gameObject)
+      then
         throw IllegalArgumentException(
           "Cannot instantiate an object already instantiated"
         )
-      gameObjectsToAdd = gameObjectsToAdd :+ gameObject
+      gameObjectsToAdd = gameObjectsToAdd + gameObject
 
     override def find[B <: Identifiable](using tt: TypeTest[Behaviour, B])(
         id: String
@@ -134,11 +135,12 @@ object Engine:
     private def deltaTimeNanos_=(dt: Long) = this._deltaTimeNanos = dt
 
     override def destroy(gameObject: Behaviour): Unit =
-      if !gameObjects.exists(_ eq gameObject) then
+      if !gameObjects.exists(_ eq gameObject) || gameObjectsToRemove(gameObject)
+      then
         throw IllegalArgumentException(
           "Cannot destroy an object not instantiated"
         )
-      gameObjectsToRemove = gameObjectsToRemove :+ gameObject
+      gameObjectsToRemove = gameObjectsToRemove + gameObject
 
     private def enabledObjects = gameObjects.filter(_.enabled)
 
@@ -146,16 +148,19 @@ object Engine:
       gameObjects = gameObjects ++ gameObjectsToAdd
       gameObjectsToAdd.foreach(_.onInit(this))
       gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
-      gameObjectsToAdd = Seq()
+      gameObjectsToAdd = Set.empty
 
     private def applyDestroy(): Unit =
       gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
       gameObjectsToRemove.foreach(_.onDeinit(this))
-      gameObjectsToRemove = Seq()
+      gameObjectsToRemove = Set.empty
 
-    private var shouldStop = false
+    private var shouldStop = true
 
     override def run(initialScene: Scene): Unit =
+      if !shouldStop then
+        throw IllegalStateException("Engine is already running")
+
       shouldStop = false
       deltaTimeNanos = 0
       loadScene(initialScene)

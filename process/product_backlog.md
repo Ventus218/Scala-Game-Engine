@@ -10,6 +10,10 @@ Priority goes from top to bottom.
 |18|Fix: Sovrapposizione di figure in IO|Quando due figure si sovrappongono fanno uno strano effetto grafico|
 |19|Definizione priorità di rendering||
 |20|Possibilità di settare un limite di FPS||
+|21|Usare Set al posto di Seq per la creazione/distruzione di oggetti|
+|22|Impedire l'esecuzione di run quando l'engine è già partito|
+|23|Aggiungere un riferimento all'engine negli Handler di **SwingInputHandler**|
+|24|Inserire un main complesso di test|
 |12|Design DSL||
 |13|Scelta e design dei videogiochi di esempio||
 |14|Realizzazione dei videogiochi di esempio||
