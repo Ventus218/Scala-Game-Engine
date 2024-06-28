@@ -1,4 +1,4 @@
-import Behaviours.Positionable
+import Dimensions2D.Positionable
 
 import java.awt.image.BufferedImage
 import java.awt.{Color, Graphics2D, Image}

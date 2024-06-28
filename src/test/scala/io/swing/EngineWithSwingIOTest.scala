@@ -1,7 +1,7 @@
-import Behaviours.*
 import SwingRenderers.*
 
 import java.awt.Color
+import Dimensions2D.Positionable
 object EngineWithSwingIOTest:
 
   trait MoveX(velocityX: Double) extends Behaviour with Positionable:
