@@ -100,3 +100,20 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
     collider.scaleY = 3
     collider.colliderHeight shouldBe 9
+
+  it should "collides using the scaled dimensions" in:
+    collider.x = 0
+    collider.y = 0
+    collider.colliderWidth = 2
+    collider.scaleX = 1
+
+    collider2.x = 5
+    collider2.y = 0
+    collider2.colliderWidth  = 4
+    collider2.scaleX = 2
+
+    collider.collides(collider2) shouldBe true
+
+    collider2.x = 6
+
+    collider.collides(collider2) shouldBe false

@@ -45,10 +45,10 @@ object Physics2D:
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
 
-    private def right: Double = x + width / 2
-    private def bottom: Double = y + height / 2
-    private def left: Double = x - width / 2
-    private def top: Double = y - height / 2
+    private def right: Double = x + colliderWidth / 2
+    private def bottom: Double = y + colliderHeight / 2
+    private def left: Double = x - colliderWidth / 2
+    private def top: Double = y - colliderHeight / 2
 
     override def collides(other: RectCollider): Boolean =
       this.top <= other.bottom &&
