@@ -159,6 +159,52 @@ val io: SwingIO = SwingIO
   .build()                            // costruisce la SwingIO
 ```
 
+## SwingIO (Input)
+### Architettura
+Si è implementata la seguente architettura:
+- SwingIO registra gli eventi di input generati dall'utente.
+- Per gestire la concorrenza della ricezione degli eventi si è deciso di accumularli durante l'esecuzione di un frame e gestirli solo nel frame successivo.
+- Il behaviour [SwingInputHandler](#swinginputhandler) permette all'utente di definire delle associazioni `tasto premuto -> azione da eseguire`, queste azioni verrano eseguite durante la fase di EarlyUpdate. Questo permette un approccio event driven piuttosto che a polling.
+  
+  Le azioni devono essere eseguite ad ogni frame se il bottone è stato premuto e rilasciato, premuto o tenuto premuto.
+
+### Implementazione
+SwingIO (in particolare SwingInputEventsAccumulator) accoda tutti gli eventi (pressioni e rilasci di tasti) inviati da Swing. Una volta raggiunta la fine del frame la coda degli eventi viene copiata (in modo da renderla persistente fino al prossimo frame) e svuotata cosicchè i nuovi eventi possano continuare ad essere accodati. 
+
+Per semplicità si immagini che gli eventi siano raggruppati per tasto.
+
+A questo punto è possibile analizzare gli eventi per ogni tasto e decidere se l'azione associata deve essere eseguita.
+
+Si prenda in considerazione un tasto T, gli eventi P = premuto e R = rilasciato, i casi di eventi accumulati possono essere i seguenti:
+|Ultimo evento registrato (prima della coda)|Coda eventi (a destra il più recente)|Interpretazione|Esecuzione dell'azione associata|
+|:----------------------:|-------------------------------------|-----------|:---------:|
+|| [ ]             |T non è mai stato premuto o rilasciato| |
+|| [ P ]           |T è stato premuto per la prima volta| X |
+|| [ R, P, ... ]        |T è stato premuto per la prima volta (il primo R si può ignorare in maniera sicura)| X |
+|| [ P, R, ... ]        |T è stato premuto e rilasciato nell'arco del frame per la prima volta| X |
+|P| [ ]             |T era stato premuto ed è ancora premuto| X |
+|P| [ R ]           |T era stato premuto e viene rilasciato| |
+|P| [ R, P, ... ]        |T era stato premuto e nell'arco del frame è stato rilasciato e premuto| X |
+|R| [ ]             |T era stato rilasciato| |
+|R| [ P ]           |T era stato rilasciato e viene premuto| X |
+|R| [ P, R, ... ]        |T era stato rilasciato e nell'arco del frame è stato premuto e rilasciato| X |
+
+> **Nota:**
+>
+> Si sono escluse configurazioni che possono essere ignorate in maniera sicura, ad esempio quelle in cui T era stato premuto prima dell'avvio dell'applicazione e rilasciato dopo.
+
+Per semplicità si considera al massimo una esecuzione per frame dell'azione associata, questo significa che in una coda più ripetizioni di P vengono combinate in una sola.
+In futuro, in caso di necessità rimane possibile modificare questo comportamento.
+
+Il tutto può essere condensato in una espressione più semplice, l'azione deve essere eseguita se:
+**E' presente almeno un P nella coda OR (La coda è vuota AND l'ultimo evento è P)**
+Il metodo che implementa tale logica è:
+```scala
+trait SwingIO extends IO:
+    // ...
+    def inputButtonWasPressed(inputButton: InputButton): Boolean
+```
+
 ## Built-in behaviours
 Di seguito sono descritte le implementazioni dei vari Behaviours built-in del SGE.
 Da notare che ogni behaviour built-in è un mixin di Behaviour.
@@ -253,4 +299,48 @@ val image: SwingImageRenderer = new Behaviour with SwingImageRenderer("icon.png"
 image.imageHeight = 2         // cambia le dimensioni
 image.imageWidth = 2
 
+```
+
+### SwingInputHandler
+Permette allo sviluppatore di definire associazioni del tipo `input -> azione`
+
+```scala
+class GameObject
+      extends Behaviour
+      // ...
+      with SwingInputHandler:
+
+    var inputHandlers: Map[InputButton, Handler] = Map(
+      D -> onMoveRight,
+      A -> onMoveLeft,
+      W -> onMoveUp,
+      S -> onMoveDown,
+      E -> (onMoveUp and onMoveRight),
+      MouseButton1 -> onTeleport.fireJustOnceIfHeld
+    )
+
+    private def onTeleport(inputButton: InputButton): Unit = // Teleport logic
+    private def onMoveRight(input: InputButton): Unit = // Move logic
+    private def onMoveLeft(input: InputButton): Unit = // Move logic
+    private def onMoveUp(input: InputButton): Unit = // Move logic
+    private def onMoveDown(input: InputButton): Unit = // Move logic
+```
+
+Il motivo per cui si obbliga la classe che implementa a definire inputHandlers piuttosto che accettare inputHandlers come parametro del mixin è che questo permette allo sviluppatore di avere i riferimenti ai metodi interni alla classe, altrimenti non sarebbe possibile avere una sintassi così espressiva.
+
+Come si può notare dall'esempio è anche possibile definire handler complessi:
+- è possibile definire un handler che esegue più funzioni tramite la sintassi `handler1 and handler2`
+- è possibile settare un handler in modo che venga eseguito solo al primo frame nel caso in cui l'evento si riproponga in maniera continua anche in quelli successivi: `handler.fireJustOnceIfHeld`
+
+Nel caso si preferisse comunque un approccio non event-driven è possibile utilizzare direttamente SwingIO senza SwingInputHandler:
+
+```scala
+class GameObject extends Behaviour
+    override def onUpdate: Engine => Unit = (engine) =>
+        val io: SwingIO = // ...
+
+        if io.inputButtonWasPressed(SPACE) then
+            // jump logic ...
+
+        super.onUpdate(engine)
 ```
