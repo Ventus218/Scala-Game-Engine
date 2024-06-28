@@ -13,8 +13,8 @@ class SwingInputHandlerTests extends AnyFlatSpec:
   val objId = "1"
 
   "SwingInputHandler" should "accept a mapping between input events and handlers" in:
-    val f: Handler = (_: InputButton) => {}
-    val h: Handler = (_: InputButton) => {}
+    val f: Handler = (_: InputButton) => (_: Engine) => {}
+    val h: Handler = (_: InputButton) => (_: Engine) => {}
     val initialInputHandlers = Map(
       N_0 -> f,
       N_1 -> h
@@ -105,8 +105,8 @@ class SwingInputHandlerTests extends AnyFlatSpec:
       with SwingInputHandler:
     var aRuns = 0
     var bRuns = 0
-    def a(i: InputButton): Unit = aRuns += 1
-    def b(i: InputButton): Unit = bRuns += 1
+    def a(input: InputButton)(engine: Engine): Unit = aRuns += 1
+    def b(input: InputButton)(engine: Engine): Unit = bRuns += 1
 
   private class InputIOMock extends SwingIO:
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
@@ -160,15 +160,15 @@ class SwingInputHandlerTests extends AnyFlatSpec:
     var moveUp = false
     var moveDown = false
 
-    private def onTeleport(inputButton: InputButton): Unit =
+    private def onTeleport(input: InputButton)(engine: Engine): Unit =
       shouldTeleport = true
-    private def onMoveRight(input: InputButton): Unit =
+    private def onMoveRight(input: InputButton)(engine: Engine): Unit =
       moveRight = true
-    private def onMoveLeft(input: InputButton): Unit =
+    private def onMoveLeft(input: InputButton)(engine: Engine): Unit =
       moveLeft = true
-    private def onMoveUp(input: InputButton): Unit =
+    private def onMoveUp(input: InputButton)(engine: Engine): Unit =
       moveUp = true
-    private def onMoveDown(input: InputButton): Unit =
+    private def onMoveDown(input: InputButton)(engine: Engine): Unit =
       moveDown = true
 
     override def onUpdate: Engine => Unit = (engine) =>

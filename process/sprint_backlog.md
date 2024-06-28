@@ -41,12 +41,16 @@
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |9|Implementazione **Engine** caricamento scena e distruzione/creazione|Michele|||X|
-|9|Implementazione **Engine** conversione delta time in secondi|Alessandro|X|||
+|9|Implementazione **Engine** conversione delta time in secondi|Alessandro|||X|
 |9|Implementazione **Engine** abilitazione e disabilitazione degli oggetti|Alessandro|||X|
 |11|Implementazione **SwingInputHandler** (old SwingInputB)|Alessandro|||X|
 |16|Refactor: Dimensionable -> Scalable|Corrado|||X|
 |17|Refactor: Collider con più shape - Rettangolo|Corrado|||X|
 |17|Refactor: Collider con più shape - Cerchio|Corrado|||X|
-|18|Fix: Sovrapposizione di figure in IO|Michele|X|||
-|19|Definizione priorità di rendering|Michele|X|||
+|18|Fix: Sovrapposizione di figure in IO|Michele|||X|
+|19|Definizione priorità di rendering|Michele|||X|
 |20|Possibilità di settare un limite di FPS|Alessandro|||X|
+|21|Usare Set al posto di Seq per la creazione/distruzione di oggetti|Tutti||X||
+|22|Impedire l'esecuzione di run quando l'engine è già partito|Tutti||X||
+|23|Aggiungere un riferimento all'engine negli Handler di **SwingInputHandler**|Tutti|||X|
+|24|Inserire un main complesso di test|Tutti||X||
