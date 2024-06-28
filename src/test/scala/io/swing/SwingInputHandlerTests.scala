@@ -125,7 +125,7 @@ class SwingInputHandlerTests extends AnyFlatSpec:
 /** A complex input test, move with WASD and teleport with left mouse click
   */
 @main def main: Unit =
-  import Behaviours.*
+  import Dimensions2D.*
   import SwingRenderers.SwingSquareRenderer
 
   val io = SwingIO
