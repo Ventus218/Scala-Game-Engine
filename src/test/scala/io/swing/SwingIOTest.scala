@@ -7,6 +7,12 @@ import SwingIO.*
 import scala.compiletime.ops.double
 
 object SwingIOTest:
+
+  val io: SwingIO.SwingIOBuilder =
+    SwingIO
+      .withSize((400, 400))
+      .withTitle("Swing Test")
+
   private def rectRenderer(posX: Int, posY: Int): Graphics2D => Unit = g =>
     g.setColor(Color.red)
     g.fillRect(posX, posY, 50, 50)
@@ -21,22 +27,14 @@ object SwingIOTest:
 
   @main def testSwingIORendering(): Unit =
     // it should allow to draw on the UI
-    val frame: SwingIO =
-      SwingIO
-        .withSize((400, 400))
-        .withTitle("Swing Test")
-        .build()
+    val frame: SwingIO = io.build()
 
     frame.draw(rectRenderer(0, 0))
     frame.show()
 
   @main def testSwingIOUpdate(): Unit =
     // it should allow to render multiple times in sequence
-    val frame: SwingIO =
-      SwingIO
-        .withSize((400, 400))
-        .withTitle("Swing Test")
-        .build()
+    val frame: SwingIO = io.build()
 
     for i <- 0 to 300 by 10 do
       frame.draw(rectRenderer(i, i))
@@ -45,11 +43,7 @@ object SwingIOTest:
 
   @main def testSwingIOMultipleRendering(): Unit =
     // it should draw multiple renderers
-    val frame: SwingIO =
-      SwingIO
-        .withSize((400, 400))
-        .withTitle("Swing Test")
-        .build()
+    val frame: SwingIO = io.build()
 
     frame.draw(rectRenderer(0, 0))
     frame.draw(circleRenderer(100, 100))
@@ -57,31 +51,42 @@ object SwingIOTest:
     frame.draw(circleRenderer(50, 200))
     frame.show()
 
+  @main def testSwingIORenderingPriority(): Unit =
+    // it should draw multiple renderers ordered by their priority
+    val frame: SwingIO = io.build()
+
+    frame.draw(circleRenderer(100, 100), priority = 1)
+    frame.draw(rectRenderer(120, 100), priority = 0)
+    frame.draw(circleRenderer(140, 50), priority = -1)
+    frame.show()
+
   // ********** Input **********
 
   @main def testSwingIOReceiveInputEvents(): Unit =
-    val io = SwingIO.withSize((400, 400)).build()
-    val engine = EngineMock(io = io, storage = Storage())
-    io.show()
+    val ioFrame = SwingIO.withSize((400, 400)).build()
+
+    val engine = EngineMock(io = ioFrame, storage = Storage())
+    ioFrame.show()
     var frame = 0
     while true do
       // Change this sleep time for debugging
       Thread.sleep(10)
-      io.onFrameEnd(engine)
-      println(s"Frame $frame:\t${io.inputButtonWasPressed(InputButton.N_0)}")
+      ioFrame.onFrameEnd(engine)
+      println(s"Frame $frame:\t${ioFrame.inputButtonWasPressed(InputButton.N_0)}")
       frame += 1
 
   @main def testSwingPointerPosition(): Unit =
-    val io = SwingIO
+    val ioFrame = SwingIO
       .withTitle("Swing Test")
       .withSize(800, 800)
       .withPixelsPerUnitRatio(10)
       .build()
-    io.show()
+    ioFrame.show()
 
     while true do
-      println(io.scenePointerPosition())
+      println(ioFrame.scenePointerPosition())
       Thread.sleep(200)
+
 
 class SwingIOTest extends AnyFlatSpec:
 

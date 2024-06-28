@@ -115,7 +115,7 @@ class SwingInputHandlerTests extends AnyFlatSpec:
     override def title: String = ???
     override def pixelsPerUnit: Int = ???
     override def pixelsPerUnit_=(p: Int): Unit = ???
-    override def draw(renderer: Graphics2D => Unit): Unit = ???
+    override def draw(renderer: Graphics2D => Unit, priority: Int): Unit = ???
     override def backgroundColor: Color = ???
     override def size: (Int, Int) = ???
     override def center_=(pos: (Double, Double)): Unit = ???

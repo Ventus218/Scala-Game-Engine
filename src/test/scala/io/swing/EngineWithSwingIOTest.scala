@@ -30,3 +30,12 @@ object EngineWithSwingIOTest:
     val scene: Scene = () => Seq(redRect, blueCircle)
 
     engine.run(scene)
+
+  @main def testSwingRendererPriority(): Unit =
+    val engine = Engine(ioBuilder.build(), Storage())
+    val scene: Scene = () => Seq(redRect, blueCircle)
+
+    redRect.renderingPriority = 5
+    blueCircle.renderingPriority = -5
+
+    engine.run(scene)

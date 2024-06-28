@@ -49,8 +49,11 @@ trait SwingIO extends IO:
     *
     * @param renderer
     *   The operation to apply to the given graphic context
+    * @param priority
+    *   The priority of the renderer. Higher priority means it will be rendered above others.
+    *   Defaults to 0.
     */
-  def draw(renderer: Graphics2D => Unit): Unit
+  def draw(renderer: Graphics2D => Unit, priority: Int = 0): Unit
 
   /** Update the windows, executing all the registered operations over the
     * graphics context
@@ -237,14 +240,14 @@ object SwingIO:
       frame.setResizable(false)
       frame.setLocationRelativeTo(null)
       frame
-
+    
     private def swapCanvases(): Unit =
       val temp = activeCanvas
       activeCanvas = bufferCanvas
       bufferCanvas = temp
 
-    override def draw(renderer: Graphics2D => Unit): Unit =
-      bufferCanvas.add(renderer)
+    override def draw(renderer: Graphics2D => Unit, priority: Int): Unit =
+      bufferCanvas.add((renderer, priority))
 
     override def show(): Unit =
       if !frame.isVisible then initCanvas()
@@ -272,14 +275,15 @@ object SwingIO:
     * @param color
     */
   private class DrawableCanvas(size: (Int, Int), color: Color) extends JPanel:
-    private var renderers: Seq[Graphics2D => Unit] = Seq.empty
+    private var renderers: Seq[(Graphics2D => Unit, Int)] = Seq.empty
     private var show: Boolean = false
 
     setPreferredSize(new Dimension(size._1, size._2))
     setBackground(color)
-
-    def add(renderer: Graphics2D => Unit): Unit =
+    
+    def add(renderer: (Graphics2D => Unit, Int)): Unit =
       renderers = renderers :+ renderer
+
     def showRenderers(): Unit = SwingUtilities.invokeLater(() => {
       show = true; repaint()
     })
@@ -291,9 +295,10 @@ object SwingIO:
           RenderingHints.KEY_ANTIALIASING,
           RenderingHints.VALUE_ANTIALIAS_ON
         )
-        renderers.foreach(_(g2))
+        renderers.sortBy((f, ord) => ord).foreach((f, ord) => f(g2))
         renderers = Seq.empty
         show = false
+
 
   /* builder class for SwingIO, with defaults */
 
