@@ -3,6 +3,9 @@ import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D, RenderingHints}
 import java.util.function.Consumer
 import javax.swing
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
+import SwingIO.InputButton
+import java.awt.event.MouseEvent
+import java.awt.MouseInfo
 
 /** An implementation of IO trait using Java Swing
   */
@@ -46,13 +49,29 @@ trait SwingIO extends IO:
     *
     * @param renderer
     *   The operation to apply to the given graphic context
+    * @param priority
+    *   The priority of the renderer. Higher priority means it will be rendered above others.
+    *   Defaults to 0.
     */
-  def draw(renderer: Graphics2D => Unit): Unit
+  def draw(renderer: Graphics2D => Unit, priority: Int = 0): Unit
 
   /** Update the windows, executing all the registered operations over the
     * graphics context
     */
   def show(): Unit
+
+  /** Determines if a inputButton was pressed in the last frame.
+    *
+    * @param inputButton
+    * @return
+    */
+  def inputButtonWasPressed(inputButton: InputButton): Boolean
+
+  /** Retrieves the current pointer position in the scene coordinate space
+    *
+    * @return
+    */
+  def scenePointerPosition(): (Double, Double)
 
 extension (io: SwingIO)
   /** Converts game-coordinates positions to screen-coordinates positions
@@ -84,6 +103,70 @@ extension (io: SwingIO)
 /** Utility object for SwingIO
   */
 object SwingIO:
+  import java.awt.event.KeyEvent.*
+
+  /** The type of input event (like Pressed or Released)
+    */
+  enum InputEvent:
+    case Pressed
+    case Released
+
+  /** The buttons that can generate an input.
+    *
+    * @param id
+    *   The Java AWT enum int value that identifies the button
+    */
+  enum InputButton(val id: Int):
+    case N_0 extends InputButton(VK_0)
+    case N_1 extends InputButton(VK_1)
+    case N_2 extends InputButton(VK_2)
+    case N_3 extends InputButton(VK_3)
+    case N_4 extends InputButton(VK_4)
+    case N_5 extends InputButton(VK_5)
+    case N_6 extends InputButton(VK_6)
+    case N_7 extends InputButton(VK_7)
+    case N_8 extends InputButton(VK_8)
+    case N_9 extends InputButton(VK_9)
+    case Q extends InputButton(VK_Q)
+    case W extends InputButton(VK_W)
+    case E extends InputButton(VK_E)
+    case R extends InputButton(VK_R)
+    case T extends InputButton(VK_T)
+    case Y extends InputButton(VK_Y)
+    case U extends InputButton(VK_U)
+    case I extends InputButton(VK_I)
+    case O extends InputButton(VK_O)
+    case P extends InputButton(VK_P)
+    case A extends InputButton(VK_A)
+    case S extends InputButton(VK_S)
+    case D extends InputButton(VK_D)
+    case F extends InputButton(VK_F)
+    case G extends InputButton(VK_G)
+    case H extends InputButton(VK_H)
+    case J extends InputButton(VK_J)
+    case K extends InputButton(VK_K)
+    case L extends InputButton(VK_L)
+    case Z extends InputButton(VK_Z)
+    case X extends InputButton(VK_X)
+    case C extends InputButton(VK_C)
+    case V extends InputButton(VK_V)
+    case B extends InputButton(VK_B)
+    case N extends InputButton(VK_N)
+    case M extends InputButton(VK_M)
+    case Space extends InputButton(VK_SPACE)
+
+    /** Usually the left mouse button
+      */
+    case MouseButton1 extends InputButton(MouseEvent.BUTTON1)
+
+    /** Usually the scrollwheel button
+      */
+    case MouseButton2 extends InputButton(MouseEvent.BUTTON2)
+
+    /** Usually the right mouse button
+      */
+    case MouseButton3 extends InputButton(MouseEvent.BUTTON3)
+
   /** Create a new SwingIO class.
     * @param title
     *   the title of the window frame
@@ -124,6 +207,8 @@ object SwingIO:
     private var bufferCanvas: DrawableCanvas = createCanvas()
     private var activeCanvas: DrawableCanvas = createCanvas()
 
+    private val inputEventsAccumulator = SwingInputEventsAccumulator()
+
     override def pixelsPerUnit: Int = _pixelsPerUnit
     override def pixelsPerUnit_=(p: Int): Unit =
       require(p > 0, "pixels/unit ratio must be positive")
@@ -133,11 +218,14 @@ object SwingIO:
       engine =>
         super.onFrameEnd(engine)
         show()
+        inputEventsAccumulator.onFrameEnd()
 
     private def initCanvas(): Unit =
       SwingUtilities.invokeAndWait(() => {
         frame.add(activeCanvas)
         frame.add(bufferCanvas)
+        frame.addKeyListener(inputEventsAccumulator)
+        frame.addMouseListener(inputEventsAccumulator)
         frame.pack()
         frame.setVisible(true)
       })
@@ -152,35 +240,50 @@ object SwingIO:
       frame.setResizable(false)
       frame.setLocationRelativeTo(null)
       frame
-
+    
     private def swapCanvases(): Unit =
       val temp = activeCanvas
       activeCanvas = bufferCanvas
       bufferCanvas = temp
 
-    override def draw(renderer: Graphics2D => Unit): Unit =
-      bufferCanvas.add(renderer)
+    override def draw(renderer: Graphics2D => Unit, priority: Int): Unit =
+      bufferCanvas.add((renderer, priority))
 
     override def show(): Unit =
-      if !frame.isVisible then
-        initCanvas()
+      if !frame.isVisible then initCanvas()
 
       bufferCanvas.showRenderers()
       swapCanvases()
+
+    override def inputButtonWasPressed(inputButton: InputButton): Boolean =
+      inputEventsAccumulator.lastFrameInputEvents.get(inputButton) match
+        case Some(events) => events.contains(InputEvent.Pressed)
+        case None =>
+          inputEventsAccumulator.lastInputEventBeforeLastFrame.get(
+            inputButton
+          ) == Some(
+            InputEvent.Pressed
+          )
+
+    override def scenePointerPosition(): (Double, Double) =
+      val absolutePointerPos = MouseInfo.getPointerInfo().getLocation()
+      SwingUtilities.convertPointFromScreen(absolutePointerPos, activeCanvas)
+      this.scenePosition((absolutePointerPos.x, absolutePointerPos.y))
 
   /** Class used as canvas for SwingIOImpl
     * @param size
     * @param color
     */
   private class DrawableCanvas(size: (Int, Int), color: Color) extends JPanel:
-    private var renderers: Seq[Graphics2D => Unit] = Seq.empty
+    private var renderers: Seq[(Graphics2D => Unit, Int)] = Seq.empty
     private var show: Boolean = false
 
     setPreferredSize(new Dimension(size._1, size._2))
     setBackground(color)
-
-    def add(renderer: Graphics2D => Unit): Unit =
+    
+    def add(renderer: (Graphics2D => Unit, Int)): Unit =
       renderers = renderers :+ renderer
+
     def showRenderers(): Unit = SwingUtilities.invokeLater(() => {
       show = true; repaint()
     })
@@ -188,10 +291,14 @@ object SwingIO:
       super.paintComponent(g)
       if show then
         val g2: Graphics2D = g.asInstanceOf[Graphics2D]
-        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON)
-        renderers.foreach(_(g2))
+        g2.setRenderingHint(
+          RenderingHints.KEY_ANTIALIASING,
+          RenderingHints.VALUE_ANTIALIAS_ON
+        )
+        renderers.sortBy((f, ord) => ord).foreach((f, ord) => f(g2))
         renderers = Seq.empty
         show = false
+
 
   /* builder class for SwingIO, with defaults */
 

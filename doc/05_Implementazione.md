@@ -155,7 +155,7 @@ engine.loadScene(Scenes.GameScene)
 ## SwingIO
 SwingIO è il componente grafico dell'engine, e implementa il trait IO utilizzando le funzionalità del framework Swing.
 
-Il metodo `draw` di SwingIO permette di registrare una funzione `Graphics2D => Unit`, ovvero l'operazione da applicare al contesto grafico della finestra.
+Il metodo `draw` di SwingIO permette di registrare una funzione `Graphics2D => Unit`, ovvero l'operazione da applicare al contesto grafico della finestra, e la sua priorità, ovvero l'ordine con il quale queste operazioni vengono applicate.
 In questo modo, l'utente e i renderer possono aggiornare liberamente il proprio stato grafico semplicemente chiamando questo metodo.
 Il vero aggiornamento della finestra avviene alla chiamata del metodo `show`, che esegue tutte le operazioni di rendering registrate precedentemente, ridisegnando così l'interfaccia.
 Se non si chiama `show` almeno una volta, la finestra rimane nascosta.
@@ -182,6 +182,52 @@ val io: SwingIO = SwingIO
   .build()                            // costruisce la SwingIO
 ```
 
+## SwingIO (Input)
+### Architettura
+Si è implementata la seguente architettura:
+- SwingIO registra gli eventi di input generati dall'utente.
+- Per gestire la concorrenza della ricezione degli eventi si è deciso di accumularli durante l'esecuzione di un frame e gestirli solo nel frame successivo.
+- Il behaviour [SwingInputHandler](#swinginputhandler) permette all'utente di definire delle associazioni `tasto premuto -> azione da eseguire`, queste azioni verrano eseguite durante la fase di EarlyUpdate. Questo permette un approccio event driven piuttosto che a polling.
+  
+  Le azioni devono essere eseguite ad ogni frame se il bottone è stato premuto e rilasciato, premuto o tenuto premuto.
+
+### Implementazione
+SwingIO (in particolare SwingInputEventsAccumulator) accoda tutti gli eventi (pressioni e rilasci di tasti) inviati da Swing. Una volta raggiunta la fine del frame la coda degli eventi viene copiata (in modo da renderla persistente fino al prossimo frame) e svuotata cosicchè i nuovi eventi possano continuare ad essere accodati. 
+
+Per semplicità si immagini che gli eventi siano raggruppati per tasto.
+
+A questo punto è possibile analizzare gli eventi per ogni tasto e decidere se l'azione associata deve essere eseguita.
+
+Si prenda in considerazione un tasto T, gli eventi P = premuto e R = rilasciato, i casi di eventi accumulati possono essere i seguenti:
+|Ultimo evento registrato (prima della coda)|Coda eventi (a destra il più recente)|Interpretazione|Esecuzione dell'azione associata|
+|:----------------------:|-------------------------------------|-----------|:---------:|
+|| [ ]             |T non è mai stato premuto o rilasciato| |
+|| [ P ]           |T è stato premuto per la prima volta| X |
+|| [ R, P, ... ]        |T è stato premuto per la prima volta (il primo R si può ignorare in maniera sicura)| X |
+|| [ P, R, ... ]        |T è stato premuto e rilasciato nell'arco del frame per la prima volta| X |
+|P| [ ]             |T era stato premuto ed è ancora premuto| X |
+|P| [ R ]           |T era stato premuto e viene rilasciato| |
+|P| [ R, P, ... ]        |T era stato premuto e nell'arco del frame è stato rilasciato e premuto| X |
+|R| [ ]             |T era stato rilasciato| |
+|R| [ P ]           |T era stato rilasciato e viene premuto| X |
+|R| [ P, R, ... ]        |T era stato rilasciato e nell'arco del frame è stato premuto e rilasciato| X |
+
+> **Nota:**
+>
+> Si sono escluse configurazioni che possono essere ignorate in maniera sicura, ad esempio quelle in cui T era stato premuto prima dell'avvio dell'applicazione e rilasciato dopo.
+
+Per semplicità si considera al massimo una esecuzione per frame dell'azione associata, questo significa che in una coda più ripetizioni di P vengono combinate in una sola.
+In futuro, in caso di necessità rimane possibile modificare questo comportamento.
+
+Il tutto può essere condensato in una espressione più semplice, l'azione deve essere eseguita se:
+**E' presente almeno un P nella coda OR (La coda è vuota AND l'ultimo evento è P)**
+Il metodo che implementa tale logica è:
+```scala
+trait SwingIO extends IO:
+    // ...
+    def inputButtonWasPressed(inputButton: InputButton): Boolean
+```
+
 ## Built-in behaviours
 Di seguito sono descritte le implementazioni dei vari Behaviours built-in del SGE.
 Da notare che ogni behaviour built-in è un mixin di Behaviour.
@@ -199,6 +245,7 @@ Si possono passare i valori iniziali di `x` e `y` se non si vuole inizializzarle
 val positionable: Positionable = new Behaviour with Positionable(5)
 positionable.y = 3
 ```
+
 ### Scalable
 Un behaviour con **Scalable** come mixin ha accesso a due campi, `scaleX` e `scaleY`, che rappresentano rispettivamente quanto il behaviour dovrà essere scalato sulla X e sulla Y rispettivamente.
 Il behaviour va inizializzato con entrambi i campi e se sono negativi o uguali a zero verranno settati automaticamente ad 1, mentre, se una volta che il behaviour è stato inizializzato si provano a cambiare i campi in valori negativi o uguali ad 1, essi non cambieranno.
@@ -215,23 +262,23 @@ println(scalable.scaleY) // 3
 ```
 
 ### Collider
-Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anche **scalable** e **Positionable**. Al **Collider** potranno essere passati due valori, `w` e `h`, rispettivamente la sua larghezza e la sua altezza.
-Un valore inferiore o uguale a 0 per i due campi (valore di default = 0) comporta che larghezza e altezza del **Collider** siano gli stessi del **scalable**.
+Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anche **Positionable**.
+**Collider** è una semplice interfaccia che racchiude tutti i metodi `collides` che le varie forme di collider dovranno implementare estendendola. Chiamando tali metodi su un Collider si potrà verificare se esso ha avuto una collisione oppure no con il **Collider** passato come parametro.
 
-Questi due valori potranno poi essere recuperati dall'esterno attraverso i campi `colliderWidth` e `colliderHeight` che non potranno essere cambiati in valori negativi o uguali a 0.
-
-Infine il metodo `collides(other)` accetta in input un **Collider** e torna `true` se si verifica una collisione tra `other` e `this`, altrimenti torna `false`. Per l'algoritmo di collisione si è usato l'algoritmo [AABB collision detection](https://stackoverflow.com/tags/aabb/info).
+#### RectCollider
+**RectCollider** è un mixin che aggiunge ad un oggetto un collider rettangolare con il centro in `(Positionable.x, Positionable.y)` e dimensione data da `colliderWidth` e `colliderHeight` passati in input.
+La sua dimensione scala in base ai valori `scaleX` e `scaleY` di **Scalable**.
 
 *Esempio*
 ```scala
 // Creation of a collider with dimension 5x5 at x = 0, y = 0
-val collider: Collider = new Behaviour with Collider with scalable(5, 5) with Positionable(0, 0)
+val collider = new Behaviour with RectCollider(5, 5) with Scalable with Positionable
 
 // Creation of a collider with dimension 5x5 at x = 4, y = 4
-val collider2: Collider = new Behaviour with Collider with scalable(5, 5) with Positionable(4, 4)
+val collider2 = new Behaviour with RectCollider(5, 5) with Scalable with Positionable(4, 4)
 
-// Creation of a collider with dimension 2x2 at x = 10, y = 10
-val collider3: Collider = new Behaviour with Collider(2, 2) with scalable(5, 5) with Positionable(6, 6)
+// Creation of a collider with dimension 2x2 at x = 6, y = 6
+val collider3 = new Behaviour with RectCollider(2, 2) with Scalable with Positionable(6, 6)
 
 println(collider.collides(collider2)) //true
 println(collider.collides(collider3)) //false
@@ -246,9 +293,14 @@ println(collider3.collides(collider2)) //false
 
 ```
 
+#### CircleCollider
+**CircleCollider** è un mixin che aggiunge ad un oggetto un collider tondo con il centro in `(Positionable.x, Positionable.y)` e raggio passato in input.
+Il suo raggio scala in base allo `scale` di **SingleScalable**.
+
+
 ### SwingRenderer
 Un behaviour con **SwingRenderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
-Il rendering avviene nell'evento di `onLateUpdate` del game loop, e viene fatto invocando la funzione `renderer`, che contiene l'operazione da eseguire sul SwingIO e sul suo contesto grafico.
+Il rendering avviene nell'evento di `onLateUpdate` del game loop, e viene fatto invocando la funzione `renderer`, che contiene l'operazione da eseguire sul SwingIO e sul suo contesto grafico, insieme con la `rendereringPriority` che indica la priorità da passare allo SwingIO.
 Se l'engine non contiene un IO di tipo SwingIO, allora SwingRenderer lancia un'eccezione di tipo `ClassCastException`.
 
 SwingRenderable è esteso dal trait **SwingGameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
@@ -276,4 +328,48 @@ val image: SwingImageRenderer = new Behaviour with SwingImageRenderer("icon.png"
 image.imageHeight = 2         // cambia le dimensioni
 image.imageWidth = 2
 
+```
+
+### SwingInputHandler
+Permette allo sviluppatore di definire associazioni del tipo `input -> azione`
+
+```scala
+class GameObject
+      extends Behaviour
+      // ...
+      with SwingInputHandler:
+
+    var inputHandlers: Map[InputButton, Handler] = Map(
+      D -> onMoveRight,
+      A -> onMoveLeft,
+      W -> onMoveUp,
+      S -> onMoveDown,
+      E -> (onMoveUp and onMoveRight),
+      MouseButton1 -> onTeleport.fireJustOnceIfHeld
+    )
+
+    private def onTeleport(inputButton: InputButton): Unit = // Teleport logic
+    private def onMoveRight(input: InputButton): Unit = // Move logic
+    private def onMoveLeft(input: InputButton): Unit = // Move logic
+    private def onMoveUp(input: InputButton): Unit = // Move logic
+    private def onMoveDown(input: InputButton): Unit = // Move logic
+```
+
+Il motivo per cui si obbliga la classe che implementa a definire inputHandlers piuttosto che accettare inputHandlers come parametro del mixin è che questo permette allo sviluppatore di avere i riferimenti ai metodi interni alla classe, altrimenti non sarebbe possibile avere una sintassi così espressiva.
+
+Come si può notare dall'esempio è anche possibile definire handler complessi:
+- è possibile definire un handler che esegue più funzioni tramite la sintassi `handler1 and handler2`
+- è possibile settare un handler in modo che venga eseguito solo al primo frame nel caso in cui l'evento si riproponga in maniera continua anche in quelli successivi: `handler.fireJustOnceIfHeld`
+
+Nel caso si preferisse comunque un approccio non event-driven è possibile utilizzare direttamente SwingIO senza SwingInputHandler:
+
+```scala
+class GameObject extends Behaviour
+    override def onUpdate: Engine => Unit = (engine) =>
+        val io: SwingIO = // ...
+
+        if io.inputButtonWasPressed(SPACE) then
+            // jump logic ...
+
+        super.onUpdate(engine)
 ```

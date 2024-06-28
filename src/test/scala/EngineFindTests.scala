@@ -2,6 +2,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import TestUtils.*
+import Dimensions2D.Positionable
 
 class EngineFindTests extends AnyFlatSpec:
   val mock1 = GameObjectMock()

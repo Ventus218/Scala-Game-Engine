@@ -1,4 +1,4 @@
-import Behaviours.Positionable
+import Dimensions2D.Positionable
 
 import java.awt.image.BufferedImage
 import java.awt.{Color, Graphics2D, Image}
@@ -263,11 +263,16 @@ object SwingRenderers:
       */
     def renderer: SwingIO => Graphics2D => Unit
 
+    /** The rendering priority of this renderer. Higher priority means that 
+      * the renderer is drawn above the others. It can be modified.
+      */
+    var renderingPriority: Int = 0
+
     override def onLateUpdate: Engine => Unit =
       engine =>
         super.onLateUpdate(engine)
         val io: SwingIO = engine.io.asInstanceOf[SwingIO]
-        io.draw(renderer(io))
+        io.draw(renderer(io), renderingPriority)
 
   /** Behaviour for rendering a generic swing game element on a SwingIO
     */
@@ -317,11 +322,13 @@ object SwingRenderers:
       width: Double,
       height: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0)
+      offset: (Double, Double) = (0, 0),
+      priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingRect =
       Shapes.rect(width, height, color)
     this.renderOffset = offset
+    this.renderingPriority = priority
 
   /** Behaviour for rendering a square on a SwingIO. Size must be > 0. The
     * square is centered at the position of the behaviour, then moved by offset
@@ -330,10 +337,12 @@ object SwingRenderers:
   trait SwingSquareRenderer(
       size: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0)
+      offset: (Double, Double) = (0, 0),
+      priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingSquare = Shapes.square(size, color)
     this.renderOffset = offset
+    this.renderingPriority = priority
 
   /** Behaviour for rendering an oval on a SwingIO. Sizes must be > 0. The oval
     * is centered at the position of the behaviour, then moved by offset units.
@@ -342,11 +351,13 @@ object SwingRenderers:
       width: Double,
       height: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0)
+      offset: (Double, Double) = (0, 0),
+      priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingOval =
       Shapes.oval(width, height, color)
     this.renderOffset = offset
+    this.renderingPriority = priority
 
   /** Behaviour for rendering a circle on a SwingIO. Radius must be > 0. The
     * circle is centered at the position of the behaviour, then moved by offset
@@ -355,11 +366,13 @@ object SwingRenderers:
   trait SwingCircleRenderer(
       radius: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0)
+      offset: (Double, Double) = (0, 0),
+      priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingCircle = Shapes.circle(radius, color)
     export element.{shapeRadius, shapeRadius_=}
     this.renderOffset = offset
+    this.renderingPriority = priority
 
   /** Behaviour for rendering an image on a SwingIO. Sizes must be > 0, and the
     * image must be located in a resource folder. The image is centered at the
@@ -369,7 +382,8 @@ object SwingRenderers:
       imagePath: String,
       width: Double,
       height: Double,
-      offset: (Double, Double) = (0, 0)
+      offset: (Double, Double) = (0, 0),
+      priority: Int = 0
   ) extends SwingGameElementRenderer:
     protected val element: SwingImage =
       Images.simpleImage(imagePath, width, height)
@@ -385,3 +399,4 @@ object SwingRenderers:
       image
     }
     this.renderOffset = offset
+    this.renderingPriority = priority

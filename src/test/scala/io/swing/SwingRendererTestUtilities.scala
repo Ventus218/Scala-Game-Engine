@@ -5,6 +5,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 
 import java.awt.Color
+import Dimensions2D.Positionable
 
 object SwingRendererTestUtilities:
 
