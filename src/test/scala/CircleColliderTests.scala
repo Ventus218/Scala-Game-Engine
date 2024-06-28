@@ -8,23 +8,23 @@ import Physics2D.RectCollider
 import Dimensions2D.SingleScalable
 
 class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
-  val collider = new Behaviour
+  val circle = new Behaviour
     with CircleCollider(r = 2)
     with Positionable
     with SingleScalable
 
-  val collider2 = new Behaviour
+  val rect = new Behaviour
     with RectCollider(2, 2)
     with Positionable(-10, -10)
     with Scalable
 
   override protected def beforeEach(): Unit =
-    collider.radius = 2
-    collider.x = 2
-    collider.y = 2
+    circle.radius = 2
+    circle.x = 2
+    circle.y = 2
 
   it should "initially have its radius" in:
-    collider.radius shouldBe 2
+    circle.radius shouldBe 2
 
     val collider2 = new Behaviour
       with CircleCollider(r = 3.5)
@@ -47,107 +47,107 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
         with SingleScalable
 
   it should "be able to change its radius but not accept negative or zero values" in:
-    collider.radius = 20
-    collider.radius shouldBe 20
+    circle.radius = 20
+    circle.radius shouldBe 20
 
-    collider.radius = 10
-    collider.radius shouldBe 10
+    circle.radius = 10
+    circle.radius shouldBe 10
 
-    collider.radius = 0
-    collider.radius shouldBe 10
+    circle.radius = 0
+    circle.radius shouldBe 10
 
-    collider.radius = -15
-    collider.radius shouldBe 10
+    circle.radius = -15
+    circle.radius shouldBe 10
 
   it should "collides with a Rectangle Collider on its top" in:
-    collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
+    circle.collides(rect) shouldBe false
+    rect.collides(circle) shouldBe false
 
-    collider2.x = 2
-    collider2.y = 5
+    rect.x = 2
+    rect.y = 5
 
-    collider.collides(collider2) shouldBe true
-    collider2.collides(collider) shouldBe true
+    circle.collides(rect) shouldBe true
+    rect.collides(circle) shouldBe true
 
-    collider2.y = 6
+    rect.y = 6
 
-    collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
+    circle.collides(rect) shouldBe false
+    rect.collides(circle) shouldBe false
 
   it should "collides with a Rectangle Collider on its right" in:
-    collider2.x = -1
-    collider2.y = 2
+    rect.x = -1
+    rect.y = 2
 
-    collider.collides(collider2) shouldBe true
+    circle.collides(rect) shouldBe true
 
-    collider2.x = -2
+    rect.x = -2
 
-    collider.collides(collider2) shouldBe false
+    circle.collides(rect) shouldBe false
 
   it should "collides with a Rectangle Collider on it bottom" in:
-    collider2.x = 2
-    collider2.y = -1
+    rect.x = 2
+    rect.y = -1
 
-    collider.collides(collider2) shouldBe true
+    circle.collides(rect) shouldBe true
 
-    collider2.y = -2
+    rect.y = -2
 
-    collider.collides(collider2) shouldBe false
+    circle.collides(rect) shouldBe false
 
   it should "collides with a Rectangle Collider on it left" in:
-    collider2.x = 5
-    collider2.y = 2
+    rect.x = 5
+    rect.y = 2
 
-    collider.collides(collider2) shouldBe true
+    circle.collides(rect) shouldBe true
 
-    collider2.x = 6
+    rect.x = 6
 
-    collider.collides(collider2) shouldBe false
+    circle.collides(rect) shouldBe false
 
   it should "collides with a Rectangle Collider also in diagonal" in:
-    collider2.x = 5
-    collider2.y = 5
+    rect.x = 5
+    rect.y = 5
 
-    collider.collides(collider2) shouldBe false
+    circle.collides(rect) shouldBe false
 
-    collider2.x = 3 + Math.sqrt(2)
-    collider2.y = 3 + Math.sqrt(2)
+    rect.x = 3 + Math.sqrt(2)
+    rect.y = 3 + Math.sqrt(2)
 
-    collider.collides(collider2) shouldBe true
+    circle.collides(rect) shouldBe true
 
-    collider2.x = collider2.x + 0.1
-    collider2.y = collider2.y + 0.1
+    rect.x = rect.x + 0.1
+    rect.y = rect.y + 0.1
 
-    collider.collides(collider2) shouldBe false
+    circle.collides(rect) shouldBe false
 
   it should "collides with a Circle Collider" in:
-    val collider2 = new Behaviour
+    val circle2 = new Behaviour
       with CircleCollider(2)
       with Positionable(-6, -6)
       with SingleScalable
 
-    collider.collides(collider2) shouldBe false
-    collider2.collides(collider) shouldBe false
+    circle.collides(circle2) shouldBe false
+    circle2.collides(circle) shouldBe false
 
-    collider2.x = 6
-    collider2.y = 2
+    circle2.x = 6
+    circle2.y = 2
 
-    collider.collides(collider2) shouldBe true
-    collider2.collides(collider) shouldBe true
+    circle.collides(circle2) shouldBe true
+    circle2.collides(circle) shouldBe true
 
-    collider2.x = 2 + 2 * Math.sqrt(2)
-    collider2.y = 2 + 2 * Math.sqrt(2)
+    circle2.x = 2 + 2 * Math.sqrt(2)
+    circle2.y = 2 + 2 * Math.sqrt(2)
 
-    collider.collides(collider2) shouldBe true
+    circle.collides(circle2) shouldBe true
 
-    collider2.x = collider2.x + 0.1
-    collider2.y = collider2.y + 0.1
+    circle2.x = circle2.x + 0.1
+    circle2.y = circle2.y + 0.1
 
-    collider.collides(collider2) shouldBe false
+    circle.collides(circle2) shouldBe false
 
   it should "scale its radius based on SingleScalable" in:
-    collider.scale = 2
-    collider.radius shouldBe 4
+    circle.scale = 2
+    circle.radius shouldBe 4
 
-    collider.scale = 3
-    collider.radius shouldBe 6
+    circle.scale = 3
+    circle.radius shouldBe 6
