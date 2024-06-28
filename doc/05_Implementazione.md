@@ -67,7 +67,7 @@ val obj = engine.find[Identifiable]("id").get
 engine.enable(obj)
 ```
 
-Si abilita l'oggetto solo nel frame successivo per dare consistenza, in quanto, se così non fosse, l'ordine di esecuzione degli oggetti potrerebbe alcuni oggetti ad essere disabilitati nel frame corrente e altri nel frame successivo. 
+Si abilita l'oggetto solo nel frame successivo per dare consistenza, in quanto, se così non fosse, l'ordine di esecuzione degli oggetti potrerebbe alcuni oggetti ad essere abilitati nel frame corrente e altri nel frame successivo. 
 
 Disabilitare un oggetto implica che venga chiamata la *onDisabled* sull'oggetto e che questo venga disabilitato solo alla fine del frame.
 ```scala
