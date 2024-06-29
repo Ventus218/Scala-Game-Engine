@@ -55,4 +55,4 @@ object FPSLimiter:
           limit = value
           newFPSLimit = None
 
-  def apply(fpsLimit: Int): FPSLimiter = FPSLimiterImpl(60)
+  def apply(fpsLimit: Int): FPSLimiter = FPSLimiterImpl(fpsLimit)
