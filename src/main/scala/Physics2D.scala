@@ -79,7 +79,6 @@ object Physics2D:
     */
   trait CircleCollider(private var r: Double) extends Collider with Scalable[Double]:
     require(r > 0)
-    type Scale = Double
 
     def radius: Double = scale * r
     def radius_=(radius: Double) = if radius > 0 then r = radius
