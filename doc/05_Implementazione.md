@@ -340,26 +340,43 @@ class GameObject
       with SwingInputHandler:
 
     var inputHandlers: Map[InputButton, Handler] = Map(
-      D -> onMoveRight,
-      A -> onMoveLeft,
-      W -> onMoveUp,
-      S -> onMoveDown,
-      E -> (onMoveUp and onMoveRight),
-      MouseButton1 -> onTeleport.fireJustOnceIfHeld
+        D -> onMoveRight,
+        A -> onMoveLeft,
+        W -> onMoveUp,
+        S -> onMoveDown,
+        E -> (onMoveRight and onMoveUp),
+        MouseButton1 -> onTeleport, // same as (onTeleport.onlyWhenPressed and onTeleport.onlyWhenHeld)
+        MouseButton3 -> onTeleport.onlyWhenPressed,
+        MouseButton2 -> onTeleport.onlyWhenHeld,
+        Space -> onTeleport.onlyWhenReleased
     )
 
-    private def onTeleport(inputButton: InputButton): Unit = // Teleport logic
-    private def onMoveRight(input: InputButton): Unit = // Move logic
-    private def onMoveLeft(input: InputButton): Unit = // Move logic
-    private def onMoveUp(input: InputButton): Unit = // Move logic
-    private def onMoveDown(input: InputButton): Unit = // Move logic
+    private def onTeleport(input: InputButton)(engine: Engine): Unit = // teleport logic
+    private def onMoveRight(input: InputButton)(engine: Engine): Unit = // move logic
+    private def onMoveLeft(input: InputButton)(engine: Engine): Unit = // move logic
+    private def onMoveUp(input: InputButton)(engine: Engine): Unit = // move logic
+    private def onMoveDown(input: InputButton)(engine: Engine): Unit = // move logic
 ```
 
 Il motivo per cui si obbliga la classe che implementa a definire inputHandlers piuttosto che accettare inputHandlers come parametro del mixin è che questo permette allo sviluppatore di avere i riferimenti ai metodi interni alla classe, altrimenti non sarebbe possibile avere una sintassi così espressiva.
 
 Come si può notare dall'esempio è anche possibile definire handler complessi:
-- è possibile definire un handler che esegue più funzioni tramite la sintassi `handler1 and handler2`
-- è possibile settare un handler in modo che venga eseguito solo al primo frame nel caso in cui l'evento si riproponga in maniera continua anche in quelli successivi: `handler.fireJustOnceIfHeld`
+- è possibile definire un handler che esegua più funzioni tramite la sintassi `handler1 and handler2`
+- su ogni handler è possibile applicare un modificatore, i modificatori servono a specificare in quali situazioni dell'input l'handler va eseguito, ovvero:
+    - `onlyWhenPressed` l'handler viene eseguito solo nel primo frame nel quale un input viene ricevuto, anche se l'input persiste per più frame
+    - `onlyWhenReleased` l'handler viene eseguito solo nel frame in cui un input passa da essere ricevuto a non esserlo più
+    - `onlyWhenHeld` l'handler viene eseguito in tutti i frame (dopo il primo) per cui l'input viene ricevuto.
+
+  Questi modificatori, soprattutto se composti, consentono la massima espressività.
+  
+> **Nota:**
+> 
+> Quando si fornisce una funzione questa avrà un comportamento di default che è quello più comunemente utilizzato, ovvero esecuzione in ogni frame in cui l'input è ricevuto (sia il primo che tutti quelli successivi)
+> ```scala
+> MouseButton1 -> onTeleport
+> // is exactly the same as 
+> MouseButton1 -> (onTeleport.onlyWhenPressed and onTeleport.onlyWhenHeld)
+> ```
 
 Nel caso si preferisse comunque un approccio non event-driven è possibile utilizzare direttamente SwingIO senza SwingInputHandler:
 

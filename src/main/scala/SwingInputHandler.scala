@@ -2,11 +2,18 @@ import SwingIO.InputButton
 
 object SwingInputHandler:
 
-  /** A Handler represents what should be done in response of an input event */
+  /** A Handler represents what should be done in response of an input event.
+    *
+    * When passing a simple function as a handler it will be fired on every
+    * frame that the input is received, so just `f` is the same as
+    * `(f.onlyWhenPressed and f.onlyWhenHeld)`
+    */
   opaque type Handler = Iterable[SingleHandlerImpl]
   private case class SingleHandlerImpl(
       val handler: InputButton => Engine => Unit,
-      val shouldFireJustOnceIfHold: Boolean
+      val fireOnPressed: Boolean,
+      val fireOnRelease: Boolean,
+      val fireOnHold: Boolean
   )
 
   extension (h: Handler)
@@ -14,13 +21,24 @@ object SwingInputHandler:
     infix def and(otherHandler: Handler): Handler =
       h ++ otherHandler
 
-    /** Makes a handler fire only once for each sequence of emitted events */
-    def fireJustOnceIfHeld: Handler =
-      h.map(h => SingleHandlerImpl(h.handler, true))
+    /** Makes a handler fire only the in first frame the event happens */
+    def onlyWhenPressed: Handler =
+      h.map(h => SingleHandlerImpl(h.handler, true, false, false))
+
+    /** Makes a handler fire only the in first frame the event stops happening
+      */
+    def onlyWhenReleased: Handler =
+      h.map(h => SingleHandlerImpl(h.handler, false, true, false))
+
+    /** Makes a handler fire on every frame after it has been held for at least
+      * one
+      */
+    def onlyWhenHeld: Handler =
+      h.map(h => SingleHandlerImpl(h.handler, false, false, true))
 
   given Conversion[InputButton => Engine => Unit, Handler] with
     def apply(f: InputButton => Engine => Unit): Handler =
-      Seq(SingleHandlerImpl(f, false))
+      Seq(SingleHandlerImpl(f, true, false, true))
 
   /** A behaviour which enables to specify some event handlers to fire when
     * specific inputs are received.
@@ -44,14 +62,22 @@ object SwingInputHandler:
       val receivedInputs = inputHandlers
         .filterKeys(io.inputButtonWasPressed(_))
 
-      receivedInputs
-        .foreachEntry((key, handlers) =>
-          handlers.foreach(h =>
-            if !h.shouldFireJustOnceIfHold || !lastFrameReceivedInputs
-                .contains(key)
-            then h.handler(key)(engine)
-          )
+      receivedInputs.toSeq
+        .flatMap((inputButton, handlers) => handlers.map((inputButton, _)))
+        .foreach((inputButton, h) =>
+          lastFrameReceivedInputs(inputButton) match
+            case false if h.fireOnPressed => h.handler(inputButton)(engine)
+            case true if h.fireOnHold     => h.handler(inputButton)(engine)
+            case _                        => ()
         )
+
+      val releasedInputs = lastFrameReceivedInputs -- receivedInputs.keys.toSet
+
+      releasedInputs.foreach(inputButton =>
+        inputHandlers(inputButton).foreach(h =>
+          if h.fireOnRelease then h.handler(inputButton)(engine)
+        )
+      )
 
       lastFrameReceivedInputs = receivedInputs.keys.toSet
 
