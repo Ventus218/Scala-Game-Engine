@@ -82,7 +82,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
       )
     engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
-      onDeInit =
+      onDeinit =
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 3
         obj.bRuns shouldBe 1
@@ -97,7 +97,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
       )
     engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
-      onDeInit =
+      onDeinit =
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 3
         obj.bRuns shouldBe 2
@@ -121,7 +121,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
         else obj.bRuns shouldBe 1
         frame += 1
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 3
         obj.bRuns shouldBe 1
@@ -136,7 +136,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
       )
     engine.testOnLifecycleEvent(testScene)(
-      onDeInit =
+      onDeinit =
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 2
     )
@@ -150,7 +150,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
       )
     engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
-      onDeInit =
+      onDeinit =
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 1
         obj.bRuns shouldBe 1
@@ -167,7 +167,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       )
 
     engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
-      onDeInit =
+      onDeinit =
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe obj.bRuns
     )

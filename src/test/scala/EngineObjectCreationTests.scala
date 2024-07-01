@@ -17,7 +17,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   "create" should "instantiate a game object in the scene" in:
     engine.testOnLifecycleEvent()(
       onStart = engine.create(obj1),
-      onDeInit = engine.find[GameObjectMock]() should contain only (obj1)
+      onDeinit = engine.find[GameObjectMock]() should contain only (obj1)
     )
 
   it should "not instantiate a game object between EarlyUpdate, Update and LateUpdate, but after" in:
@@ -62,7 +62,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
 
     engine.testOnLifecycleEvent(scene)(
       onStart = engine.create(obj),
-      onDeInit = obj.happenedEvents should contain oneElementOf Seq(Init)
+      onDeinit = obj.happenedEvents should contain oneElementOf Seq(Init)
     )
 
   it should "invoke the event methods in the correct order" in:
@@ -78,7 +78,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   "destroy" should "remove a game object from the scene" in:
     engine.testOnLifecycleEvent(scene)(
       onStart = engine.destroy(obj1),
-      onDeInit = engine.find[GameObjectMock]() should contain only (obj2, obj3)
+      onDeinit = engine.find[GameObjectMock]() should contain only (obj2, obj3)
     )
 
   it should "not remove a game object between EarlyUpdate, Update and LateUpdate, but after" in:
@@ -123,7 +123,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
 
     engine.testOnLifecycleEvent(() => Seq(obj), nFramesToRun = 3)(
       onStart = engine.destroy(obj),
-      onDeInit = obj.happenedEvents should contain theSameElementsInOrderAs Seq(
+      onDeinit = obj.happenedEvents should contain theSameElementsInOrderAs Seq(
         Init,
         Start,
         EarlyUpdate,

@@ -121,7 +121,7 @@ object TestUtils:
         onEarlyUpdate: => TestingFunction = _ => (),
         onUpdate: => TestingFunction = _ => (),
         onLateUpdate: => TestingFunction = _ => (),
-        onDeInit: => TestingFunction = _ => (),
+        onDeinit: => TestingFunction = _ => (),
         onEnabled: => TestingFunction = _ => (),
         onDisabled: => TestingFunction = _ => ()
     ): Unit =
@@ -132,7 +132,7 @@ object TestUtils:
           with EarlyUpdateTester(onEarlyUpdate(_))
           with UpdateTester(onUpdate(_))
           with LateUpdateTester(onLateUpdate(_))
-          with DeinitTester(onDeInit(_))
+          with DeinitTester(onDeinit(_))
           with EnabledTester(onEnabled(_))
           with DisabledTester(onDisabled(_))
           with NFrameStopper(nFramesToRun)
