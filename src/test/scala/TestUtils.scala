@@ -103,36 +103,6 @@ object TestUtils:
         with NFrameStopper(nFramesToRun)
       engine.loadScene(newScene.joined(() => Seq(testerObject)))
 
-    /** Runs the engine and calls `testFunction` on every LateUpdate
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      *   provides the current `TestingContext`
-      */
-    def testOnLateUpdateWithContext(
-        scene: Scene = () => Seq.empty,
-        nFramesToRun: Int = 1
-    )(
-        testFunction: (TestingContext) => Unit
-    ): Unit =
-      val testerObject = new Behaviour
-        with LateUpdateTester(testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.testWithTesterObject(scene)(testerObject)
-
-    /** Runs the engine and calls `testFunction` on every LateUpdate
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      */
-    def testOnLateUpdate(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
-        testFunction: => Unit
-    ): Unit =
-      engine.testOnLateUpdateWithContext(scene, nFramesToRun): (_) =>
-        testFunction
-
     /** Runs the engine and calls `testFunction` on Deinit
       * @param scene
       * @param nFramesToRun
