@@ -29,8 +29,63 @@ object TestUtils:
   given Conversion[Unit, TestingFunction] with
     def apply(x: Unit): TestingFunction = _ => ()
 
+  case class GameloopTestingBuilder(
+      val init: () => TestingFunction = () => _ => (),
+      val start: () => TestingFunction = () => _ => (),
+      val earlyUpdate: () => TestingFunction = () => _ => (),
+      val update: () => TestingFunction = () => _ => (),
+      val lateUpdate: () => TestingFunction = () => _ => (),
+      val deinit: () => TestingFunction = () => _ => (),
+      val enabled: () => TestingFunction = () => _ => (),
+      val disabled: () => TestingFunction = () => _ => (),
+      val nFramesToRun: Int = 1
+  ):
+    def onInit(testingFunction: => TestingFunction): GameloopTestingBuilder =
+      copy(init = () => testingFunction)
+
+    def onStart(testingFunction: => TestingFunction): GameloopTestingBuilder =
+      copy(start = () => testingFunction)
+
+    def onEarlyUpdate(
+        testingFunction: => TestingFunction
+    ): GameloopTestingBuilder =
+      copy(earlyUpdate = () => testingFunction)
+
+    def onUpdate(testingFunction: => TestingFunction): GameloopTestingBuilder =
+      copy(update = () => testingFunction)
+
+    def onLateUpdate(
+        testingFunction: => TestingFunction
+    ): GameloopTestingBuilder =
+      copy(lateUpdate = () => testingFunction)
+
+    def onDeinit(testingFunction: => TestingFunction): GameloopTestingBuilder =
+      copy(deinit = () => testingFunction)
+
+    def onEnabled(testingFunction: => TestingFunction): GameloopTestingBuilder =
+      copy(enabled = () => testingFunction)
+
+    def onDisabled(
+        testingFunction: => TestingFunction
+    ): GameloopTestingBuilder =
+      copy(disabled = () => testingFunction)
+
   import Testers.*
   import Behaviours.NFrameStopper
+
+  private def gameloopTestingBuilderToTesterObject(
+      testingBuilder: GameloopTestingBuilder
+  ): Behaviour =
+    new Behaviour
+      with InitTester(testingBuilder.init()(_))
+      with StartTester(testingBuilder.start()(_))
+      with EarlyUpdateTester(testingBuilder.earlyUpdate()(_))
+      with UpdateTester(testingBuilder.update()(_))
+      with LateUpdateTester(testingBuilder.lateUpdate()(_))
+      with DeinitTester(testingBuilder.deinit()(_))
+      with EnabledTester(testingBuilder.enabled()(_))
+      with DisabledTester(testingBuilder.disabled()(_))
+      with NFrameStopper(testingBuilder.nFramesToRun)
 
   extension (engine: Engine)
     /** Runs the engine with a given scene injecting the testerObject
@@ -66,27 +121,13 @@ object TestUtils:
         scene: Scene = () => Seq.empty,
         nFramesToRun: Int = 1
     )(
-        onInit: => TestingFunction = _ => (),
-        onStart: => TestingFunction = _ => (),
-        onEarlyUpdate: => TestingFunction = _ => (),
-        onUpdate: => TestingFunction = _ => (),
-        onLateUpdate: => TestingFunction = _ => (),
-        onDeinit: => TestingFunction = _ => (),
-        onEnabled: => TestingFunction = _ => (),
-        onDisabled: => TestingFunction = _ => ()
+        testingBuilder: GameloopTestingBuilder => GameloopTestingBuilder =
+          (_) => GameloopTestingBuilder()
     ): Unit =
-      engine.testWithTesterObject(scene)(
-        new Behaviour
-          with InitTester(onInit(_))
-          with StartTester(onStart(_))
-          with EarlyUpdateTester(onEarlyUpdate(_))
-          with UpdateTester(onUpdate(_))
-          with LateUpdateTester(onLateUpdate(_))
-          with DeinitTester(onDeinit(_))
-          with EnabledTester(onEnabled(_))
-          with DisabledTester(onDisabled(_))
-          with NFrameStopper(nFramesToRun)
-      )
+      engine.testWithTesterObject(scene):
+        gameloopTestingBuilderToTesterObject(
+          testingBuilder(GameloopTestingBuilder(nFramesToRun = nFramesToRun))
+        )
 
     /** Loads a new scene on a running engine and calls the given test function
       * on the corresponding events by injecting a tester object into the scene.
@@ -101,27 +142,13 @@ object TestUtils:
         scene: Scene = () => Seq.empty,
         nFramesToRun: Int = 1
     )(
-        onInit: => TestingFunction = _ => (),
-        onStart: => TestingFunction = _ => (),
-        onEarlyUpdate: => TestingFunction = _ => (),
-        onUpdate: => TestingFunction = _ => (),
-        onLateUpdate: => TestingFunction = _ => (),
-        onDeinit: => TestingFunction = _ => (),
-        onEnabled: => TestingFunction = _ => (),
-        onDisabled: => TestingFunction = _ => ()
+        testingBuilder: GameloopTestingBuilder => GameloopTestingBuilder =
+          (_) => GameloopTestingBuilder()
     ): Unit =
-      engine.loadSceneWithTesterObject(scene)(
-        new Behaviour
-          with InitTester(onInit(_))
-          with StartTester(onStart(_))
-          with EarlyUpdateTester(onEarlyUpdate(_))
-          with UpdateTester(onUpdate(_))
-          with LateUpdateTester(onLateUpdate(_))
-          with DeinitTester(onDeinit(_))
-          with EnabledTester(onEnabled(_))
-          with DisabledTester(onDisabled(_))
-          with NFrameStopper(nFramesToRun)
-      )
+      engine.loadSceneWithTesterObject(scene):
+        gameloopTestingBuilderToTesterObject(
+          testingBuilder(GameloopTestingBuilder(nFramesToRun = nFramesToRun))
+        )
 
   /** Provides multiple concrete behaviours for testing
     */
