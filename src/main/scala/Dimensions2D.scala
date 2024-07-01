@@ -11,17 +11,36 @@ object Dimensions2D:
     */
   trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
 
-  trait IsNotValid[T]:
+  /** Tells if a generic T scale is valid
+    */
+  trait IsValid[T]:
+    /** Returns true if the scale is valid, false otherwise
+      *
+      * @param scale
+      */
     def apply(scale: T): Boolean
 
-  given IsNotValid[Double] with
-    override def apply(scale: Double): Boolean = scale <= 0
+  given IsValid[Double] with
+    override def apply(scale: Double): Boolean = scale > 0
 
-  given IsNotValid[(Double, Double)] with
-    override def apply(scale: (Double, Double)): Boolean = scale._1 <= 0 || scale._2 <= 0
+  given IsValid[(Double, Double)] with
+    override def apply(scale: (Double, Double)): Boolean =
+      scale._1 > 0 && scale._2 > 0
 
-  trait Scalable[T](private var _scale: T)(using isNotValid: IsNotValid[T]) extends Behaviour:
-    require(!isNotValid(_scale))
+  /** Add a scale to a behaviour in order to change its dimension. T is the type
+    * of the dimension to scale (e.g. if it's radius, it has one dimension so it
+    * will use a Double as T, if two dimension are needed, it is possible to use
+    * (Double, Double), ecc.)
+    *
+    * @param _scale
+    *   init value of the scale of the dimension, must be valid or otherwise
+    *   will throw an IllegalArgumentException
+    * @param isValid
+    *   tell the trait how to decide if the value of the scale is valid
+    */
+  trait Scalable[T](private var _scale: T)(using isValid: IsValid[T])
+      extends Behaviour:
+    require(isValid(_scale))
 
     def scale: T = _scale
-    def scale_=(s: T) = if !isNotValid(s) then _scale = s
+    def scale_=(s: T) = if isValid(s) then _scale = s
