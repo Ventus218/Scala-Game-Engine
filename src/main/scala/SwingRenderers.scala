@@ -400,11 +400,35 @@ object SwingRenderers:
     }
     this.renderOffset = offset
     this.renderingPriority = priority
+    
+    
+  enum TextAnchor:
+    case TopLeft
+    case TopCenter
+    case TopRight
+    case CenterLeft
+    case Center
+    case CenterRight
+    case BottomLeft
+    case BottomCenter
+    case BottomRight
 
-  trait SwingTextRenderer(text: String, private val font: Font, color: Color, position: (Int, Int) = (0, 0)) extends SwingRenderer:
+  trait SwingTextRenderer(
+      private var text: String, 
+      private var font: Font,
+      private var color: Color, 
+      anchor: TextAnchor = TextAnchor.TopLeft, 
+      anchorOffset: (Int, Int) = (0, 0)
+  ) extends SwingRenderer:
+    def textContent: String = text
+    def textSize: Int = font.getSize
+    def textColor: Color = color
+    def textOffset: (Int, Int) = anchorOffset
+    def textAnchor: TextAnchor = anchor
+    
     override def renderer: SwingIO => Graphics2D => Unit = io =>
       g2d =>
         
         g2d.setFont(font)
         g2d.setPaint(color)
-        g2d.drawString(text, position._1, position._2 + font.getSize)
+        g2d.drawString(text, textOffset._1, textOffset._2 + font.getSize)

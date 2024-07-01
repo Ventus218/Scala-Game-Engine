@@ -71,10 +71,10 @@ object SwingRendererTestUtilities:
       text: String,
       size: Int,
       color: Color,
-      position: (Int, Int) = (0, 0)
+      offset: (Int, Int) = (0, 0)
   ): SwingTextRenderer = 
     new Behaviour
-      with SwingTextRenderer(text, Font("Arial", Font.PLAIN, size), color, position)
+      with SwingTextRenderer(text, Font("Arial", Font.PLAIN, size), color, anchorOffset = offset)
 
   /* test for shape renderable */
   def testShapeProperties(renderer: SwingShapeRenderer): Unit =
