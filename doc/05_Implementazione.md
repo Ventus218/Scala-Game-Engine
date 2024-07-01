@@ -273,18 +273,18 @@ Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anch
 
 #### RectCollider
 **RectCollider** è un mixin che aggiunge ad un oggetto un collider rettangolare con il centro in `(Positionable.x, Positionable.y)` e dimensione data da `colliderWidth` e `colliderHeight` passati in input.
-La sua dimensione scala in base ai valori `scaleX` e `scaleY` di **Scalable**.
+La sua dimensione scala in base allo `scale` di **Scalable**.
 
 *Esempio*
 ```scala
 // Creation of a collider with dimension 5x5 at x = 0, y = 0
-val collider = new Behaviour with RectCollider(5, 5) with Scalable with Positionable
+val collider = new Behaviour with RectCollider(5, 5) with Scalable(1.0, 1.0) with Positionable
 
 // Creation of a collider with dimension 5x5 at x = 4, y = 4
-val collider2 = new Behaviour with RectCollider(5, 5) with Scalable with Positionable(4, 4)
+val collider2 = new Behaviour with RectCollider(5, 5) with Scalable(1.0, 1.0) with Positionable(4, 4)
 
 // Creation of a collider with dimension 2x2 at x = 6, y = 6
-val collider3 = new Behaviour with RectCollider(2, 2) with Scalable with Positionable(6, 6)
+val collider3 = new Behaviour with RectCollider(2, 2) with Scalable(1.0, 1.0) with Positionable(6, 6)
 
 println(collider.collides(collider2)) //true
 println(collider.collides(collider3)) //false
@@ -301,7 +301,7 @@ println(collider3.collides(collider2)) //false
 
 #### CircleCollider
 **CircleCollider** è un mixin che aggiunge ad un oggetto un collider tondo con il centro in `(Positionable.x, Positionable.y)` e raggio passato in input.
-Il suo raggio scala in base allo `scale` di **SingleScalable**.
+Il suo raggio scala in base allo `scale` di **Scalable**.
 
 
 ### SwingRenderer
