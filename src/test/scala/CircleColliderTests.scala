@@ -5,18 +5,17 @@ import Dimensions2D.Positionable
 import Dimensions2D.Scalable
 import Physics2D.CircleCollider
 import Physics2D.RectCollider
-import Dimensions2D.SingleScalable
 
 class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   val circle = new Behaviour
     with CircleCollider(r = 2)
     with Positionable
-    with SingleScalable
+    with Scalable(1d)
 
   val rect = new Behaviour
     with RectCollider(2, 2)
     with Positionable(-10, -10)
-    with Scalable
+    with Scalable((1d, 1d))
 
   override protected def beforeEach(): Unit =
     circle.radius = 2
@@ -29,7 +28,7 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     val collider2 = new Behaviour
       with CircleCollider(r = 3.5)
       with Positionable
-      with SingleScalable
+      with Scalable(1d)
 
     collider2.radius shouldBe 3.5
 
@@ -38,13 +37,13 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
       new Behaviour
         with CircleCollider(r = 0)
         with Positionable
-        with SingleScalable
+        with Scalable(1d)
 
     assertThrows[IllegalArgumentException]:
       new Behaviour
         with CircleCollider(r = -5)
         with Positionable
-        with SingleScalable
+        with Scalable(1d)
 
   it should "be able to change its radius but not accept negative or zero values" in:
     circle.radius = 20
@@ -124,7 +123,7 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     val circle2 = new Behaviour
       with CircleCollider(2)
       with Positionable(-6, -6)
-      with SingleScalable
+      with Scalable(1d)
 
     circle.collides(circle2) shouldBe false
     circle2.collides(circle) shouldBe false
@@ -145,7 +144,7 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
     circle.collides(circle2) shouldBe false
 
-  it should "scale its radius based on SingleScalable" in:
+  it should "scale its radius based on Scalable(1d)" in:
     circle.scale = 2
     circle.radius shouldBe 4
 

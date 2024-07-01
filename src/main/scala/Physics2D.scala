@@ -35,12 +35,12 @@ object Physics2D:
     */
   trait RectCollider(private var width: Double, private var height: Double)
       extends Collider
-      with Scalable:
+      with Scalable[(Double, Double)]:
     require(width > 0)
     require(height > 0)
 
-    def colliderWidth: Double = width * scaleX
-    def colliderHeight: Double = height * scaleY
+    def colliderWidth: Double = width * scale._1
+    def colliderHeight: Double = height * scale._2
 
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
@@ -50,13 +50,13 @@ object Physics2D:
     private def left: Double = x - colliderWidth / 2
     private def top: Double = y - colliderHeight / 2
 
-    override def collides(other: RectCollider): Boolean =
+    override final def collides(other: RectCollider): Boolean =
       this.top <= other.bottom &&
         this.left <= other.right &&
         this.right >= other.left &&
         this.bottom >= other.top
 
-    override def collides(other: CircleCollider): Boolean =
+    override final def collides(other: CircleCollider): Boolean =
       val cx = other.x
       val cy = other.y
 
@@ -79,15 +79,16 @@ object Physics2D:
     */
   trait CircleCollider(private var r: Double)
       extends Collider
-      with SingleScalable:
+      with Scalable[Double]:
     require(r > 0)
 
     def radius: Double = scale * r
     def radius_=(radius: Double) = if radius > 0 then r = radius
 
-    override def collides(other: RectCollider): Boolean = other.collides(this)
+    override final def collides(other: RectCollider): Boolean =
+      other.collides(this)
 
-    override def collides(other: CircleCollider): Boolean =
+    override final def collides(other: CircleCollider): Boolean =
       val dx = x - other.x
       val dy = y - other.y
 

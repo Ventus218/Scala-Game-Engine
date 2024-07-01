@@ -247,18 +247,24 @@ positionable.y = 3
 ```
 
 ### Scalable
-Un behaviour con **Scalable** come mixin ha accesso a due campi, `scaleX` e `scaleY`, che rappresentano rispettivamente quanto il behaviour dovrà essere scalato sulla X e sulla Y rispettivamente.
-Il behaviour va inizializzato con entrambi i campi e se sono negativi o uguali a zero verranno settati automaticamente ad 1, mentre, se una volta che il behaviour è stato inizializzato si provano a cambiare i campi in valori negativi o uguali ad 1, essi non cambieranno.
+**Scalable** è un mixin generico su un tipo `T` che ne rappresenta la dimensione su cui scalare i valori. Per esempio, se si vuole scalare un singolo valore `Double`, allora il tipo `T` sarà proprio `Double`, se invece si vogliono scalare due valori `Double`, il tipo `T` sarà `(Double, Double)`.
+Oltre al tipo generico e ad un valore di inizializzazione dello scaling, **Scalable** utilizza un contesto di tipo **IsValid** generico anch'esso sul tipo `T`, che si occuperà di indicare se lo scaling è valido oppure no.
+Sono presenti due implementazioni di default del contesto **IsValid**, una per `Double` e una per `(Double, Double)`, in modo che controlli che lo scaling sia positivo e maggiore di zero (nel caso di due dimensioni, entrambe devono essere positive e maggiori di zero).
+Se il parametro in input al costruttore di **Scalable** non è valido secondo il contesto, viene tirata un'eccezzione del tipo `IllegalArgumentException`.
 
 *Esempio*
 ```scala
-// create a scalable with scaleX = 5, scaleY = -4 (will be 1 because is negative) 
-val scalable: Scalable = new Behaviour with Scalable(5, -4)
-// change scaleY to 3 and try to change scaleX to -4
-scalable.scaleX = -4
-scalable.scaleY = 3
-println(scalable.scaleX) // 5, cannot set scaleX to negative number so it didn't change
-println(scalable.scaleY) // 3
+// create a scalable that scales two dimensions, with (1, 1) as value of the scaling
+val scalable: Scalable[(Double,Double)] = new Behaviour with Scalable(1d, 1d) // equivalent to Scalable((1d, 1d)) in Scala
+scalable.scale = (4, 3)
+println(scalable.scale) // (4, 3)
+scalable.scale = (10, -2)
+// it is not possible to change either one of the values if one of them is not valid (according to the given context)
+println(scalable.scale) // (4, 3)
+
+val singleScalable: Scalable[Double] = new Behaviour with Scalable(1.0)
+singleScalable.scale = 5
+println(singleScalable.scale) // 5
 ```
 
 ### Collider
@@ -267,18 +273,18 @@ Un behaviour con **Collider** come mixin dovrà innanzitutto avere in mixin anch
 
 #### RectCollider
 **RectCollider** è un mixin che aggiunge ad un oggetto un collider rettangolare con il centro in `(Positionable.x, Positionable.y)` e dimensione data da `colliderWidth` e `colliderHeight` passati in input.
-La sua dimensione scala in base ai valori `scaleX` e `scaleY` di **Scalable**.
+La sua dimensione scala in base allo `scale` di **Scalable**.
 
 *Esempio*
 ```scala
 // Creation of a collider with dimension 5x5 at x = 0, y = 0
-val collider = new Behaviour with RectCollider(5, 5) with Scalable with Positionable
+val collider = new Behaviour with RectCollider(5, 5) with Scalable(1.0, 1.0) with Positionable
 
 // Creation of a collider with dimension 5x5 at x = 4, y = 4
-val collider2 = new Behaviour with RectCollider(5, 5) with Scalable with Positionable(4, 4)
+val collider2 = new Behaviour with RectCollider(5, 5) with Scalable(1.0, 1.0) with Positionable(4, 4)
 
 // Creation of a collider with dimension 2x2 at x = 6, y = 6
-val collider3 = new Behaviour with RectCollider(2, 2) with Scalable with Positionable(6, 6)
+val collider3 = new Behaviour with RectCollider(2, 2) with Scalable(1.0, 1.0) with Positionable(6, 6)
 
 println(collider.collides(collider2)) //true
 println(collider.collides(collider3)) //false
@@ -295,7 +301,7 @@ println(collider3.collides(collider2)) //false
 
 #### CircleCollider
 **CircleCollider** è un mixin che aggiunge ad un oggetto un collider tondo con il centro in `(Positionable.x, Positionable.y)` e raggio passato in input.
-Il suo raggio scala in base allo `scale` di **SingleScalable**.
+Il suo raggio scala in base allo `scale` di **Scalable**.
 
 
 ### SwingRenderer

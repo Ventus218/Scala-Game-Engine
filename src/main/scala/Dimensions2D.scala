@@ -8,29 +8,36 @@ object Dimensions2D:
     */
   trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
 
-  /** Gives to other behaviours a single scale value for their dimension.
-    *
-    * @param x
+  /** Tells if a generic T scale is valid
     */
-  trait SingleScalable(private var x: Double = 1) extends Behaviour:
-    def scale = if x > 0 then x else 1
-    def scale_=(scale: Double) = if scale > 0 then x = scale
+  trait IsValid[T]:
+    /** Returns true if the scale is valid, false otherwise
+      *
+      * @param scale
+      */
+    def apply(scale: T): Boolean
 
-  /** Gives to other behaviours a scale on X and Y of their dimension.
+  given IsValid[Double] with
+    override def apply(scale: Double): Boolean = scale > 0
+
+  given IsValid[(Double, Double)] with
+    override def apply(scale: (Double, Double)): Boolean =
+      scale._1 > 0 && scale._2 > 0
+
+  /** Add a scale to a behaviour in order to change its dimension. T is the type
+    * of the dimension to scale (e.g. if it's radius, it has one dimension so it
+    * will use a Double as T, if two dimension are needed, it is possible to use
+    * (Double, Double), ecc.)
     *
-    * @param x
-    *   multiplier of the width, must be greater than 0.
-    * @param y
-    *   multiplier of the height, must be greater than 0.
+    * @param _scale
+    *   init value of the scale of the dimension, must be valid or otherwise
+    *   will throw an IllegalArgumentException
+    * @param isValid
+    *   tell the trait how to decide if the value of the scale is valid
     */
-  trait Scalable(private var x: Double = 1, private var y: Double = 1)
+  trait Scalable[T](private var _scale: T)(using isValid: IsValid[T])
       extends Behaviour:
+    require(isValid(_scale))
 
-    private val singleScalable: SingleScalable = new Behaviour
-      with SingleScalable(x)
-
-    def scaleY: Double = if y > 0 then y else 1
-    def scaleY_=(h: Double): Unit =
-      if h > 0 then this.y = h
-
-    export singleScalable.{scale as scaleX, scale_= as scaleX_=}
+    def scale: T = _scale
+    def scale_=(s: T) = if isValid(s) then _scale = s
