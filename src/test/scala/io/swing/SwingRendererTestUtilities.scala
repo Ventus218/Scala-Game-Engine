@@ -74,7 +74,7 @@ object SwingRendererTestUtilities:
       offset: (Int, Int) = (0, 0)
   ): SwingTextRenderer = 
     new Behaviour
-      with SwingTextRenderer(text, Font("Arial", Font.PLAIN, size), color, anchorOffset = offset)
+      with SwingTextRenderer(text, Font("Arial", Font.PLAIN, size), color, textOffset = offset)
 
   /* test for shape renderable */
   def testShapeProperties(renderer: SwingShapeRenderer): Unit =
