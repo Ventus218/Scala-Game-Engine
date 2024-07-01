@@ -53,4 +53,16 @@
 |21|Usare Set al posto di Seq per la creazione/distruzione di oggetti|Tutti|||X|
 |22|Impedire l'esecuzione di run quando l'engine è già partito|Tutti|||X|
 |23|Aggiungere un riferimento all'engine negli Handler di **SwingInputHandler**|Tutti|||X|
-|24|Inserire un main complesso di test|Tutti||X||
+|24|Inserire un main complesso di test|Tutti|||X|
+
+## Sprint 3 (inizio 1/07/2024)
+|Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
+|------------|-----------|------------|:-:|:-:|:-:|
+|25|Inserire uno SwingRenderer per il testo|Michele|X|||
+|26|Inserire un behaviour built-in PositionFollower|Corrado|X|||
+|27|Inserire un behaviour built-in per un bottone|Alessandro|X|||
+|28|Refactor: un unico Scalable generico|Corrado|X|||
+|29|Refactor: I Renderer devono adottare il nuovo Scalable|Michele|X|||
+|30|Bugfix: Fare in modo che swingIO crei i canvas in modo lazy|Michele|X|||
+|13|Scelta e design dei videogiochi di esempio|Tutti|X|||
+|12|Refactor e pulizia di TestUtils|Alessandro|X|||
