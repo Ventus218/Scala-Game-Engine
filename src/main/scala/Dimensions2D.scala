@@ -1,3 +1,6 @@
+import Physics2D.RectCollider
+import Dimensions2D.Positionable
+import Dimensions2D.Scalable
 object Dimensions2D:
   /** Add 2D position to a Behaviour
     *
@@ -8,29 +11,17 @@ object Dimensions2D:
     */
   trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
 
-  /** Gives to other behaviours a single scale value for their dimension.
-    *
-    * @param x
-    */
-  trait SingleScalable(private var x: Double = 1) extends Behaviour:
-    def scale = if x > 0 then x else 1
-    def scale_=(scale: Double) = if scale > 0 then x = scale
+  trait IsNotValid[T]:
+    def apply(scale: T): Boolean
 
-  /** Gives to other behaviours a scale on X and Y of their dimension.
-    *
-    * @param x
-    *   multiplier of the width, must be greater than 0.
-    * @param y
-    *   multiplier of the height, must be greater than 0.
-    */
-  trait Scalable(private var x: Double = 1, private var y: Double = 1)
-      extends Behaviour:
+  given IsNotValid[Double] with
+    override def apply(scale: Double): Boolean = scale <= 0
 
-    private val singleScalable: SingleScalable = new Behaviour
-      with SingleScalable(x)
+  given IsNotValid[(Double, Double)] with
+    override def apply(scale: (Double, Double)): Boolean = scale._1 <= 0 || scale._2 <= 0
 
-    def scaleY: Double = if y > 0 then y else 1
-    def scaleY_=(h: Double): Unit =
-      if h > 0 then this.y = h
+  trait Scalable[T](private var _scale: T)(using isNotValid: IsNotValid[T]) extends Behaviour:
+    require(!isNotValid(_scale))
 
-    export singleScalable.{scale as scaleX, scale_= as scaleX_=}
+    def scale: T = _scale
+    def scale_=(s: T) = if !isNotValid(s) then _scale = s

@@ -3,19 +3,17 @@ import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import org.scalatest.BeforeAndAfterEach
 import Dimensions2D.Scalable
-import Dimensions2D.SingleScalable
 
 class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
     private val scaleX: Double = 0.5
     private val scaleY: Double = 2
 
-    private val singleScalable = new Behaviour with SingleScalable(scaleX)
+    private val singleScalable = new Behaviour with Scalable(scaleX)
     private val scalable = new Behaviour with Scalable(scaleX, scaleY)
 
     override protected def beforeEach(): Unit = 
         singleScalable.scale = scaleX
-        scalable.scaleX = scaleX
-        scalable.scaleY = scaleY
+        scalable.scale = (scaleX, scaleY)
 
     "single scalable" should "have right scale" in:
         singleScalable.scale shouldBe scaleX
@@ -31,30 +29,28 @@ class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
         singleScalable.scale = -2
         singleScalable.scale shouldBe scaleX
 
-        val singleScalable2 = new Behaviour with SingleScalable(0)
-        singleScalable2.scale shouldBe 1
+        an[IllegalArgumentException] shouldBe thrownBy:
+            new Behaviour with Scalable(0d)
 
     "scalable" should "have right scaleX and scaleY" in:
-        scalable.scaleX shouldBe scaleX
-        scalable.scaleY shouldBe scaleY
+        scalable.scale._1 shouldBe scaleX
+        scalable.scale._2 shouldBe scaleY
 
     it should "change scaleX and scaleY" in:
-        scalable.scaleX = 10.5
-        scalable.scaleY = 2
-        scalable.scaleX shouldBe 10.5
-        scalable.scaleY shouldBe 2
+        scalable.scale = (10.5, 2)
+        scalable.scale._1 shouldBe 10.5
+        scalable.scale._2 shouldBe 2
 
-        scalable.scaleX = 5
-        scalable.scaleX shouldBe 5
-        scalable.scaleY = 0.4
-        scalable.scaleY shouldBe 0.4
+        scalable.scale = (5, 0.4)
+
+        scalable.scale._1 shouldBe 5
+        scalable.scale._2 shouldBe 0.4
 
     it should "not accept negative values or zero" in:
-        scalable.scaleX = -1
-        scalable.scaleY = 0
-        scalable.scaleX shouldBe scaleX
-        scalable.scaleY shouldBe scaleY
+        scalable.scale = (-1, 0)
 
-        val scalable2 = new Behaviour with Scalable(-5, 0)
-        scalable2.scaleX shouldBe 1
-        scalable2.scaleY shouldBe 1
+        scalable.scale._1 shouldBe scaleX
+        scalable.scale._2 shouldBe scaleY
+
+        an[IllegalArgumentException] shouldBe thrownBy:
+            new Behaviour with Scalable(-5d, 4d)

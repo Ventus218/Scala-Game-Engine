@@ -5,6 +5,7 @@ import java.awt.{Color, Graphics2D, Image}
 import java.io.File
 import javax.imageio.ImageIO
 import scala.util.Try
+import Dimensions2D.Scalable
 
 object SwingRenderers:
 
@@ -340,6 +341,7 @@ object SwingRenderers:
       offset: (Double, Double) = (0, 0),
       priority: Int = 0
   ) extends SwingShapeRenderer:
+    type Shape = Double
     override protected val element: SwingSquare = Shapes.square(size, color)
     this.renderOffset = offset
     this.renderingPriority = priority

@@ -5,8 +5,8 @@ import org.scalatest.BeforeAndAfterEach
 import Physics2D.RectCollider
 
 class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
-  val collider = new Behaviour with RectCollider(5, 3) with Positionable with Scalable
-  val collider2 = new Behaviour with RectCollider(1, 2) with Positionable with Scalable
+  val collider = new Behaviour with RectCollider(5, 3) with Positionable with Scalable((1d, 1d))
+  val collider2 = new Behaviour with RectCollider(1, 2) with Positionable with Scalable((1d, 1d))
 
   override protected def beforeEach(): Unit = 
     collider.colliderWidth = 5
@@ -20,10 +20,10 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "throws an exception if initially its width and height are less or equal to zero" in:
     assertThrows[IllegalArgumentException]:
-      new Behaviour with RectCollider(-1, 1) with Positionable with Scalable
+      new Behaviour with RectCollider(-1, 1) with Positionable with Scalable((1d, 1d))
 
     assertThrows[IllegalArgumentException]:
-      new Behaviour with RectCollider(5, 0) with Positionable with Scalable
+      new Behaviour with RectCollider(5, 0) with Positionable with Scalable((1d, 1d))
 
   it should "be able to change its width and height but not accept negative or zero values" in:
     collider.colliderWidth = 10
@@ -92,25 +92,23 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.collides(collider2) shouldBe false
     
   it should "scale its dimension based on Scalable X and Y" in:
-    collider.scaleX = 2
+    collider.scale = (2, 3)
+
     collider.colliderWidth shouldBe 10
-
-    collider.scaleX = 3
-    collider.colliderWidth shouldBe 15
-
-    collider.scaleY = 3
     collider.colliderHeight shouldBe 9
+
+    
 
   it should "collides using the scaled dimensions" in:
     collider.x = 0
     collider.y = 0
     collider.colliderWidth = 2
-    collider.scaleX = 1
+    collider.scale = (1, 1)
 
     collider2.x = 5
     collider2.y = 0
     collider2.colliderWidth  = 4
-    collider2.scaleX = 2
+    collider2.scale = (2, 1)
 
     collider.collides(collider2) shouldBe true
 
