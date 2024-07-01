@@ -76,39 +76,6 @@ object TestUtils:
         with NFrameStopper(nFramesToRun)
       engine.loadScene(newScene.joined(() => Seq(testerObject)))
 
-    /** Runs the engine and calls `testFunction` on every EarlyUpdate
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      *   provides the current `TestingContext`
-      */
-    def testOnEarlyUpdateWithContext(
-        scene: Scene = () => Seq.empty,
-        nFramesToRun: Int = 1
-    )(
-        testFunction: (TestingContext) => Unit
-    ): Unit =
-      val testerObject = new Behaviour
-        with EarlyUpdateTester(testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.testWithTesterObject(scene)(testerObject)
-
-    /** Runs the engine and calls `testFunction` on every EarlyUpdate
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      */
-    def testOnEarlyUpdate(
-        scene: Scene = () => Seq.empty,
-        nFramesToRun: Int = 1
-    )(
-        testFunction: => Unit
-    ): Unit =
-      engine.testOnEarlyUpdateWithContext(scene, nFramesToRun): (_) =>
-        testFunction
-
     /** Runs the engine and calls `testFunction` on every Update
       * @param scene
       * @param nFramesToRun

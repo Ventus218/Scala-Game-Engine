@@ -150,14 +150,11 @@ class GameLoopTests extends AnyFlatSpec:
       case throwable => throw throwable
 
   "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
-    engine.testOnEarlyUpdate(testScene):
-      engine.deltaTimeNanos shouldBe 0
-
-    engine.testOnUpdate(testScene):
-      engine.deltaTimeNanos shouldBe 0
-
-    engine.testOnLateUpdate(testScene):
-      engine.deltaTimeNanos shouldBe 0
+    engine.testOnLifecycleEvent(testScene)(
+      onEarlyUpdate = engine.deltaTimeNanos shouldBe 0,
+      onUpdate = engine.deltaTimeNanos shouldBe 0,
+      onLateUpdate = engine.deltaTimeNanos shouldBe 0
+    )
 
   it should "be 0 if the game loop is not executed" in:
     engine.testOnDeinit(testScene, nFramesToRun = 0):
