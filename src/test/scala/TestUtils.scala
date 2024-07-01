@@ -62,7 +62,7 @@ object TestUtils:
       * @param onXXX
       *   the function to execute at XXX event
       */
-    def testOnLifecycleEvent(
+    def testOnGameloopEvents(
         scene: Scene = () => Seq.empty,
         nFramesToRun: Int = 1
     )(
@@ -97,7 +97,7 @@ object TestUtils:
       * @param onXXX
       *   the function to execute at XXX event
       */
-    def loadSceneTestingOnLifecycleEvent(
+    def loadSceneTestingOnGameloopEvents(
         scene: Scene = () => Seq.empty,
         nFramesToRun: Int = 1
     )(

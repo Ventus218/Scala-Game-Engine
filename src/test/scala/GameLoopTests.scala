@@ -3,26 +3,26 @@ import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
-import LifecycleTester.*
-import LifecycleEvent.*
+import GameloopTester.*
+import GameloopEvent.*
 import TestUtils.Testers.*
 import org.scalatest.exceptions.TestFailedException
 
 class GameLoopTests extends AnyFlatSpec:
-  private def getSequenceOfActions(): Seq[LifecycleEvent] =
+  private def getSequenceOfActions(): Seq[GameloopEvent] =
     Seq(Init, Start)
 
-  private def getUpdatesSequenceOfActions(): Seq[LifecycleEvent] =
+  private def getUpdatesSequenceOfActions(): Seq[GameloopEvent] =
     Seq(EarlyUpdate, Update, LateUpdate)
 
   val numSteps = 3
 
   private def testScene: Scene = () =>
     Iterable(
-      new Behaviour with LifecycleTester,
-      new Behaviour with LifecycleTester,
-      new Behaviour(enabled = false) with LifecycleTester,
-      new Behaviour(enabled = false) with LifecycleTester
+      new Behaviour with GameloopTester,
+      new Behaviour with GameloopTester,
+      new Behaviour(enabled = false) with GameloopTester,
+      new Behaviour(enabled = false) with GameloopTester
     )
 
   val engine = Engine(
@@ -36,7 +36,7 @@ class GameLoopTests extends AnyFlatSpec:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    engine.testOnLifecycleEvent(testScene, nFramesToRun = numSteps)(
+    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps)(
       onDeinit =
         /** This tests has to deal with undeterministic behaviour:
           *
@@ -45,7 +45,7 @@ class GameLoopTests extends AnyFlatSpec:
           * been called yet. This is why the test succedes in both cases.
           */
         engine
-          .find[LifecycleTester]()
+          .find[GameloopTester]()
           .filter(_.enabled)
           .foreach(
             _.happenedEvents should (
@@ -54,7 +54,7 @@ class GameLoopTests extends AnyFlatSpec:
             )
           )
         engine
-          .find[LifecycleTester]()
+          .find[GameloopTester]()
           .filter(!_.enabled)
           .foreach(
             _.happenedEvents should (
@@ -72,7 +72,7 @@ class GameLoopTests extends AnyFlatSpec:
       getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
     // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
-    engine.testOnLifecycleEvent(oneFrameScene, nFramesToRun = 5)(
+    engine.testOnGameloopEvents(oneFrameScene, nFramesToRun = 5)(
       onDeinit =
         /** This tests has to deal with undeterministic behaviour:
           *
@@ -81,7 +81,7 @@ class GameLoopTests extends AnyFlatSpec:
           * been called yet. This is why the test succedes in both cases.
           */
         engine
-          .find[LifecycleTester]()
+          .find[GameloopTester]()
           .filter(_.enabled)
           .foreach(
             _.happenedEvents should (
@@ -92,7 +92,7 @@ class GameLoopTests extends AnyFlatSpec:
     )
 
   it should "do the loop again if called run after being stopped" in:
-    engine.testOnLifecycleEvent(testScene)(
+    engine.testOnGameloopEvents(testScene)(
       onUpdate = {}
     )
     engine.stop()
@@ -102,7 +102,7 @@ class GameLoopTests extends AnyFlatSpec:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    engine.testOnLifecycleEvent(testScene, nFramesToRun = numSteps)(
+    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps)(
       onDeinit =
         /** This tests has to deal with undeterministic behaviour:
           *
@@ -111,7 +111,7 @@ class GameLoopTests extends AnyFlatSpec:
           * been called yet. This is why the test succedes in both cases.
           */
         engine
-          .find[LifecycleTester]()
+          .find[GameloopTester]()
           .filter(_.enabled)
           .foreach(
             _.happenedEvents should (
@@ -120,7 +120,7 @@ class GameLoopTests extends AnyFlatSpec:
             )
           )
         engine
-          .find[LifecycleTester]()
+          .find[GameloopTester]()
           .filter(!_.enabled)
           .foreach(
             _.happenedEvents should (
@@ -131,7 +131,7 @@ class GameLoopTests extends AnyFlatSpec:
     )
 
   it should "throw an exception if the user tries to run again the engine while it's already running" in:
-    engine.testOnLifecycleEvent(testScene)(
+    engine.testOnGameloopEvents(testScene)(
       onStart = an[IllegalStateException] shouldBe thrownBy:
         engine.run(() => Seq())
     )
@@ -143,7 +143,7 @@ class GameLoopTests extends AnyFlatSpec:
     val engine = Engine(new IO {}, Storage(), fpsLimit)
 
     val start = System.currentTimeMillis()
-    engine.testOnLifecycleEvent(nFramesToRun = fpsLimit)(
+    engine.testOnGameloopEvents(nFramesToRun = fpsLimit)(
       onUpdate = {}
     )
     val end = System.currentTimeMillis()
@@ -158,21 +158,21 @@ class GameLoopTests extends AnyFlatSpec:
       case throwable => throw throwable
 
   "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
-    engine.testOnLifecycleEvent(testScene)(
+    engine.testOnGameloopEvents(testScene)(
       onEarlyUpdate = engine.deltaTimeNanos shouldBe 0,
       onUpdate = engine.deltaTimeNanos shouldBe 0,
       onLateUpdate = engine.deltaTimeNanos shouldBe 0
     )
 
   it should "be 0 if the game loop is not executed" in:
-    engine.testOnLifecycleEvent(testScene, nFramesToRun = 0)(
+    engine.testOnGameloopEvents(testScene, nFramesToRun = 0)(
       onDeinit = engine.deltaTimeNanos shouldBe 0
     )
 
     engine.deltaTimeNanos shouldBe 0
 
   it should "be higher than 0 after a game loop iteration" in:
-    engine.testOnLifecycleEvent(testScene)(
+    engine.testOnGameloopEvents(testScene)(
       onDeinit = engine.deltaTimeNanos should be > 0L
     )
 
