@@ -50,7 +50,7 @@ object ComplexTest:
   class Obstacle(initX: Double, initY: Double, squareSide: Double)
       extends Behaviour
       with Positionable(initX, initY)
-      with Scalable
+      with Scalable(1.0, 1.0)
       with SwingSquareRenderer(squareSide, Color.red)
       with RectCollider(squareSide, squareSide)
 
@@ -61,7 +61,7 @@ object ComplexTest:
       val movementVelocity: Double = 40
   ) extends Behaviour
       with Positionable(initX, initY)
-      with SingleScalable
+      with Scalable(1.0)
       with SwingCircleRenderer(circleRadius, Color.blue)
       with CircleCollider(circleRadius)
       with SwingInputHandler
