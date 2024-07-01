@@ -2,6 +2,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import TestUtils.*
+import LifecycleTester.*
+import LifecycleEvent.*
 import TestUtils.Testers.*
 
 class EngineObjectCreationTests extends AnyFlatSpec:
@@ -13,9 +15,10 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   val scene: Scene = () => Seq(obj1, obj2, obj3)
 
   "create" should "instantiate a game object in the scene" in:
-    engine.testOnStart():
-      engine.create(obj1)
-    engine.find[GameObjectMock]() should contain only (obj1)
+    engine.testOnLifecycleEvent()(
+      onStart = engine.create(obj1),
+      onDeInit = engine.find[GameObjectMock]() should contain only (obj1)
+    )
 
   it should "not instantiate a game object between EarlyUpdate, Update and LateUpdate, but after" in:
     var frame = 0
@@ -51,30 +54,28 @@ class EngineObjectCreationTests extends AnyFlatSpec:
         engine.create(obj)
 
   it should "invoke the method onInit on the game object" in:
-    var hasCalledInit = false
-    val objInit: Behaviour =
-      new Behaviour with InitTester((_) => hasCalledInit = true)
+    val obj = new Behaviour with LifecycleTester
 
-    engine.testOnStart(scene):
-      engine.create(objInit)
-
-    hasCalledInit shouldBe true
+    engine.testOnLifecycleEvent(scene)(
+      onStart = engine.create(obj),
+      onDeInit = obj.happenedEvents should contain oneElementOf Seq(Init)
+    )
 
   it should "invoke the event methods in the correct order" in:
-    import LifecycleTester.*
-    import LifecycleEvent.*
     val objTester: LifecycleTester =
       new Behaviour with LifecycleTester
-    engine.testOnStart():
-      engine.create(objTester)
+    engine.testOnLifecycleEvent(scene)(
+      onStart = engine.create(objTester)
+    )
 
     objTester.happenedEvents should contain theSameElementsInOrderAs
       Seq(Init, Start, EarlyUpdate, Update, LateUpdate, Deinit)
 
   "destroy" should "remove a game object from the scene" in:
-    engine.testOnStart(scene):
-      engine.destroy(obj1)
-    engine.find[GameObjectMock]() should contain only (obj2, obj3)
+    engine.testOnLifecycleEvent(scene)(
+      onStart = engine.destroy(obj1),
+      onDeInit = engine.find[GameObjectMock]() should contain only (obj2, obj3)
+    )
 
   it should "not remove a game object between EarlyUpdate, Update and LateUpdate, but after" in:
     var frame = 0
@@ -95,13 +96,15 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "remove an object only if already instantiated in the scene" in:
-    engine.testOnStart(scene):
-      an[IllegalArgumentException] shouldBe thrownBy {
-        engine.destroy(new GameObjectMock())
-      }
-      an[IllegalArgumentException] shouldBe thrownBy {
-        engine.destroy(new GameObjectMock() with Identifiable("1"))
-      }
+    engine.testOnLifecycleEvent(scene)(
+      onStart =
+        an[IllegalArgumentException] shouldBe thrownBy {
+          engine.destroy(new GameObjectMock())
+        }
+        an[IllegalArgumentException] shouldBe thrownBy {
+          engine.destroy(new GameObjectMock() with Identifiable("1"))
+        }
+    )
 
   it should "throw if trying to destroy an object multiple times in the same frame" in:
     engine.testOnUpdate(scene):
