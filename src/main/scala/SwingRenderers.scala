@@ -424,6 +424,8 @@ object SwingRenderers:
     textContent = text
     textColor = color
     
+    import TextAnchor.*
+    
     def textContent: String = text
     def textContent_=(txt: String): Unit =
       require(txt != null, "text content can't be null")
@@ -437,9 +439,25 @@ object SwingRenderers:
       require(c != null, "text color can't be null")
       color = c
     
+    private def anchoredPosition(io: SwingIO)(g2d: Graphics2D): (Int, Int) =
+      val width: Int = g2d.getFontMetrics(font).stringWidth(textContent)
+      val height: Int = textSize
+      val screenWidth: Int = io.size._1
+      val screenHeight: Int = io.size._2
+      textAnchor match
+        case TopLeft => (0, height)
+        case TopCenter => ((screenWidth - width)/2, height)
+        case TopRight => (screenWidth - width, height)
+        case CenterLeft => (0, (screenHeight + height)/2)
+        case Center => ((screenWidth - width)/2, (screenHeight + height)/2)
+        case CenterRight => (screenWidth - width, (screenHeight + height)/2)
+        case BottomLeft => (0, screenHeight)
+        case BottomCenter => ((screenWidth - width)/2, screenHeight)
+        case BottomRight => (screenWidth - width, screenHeight)
+      
     override def renderer: SwingIO => Graphics2D => Unit = io =>
       g2d =>
-        
         g2d.setFont(font)
         g2d.setPaint(color)
-        g2d.drawString(text, textOffset._1, textOffset._2 + font.getSize)
+        val position = anchoredPosition(io)(g2d)
+        g2d.drawString(text, position._1 + textOffset._1, position._2 + textOffset._2)

@@ -21,21 +21,41 @@ object SwingTextRendererTest:
         "Hello World!",
         20,
         Color.red,
-        offset = (200, 200)
+        offset = (0, 0),
+        anchor = TextAnchor.Center
       ),
       topLeft = textRenderer(
         "Ciao Mondo!",
         14,
         Color.blue,
-        offset = (0, 0)
+        offset = (0, 0),
+        anchor = TextAnchor.TopLeft
       ),
       topRight = textRenderer(
         "Hola Mundo!",
         17,
         Color.green,
-        offset = (400, 0)
+        offset = (0, 0),
+        anchor = TextAnchor.TopRight
       )
     )
+
+  @main def testSwingRendererTextAllPlacements(): Unit =
+    val io: SwingIO = SwingIO
+      .withSize(600, 500)
+      .build()
+
+    TextAnchor.values.foreach(a =>
+      val text = textRenderer(
+        "Hello World!",
+        20,
+        Color.red,
+        offset = (0, 0),
+        anchor = a
+      )
+      io.draw(text.renderer(io))
+    )
+    io.show()
 
 class SwingTextRendererTest extends AnyFlatSpec:
 
