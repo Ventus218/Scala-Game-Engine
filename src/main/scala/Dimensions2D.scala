@@ -1,6 +1,3 @@
-import Physics2D.RectCollider
-import Dimensions2D.Positionable
-import Dimensions2D.Scalable
 object Dimensions2D:
   /** Add 2D position to a Behaviour
     *
