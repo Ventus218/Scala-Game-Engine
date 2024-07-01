@@ -227,22 +227,24 @@ object TestUtils:
         nFramesToRun: Int = 1
     )(
         onInit: => Unit = (),
-        onEnabled: => Unit = (),
         onStart: => Unit = (),
         onEarlyUpdate: => Unit = (),
         onUpdate: => Unit = (),
         onLateUpdate: => Unit = (),
-        onDeInit: => Unit = ()
+        onDeInit: => Unit = (),
+        onEnabled: => Unit = (),
+        onDisabled: => Unit = ()
     ): Unit =
       engine.testWithTesterObject(scene)(
         new Behaviour
           with InitTester((_) => onInit)
-          with EnabledTester((_) => onInit)
           with StartTester((_) => onStart)
           with EarlyUpdateTester((_) => onEarlyUpdate)
           with UpdateTester((_) => onUpdate)
           with LateUpdateTester((_) => onLateUpdate)
           with DeinitTester((_) => onDeInit)
+          with EnabledTester((_) => onEnabled)
+          with DisabledTester((_) => onDisabled)
           with NFrameStopper(nFramesToRun)
       )
 
@@ -256,12 +258,6 @@ object TestUtils:
       override def onInit: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
         super.onInit(engine)
-
-    trait EnabledTester(testFunction: (TestingContext) => Unit)
-        extends Behaviour:
-      override def onEnabled: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onEnabled(engine)
 
     trait StartTester(testFunction: (TestingContext) => Unit) extends Behaviour:
       override def onStart: Engine => Unit = (engine) =>
@@ -291,3 +287,15 @@ object TestUtils:
       override def onDeinit: Engine => Unit = (engine) =>
         testFunction(TestingContext(engine, this))
         super.onDeinit(engine)
+
+    trait EnabledTester(testFunction: (TestingContext) => Unit)
+        extends Behaviour:
+      override def onEnabled: Engine => Unit = (engine) =>
+        testFunction(TestingContext(engine, this))
+        super.onEnabled(engine)
+
+    trait DisabledTester(testFunction: (TestingContext) => Unit)
+        extends Behaviour:
+      override def onDisabled: Engine => Unit = (engine) =>
+        testFunction(TestingContext(engine, this))
+        super.onDisabled(engine)
