@@ -416,15 +416,26 @@ object SwingRenderers:
   trait SwingTextRenderer(
       private var text: String, 
       private var font: Font,
-      private var color: Color, 
-      anchor: TextAnchor = TextAnchor.TopLeft, 
-      anchorOffset: (Int, Int) = (0, 0)
+      private var color: Color,
+      var textAnchor: TextAnchor = TextAnchor.TopLeft,
+      var textOffset: (Int, Int) = (0, 0)
   ) extends SwingRenderer:
+    require(font != null, "text font can't be null")
+    textContent = text
+    textColor = color
+    
     def textContent: String = text
+    def textContent_=(txt: String): Unit =
+      require(txt != null, "text content can't be null")
+      text = txt
     def textSize: Int = font.getSize
+    def textSize_=(s: Int): Unit =
+      require(s > 0, "text size must be positive")
+      font = Font(font.getFontName, font.getStyle, s)
     def textColor: Color = color
-    def textOffset: (Int, Int) = anchorOffset
-    def textAnchor: TextAnchor = anchor
+    def textColor_=(c: Color): Unit =
+      require(c != null, "text color can't be null")
+      color = c
     
     override def renderer: SwingIO => Graphics2D => Unit = io =>
       g2d =>

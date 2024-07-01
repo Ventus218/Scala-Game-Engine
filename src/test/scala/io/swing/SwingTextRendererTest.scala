@@ -3,7 +3,7 @@ import SwingRenderers.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 
-import java.awt.Color
+import java.awt.{Color, Font}
 
 object SwingTextRendererTest:
 
@@ -39,20 +39,43 @@ object SwingTextRendererTest:
 
 class SwingTextRendererTest extends AnyFlatSpec:
 
+  val font: Font = Font("Arial", Font.PLAIN, 10)
+
   "SwingTextRenderer" should "be initialized correctly" in:
-    val text = SwingRendererTestUtilities.textRenderer(
-      "Hello World!",
-      20,
-      Color.red,
-      offset = (0, 0)
+    val text = new Behaviour
+      with SwingTextRenderer(
+      "Test",
+      font,
+      Color.red
     )
-    text.textContent shouldBe "Hello World!"
-    text.textSize shouldBe 20
+    text.textContent shouldBe "Test"
+    text.textSize shouldBe 10
     text.textColor shouldBe Color.red
     text.textOffset shouldBe (0, 0)
     text.textAnchor shouldBe TextAnchor.TopLeft
 
-  it should "not be initialized with null text, color or font"
+  it should "not be initialized with null text, color or font" in:
+    an[IllegalArgumentException] shouldBe thrownBy {
+      new Behaviour with SwingTextRenderer(
+        null,
+        font,
+        Color.red
+      )
+    }
+    an[IllegalArgumentException] shouldBe thrownBy {
+      new Behaviour with SwingTextRenderer(
+        "Test",
+        null,
+        Color.red
+      )
+    }
+    an[IllegalArgumentException] shouldBe thrownBy {
+      new Behaviour with SwingTextRenderer(
+        "Test",
+        font,
+        null
+      )
+    }
 
   it should "be able to change text, size and color"
 
