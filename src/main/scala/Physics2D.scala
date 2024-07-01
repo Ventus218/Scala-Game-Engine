@@ -77,13 +77,16 @@ object Physics2D:
     *   radius of the collider, must be greater than zero otherwise throws an
     *   IllegalArgumentException
     */
-  trait CircleCollider(private var r: Double) extends Collider with Scalable[Double]:
+  trait CircleCollider(private var r: Double)
+      extends Collider
+      with Scalable[Double]:
     require(r > 0)
 
     def radius: Double = scale * r
     def radius_=(radius: Double) = if radius > 0 then r = radius
 
-    override final def collides(other: RectCollider): Boolean = other.collides(this)
+    override final def collides(other: RectCollider): Boolean =
+      other.collides(this)
 
     override final def collides(other: CircleCollider): Boolean =
       val dx = x - other.x
