@@ -72,7 +72,7 @@ object SwingRendererTestUtilities:
       size: Int,
       color: Color,
       offset: (Int, Int) = (0, 0),
-      anchor: TextAnchor = TextAnchor.Center
+      anchor: UIAnchor = UIAnchor.Center
   ): SwingTextRenderer = 
     new Behaviour
       with SwingTextRenderer(text, Font("Arial", Font.PLAIN, size), color, textAnchor = anchor, textOffset = offset)

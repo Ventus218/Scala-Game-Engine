@@ -22,21 +22,21 @@ object SwingTextRendererTest:
         20,
         Color.red,
         offset = (0, 0),
-        anchor = TextAnchor.Center
+        anchor = UIAnchor.Center
       ),
       topLeft = textRenderer(
         "Ciao Mondo!",
         14,
         Color.blue,
         offset = (0, 0),
-        anchor = TextAnchor.TopLeft
+        anchor = UIAnchor.TopLeft
       ),
       topRight = textRenderer(
         "Hola Mundo!",
         17,
         Color.green,
         offset = (0, 0),
-        anchor = TextAnchor.TopRight
+        anchor = UIAnchor.TopRight
       )
     )
 
@@ -45,7 +45,7 @@ object SwingTextRendererTest:
       .withSize(600, 500)
       .build()
 
-    TextAnchor.values.foreach(a =>
+    UIAnchor.values.foreach(a =>
       val text = textRenderer(
         "Hello World!",
         20,
@@ -73,7 +73,7 @@ class SwingTextRendererTest extends AnyFlatSpec:
     text.textSize shouldBe 10
     text.textColor shouldBe Color.red
     text.textOffset shouldBe (0, 0)
-    text.textAnchor shouldBe TextAnchor.TopLeft
+    text.textAnchor shouldBe UIAnchor.TopLeft
 
   it should "not be initialized with null text, color or font" in:
     an[IllegalArgumentException] shouldBe thrownBy {
@@ -128,7 +128,7 @@ class SwingTextRendererTest extends AnyFlatSpec:
 
   it should "be able to change its offset and anchor point" in:
     val text = textTest
-    text.textAnchor = TextAnchor.BottomCenter
-    text.textAnchor shouldBe TextAnchor.BottomCenter
+    text.textAnchor = UIAnchor.BottomCenter
+    text.textAnchor shouldBe UIAnchor.BottomCenter
     text.textOffset = (100, 0)
     text.textOffset shouldBe (100, 0)

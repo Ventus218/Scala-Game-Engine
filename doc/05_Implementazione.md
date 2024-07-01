@@ -308,6 +308,9 @@ Questo a sua volta è esteso dai trait **SwingShapeRenderer**, che rappresenta u
 Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli.
 Questi renderer hanno anche un `renderOffset`, che indica di quanto il disegno debba essere traslato rispetto alla posizione attuale del behaviour.
 
+SwingRenderable è esteso dal trait **SwingTextRenderer**, che disegna un testo su shermo, e che a differenza degli altri renderer rappresenta un elemento di overlay del gioco. Questo significa che non ha una posizione definita in termini di unità di gioco, bensì in pixel; Inoltre la sua posizione è 
+legata al `textAnchor`, ovvero il punto di partenza sullo schermo dal quale iniziare a disegnare l'elemento. In questo modo, gli elementi di overlay dipendono solamente dalla SwingIO dell'engine e non dalla scena nella quale sono istanziati.
+
 *Esempio*
 ```scala
 // Disegna un rettangolo in LateUpdate

@@ -400,9 +400,12 @@ object SwingRenderers:
     }
     this.renderOffset = offset
     this.renderingPriority = priority
-    
-    
-  enum TextAnchor:
+
+  /** The anchor position used to compute the true screen position of a
+    * UI element. It represents the starting point on the screen for calculating
+    * the relative UI element position.
+    */
+  enum UIAnchor:
     case TopLeft
     case TopCenter
     case TopRight
@@ -413,19 +416,23 @@ object SwingRenderers:
     case BottomCenter
     case BottomRight
 
+  /** Behaviour for rendering an text on a SwingIO. The text is positioned on the screen
+    * based on its anchor point and its offset. By default the anchor is in the top-left
+    * corner.
+    */
   trait SwingTextRenderer(
-      private var text: String, 
+      private var text: String,
       private var font: Font,
       private var color: Color,
-      var textAnchor: TextAnchor = TextAnchor.TopLeft,
+      var textAnchor: UIAnchor = UIAnchor.TopLeft,
       var textOffset: (Int, Int) = (0, 0)
   ) extends SwingRenderer:
     require(font != null, "text font can't be null")
     textContent = text
     textColor = color
-    
-    import TextAnchor.*
-    
+
+    import UIAnchor.*
+
     def textContent: String = text
     def textContent_=(txt: String): Unit =
       require(txt != null, "text content can't be null")
@@ -438,7 +445,13 @@ object SwingRenderers:
     def textColor_=(c: Color): Unit =
       require(c != null, "text color can't be null")
       color = c
-    
+
+    /** Compute the screen position relative to the anchor point.
+      *
+      * @param io the SwingIO
+      * @param g2d the graphic context
+      * @return the screen position of this UI element
+      */
     private def anchoredPosition(io: SwingIO)(g2d: Graphics2D): (Int, Int) =
       val width: Int = g2d.getFontMetrics(font).stringWidth(textContent)
       val height: Int = textSize
@@ -454,7 +467,7 @@ object SwingRenderers:
         case BottomLeft => (0, screenHeight)
         case BottomCenter => ((screenWidth - width)/2, screenHeight)
         case BottomRight => (screenWidth - width, screenHeight)
-      
+
     override def renderer: SwingIO => Graphics2D => Unit = io =>
       g2d =>
         g2d.setFont(font)
