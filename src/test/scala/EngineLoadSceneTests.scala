@@ -20,15 +20,19 @@ class EngineLoadSceneTests extends AnyFlatSpec:
       onUpdate =
         engine.find[Identifiable]() should contain theSameElementsAs scene1()
 
-        engine.loadSceneAndTestOnUpdate(scene2):
-          engine.find[Identifiable]() should contain theSameElementsAs scene2()
+        // loading a new Scene -> redefining testing to do
+        engine.loadSceneTestingOnLifecycleEvent(scene2)(
+          onUpdate = engine
+            .find[Identifiable]() should contain theSameElementsAs scene2()
+        )
     )
 
   it should "change the scene after finishing the current frame" in:
     engine.testOnLifecycleEvent(scene1)(
-      onEarlyUpdate = engine.loadSceneAndTestOnUpdate(scene2):
-        engine.find[Identifiable]() should contain theSameElementsAs scene2()
-      ,
+      onEarlyUpdate = engine.loadSceneTestingOnLifecycleEvent(scene2)(
+        onUpdate =
+          engine.find[Identifiable]() should contain theSameElementsAs scene2()
+      ),
       onLateUpdate =
         engine.find[Identifiable]() should contain theSameElementsAs scene1()
     )
@@ -36,7 +40,7 @@ class EngineLoadSceneTests extends AnyFlatSpec:
   it should "deinitialize all the game objects before swapping scenes" in:
     var hasCalledDeinit = false
     engine.testOnLifecycleEvent(scene1)(
-      onStart = engine.loadSceneAndTestOnInit(scene2)(testFunction = ()),
+      onStart = engine.loadSceneTestingOnLifecycleEvent(scene2)(),
       onDeinit = hasCalledDeinit = true
     )
     hasCalledDeinit shouldBe true
@@ -44,15 +48,17 @@ class EngineLoadSceneTests extends AnyFlatSpec:
   it should "initialize all the game objects after swapping scenes" in:
     var hasCalledInit = false
     engine.testOnLifecycleEvent(scene1, nFramesToRun = 2)(
-      onUpdate = engine.loadSceneAndTestOnInit(scene2):
-        hasCalledInit = true
+      onUpdate = engine.loadSceneTestingOnLifecycleEvent(scene2)(
+        onInit = hasCalledInit = true
+      )
     )
     hasCalledInit shouldBe true
 
   it should "invoke onStart on the new game objects if enabled" in:
     var hasCalledStart = false
     engine.testOnLifecycleEvent(scene1, nFramesToRun = 2)(
-      onUpdate = engine.loadSceneAndTestOnStart(scene2):
-        hasCalledStart = true
+      onUpdate = engine.loadSceneTestingOnLifecycleEvent(scene2)(
+        onStart = hasCalledStart = true
+      )
     )
     hasCalledStart shouldBe true

@@ -43,65 +43,15 @@ object TestUtils:
     ): Unit =
       engine.run(scene.joined(() => Seq(testerObject)))
 
-    /** Loads a new scene and calls `testFunction` on every Init
+    /** Loads a scene on a running engine injecting the testerObject
       *
-      * @param newScene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
+      * @param scene
+      * @param testerObject
       */
-    def loadSceneAndTestOnInit(newScene: Scene, nFramesToRun: Int = 1)(
-        testFunction: => Unit
+    def loadSceneWithTesterObject(scene: Scene = () => Seq.empty)(
+        testerObject: Behaviour
     ): Unit =
-      val testerObject = new Behaviour
-        with InitTester((_) => testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.loadScene(newScene.joined(() => Seq(testerObject)))
-
-    /** Loads a new scene and calls `testFunction` on every Enabled
-      *
-      * @param newScene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      */
-    def loadSceneAndTestOnEnabled(newScene: Scene, nFramesToRun: Int = 1)(
-        testFunction: => Unit
-    ): Unit =
-      val testerObject = new Behaviour
-        with EnabledTester((_) => testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.loadScene(newScene.joined(() => Seq(testerObject)))
-
-    /** Loads a new scene and calls `testFunction` on every Start
-      *
-      * @param newScene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      */
-    def loadSceneAndTestOnStart(newScene: Scene, nFramesToRun: Int = 1)(
-        testFunction: => Unit
-    ): Unit =
-      val testerObject = new Behaviour
-        with StartTester((_) => testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.loadScene(newScene.joined(() => Seq(testerObject)))
-
-    /** Loads a new scene and calls `testFunction` on every Update
-      *
-      * @param newScene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      */
-    def loadSceneAndTestOnUpdate(newScene: Scene, nFramesToRun: Int = 1)(
-        testFunction: => Unit
-    ): Unit =
-      val testerObject = new Behaviour
-        with UpdateTester((_) => testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.loadScene(newScene.joined(() => Seq(testerObject)))
+      engine.loadScene(scene.joined(() => Seq(testerObject)))
 
     /** Runs the engine and calls the given test function on the corresponding
       * events by injecting a tester object into the scene.
@@ -126,6 +76,41 @@ object TestUtils:
         onDisabled: => TestingFunction = _ => ()
     ): Unit =
       engine.testWithTesterObject(scene)(
+        new Behaviour
+          with InitTester(onInit(_))
+          with StartTester(onStart(_))
+          with EarlyUpdateTester(onEarlyUpdate(_))
+          with UpdateTester(onUpdate(_))
+          with LateUpdateTester(onLateUpdate(_))
+          with DeinitTester(onDeinit(_))
+          with EnabledTester(onEnabled(_))
+          with DisabledTester(onDisabled(_))
+          with NFrameStopper(nFramesToRun)
+      )
+
+    /** Loads a new scene on a running engine and calls the given test function
+      * on the corresponding events by injecting a tester object into the scene.
+      *
+      * @param scene
+      * @param nFramesToRun
+      *   number of frames the engine will run, defaults to 1
+      * @param onXXX
+      *   the function to execute at XXX event
+      */
+    def loadSceneTestingOnLifecycleEvent(
+        scene: Scene = () => Seq.empty,
+        nFramesToRun: Int = 1
+    )(
+        onInit: => TestingFunction = _ => (),
+        onStart: => TestingFunction = _ => (),
+        onEarlyUpdate: => TestingFunction = _ => (),
+        onUpdate: => TestingFunction = _ => (),
+        onLateUpdate: => TestingFunction = _ => (),
+        onDeinit: => TestingFunction = _ => (),
+        onEnabled: => TestingFunction = _ => (),
+        onDisabled: => TestingFunction = _ => ()
+    ): Unit =
+      engine.loadSceneWithTesterObject(scene)(
         new Behaviour
           with InitTester(onInit(_))
           with StartTester(onStart(_))
