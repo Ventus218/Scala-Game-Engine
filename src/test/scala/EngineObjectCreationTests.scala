@@ -1,7 +1,7 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
-import TestUtils.*
+import TestUtils.{*, given}
 import LifecycleTester.*
 import LifecycleEvent.*
 import TestUtils.Testers.*
@@ -40,18 +40,22 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "not instantiate a game object already present in the scene" in:
-    engine.testOnUpdate(scene):
-      engine.find[GameObjectMock]() should contain(obj1)
-      an[IllegalArgumentException] shouldBe thrownBy {
-        engine.create(obj1)
-      }
+    engine.testOnLifecycleEvent(scene)(
+      onUpdate =
+        engine.find[GameObjectMock]() should contain(obj1)
+        an[IllegalArgumentException] shouldBe thrownBy {
+          engine.create(obj1)
+        }
+    )
 
   it should "throw if trying to create an object multiple times in the same frame" in:
-    engine.testOnUpdate(scene):
-      val obj = new Behaviour {}
-      engine.create(obj)
-      an[IllegalArgumentException] shouldBe thrownBy:
+    engine.testOnLifecycleEvent(scene)(
+      onUpdate =
+        val obj = new Behaviour {}
         engine.create(obj)
+        an[IllegalArgumentException] shouldBe thrownBy:
+          engine.create(obj)
+    )
 
   it should "invoke the method onInit on the game object" in:
     val obj = new Behaviour with LifecycleTester
@@ -107,17 +111,24 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "throw if trying to destroy an object multiple times in the same frame" in:
-    engine.testOnUpdate(scene):
-      engine.destroy(obj1)
-      an[IllegalArgumentException] shouldBe thrownBy:
+    engine.testOnLifecycleEvent(scene)(
+      onUpdate =
         engine.destroy(obj1)
+        an[IllegalArgumentException] shouldBe thrownBy:
+          engine.destroy(obj1)
+    )
 
   it should "invoke the method onDeinit on the game object at the end of the frame" in:
-    var hasCalledDeinit = false
-    val objDeinit: Behaviour =
-      new Behaviour with DeinitTester((_) => hasCalledDeinit = true)
+    val obj = new Behaviour with LifecycleTester()
 
-    engine.testOnUpdate(() => Seq(objDeinit)):
-      engine.destroy(objDeinit)
-
-    hasCalledDeinit shouldBe true
+    engine.testOnLifecycleEvent(() => Seq(obj), nFramesToRun = 3)(
+      onStart = engine.destroy(obj),
+      onDeInit = obj.happenedEvents should contain theSameElementsInOrderAs Seq(
+        Init,
+        Start,
+        EarlyUpdate,
+        Update,
+        LateUpdate,
+        Deinit
+      )
+    )
