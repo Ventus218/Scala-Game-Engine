@@ -1,7 +1,7 @@
 import Dimensions2D.Positionable
 
 import java.awt.image.BufferedImage
-import java.awt.{Color, Graphics2D, Image}
+import java.awt.{Color, Font, FontMetrics, Graphics2D, Image}
 import java.io.File
 import javax.imageio.ImageIO
 import scala.util.Try
@@ -400,3 +400,11 @@ object SwingRenderers:
     }
     this.renderOffset = offset
     this.renderingPriority = priority
+
+  trait SwingTextRenderer(text: String, private val font: Font, color: Color, position: (Int, Int) = (0, 0)) extends SwingRenderer:
+    override def renderer: SwingIO => Graphics2D => Unit = io =>
+      g2d =>
+        
+        g2d.setFont(font)
+        g2d.setPaint(color)
+        g2d.drawString(text, position._1, position._2 + font.getSize)
