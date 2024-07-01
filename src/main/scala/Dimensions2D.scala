@@ -8,10 +8,16 @@ object Dimensions2D:
     */
   trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
 
-  trait PositionFollower(position: Positionable, offset: (Double, Double) = (0, 0)) extends Positionable:
+  trait PositionFollower(position: Positionable, var offset: (Double, Double) = (0, 0)) extends Positionable:
     override def onInit: Engine => Unit =
       engine =>
         super.onInit(engine)
+        x = position.x + offset._1
+        y = position.y + offset._2
+
+    override def onLateUpdate: Engine => Unit =
+      engine =>
+        super.onLateUpdate(engine)
         x = position.x + offset._1
         y = position.y + offset._2
 
