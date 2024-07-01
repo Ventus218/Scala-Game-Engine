@@ -36,8 +36,8 @@ class GameLoopTests extends AnyFlatSpec:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps)(
-      onDeinit =
+    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps):
+      _.onDeinit:
         /** This tests has to deal with undeterministic behaviour:
           *
           * Given the fact that the order of objects is not defined. The tester
@@ -62,7 +62,6 @@ class GameLoopTests extends AnyFlatSpec:
                 or contain theSameElementsInOrderAs Seq(Init)
             )
           )
-    )
 
   it should "stop when engine.stop() is called" in:
     val oneFrameScene = testScene.joined: () =>
@@ -72,8 +71,8 @@ class GameLoopTests extends AnyFlatSpec:
       getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
     // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
-    engine.testOnGameloopEvents(oneFrameScene, nFramesToRun = 5)(
-      onDeinit =
+    engine.testOnGameloopEvents(oneFrameScene, nFramesToRun = 5):
+      _.onDeinit:
         /** This tests has to deal with undeterministic behaviour:
           *
           * Given the fact that the order of objects is not defined. The tester
@@ -89,12 +88,9 @@ class GameLoopTests extends AnyFlatSpec:
                 or contain theSameElementsInOrderAs sequenceOfActions
             )
           )
-    )
 
   it should "do the loop again if called run after being stopped" in:
-    engine.testOnGameloopEvents(testScene)(
-      onUpdate = {}
-    )
+    engine.testOnGameloopEvents(testScene)()
     engine.stop()
 
     var sequenceOfActions = getSequenceOfActions()
@@ -102,8 +98,8 @@ class GameLoopTests extends AnyFlatSpec:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps)(
-      onDeinit =
+    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps):
+      _.onDeinit:
         /** This tests has to deal with undeterministic behaviour:
           *
           * Given the fact that the order of objects is not defined. The tester
@@ -128,13 +124,12 @@ class GameLoopTests extends AnyFlatSpec:
                 or contain theSameElementsInOrderAs Seq(Init)
             )
           )
-    )
 
   it should "throw an exception if the user tries to run again the engine while it's already running" in:
-    engine.testOnGameloopEvents(testScene)(
-      onStart = an[IllegalStateException] shouldBe thrownBy:
-        engine.run(() => Seq())
-    )
+    engine.testOnGameloopEvents(testScene):
+      _.onStart:
+        an[IllegalStateException] shouldBe thrownBy:
+          engine.run(() => Seq())
 
   it should "allow to set an fps limit" in:
     val fpsLimit = 60
@@ -143,9 +138,7 @@ class GameLoopTests extends AnyFlatSpec:
     val engine = Engine(new IO {}, Storage(), fpsLimit)
 
     val start = System.currentTimeMillis()
-    engine.testOnGameloopEvents(nFramesToRun = fpsLimit)(
-      onUpdate = {}
-    )
+    engine.testOnGameloopEvents(nFramesToRun = fpsLimit)()
     val end = System.currentTimeMillis()
 
     val elapsedTimeSeconds = (end - start) / 1_000d
@@ -158,23 +151,25 @@ class GameLoopTests extends AnyFlatSpec:
       case throwable => throw throwable
 
   "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
-    engine.testOnGameloopEvents(testScene)(
-      onEarlyUpdate = engine.deltaTimeNanos shouldBe 0,
-      onUpdate = engine.deltaTimeNanos shouldBe 0,
-      onLateUpdate = engine.deltaTimeNanos shouldBe 0
-    )
+    engine.testOnGameloopEvents(testScene):
+      _.onEarlyUpdate:
+        engine.deltaTimeNanos shouldBe 0
+      .onUpdate:
+        engine.deltaTimeNanos shouldBe 0
+      .onLateUpdate:
+        engine.deltaTimeNanos shouldBe 0
 
   it should "be 0 if the game loop is not executed" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 0)(
-      onDeinit = engine.deltaTimeNanos shouldBe 0
-    )
+    engine.testOnGameloopEvents(testScene, nFramesToRun = 0):
+      _.onDeinit:
+        engine.deltaTimeNanos shouldBe 0
 
     engine.deltaTimeNanos shouldBe 0
 
   it should "be higher than 0 after a game loop iteration" in:
-    engine.testOnGameloopEvents(testScene)(
-      onDeinit = engine.deltaTimeNanos should be > 0L
-    )
+    engine.testOnGameloopEvents(testScene):
+      _.onDeinit:
+        engine.deltaTimeNanos should be > 0L
 
   it should "be higher than time elapsed inside updates" in:
     val slowDownDurationMillis: Long = 10
