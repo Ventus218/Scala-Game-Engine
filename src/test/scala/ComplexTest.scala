@@ -1,6 +1,4 @@
-import SwingRenderers.SwingCircleRenderer
 import SwingInputHandler.{*, given}
-import Physics2D.CircleCollider
 import java.awt.Color
 import SwingIO.InputButton
 import InputButton.*
@@ -11,7 +9,8 @@ import Physics2D.*
 object ComplexTest:
   extension (e: Engine) def swingIO: SwingIO = e.io.asInstanceOf[SwingIO]
 
-  @main def main: Unit =
+  @main
+  def test: Unit =
 
     val io = SwingIO
       .withTitle("Test")
