@@ -6,7 +6,7 @@ Testare un loop non è sicuramente banale, per questo si sono preparati degli st
 
 Per testare il game loop si è scelto di utilizzare degli oggetti di gioco (Behaviour).
 
-L'idea è che l'oggetto di gioco offre la possibilità di eseguire test in ogni punto del lifecycle del game loop e proprio per questo è possibile iniettare nell'engine degli oggetti e utilizzarli come tester.
+L'idea è che l'oggetto di gioco offre la possibilità di eseguire test in ogni punto del game loop e proprio per questo è possibile iniettare nell'engine degli oggetti e utilizzarli come tester.
 
 ## TestUtils
 Per semplificare il testing si sono creati dei trait e metodi di utilità.

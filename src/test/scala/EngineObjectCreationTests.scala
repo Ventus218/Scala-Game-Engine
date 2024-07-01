@@ -2,8 +2,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import TestUtils.{*, given}
-import LifecycleTester.*
-import LifecycleEvent.*
+import GameloopTester.*
+import GameloopEvent.*
 import TestUtils.Testers.*
 
 class EngineObjectCreationTests extends AnyFlatSpec:
@@ -15,14 +15,14 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   val scene: Scene = () => Seq(obj1, obj2, obj3)
 
   "create" should "instantiate a game object in the scene" in:
-    engine.testOnLifecycleEvent()(
+    engine.testOnGameloopEvents()(
       onStart = engine.create(obj1),
       onDeinit = engine.find[GameObjectMock]() should contain only (obj1)
     )
 
   it should "not instantiate a game object between EarlyUpdate, Update and LateUpdate, but after" in:
     var frame = 0
-    engine.testOnLifecycleEvent(nFramesToRun = 2)(
+    engine.testOnGameloopEvents(nFramesToRun = 2)(
       onEarlyUpdate =
         frame += 1
         if frame > 1 then
@@ -40,7 +40,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "not instantiate a game object already present in the scene" in:
-    engine.testOnLifecycleEvent(scene)(
+    engine.testOnGameloopEvents(scene)(
       onUpdate =
         engine.find[GameObjectMock]() should contain(obj1)
         an[IllegalArgumentException] shouldBe thrownBy {
@@ -49,7 +49,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "throw if trying to create an object multiple times in the same frame" in:
-    engine.testOnLifecycleEvent(scene)(
+    engine.testOnGameloopEvents(scene)(
       onUpdate =
         val obj = new Behaviour {}
         engine.create(obj)
@@ -58,17 +58,17 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "invoke the method onInit on the game object" in:
-    val obj = new Behaviour with LifecycleTester
+    val obj = new Behaviour with GameloopTester
 
-    engine.testOnLifecycleEvent(scene)(
+    engine.testOnGameloopEvents(scene)(
       onStart = engine.create(obj),
       onDeinit = obj.happenedEvents should contain oneElementOf Seq(Init)
     )
 
   it should "invoke the event methods in the correct order" in:
-    val objTester: LifecycleTester =
-      new Behaviour with LifecycleTester
-    engine.testOnLifecycleEvent(scene)(
+    val objTester: GameloopTester =
+      new Behaviour with GameloopTester
+    engine.testOnGameloopEvents(scene)(
       onStart = engine.create(objTester)
     )
 
@@ -76,14 +76,14 @@ class EngineObjectCreationTests extends AnyFlatSpec:
       Seq(Init, Start, EarlyUpdate, Update, LateUpdate, Deinit)
 
   "destroy" should "remove a game object from the scene" in:
-    engine.testOnLifecycleEvent(scene)(
+    engine.testOnGameloopEvents(scene)(
       onStart = engine.destroy(obj1),
       onDeinit = engine.find[GameObjectMock]() should contain only (obj2, obj3)
     )
 
   it should "not remove a game object between EarlyUpdate, Update and LateUpdate, but after" in:
     var frame = 0
-    engine.testOnLifecycleEvent(scene, nFramesToRun = 2)(
+    engine.testOnGameloopEvents(scene, nFramesToRun = 2)(
       onEarlyUpdate =
         frame += 1
         if frame > 1 then engine.find[GameObjectMock]() shouldBe empty
@@ -100,7 +100,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "remove an object only if already instantiated in the scene" in:
-    engine.testOnLifecycleEvent(scene)(
+    engine.testOnGameloopEvents(scene)(
       onStart =
         an[IllegalArgumentException] shouldBe thrownBy {
           engine.destroy(new GameObjectMock())
@@ -111,7 +111,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "throw if trying to destroy an object multiple times in the same frame" in:
-    engine.testOnLifecycleEvent(scene)(
+    engine.testOnGameloopEvents(scene)(
       onUpdate =
         engine.destroy(obj1)
         an[IllegalArgumentException] shouldBe thrownBy:
@@ -119,9 +119,9 @@ class EngineObjectCreationTests extends AnyFlatSpec:
     )
 
   it should "invoke the method onDeinit on the game object at the end of the frame" in:
-    val obj = new Behaviour with LifecycleTester()
+    val obj = new Behaviour with GameloopTester()
 
-    engine.testOnLifecycleEvent(() => Seq(obj), nFramesToRun = 3)(
+    engine.testOnGameloopEvents(() => Seq(obj), nFramesToRun = 3)(
       onStart = engine.destroy(obj),
       onDeinit = obj.happenedEvents should contain theSameElementsInOrderAs Seq(
         Init,

@@ -16,20 +16,20 @@ class EngineLoadSceneTests extends AnyFlatSpec:
   val scene2: Scene = () => Seq(id2, id3)
 
   "loadScene" should "change the active scene" in:
-    engine.testOnLifecycleEvent(scene1)(
+    engine.testOnGameloopEvents(scene1)(
       onUpdate =
         engine.find[Identifiable]() should contain theSameElementsAs scene1()
 
         // loading a new Scene -> redefining testing to do
-        engine.loadSceneTestingOnLifecycleEvent(scene2)(
+        engine.loadSceneTestingOnGameloopEvents(scene2)(
           onUpdate = engine
             .find[Identifiable]() should contain theSameElementsAs scene2()
         )
     )
 
   it should "change the scene after finishing the current frame" in:
-    engine.testOnLifecycleEvent(scene1)(
-      onEarlyUpdate = engine.loadSceneTestingOnLifecycleEvent(scene2)(
+    engine.testOnGameloopEvents(scene1)(
+      onEarlyUpdate = engine.loadSceneTestingOnGameloopEvents(scene2)(
         onUpdate =
           engine.find[Identifiable]() should contain theSameElementsAs scene2()
       ),
@@ -39,16 +39,16 @@ class EngineLoadSceneTests extends AnyFlatSpec:
 
   it should "deinitialize all the game objects before swapping scenes" in:
     var hasCalledDeinit = false
-    engine.testOnLifecycleEvent(scene1)(
-      onStart = engine.loadSceneTestingOnLifecycleEvent(scene2)(),
+    engine.testOnGameloopEvents(scene1)(
+      onStart = engine.loadSceneTestingOnGameloopEvents(scene2)(),
       onDeinit = hasCalledDeinit = true
     )
     hasCalledDeinit shouldBe true
 
   it should "initialize all the game objects after swapping scenes" in:
     var hasCalledInit = false
-    engine.testOnLifecycleEvent(scene1, nFramesToRun = 2)(
-      onUpdate = engine.loadSceneTestingOnLifecycleEvent(scene2)(
+    engine.testOnGameloopEvents(scene1, nFramesToRun = 2)(
+      onUpdate = engine.loadSceneTestingOnGameloopEvents(scene2)(
         onInit = hasCalledInit = true
       )
     )
@@ -56,8 +56,8 @@ class EngineLoadSceneTests extends AnyFlatSpec:
 
   it should "invoke onStart on the new game objects if enabled" in:
     var hasCalledStart = false
-    engine.testOnLifecycleEvent(scene1, nFramesToRun = 2)(
-      onUpdate = engine.loadSceneTestingOnLifecycleEvent(scene2)(
+    engine.testOnGameloopEvents(scene1, nFramesToRun = 2)(
+      onUpdate = engine.loadSceneTestingOnGameloopEvents(scene2)(
         onStart = hasCalledStart = true
       )
     )
