@@ -7,10 +7,15 @@ import java.awt.Color
 import java.awt.Graphics2D
 import Behaviours.Identifiable
 import TestUtils.*
+import org.scalatest.BeforeAndAfterEach
 
-class SwingInputHandlerTests extends AnyFlatSpec:
-  val engine = Engine(InputIOMock(), Storage())
+class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
+  var engine = newEngine
   val objId = "1"
+
+  def newEngine = Engine(InputIOMock(), Storage())
+  override protected def beforeEach(): Unit =
+    engine = newEngine
 
   "SwingInputHandler" should "accept a mapping between input events and handlers" in:
     val f: Handler = (_: InputButton) => (_: Engine) => {}
@@ -61,18 +66,55 @@ class SwingInputHandlerTests extends AnyFlatSpec:
       obj.aRuns shouldBe 1
       obj.bRuns shouldBe 1
 
-  it should "allow to set a handler which fires only once while the input button is held pressed down" in:
+  it should "allow to set a handler which fires only when input is pressed even if it's held down for more frames" in:
     val testScene = () =>
       Seq(
         new InputCounterObject(objId):
           var inputHandlers: Map[InputButton, Handler] = Map(
-            N_0 -> (a and b.fireJustOnceIfHeld)
+            N_0 -> (a and b.onlyWhenPressed)
           )
       )
     engine.testOnDeinit(testScene, nFramesToRun = 3):
       val obj = engine.find[InputCounterObject](objId).get
       obj.aRuns shouldBe 3
       obj.bRuns shouldBe 1
+
+  it should "allow to set a handler which fires only when input is held down for more than one frame" in:
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            N_0 -> (a and b.onlyWhenHeld)
+          )
+      )
+    engine.testOnDeinit(testScene, nFramesToRun = 3):
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe 3
+      obj.bRuns shouldBe 2
+
+  it should "allow to set a handler which fires only when input is released" in:
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            N_0 -> a,
+            N_1 -> b.onlyWhenReleased
+          )
+      )
+
+    var frame = 0
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
+      onUpdate =
+        val obj = engine.find[InputCounterObject](objId).get
+        if frame == 0 then obj.bRuns shouldBe 0
+        else obj.bRuns shouldBe 1
+        frame += 1
+      ,
+      onDeInit =
+        val obj = engine.find[InputCounterObject](objId).get
+        obj.aRuns shouldBe 3
+        obj.bRuns shouldBe 1
+    )
 
   it should "fire the same handler multiple times if it is merged with itself" in:
     val testScene = () =>
@@ -86,18 +128,32 @@ class SwingInputHandlerTests extends AnyFlatSpec:
       val obj = engine.find[InputCounterObject](objId).get
       obj.aRuns shouldBe 2
 
-  "fireJustOnceIfHeld" should "make apply to every handler if applied on multiple once at the same time" in:
+  "Handler modifiers" should "be applied to every handler if applied on multiple once at the same time" in:
     val testScene = () =>
       Seq(
         new InputCounterObject(objId):
           var inputHandlers: Map[InputButton, Handler] = Map(
-            N_0 -> (a and b).fireJustOnceIfHeld
+            N_0 -> (a and b).onlyWhenPressed
           )
       )
     engine.testOnDeinit(testScene, nFramesToRun = 3):
       val obj = engine.find[InputCounterObject](objId).get
       obj.aRuns shouldBe 1
       obj.bRuns shouldBe 1
+
+  "Handler" should "by default fire on input pressed and input held" in:
+    val testScene = () =>
+      Seq(
+        new InputCounterObject(objId):
+          var inputHandlers: Map[InputButton, Handler] = Map(
+            // a should be fired exactly as b
+            N_0 -> (a and (b.onlyWhenPressed and b.onlyWhenHeld))
+          )
+      )
+
+    engine.testOnDeinit(testScene, nFramesToRun = 3):
+      val obj = engine.find[InputCounterObject](objId).get
+      obj.aRuns shouldBe obj.bRuns
 
   private abstract class InputCounterObject(id: String)
       extends Behaviour
@@ -108,9 +164,16 @@ class SwingInputHandlerTests extends AnyFlatSpec:
     def a(input: InputButton)(engine: Engine): Unit = aRuns += 1
     def b(input: InputButton)(engine: Engine): Unit = bRuns += 1
 
+  /** A mock SwingIO which fakes a continuous press on N_0 and a press on N_1
+    * just for the first frame
+    */
   private class InputIOMock extends SwingIO:
+    var isFirstFrame = true
+    override def onFrameEnd: Engine => Unit = (engine) =>
+      isFirstFrame = false
+      super.onFrameEnd(engine)
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
-      return inputButton == N_0
+      return inputButton == N_0 || (isFirstFrame && inputButton == N_1)
     override def scenePointerPosition(): (Double, Double) = ???
     override def title: String = ???
     override def pixelsPerUnit: Int = ???
@@ -133,7 +196,11 @@ class SwingInputHandlerTests extends AnyFlatSpec:
     .withSize((400, 400))
     .withPixelsPerUnitRatio(5)
     .build()
-  val engine = Engine(io, Storage())
+  val engine = Engine(
+    io,
+    Storage(),
+    fpsLimit = 20 // low fps to test onlyWhenHeld modifier
+  )
 
   engine.run: () =>
     Seq(GameObject())
@@ -148,42 +215,29 @@ class SwingInputHandlerTests extends AnyFlatSpec:
       A -> onMoveLeft,
       W -> onMoveUp,
       S -> onMoveDown,
-      MouseButton3 -> (onMoveRight and onMoveUp),
-      MouseButton1 -> onTeleport.fireJustOnceIfHeld,
-      MouseButton2 -> (onTeleport.fireJustOnceIfHeld and onMoveDown)
+      E -> (onMoveRight and onMoveUp),
+      MouseButton1 -> onTeleport, // same as (onTeleport.onlyWhenPressed and onTeleport.onlyWhenHeld)
+      MouseButton3 -> onTeleport.onlyWhenPressed,
+      MouseButton2 -> onTeleport.onlyWhenHeld,
+      Space -> onTeleport.onlyWhenReleased
     )
 
     val v = 20
-    var shouldTeleport = false
-    var moveRight = false
-    var moveLeft = false
-    var moveUp = false
-    var moveDown = false
 
     private def onTeleport(input: InputButton)(engine: Engine): Unit =
-      shouldTeleport = true
+      val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
+      x = pointer._1
+      y = pointer._2
+      println(pointer)
+
     private def onMoveRight(input: InputButton)(engine: Engine): Unit =
-      moveRight = true
+      x += v * engine.deltaTimeNanos * Math.pow(10, -9)
+
     private def onMoveLeft(input: InputButton)(engine: Engine): Unit =
-      moveLeft = true
+      x -= v * engine.deltaTimeNanos * Math.pow(10, -9)
+
     private def onMoveUp(input: InputButton)(engine: Engine): Unit =
-      moveUp = true
+      y += v * engine.deltaTimeNanos * Math.pow(10, -9)
+
     private def onMoveDown(input: InputButton)(engine: Engine): Unit =
-      moveDown = true
-
-    override def onUpdate: Engine => Unit = (engine) =>
-      if moveRight then x += v * engine.deltaTimeNanos * Math.pow(10, -9)
-      if moveLeft then x -= v * engine.deltaTimeNanos * Math.pow(10, -9)
-      if moveUp then y += v * engine.deltaTimeNanos * Math.pow(10, -9)
-      if moveDown then y -= v * engine.deltaTimeNanos * Math.pow(10, -9)
-      if shouldTeleport then
-        shouldTeleport = false
-        val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
-        x = pointer._1
-        y = pointer._2
-        println(pointer)
-
-      moveRight = false
-      moveLeft = false
-      moveUp = false
-      moveDown = false
+      y -= v * engine.deltaTimeNanos * Math.pow(10, -9)
