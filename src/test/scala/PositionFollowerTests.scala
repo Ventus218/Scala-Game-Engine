@@ -22,7 +22,7 @@ class PositionFollowerTests extends AnyFlatSpec:
   val offsetY: Double = 10
 
   val positionableFollower = new Behaviour
-    with PositionFollower(position = positionable, offset = (offsetX, offsetY))
+    with PositionFollower(followed = positionable, offset = (offsetX, offsetY))
     with Positionable(0, 0)
 
   val scene = () => Seq(positionableFollower, positionable)
