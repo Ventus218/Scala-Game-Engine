@@ -27,7 +27,7 @@ class GameLoopTests extends AnyFlatSpec:
 
   val engine = Engine(
     io = new IO() {},
-    storage = new StorageMock()
+    storage = Storage()
   )
 
   "Engine" should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:

@@ -9,7 +9,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
   val enabledId = "enabled"
   val disabledId = "disabled"
 
-  val engine = Engine(new IO() {}, StorageMock())
+  val engine = Engine(new IO() {}, Storage())
   def testScene: Scene = () =>
     Seq(
       TestObj(enabled = true, id = enabledId),
