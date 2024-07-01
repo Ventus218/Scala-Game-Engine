@@ -15,6 +15,20 @@ object TestUtils:
       val testerObject: Behaviour
   )
 
+  /** A function that accepts a TestingContext and performs some work */
+  type TestingFunction = TestingContext => Unit
+
+  // Below are defined some implicit convertions to allow a simpler test syntax
+  // in this way the tester can use a simple block of code as well as a function
+  // which has a TestingContext.
+  // It may be an option to define just one implicit conversion from
+  // Any to TestingFunciton, it's possible to do it in the future if needed.
+  import org.scalatest.compatible.Assertion
+  given Conversion[Assertion, TestingFunction] with
+    def apply(x: Assertion): TestingFunction = _ => ()
+  given Conversion[Unit, TestingFunction] with
+    def apply(x: Unit): TestingFunction = _ => ()
+
   import Testers.*
   import Behaviours.NFrameStopper
 
@@ -28,8 +42,6 @@ object TestUtils:
         testerObject: Behaviour
     ): Unit =
       engine.run(scene.joined(() => Seq(testerObject)))
-
-    // Add new test utilities here if needed.
 
     /** Loads a new scene and calls `testFunction` on every Init
       *
@@ -75,36 +87,6 @@ object TestUtils:
         with StartTester((_) => testFunction)
         with NFrameStopper(nFramesToRun)
       engine.loadScene(newScene.joined(() => Seq(testerObject)))
-
-    /** Runs the engine and calls `testFunction` on every Update
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      *   provides the current `TestingContext`
-      */
-    def testOnUpdateWithContext(
-        scene: Scene = () => Seq.empty,
-        nFramesToRun: Int = 1
-    )(
-        testFunction: (TestingContext) => Unit
-    ): Unit =
-      val testerObject = new Behaviour
-        with UpdateTester(testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.testWithTesterObject(scene)(testerObject)
-
-    /** Runs the engine and calls `testFunction` on every Update
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      */
-    def testOnUpdate(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
-        testFunction: => Unit
-    ): Unit =
-      engine.testOnUpdateWithContext(scene, nFramesToRun): (_) =>
-        testFunction
 
     /** Loads a new scene and calls `testFunction` on every Update
       *
@@ -182,44 +164,43 @@ object TestUtils:
         testFunction
 
     /** Runs the engine and calls the given test function on the corresponding
-      * events
+      * events by injecting a tester object into the scene.
       *
       * @param scene
       * @param nFramesToRun
       *   number of frames the engine will run, defaults to 1
-      * @param onEvent
+      * @param onXXX
+      *   the function to execute at XXX event
       */
     def testOnLifecycleEvent(
         scene: Scene = () => Seq.empty,
         nFramesToRun: Int = 1
     )(
-        onInit: => Unit = (),
-        onStart: => Unit = (),
-        onEarlyUpdate: => Unit = (),
-        onUpdate: => Unit = (),
-        onLateUpdate: => Unit = (),
-        onDeInit: => Unit = (),
-        onEnabled: => Unit = (),
-        onDisabled: => Unit = ()
+        onInit: => TestingFunction = _ => (),
+        onStart: => TestingFunction = _ => (),
+        onEarlyUpdate: => TestingFunction = _ => (),
+        onUpdate: => TestingFunction = _ => (),
+        onLateUpdate: => TestingFunction = _ => (),
+        onDeInit: => TestingFunction = _ => (),
+        onEnabled: => TestingFunction = _ => (),
+        onDisabled: => TestingFunction = _ => ()
     ): Unit =
       engine.testWithTesterObject(scene)(
         new Behaviour
-          with InitTester((_) => onInit)
-          with StartTester((_) => onStart)
-          with EarlyUpdateTester((_) => onEarlyUpdate)
-          with UpdateTester((_) => onUpdate)
-          with LateUpdateTester((_) => onLateUpdate)
-          with DeinitTester((_) => onDeInit)
-          with EnabledTester((_) => onEnabled)
-          with DisabledTester((_) => onDisabled)
+          with InitTester(onInit(_))
+          with StartTester(onStart(_))
+          with EarlyUpdateTester(onEarlyUpdate(_))
+          with UpdateTester(onUpdate(_))
+          with LateUpdateTester(onLateUpdate(_))
+          with DeinitTester(onDeInit(_))
+          with EnabledTester(onEnabled(_))
+          with DisabledTester(onDisabled(_))
           with NFrameStopper(nFramesToRun)
       )
 
   /** Provides multiple concrete behaviours for testing
     */
   object Testers:
-
-    // Add new testers here if needed.
 
     trait InitTester(testFunction: (TestingContext) => Unit) extends Behaviour:
       override def onInit: Engine => Unit = (engine) =>

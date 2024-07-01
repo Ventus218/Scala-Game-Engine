@@ -88,8 +88,9 @@ class GameLoopTests extends AnyFlatSpec:
         )
 
   it should "do the loop again if called run after being stopped" in:
-    engine.testOnUpdate(testScene):
-      {}
+    engine.testOnLifecycleEvent(testScene)(
+      onUpdate = {}
+    )
     engine.stop()
 
     var sequenceOfActions = getSequenceOfActions()
@@ -125,7 +126,7 @@ class GameLoopTests extends AnyFlatSpec:
 
   it should "throw an exception if the user tries to run again the engine while it's already running" in:
     engine.testOnLifecycleEvent(testScene)(
-      onStart = assertThrows[IllegalStateException]:
+      onStart = an[IllegalStateException] shouldBe thrownBy:
         engine.run(() => Seq())
     )
 
@@ -136,8 +137,9 @@ class GameLoopTests extends AnyFlatSpec:
     val engine = Engine(new IO {}, Storage(), fpsLimit)
 
     val start = System.currentTimeMillis()
-    engine.testOnUpdate(nFramesToRun = fpsLimit):
-      {}
+    engine.testOnLifecycleEvent(nFramesToRun = fpsLimit)(
+      onUpdate = {}
+    )
     val end = System.currentTimeMillis()
 
     val elapsedTimeSeconds = (end - start) / 1_000d
