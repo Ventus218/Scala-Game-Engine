@@ -8,6 +8,8 @@ object Dimensions2D:
     */
   trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
 
+  trait PositionFollower(position: Positionable) extends Positionable
+
   /** Tells if a generic T scale is valid
     */
   trait IsValid[T]:
