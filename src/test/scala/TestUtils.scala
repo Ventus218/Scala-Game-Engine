@@ -103,36 +103,6 @@ object TestUtils:
         with NFrameStopper(nFramesToRun)
       engine.loadScene(newScene.joined(() => Seq(testerObject)))
 
-    /** Runs the engine and calls `testFunction` on Deinit
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      *   provides the current `TestingContext`
-      */
-    def testOnDeinitWithContext(
-        scene: Scene = () => Seq.empty,
-        nFramesToRun: Int = 1
-    )(
-        testFunction: (TestingContext) => Unit
-    ): Unit =
-      val testerObject = new Behaviour
-        with DeinitTester(testFunction)
-        with NFrameStopper(nFramesToRun)
-      engine.testWithTesterObject(scene)(testerObject)
-
-    /** Runs the engine and calls `testFunction` on Deinit
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testFunction
-      */
-    def testOnDeinit(scene: Scene = () => Seq.empty, nFramesToRun: Int = 1)(
-        testFunction: => Unit
-    ): Unit =
-      engine.testOnDeinitWithContext(scene, nFramesToRun): (_) =>
-        testFunction
-
     /** Runs the engine and calls the given test function on the corresponding
       * events by injecting a tester object into the scene.
       *

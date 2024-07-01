@@ -81,10 +81,12 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and b.onlyWhenPressed)
           )
       )
-    engine.testOnDeinit(testScene, nFramesToRun = 3):
-      val obj = engine.find[InputCounterObject](objId).get
-      obj.aRuns shouldBe 3
-      obj.bRuns shouldBe 1
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
+      onDeInit =
+        val obj = engine.find[InputCounterObject](objId).get
+        obj.aRuns shouldBe 3
+        obj.bRuns shouldBe 1
+    )
 
   it should "allow to set a handler which fires only when input is held down for more than one frame" in:
     val testScene = () =>
@@ -94,10 +96,12 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and b.onlyWhenHeld)
           )
       )
-    engine.testOnDeinit(testScene, nFramesToRun = 3):
-      val obj = engine.find[InputCounterObject](objId).get
-      obj.aRuns shouldBe 3
-      obj.bRuns shouldBe 2
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
+      onDeInit =
+        val obj = engine.find[InputCounterObject](objId).get
+        obj.aRuns shouldBe 3
+        obj.bRuns shouldBe 2
+    )
 
   it should "allow to set a handler which fires only when input is released" in:
     val testScene = () =>
@@ -131,9 +135,11 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and a)
           )
       )
-    engine.testOnDeinit(testScene):
-      val obj = engine.find[InputCounterObject](objId).get
-      obj.aRuns shouldBe 2
+    engine.testOnLifecycleEvent(testScene)(
+      onDeInit =
+        val obj = engine.find[InputCounterObject](objId).get
+        obj.aRuns shouldBe 2
+    )
 
   "Handler modifiers" should "be applied to every handler if applied on multiple once at the same time" in:
     val testScene = () =>
@@ -143,10 +149,12 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and b).onlyWhenPressed
           )
       )
-    engine.testOnDeinit(testScene, nFramesToRun = 3):
-      val obj = engine.find[InputCounterObject](objId).get
-      obj.aRuns shouldBe 1
-      obj.bRuns shouldBe 1
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
+      onDeInit =
+        val obj = engine.find[InputCounterObject](objId).get
+        obj.aRuns shouldBe 1
+        obj.bRuns shouldBe 1
+    )
 
   "Handler" should "by default fire on input pressed and input held" in:
     val testScene = () =>
@@ -158,9 +166,11 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
       )
 
-    engine.testOnDeinit(testScene, nFramesToRun = 3):
-      val obj = engine.find[InputCounterObject](objId).get
-      obj.aRuns shouldBe obj.bRuns
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 3)(
+      onDeInit =
+        val obj = engine.find[InputCounterObject](objId).get
+        obj.aRuns shouldBe obj.bRuns
+    )
 
   private abstract class InputCounterObject(id: String)
       extends Behaviour

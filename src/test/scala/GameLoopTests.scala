@@ -36,31 +36,33 @@ class GameLoopTests extends AnyFlatSpec:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    engine.testOnDeinit(testScene, nFramesToRun = numSteps):
-      /** This tests has to deal with undeterministic behaviour:
-        *
-        * Given the fact that the order of objects is not defined. The tester
-        * object may run its test while other objects "onDeinit" may not have
-        * been called yet. This is why the test succedes in both cases.
-        */
-      engine
-        .find[LifecycleTester]()
-        .filter(_.enabled)
-        .foreach(
-          _.happenedEvents should (
-            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
-              or contain theSameElementsInOrderAs sequenceOfActions
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = numSteps)(
+      onDeInit =
+        /** This tests has to deal with undeterministic behaviour:
+          *
+          * Given the fact that the order of objects is not defined. The tester
+          * object may run its test while other objects "onDeinit" may not have
+          * been called yet. This is why the test succedes in both cases.
+          */
+        engine
+          .find[LifecycleTester]()
+          .filter(_.enabled)
+          .foreach(
+            _.happenedEvents should (
+              contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
+                or contain theSameElementsInOrderAs sequenceOfActions
+            )
           )
-        )
-      engine
-        .find[LifecycleTester]()
-        .filter(!_.enabled)
-        .foreach(
-          _.happenedEvents should (
-            contain theSameElementsInOrderAs Seq(Init) :+ Deinit
-              or contain theSameElementsInOrderAs Seq(Init)
+        engine
+          .find[LifecycleTester]()
+          .filter(!_.enabled)
+          .foreach(
+            _.happenedEvents should (
+              contain theSameElementsInOrderAs Seq(Init) :+ Deinit
+                or contain theSameElementsInOrderAs Seq(Init)
+            )
           )
-        )
+    )
 
   it should "stop when engine.stop() is called" in:
     val oneFrameScene = testScene.joined: () =>
@@ -70,22 +72,24 @@ class GameLoopTests extends AnyFlatSpec:
       getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
     // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
-    engine.testOnDeinit(oneFrameScene, nFramesToRun = 5):
-      /** This tests has to deal with undeterministic behaviour:
-        *
-        * Given the fact that the order of objects is not defined. The tester
-        * object may run its test while other objects "onDeinit" may not have
-        * been called yet. This is why the test succedes in both cases.
-        */
-      engine
-        .find[LifecycleTester]()
-        .filter(_.enabled)
-        .foreach(
-          _.happenedEvents should (
-            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
-              or contain theSameElementsInOrderAs sequenceOfActions
+    engine.testOnLifecycleEvent(oneFrameScene, nFramesToRun = 5)(
+      onDeInit =
+        /** This tests has to deal with undeterministic behaviour:
+          *
+          * Given the fact that the order of objects is not defined. The tester
+          * object may run its test while other objects "onDeinit" may not have
+          * been called yet. This is why the test succedes in both cases.
+          */
+        engine
+          .find[LifecycleTester]()
+          .filter(_.enabled)
+          .foreach(
+            _.happenedEvents should (
+              contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
+                or contain theSameElementsInOrderAs sequenceOfActions
+            )
           )
-        )
+    )
 
   it should "do the loop again if called run after being stopped" in:
     engine.testOnLifecycleEvent(testScene)(
@@ -98,31 +102,33 @@ class GameLoopTests extends AnyFlatSpec:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    engine.testOnDeinit(testScene, nFramesToRun = numSteps):
-      /** This tests has to deal with undeterministic behaviour:
-        *
-        * Given the fact that the order of objects is not defined. The tester
-        * object may run its test while other objects "onDeinit" may not have
-        * been called yet. This is why the test succedes in both cases.
-        */
-      engine
-        .find[LifecycleTester]()
-        .filter(_.enabled)
-        .foreach(
-          _.happenedEvents should (
-            contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
-              or contain theSameElementsInOrderAs sequenceOfActions
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = numSteps)(
+      onDeInit =
+        /** This tests has to deal with undeterministic behaviour:
+          *
+          * Given the fact that the order of objects is not defined. The tester
+          * object may run its test while other objects "onDeinit" may not have
+          * been called yet. This is why the test succedes in both cases.
+          */
+        engine
+          .find[LifecycleTester]()
+          .filter(_.enabled)
+          .foreach(
+            _.happenedEvents should (
+              contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
+                or contain theSameElementsInOrderAs sequenceOfActions
+            )
           )
-        )
-      engine
-        .find[LifecycleTester]()
-        .filter(!_.enabled)
-        .foreach(
-          _.happenedEvents should (
-            contain theSameElementsInOrderAs Seq(Init) :+ Deinit
-              or contain theSameElementsInOrderAs Seq(Init)
+        engine
+          .find[LifecycleTester]()
+          .filter(!_.enabled)
+          .foreach(
+            _.happenedEvents should (
+              contain theSameElementsInOrderAs Seq(Init) :+ Deinit
+                or contain theSameElementsInOrderAs Seq(Init)
+            )
           )
-        )
+    )
 
   it should "throw an exception if the user tries to run again the engine while it's already running" in:
     engine.testOnLifecycleEvent(testScene)(
@@ -159,14 +165,16 @@ class GameLoopTests extends AnyFlatSpec:
     )
 
   it should "be 0 if the game loop is not executed" in:
-    engine.testOnDeinit(testScene, nFramesToRun = 0):
-      engine.deltaTimeNanos shouldBe 0
+    engine.testOnLifecycleEvent(testScene, nFramesToRun = 0)(
+      onDeInit = engine.deltaTimeNanos shouldBe 0
+    )
 
     engine.deltaTimeNanos shouldBe 0
 
   it should "be higher than 0 after a game loop iteration" in:
-    engine.testOnDeinit(testScene):
-      engine.deltaTimeNanos should be > 0L
+    engine.testOnLifecycleEvent(testScene)(
+      onDeInit = engine.deltaTimeNanos should be > 0L
+    )
 
   it should "be higher than time elapsed inside updates" in:
     val slowDownDurationMillis: Long = 10
