@@ -246,6 +246,11 @@ val positionable: Positionable = new Behaviour with Positionable(5)
 positionable.y = 3
 ```
 
+### PositionFollower
+**PositionFollower** è un mixin che accetta come parametro un `followed` di tipo **Positionable** e un `offset` del tipo `(Double, Double)`, ed esso stesso richiede in mixin un **Positionable**.
+Il **PositionFollower** si occupa di tenere aggiornata la posizione del proprio **Positionable** in base alla posizione del `followed`, aggiungendoci l'`offset`.
+La posizione viene inizializzata nella `onInit` e aggiornata nella `onLateUpdate`.
+
 ### Scalable
 **Scalable** è un mixin generico su un tipo `T` che ne rappresenta la dimensione su cui scalare i valori. Per esempio, se si vuole scalare un singolo valore `Double`, allora il tipo `T` sarà proprio `Double`, se invece si vogliono scalare due valori `Double`, il tipo `T` sarà `(Double, Double)`.
 Oltre al tipo generico e ad un valore di inizializzazione dello scaling, **Scalable** utilizza un contesto di tipo **IsValid** generico anch'esso sul tipo `T`, che si occuperà di indicare se lo scaling è valido oppure no.
