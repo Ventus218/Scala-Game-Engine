@@ -37,7 +37,7 @@ class EngineLoadSceneTests extends AnyFlatSpec:
     var hasCalledDeinit = false
     engine.testOnLifecycleEvent(scene1)(
       onStart = engine.loadSceneAndTestOnInit(scene2)(testFunction = ()),
-      onDeInit = hasCalledDeinit = true
+      onDeinit = hasCalledDeinit = true
     )
     hasCalledDeinit shouldBe true
 

@@ -22,7 +22,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](disabledId).get
         if !obj.enabled then engine.enable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents should contain(Enable)
     )
@@ -35,7 +35,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
           engine.enable(obj)
           obj.happenedEvents should not contain (Enable)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents should contain(Enable)
     )
@@ -46,7 +46,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](disabledId).get
         engine.enable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents should contain noElementsOf Seq(
           Start,
@@ -61,7 +61,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](disabledId).get
         engine.enable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents.startsWith(
           Seq(Init, Enable, Start, EarlyUpdate, Update, LateUpdate)
@@ -74,7 +74,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](disabledId).get
         engine.enable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents.count(_ == Enable) shouldBe 1
     )
@@ -85,7 +85,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](enabledId).get
         obj.happenedEvents should contain(Disable)
     )
@@ -96,7 +96,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](enabledId).get
         obj.happenedEvents.startsWith(
           Seq(Init, Start, EarlyUpdate, Update, LateUpdate, Disable)
@@ -109,7 +109,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](enabledId).get
         obj.happenedEvents should (contain theSameElementsInOrderAs Seq(
           Init,
@@ -135,7 +135,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](enabledId).get
         obj.happenedEvents.count(_ == Disable) shouldBe 1
     )
@@ -149,7 +149,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
         else engine.enable(obj)
         frame += 1
       ,
-      onDeInit =
+      onDeinit =
         val obj = engine.find[TestObj](enabledId).get
         val eventsFrame1 =
           Seq(Init, Start, EarlyUpdate, Update, LateUpdate, Disable)

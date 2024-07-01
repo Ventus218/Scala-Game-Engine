@@ -37,7 +37,7 @@ class GameLoopTests extends AnyFlatSpec:
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
     engine.testOnLifecycleEvent(testScene, nFramesToRun = numSteps)(
-      onDeInit =
+      onDeinit =
         /** This tests has to deal with undeterministic behaviour:
           *
           * Given the fact that the order of objects is not defined. The tester
@@ -73,7 +73,7 @@ class GameLoopTests extends AnyFlatSpec:
 
     // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
     engine.testOnLifecycleEvent(oneFrameScene, nFramesToRun = 5)(
-      onDeInit =
+      onDeinit =
         /** This tests has to deal with undeterministic behaviour:
           *
           * Given the fact that the order of objects is not defined. The tester
@@ -103,7 +103,7 @@ class GameLoopTests extends AnyFlatSpec:
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
     engine.testOnLifecycleEvent(testScene, nFramesToRun = numSteps)(
-      onDeInit =
+      onDeinit =
         /** This tests has to deal with undeterministic behaviour:
           *
           * Given the fact that the order of objects is not defined. The tester
@@ -166,14 +166,14 @@ class GameLoopTests extends AnyFlatSpec:
 
   it should "be 0 if the game loop is not executed" in:
     engine.testOnLifecycleEvent(testScene, nFramesToRun = 0)(
-      onDeInit = engine.deltaTimeNanos shouldBe 0
+      onDeinit = engine.deltaTimeNanos shouldBe 0
     )
 
     engine.deltaTimeNanos shouldBe 0
 
   it should "be higher than 0 after a game loop iteration" in:
     engine.testOnLifecycleEvent(testScene)(
-      onDeInit = engine.deltaTimeNanos should be > 0L
+      onDeinit = engine.deltaTimeNanos should be > 0L
     )
 
   it should "be higher than time elapsed inside updates" in:
