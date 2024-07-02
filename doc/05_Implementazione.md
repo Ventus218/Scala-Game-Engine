@@ -247,8 +247,8 @@ positionable.y = 3
 ```
 
 ### PositionFollower
-**PositionFollower** è un mixin che accetta come parametro un `followed` di tipo **Positionable** e un `offset` del tipo `(Double, Double)`, ed esso stesso richiede in mixin un **Positionable**.
-Il **PositionFollower** si occupa di tenere aggiornata la posizione del proprio **Positionable** in base alla posizione del `followed`, aggiungendoci l'`offset`.
+**PositionFollower** è un mixin che accetta come parametro un `followed` di tipo **Positionable** e un `positionOffset` del tipo `(Double, Double)`, ed esso stesso richiede in mixin un **Positionable**.
+Il **PositionFollower** si occupa di tenere aggiornata la posizione del proprio **Positionable** in base alla posizione del `followed`, aggiungendoci il `positionOffset`.
 La posizione viene inizializzata nella `onInit` e aggiornata nella `onLateUpdate`.
 
 ### Scalable

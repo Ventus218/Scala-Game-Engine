@@ -17,19 +17,19 @@ object Dimensions2D:
     */
   trait PositionFollower(
       followed: Positionable,
-      var offset: (Double, Double) = (0, 0)
+      var positionOffset: (Double, Double) = (0, 0)
   ) extends Positionable:
     override def onInit: Engine => Unit =
       engine =>
         super.onInit(engine)
-        x = followed.x + offset._1
-        y = followed.y + offset._2
+        x = followed.x + positionOffset._1
+        y = followed.y + positionOffset._2
 
     override def onLateUpdate: Engine => Unit =
       engine =>
         super.onLateUpdate(engine)
-        x = followed.x + offset._1
-        y = followed.y + offset._2
+        x = followed.x + positionOffset._1
+        y = followed.y + positionOffset._2
 
   /** Tells if a generic T scale is valid
     */

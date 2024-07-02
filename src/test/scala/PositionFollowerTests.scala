@@ -22,7 +22,7 @@ class PositionFollowerTests extends AnyFlatSpec:
   val offsetY: Double = 10
 
   val positionableFollower = new Behaviour
-    with PositionFollower(followed = positionable, offset = (offsetX, offsetY))
+    with PositionFollower(followed = positionable, positionOffset = (offsetX, offsetY))
     with Positionable(0, 0)
 
   val scene = () => Seq(positionableFollower, positionable)
@@ -49,5 +49,5 @@ class PositionFollowerTests extends AnyFlatSpec:
       positionableFollower.y shouldBe positionable.y + offsetY
 
   it should "be able to change its offset" in:
-    positionableFollower.offset = (0, 20)
-    positionableFollower.offset shouldBe (0, 20)
+    positionableFollower.positionOffset = (0, 20)
+    positionableFollower.positionOffset shouldBe (0, 20)
