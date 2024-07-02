@@ -2,7 +2,6 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import TestUtils.*
-import TestUtils.Testers.*
 
 class EngineLoadSceneTests extends AnyFlatSpec:
   val id0 = new Behaviour with Identifiable("0")

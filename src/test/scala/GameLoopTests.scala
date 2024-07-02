@@ -5,7 +5,6 @@ import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
 import GameloopTester.*
 import GameloopEvent.*
-import TestUtils.Testers.*
 import org.scalatest.exceptions.TestFailedException
 
 class GameLoopTests extends AnyFlatSpec:

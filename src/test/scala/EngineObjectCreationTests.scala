@@ -4,7 +4,6 @@ import Behaviours.*
 import TestUtils.{*, given}
 import GameloopTester.*
 import GameloopEvent.*
-import TestUtils.Testers.*
 
 class EngineObjectCreationTests extends AnyFlatSpec:
   val obj1 = new GameObjectMock() with Identifiable("1")
