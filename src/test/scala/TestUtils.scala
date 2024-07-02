@@ -144,7 +144,8 @@ object TestUtils:
           TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
         ).build
 
-  private trait TesterObject(private val builder: TesterObjectBuilder) extends Behaviour:
+  private trait TesterObject(private val builder: TesterObjectBuilder)
+      extends Behaviour:
     override def onInit: Engine => Unit = e =>
       builder.init()(TestingContext(e, this))
       super.onInit(e)
