@@ -1,5 +1,5 @@
-object LifecycleTester:
-  enum LifecycleEvent:
+object GameloopTester:
+  enum GameloopEvent:
     case Init
     case Enable
     case Disable
@@ -9,12 +9,12 @@ object LifecycleTester:
     case LateUpdate
     case Deinit
 
-  trait LifecycleTester extends Behaviour:
-    import LifecycleEvent.*
+  trait GameloopTester extends Behaviour:
+    import GameloopEvent.*
 
-    private var _happenedEvents: Seq[LifecycleEvent] = Seq()
-    def happenedEvents: Seq[LifecycleEvent] = _happenedEvents
-    def happenedEvents_=(newValue: Seq[LifecycleEvent]) =
+    private var _happenedEvents: Seq[GameloopEvent] = Seq()
+    def happenedEvents: Seq[GameloopEvent] = _happenedEvents
+    def happenedEvents_=(newValue: Seq[GameloopEvent]) =
       _happenedEvents = newValue
 
     override def onInit: Engine => Unit =

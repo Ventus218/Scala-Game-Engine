@@ -19,28 +19,38 @@ class EngineFindTests extends AnyFlatSpec:
   val identifiables = Set(id0, mockId1, mockId2)
 
   "find" should "retrieve all objects with a given concrete behaviour" in:
-    engine.testOnUpdate(scene):
-      engine
-        .find[GameObjectMock]() should contain theSameElementsAs gameObjectMocks
+    engine.testOnGameloopEvents(scene):
+      _.onUpdate:
+        engine
+          .find[
+            GameObjectMock
+          ]() should contain theSameElementsAs gameObjectMocks
 
   it should "retrieve all objects with a given behaviour" in:
-    engine.testOnUpdate(scene):
-      engine.find[Identifiable]() should contain theSameElementsAs identifiables
+    engine.testOnGameloopEvents(scene):
+      _.onUpdate:
+        engine
+          .find[Identifiable]() should contain theSameElementsAs identifiables
 
   it should "retrieve all objects if Behaviour is given as type parameters" in:
-    engine.testOnUpdateWithContext(scene): (testingContext) =>
-      engine.find[
-        Behaviour
-      ]() should contain theSameElementsAs gameObjects + testingContext.testerObject
+    engine.testOnGameloopEvents(scene):
+      _.onUpdate: (testingContext) =>
+        engine
+          .find[
+            Behaviour
+          ]() should contain theSameElementsAs gameObjects + testingContext.testerObject
 
   it should "retrieve no objects if none implements the given behaviour" in:
-    engine.testOnUpdate(scene):
-      engine.find[Positionable]() should contain theSameElementsAs Seq()
+    engine.testOnGameloopEvents(scene):
+      _.onUpdate:
+        engine.find[Positionable]() should contain theSameElementsAs Seq()
 
   "find(id:)" should "retrieve an Identifiable object with the given identifier" in:
-    engine.testOnUpdate(scene):
-      engine.find[Identifiable](mockId1.id) shouldBe Some(mockId1)
+    engine.testOnGameloopEvents(scene):
+      _.onUpdate:
+        engine.find[Identifiable](mockId1.id) shouldBe Some(mockId1)
 
   it should "retrieve no object if none is found with the given identifier" in:
-    engine.testOnUpdate(scene):
-      engine.find[Identifiable]("3") shouldBe None
+    engine.testOnGameloopEvents(scene):
+      _.onUpdate:
+        engine.find[Identifiable]("3") shouldBe None
