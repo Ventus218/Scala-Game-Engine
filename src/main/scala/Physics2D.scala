@@ -104,3 +104,9 @@ object Physics2D:
     def velocity_=(v: (Double, Double)) =
       require(v != null)
       _velocity = v
+    
+    override def onUpdate: Engine => Unit = 
+      engine =>
+        super.onUpdate(engine)
+        this.x = this.x + velocity._1 * engine.deltaTimeNanos
+        this.y = this.y + velocity._2 * engine.deltaTimeNanos
