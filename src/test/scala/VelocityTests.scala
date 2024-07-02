@@ -36,8 +36,8 @@ class VelocityTests extends AnyFlatSpec:
         val scene = () => Seq(velocity)
         engine.testOnGameloopEvents(scene, nFramesToRun = 2):
             _.onLateUpdate:
-                velocity.x shouldBe x + velocity.velocity._1 * engine.deltaTimeNanos
-                velocity.y shouldBe y + velocity.velocity._2 * engine.deltaTimeNanos
+                velocity.x shouldBe x + velocity.velocity._1 * engine.deltaTimeSeconds
+                velocity.y shouldBe y + velocity.velocity._2 * engine.deltaTimeSeconds
             .onEarlyUpdate:
                 x = velocity.x
                 y = velocity.y

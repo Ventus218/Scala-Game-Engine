@@ -115,5 +115,5 @@ object Physics2D:
     override def onUpdate: Engine => Unit =
       engine =>
         super.onUpdate(engine)
-        this.x = this.x + velocity._1 * engine.deltaTimeNanos
-        this.y = this.y + velocity._2 * engine.deltaTimeNanos
+        this.x = this.x + velocity._1 * engine.deltaTimeSeconds
+        this.y = this.y + velocity._2 * engine.deltaTimeSeconds
