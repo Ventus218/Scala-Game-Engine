@@ -64,7 +64,7 @@
 |28|Refactor: un unico Scalable generico|Corrado|||X|
 |29|Refactor: I Renderer devono adottare il nuovo Scalable|Michele|X|||
 |30|Bugfix: Fare in modo che swingIO crei i canvas in modo lazy|Michele|X|||
-|31|Behaviour **Velocity**|Corrado||X||
+|31|Behaviour **Velocity**|Corrado|||X|
 |31|Behaviour **Acceleration**|Corrado|X|||
 |13|Scelta e design dei videogiochi di esempio|Tutti|X|||
 |12|Refactor e pulizia di TestUtils|Alessandro|||X|
