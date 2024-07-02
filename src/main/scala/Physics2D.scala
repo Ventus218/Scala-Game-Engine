@@ -96,16 +96,23 @@ object Physics2D:
 
       distance <= radius + other.radius
 
-  trait Velocity(var _velocity: (Double, Double) = (0, 0)) extends Positionable:
+  /** Add velocity to a Positionable behaviour, in order to move it once the
+    * onUpdate is called.
+    *
+    * @param _velocity
+    *   value of X and Y to add to the position in order to move the behaviour.
+    *   It must be not null or otherwise throws an IllegalArgumentException.
+    */
+  trait Velocity(private var _velocity: (Double, Double) = (0, 0)) extends Positionable:
     require(_velocity != null)
 
-    def velocity:(Double, Double) = _velocity
+    def velocity: (Double, Double) = _velocity
 
     def velocity_=(v: (Double, Double)) =
       require(v != null)
       _velocity = v
-    
-    override def onUpdate: Engine => Unit = 
+
+    override def onUpdate: Engine => Unit =
       engine =>
         super.onUpdate(engine)
         this.x = this.x + velocity._1 * engine.deltaTimeNanos
