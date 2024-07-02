@@ -11,7 +11,7 @@ class EngineFindTests extends AnyFlatSpec:
   val mockId1 = new GameObjectMock with Identifiable("1")
   val mockId2 = new GameObjectMock with Identifiable("2")
   val gameObjects = Set(mock1, mock2, id0, mockId1, mockId2)
-  val engine = Engine(new IO() {}, StorageMock())
+  val engine = Engine(new IO() {}, Storage())
   val scene: Scene = () => gameObjects
 
   // Grouped by Behaviour

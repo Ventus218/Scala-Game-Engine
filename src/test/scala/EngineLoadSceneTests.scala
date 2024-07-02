@@ -10,7 +10,7 @@ class EngineLoadSceneTests extends AnyFlatSpec:
   val id2 = new Behaviour with Identifiable("2")
   val id3 = new Behaviour with Identifiable("3")
 
-  val engine = Engine(new IO() {}, StorageMock())
+  val engine = Engine(new IO() {}, Storage())
 
   val scene1: Scene = () => Seq(id0, id1)
   val scene2: Scene = () => Seq(id2, id3)

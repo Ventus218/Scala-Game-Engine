@@ -8,7 +8,7 @@ class EngineObjectCreationTests extends AnyFlatSpec:
   val obj1 = new GameObjectMock() with Identifiable("1")
   val obj2 = new GameObjectMock() with Identifiable("2")
   val obj3 = new GameObjectMock() with Identifiable("3")
-  val engine = Engine(new IO() {}, StorageMock())
+  val engine = Engine(new IO() {}, Storage())
 
   val scene: Scene = () => Seq(obj1, obj2, obj3)
 

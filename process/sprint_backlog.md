@@ -59,7 +59,7 @@
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |25|Inserire uno SwingRenderer per il testo|Michele|X|||
-|26|Inserire un behaviour built-in PositionFollower|Corrado|X|||
+|26|Inserire un behaviour built-in PositionFollower|Corrado|||X|
 |27|Inserire un behaviour built-in per un bottone|Alessandro|X|||
 |28|Refactor: un unico Scalable generico|Corrado|||X|
 |29|Refactor: I Renderer devono adottare il nuovo Scalable|Michele|X|||

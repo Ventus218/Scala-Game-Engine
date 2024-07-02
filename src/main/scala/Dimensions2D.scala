@@ -8,6 +8,29 @@ object Dimensions2D:
     */
   trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
 
+  /** Gives the capability to follow another Positionable. The position of this
+    * Behaviour is initialized as the follower position in the init and updated
+    * on the lateUpdate, according to an offset.
+    *
+    * @param followed
+    * @param offset
+    */
+  trait PositionFollower(
+      followed: Positionable,
+      var positionOffset: (Double, Double) = (0, 0)
+  ) extends Positionable:
+    override def onInit: Engine => Unit =
+      engine =>
+        super.onInit(engine)
+        x = followed.x + positionOffset._1
+        y = followed.y + positionOffset._2
+
+    override def onLateUpdate: Engine => Unit =
+      engine =>
+        super.onLateUpdate(engine)
+        x = followed.x + positionOffset._1
+        y = followed.y + positionOffset._2
+
   /** Tells if a generic T scale is valid
     */
   trait IsValid[T]:
