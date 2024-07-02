@@ -175,18 +175,15 @@ class GameLoopTests extends AnyFlatSpec:
     val expectedElapsedTimeNanos =
       (slowDownDurationMillis * Math.pow(10, 6)).toLong * 3
 
-    val deinitTesterFunction: (TestingContext) => Unit = (testingContext) =>
-      // More the expected value
-      testingContext.engine.deltaTimeNanos should be >= expectedElapsedTimeNanos
-
-    // Testing on an empty scene to be more accurate
-    engine.testWithTesterObject():
-      new Behaviour
-        with DeinitTester(deinitTesterFunction)
-        with NFrameStopper(1)
-        with SlowEarlyUpdater(slowDownDurationMillis)
-        with SlowUpdater(slowDownDurationMillis)
-        with SlowLateUpdater(slowDownDurationMillis)
+    engine.testOnGameloopEvents():
+      _.onEarlyUpdate:
+        Thread.sleep(slowDownDurationMillis)
+      .onUpdate:
+        Thread.sleep(slowDownDurationMillis)
+      .onLateUpdate:
+        Thread.sleep(slowDownDurationMillis)
+      .onDeinit:
+        engine.deltaTimeNanos should be >= expectedElapsedTimeNanos
 
   "deltaTimeSeconds" should "represent deltaTimeNanos in seconds" in:
     val engineMock = (nanoseconds: Long) =>
