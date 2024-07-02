@@ -95,3 +95,12 @@ object Physics2D:
       val distance = Math.sqrt(dx * dx + dy * dy)
 
       distance <= radius + other.radius
+
+  trait Velocity(var _velocity: (Double, Double) = (0, 0)) extends Positionable:
+    require(_velocity != null)
+
+    def velocity:(Double, Double) = _velocity
+
+    def velocity_=(v: (Double, Double)) =
+      require(v != null)
+      _velocity = v
