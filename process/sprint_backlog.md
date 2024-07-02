@@ -67,4 +67,4 @@
 |31|Behaviour **Velocity**|Corrado||X||
 |31|Behaviour **Acceleration**|Corrado|X|||
 |13|Scelta e design dei videogiochi di esempio|Tutti|X|||
-|12|Refactor e pulizia di TestUtils|Alessandro|X|||
+|12|Refactor e pulizia di TestUtils|Alessandro|||X|
