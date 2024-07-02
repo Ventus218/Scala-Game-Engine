@@ -103,17 +103,40 @@ object Physics2D:
     *   value of X and Y to add to the position in order to move the behaviour.
     *   It must be not null or otherwise throws an IllegalArgumentException.
     */
-  trait Velocity(private var _velocity: (Double, Double) = (0, 0)) extends Positionable:
+  trait Velocity(private var _velocity: (Double, Double) = (0, 0))
+      extends Positionable:
     require(_velocity != null)
 
     def velocity: (Double, Double) = _velocity
-
     def velocity_=(v: (Double, Double)) =
       require(v != null)
       _velocity = v
 
+    protected def velocityX = velocity._1
+    protected def velocityY = velocity._2
+
     override def onUpdate: Engine => Unit =
       engine =>
         super.onUpdate(engine)
-        this.x = this.x + velocity._1 * engine.deltaTimeSeconds
-        this.y = this.y + velocity._2 * engine.deltaTimeSeconds
+        this.x = this.x + velocityX * engine.deltaTimeSeconds
+        this.y = this.y + velocityY * engine.deltaTimeSeconds
+
+  trait Acceleration(private var _acceleration: (Double, Double) = (0, 0))
+      extends Velocity:
+    require(_acceleration != null)
+
+    def acceleration = _acceleration
+    def acceleration_=(a: (Double, Double)) =
+      require(a != null)
+      _acceleration = a
+
+    protected def accelerationX = acceleration._1
+    protected def accelerationY = acceleration._2
+
+    override def onEarlyUpdate: Engine => Unit =
+      engine =>
+        super.onEarlyUpdate(engine)
+        this.velocity = (
+          this.velocityX + accelerationX * engine.deltaTimeSeconds,
+          this.velocityY + accelerationY * engine.deltaTimeSeconds
+        )
