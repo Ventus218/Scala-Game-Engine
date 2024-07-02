@@ -121,6 +121,13 @@ object Physics2D:
         this.x = this.x + velocityX * engine.deltaTimeSeconds
         this.y = this.y + velocityY * engine.deltaTimeSeconds
 
+  /** Add an acceleration to a Velocity behaviour in order to increment (or
+    * decrement) its velocity every time the onEarlyUpdate is called.
+    *
+    * @param _acceleration
+    *   value of X and Y to add to the velocity in order to change it. It must
+    *   be not null or otherwise throws an IllegalArgumentException
+    */
   trait Acceleration(private var _acceleration: (Double, Double) = (0, 0))
       extends Velocity:
     require(_acceleration != null)
