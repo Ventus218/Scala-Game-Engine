@@ -29,63 +29,66 @@ object TestUtils:
   given Conversion[Unit, TestingFunction] with
     def apply(x: Unit): TestingFunction = _ => ()
 
-  case class GameloopTestingBuilder(
-      val init: () => TestingFunction = () => _ => (),
-      val start: () => TestingFunction = () => _ => (),
-      val earlyUpdate: () => TestingFunction = () => _ => (),
-      val update: () => TestingFunction = () => _ => (),
-      val lateUpdate: () => TestingFunction = () => _ => (),
-      val deinit: () => TestingFunction = () => _ => (),
-      val enabled: () => TestingFunction = () => _ => (),
-      val disabled: () => TestingFunction = () => _ => (),
+  /** A builder for defining a testing function for each gameloop event and a
+    * number of frames for the engine to run
+    */
+  opaque type TesterObjectBuilder = TesterObjectBuilderImpl
+  case class TesterObjectBuilderImpl(
+      val init: () => TestingFunction = () => (),
+      val start: () => TestingFunction = () => (),
+      val earlyUpdate: () => TestingFunction = () => (),
+      val update: () => TestingFunction = () => (),
+      val lateUpdate: () => TestingFunction = () => (),
+      val deinit: () => TestingFunction = () => (),
+      val enabled: () => TestingFunction = () => (),
+      val disabled: () => TestingFunction = () => (),
       val nFramesToRun: Int = 1
-  ):
-    def onInit(testingFunction: => TestingFunction): GameloopTestingBuilder =
-      copy(init = () => testingFunction)
-
-    def onStart(testingFunction: => TestingFunction): GameloopTestingBuilder =
-      copy(start = () => testingFunction)
-
-    def onEarlyUpdate(
-        testingFunction: => TestingFunction
-    ): GameloopTestingBuilder =
-      copy(earlyUpdate = () => testingFunction)
-
-    def onUpdate(testingFunction: => TestingFunction): GameloopTestingBuilder =
-      copy(update = () => testingFunction)
-
-    def onLateUpdate(
-        testingFunction: => TestingFunction
-    ): GameloopTestingBuilder =
-      copy(lateUpdate = () => testingFunction)
-
-    def onDeinit(testingFunction: => TestingFunction): GameloopTestingBuilder =
-      copy(deinit = () => testingFunction)
-
-    def onEnabled(testingFunction: => TestingFunction): GameloopTestingBuilder =
-      copy(enabled = () => testingFunction)
-
-    def onDisabled(
-        testingFunction: => TestingFunction
-    ): GameloopTestingBuilder =
-      copy(disabled = () => testingFunction)
+  )
 
   import Testers.*
   import Behaviours.NFrameStopper
+  extension (builder: TesterObjectBuilder)
+    def onInit(testingFunction: => TestingFunction): TesterObjectBuilder =
+      builder.copy(init = () => testingFunction)
 
-  private def gameloopTestingBuilderToTesterObject(
-      testingBuilder: GameloopTestingBuilder
-  ): Behaviour =
-    new Behaviour
-      with InitTester(testingBuilder.init()(_))
-      with StartTester(testingBuilder.start()(_))
-      with EarlyUpdateTester(testingBuilder.earlyUpdate()(_))
-      with UpdateTester(testingBuilder.update()(_))
-      with LateUpdateTester(testingBuilder.lateUpdate()(_))
-      with DeinitTester(testingBuilder.deinit()(_))
-      with EnabledTester(testingBuilder.enabled()(_))
-      with DisabledTester(testingBuilder.disabled()(_))
-      with NFrameStopper(testingBuilder.nFramesToRun)
+    def onStart(testingFunction: => TestingFunction): TesterObjectBuilder =
+      builder.copy(start = () => testingFunction)
+
+    def onEarlyUpdate(
+        testingFunction: => TestingFunction
+    ): TesterObjectBuilder =
+      builder.copy(earlyUpdate = () => testingFunction)
+
+    def onUpdate(testingFunction: => TestingFunction): TesterObjectBuilder =
+      builder.copy(update = () => testingFunction)
+
+    def onLateUpdate(
+        testingFunction: => TestingFunction
+    ): TesterObjectBuilder =
+      builder.copy(lateUpdate = () => testingFunction)
+
+    def onDeinit(testingFunction: => TestingFunction): TesterObjectBuilder =
+      builder.copy(deinit = () => testingFunction)
+
+    def onEnabled(testingFunction: => TestingFunction): TesterObjectBuilder =
+      builder.copy(enabled = () => testingFunction)
+
+    def onDisabled(
+        testingFunction: => TestingFunction
+    ): TesterObjectBuilder =
+      builder.copy(disabled = () => testingFunction)
+
+    private def build: Behaviour =
+      new Behaviour
+        with InitTester(builder.init()(_))
+        with StartTester(builder.start()(_))
+        with EarlyUpdateTester(builder.earlyUpdate()(_))
+        with UpdateTester(builder.update()(_))
+        with LateUpdateTester(builder.lateUpdate()(_))
+        with DeinitTester(builder.deinit()(_))
+        with EnabledTester(builder.enabled()(_))
+        with DisabledTester(builder.disabled()(_))
+        with NFrameStopper(builder.nFramesToRun)
 
   extension (engine: Engine)
     /** Runs the engine with a given scene injecting the testerObject
@@ -108,47 +111,46 @@ object TestUtils:
     ): Unit =
       engine.loadScene(scene.joined(() => Seq(testerObject)))
 
-    /** Runs the engine and calls the given test function on the corresponding
-      * events by injecting a tester object into the scene.
+    /** Runs the engine and injects a tester object into the scene.
       *
       * @param scene
       * @param nFramesToRun
       *   number of frames the engine will run, defaults to 1
-      * @param onXXX
-      *   the function to execute at XXX event
+      * @param testerObjectBuilder
+      *   a builder for defining the testing functions to execute
       */
     def testOnGameloopEvents(
         scene: Scene = () => Seq.empty,
         nFramesToRun: Int = 1
     )(
-        testingBuilder: GameloopTestingBuilder => GameloopTestingBuilder =
-          (_) => GameloopTestingBuilder()
+        testerObjectBuilder: TesterObjectBuilder => TesterObjectBuilder = (_) =>
+          TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
     ): Unit =
       engine.testWithTesterObject(scene):
-        gameloopTestingBuilderToTesterObject(
-          testingBuilder(GameloopTestingBuilder(nFramesToRun = nFramesToRun))
-        )
+        testerObjectBuilder(
+          TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
+        ).build
 
-    /** Loads a new scene on a running engine and calls the given test function
-      * on the corresponding events by injecting a tester object into the scene.
+    /** Loads a new scene on a running engine and injects a tester object into
+      * the scene.
       *
       * @param scene
       * @param nFramesToRun
       *   number of frames the engine will run, defaults to 1
-      * @param onXXX
-      *   the function to execute at XXX event
+      * @param testerObjectBuilder
+      *   a builder for defining the testing functions to execute
       */
     def loadSceneTestingOnGameloopEvents(
         scene: Scene = () => Seq.empty,
         nFramesToRun: Int = 1
     )(
-        testingBuilder: GameloopTestingBuilder => GameloopTestingBuilder =
-          (_) => GameloopTestingBuilder()
+        testerObjectBuilder: TesterObjectBuilder => TesterObjectBuilder = (_) =>
+          TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
     ): Unit =
       engine.loadSceneWithTesterObject(scene):
-        gameloopTestingBuilderToTesterObject(
-          testingBuilder(GameloopTestingBuilder(nFramesToRun = nFramesToRun))
-        )
+        testerObjectBuilder(
+          TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
+        ).build
 
   /** Provides multiple concrete behaviours for testing
     */
