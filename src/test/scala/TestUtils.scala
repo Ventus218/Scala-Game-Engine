@@ -45,8 +45,6 @@ object TestUtils:
       val nFramesToRun: Int = 1
   )
 
-  import Testers.*
-  import Behaviours.NFrameStopper
   extension (builder: TesterObjectBuilder)
     def onInit(testingFunction: => TestingFunction): TesterObjectBuilder =
       builder.copy(init = () => testingFunction)
@@ -79,16 +77,10 @@ object TestUtils:
       builder.copy(disabled = () => testingFunction)
 
     private def build: Behaviour =
+      import Behaviours.NFrameStopper
       new Behaviour
-        with InitTester(builder.init()(_))
-        with StartTester(builder.start()(_))
-        with EarlyUpdateTester(builder.earlyUpdate()(_))
-        with UpdateTester(builder.update()(_))
-        with LateUpdateTester(builder.lateUpdate()(_))
-        with DeinitTester(builder.deinit()(_))
-        with EnabledTester(builder.enabled()(_))
-        with DisabledTester(builder.disabled()(_))
         with NFrameStopper(builder.nFramesToRun)
+        with TesterObject(builder)
 
   extension (engine: Engine)
     /** Runs the engine with a given scene injecting the testerObject
@@ -152,52 +144,28 @@ object TestUtils:
           TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
         ).build
 
-  /** Provides multiple concrete behaviours for testing
-    */
-  object Testers:
-
-    trait InitTester(testFunction: (TestingContext) => Unit) extends Behaviour:
-      override def onInit: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onInit(engine)
-
-    trait StartTester(testFunction: (TestingContext) => Unit) extends Behaviour:
-      override def onStart: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onStart(engine)
-
-    trait EarlyUpdateTester(testFunction: (TestingContext) => Unit)
-        extends Behaviour:
-      override def onEarlyUpdate: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onEarlyUpdate(engine)
-
-    trait UpdateTester(testFunction: (TestingContext) => Unit)
-        extends Behaviour:
-      override def onUpdate: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onUpdate(engine)
-
-    trait LateUpdateTester(testFunction: (TestingContext) => Unit)
-        extends Behaviour:
-      override def onLateUpdate: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onLateUpdate(engine)
-
-    trait DeinitTester(testFunction: (TestingContext) => Unit)
-        extends Behaviour:
-      override def onDeinit: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onDeinit(engine)
-
-    trait EnabledTester(testFunction: (TestingContext) => Unit)
-        extends Behaviour:
-      override def onEnabled: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onEnabled(engine)
-
-    trait DisabledTester(testFunction: (TestingContext) => Unit)
-        extends Behaviour:
-      override def onDisabled: Engine => Unit = (engine) =>
-        testFunction(TestingContext(engine, this))
-        super.onDisabled(engine)
+  private trait TesterObject(private val builder: TesterObjectBuilder) extends Behaviour:
+    override def onInit: Engine => Unit = e =>
+      builder.init()(TestingContext(e, this))
+      super.onInit(e)
+    override def onStart: Engine => Unit = e =>
+      builder.start()(TestingContext(e, this))
+      super.onStart(e)
+    override def onEarlyUpdate: Engine => Unit = e =>
+      builder.earlyUpdate()(TestingContext(e, this))
+      super.onEarlyUpdate(e)
+    override def onUpdate: Engine => Unit = e =>
+      builder.update()(TestingContext(e, this))
+      super.onUpdate(e)
+    override def onLateUpdate: Engine => Unit = e =>
+      builder.lateUpdate()(TestingContext(e, this))
+      super.onLateUpdate(e)
+    override def onDeinit: Engine => Unit = e =>
+      builder.deinit()(TestingContext(e, this))
+      super.onDeinit(e)
+    override def onEnabled: Engine => Unit = e =>
+      builder.enabled()(TestingContext(e, this))
+      super.onEnabled(e)
+    override def onDisabled: Engine => Unit = e =>
+      builder.disabled()(TestingContext(e, this))
+      super.onDisabled(e)
