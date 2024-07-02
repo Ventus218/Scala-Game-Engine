@@ -252,8 +252,12 @@ Il **PositionFollower** si occupa di tenere aggiornata la posizione del proprio 
 La posizione viene inizializzata nella `onInit` e aggiornata nella `onLateUpdate`.
 
 ### Velocity
-**Velocity** è un mixin che accetta come parametro di inizializzazione `velocity` di tipo `(Double, Double)`.
+**Velocity** è un mixin che accetta come parametro di inizializzazione un tipo `(Double, Double)`.
 Un **Positionable** che ha questo trait come mixin si vedrà la propria posizione aggiornata ogni volta che verrà chiamata la `onUpdate`, secondo la velocità impostata. Tale velocità sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour si muovi secondo il frameRate (se in un secondo vengono eseguiti 60 frame, e la velocità è di 2, si vuole muovere il behaviour di 2 pixel nel giro di un secondo, quindi di 2/60 pixel ad ogni frame).
+
+### Acceleration
+**Acceleration** è un mixin che accetta come parametro di inizializzazione un tipo `(Double, Double)`.
+Un **Velocity** che ha questo trait come mixin si vedrà la propria velocità aggiornata ogni volta che verrà chiamata la `onEarlyUpdate`, secondo l'accelerazione impostata. Tale accelerazione sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour acceleri secondo il frameRate.
 
 ### Scalable
 **Scalable** è un mixin generico su un tipo `T` che ne rappresenta la dimensione su cui scalare i valori. Per esempio, se si vuole scalare un singolo valore `Double`, allora il tipo `T` sarà proprio `Double`, se invece si vogliono scalare due valori `Double`, il tipo `T` sarà `(Double, Double)`.
