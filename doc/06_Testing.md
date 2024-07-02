@@ -64,6 +64,7 @@ Tutti questi metodi sono forniti come extension su `Engine`
 // Si vuole testare che al primo frame il delta time sia 0
 "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
     engine.testOnGameloopEvents(testScene):
+        // si noti come è semplice configurare il builder
         _.onEarlyUpdate:
             engine.deltaTimeNanos shouldBe 0
         .onUpdate:
