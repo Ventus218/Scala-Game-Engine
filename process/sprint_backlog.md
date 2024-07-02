@@ -65,4 +65,4 @@
 |29|Refactor: I Renderer devono adottare il nuovo Scalable|Michele|X|||
 |30|Bugfix: Fare in modo che swingIO crei i canvas in modo lazy|Michele|X|||
 |13|Scelta e design dei videogiochi di esempio|Tutti|X|||
-|12|Refactor e pulizia di TestUtils|Alessandro|X|||
+|12|Refactor e pulizia di TestUtils|Alessandro|||X|
