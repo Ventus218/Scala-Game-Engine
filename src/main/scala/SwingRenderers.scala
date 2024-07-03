@@ -290,8 +290,8 @@ object SwingRenderers:
       g2d =>
         val pos = io.pixelPosition(
           (
-            x + renderOffset.x - element.elementWidth / 2,
-            y + renderOffset.y + element.elementHeight / 2
+            position.x + renderOffset.x - element.elementWidth / 2,
+            position.y + renderOffset.y + element.elementHeight / 2
           )
         )
         val w = (element.elementWidth * io.pixelsPerUnit).toInt

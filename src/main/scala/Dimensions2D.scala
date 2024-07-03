@@ -6,27 +6,31 @@ object Dimensions2D:
     extension (v: Vector)
       def x: Double = v._1
       def y: Double = v._2
+      def setX(x: Double): Vector = (x, v.y)
+      def setY(y: Double): Vector = (v.x, y)
       infix def *(scalar: Double): Vector = (v.x * scalar, v.y * scalar)
       infix def /(scalar: Double): Vector = (v.x / scalar, v.y / scalar)
       infix def +(other: Vector): Vector = (v.x + other.x, v.y + other.y)
       infix def -(other: Vector): Vector = (v.x - other.x, v.y - other.y)
 
+    object Vector:
+      def identity: Vector = (1, 1)
     object Versor:
       def up: Vector = (0, 1)
       def down: Vector = (0, -1)
       def right: Vector = (1, 0)
       def left: Vector = (-1, 0)
+      def x: Vector = right
+      def y: Vector = up
 
   import Vector.*
 
   /** Add 2D position to a Behaviour
     *
-    * @param x
-    *   position of the Behaviour on the X axis
-    * @param y
-    *   position of the Behaviour on the Y axis
+    * @param position
+    *   position of the Behaviour on the X and Y axis
     */
-  trait Positionable(var x: Double = 0, var y: Double = 0) extends Behaviour
+  trait Positionable(var position: Vector = (0, 0)) extends Behaviour
 
   /** Gives the capability to follow another Positionable. The position of this
     * Behaviour is initialized as the follower position in the init and updated
@@ -42,14 +46,12 @@ object Dimensions2D:
     override def onInit: Engine => Unit =
       engine =>
         super.onInit(engine)
-        x = followed.x + positionOffset.x
-        y = followed.y + positionOffset.y
+        position = followed.position + positionOffset
 
     override def onLateUpdate: Engine => Unit =
       engine =>
         super.onLateUpdate(engine)
-        x = followed.x + positionOffset.x
-        y = followed.y + positionOffset.y
+        position = followed.position + positionOffset
 
   /** Tells if a generic T scale is valid
     */

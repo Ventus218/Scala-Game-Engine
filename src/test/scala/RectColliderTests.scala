@@ -3,6 +3,7 @@ import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.*
 import org.scalatest.BeforeAndAfterEach
 import Physics2D.RectCollider
+import Dimensions2D.Vector.*
 
 class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   val collider = new Behaviour
@@ -18,8 +19,7 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   override protected def beforeEach(): Unit =
     collider.colliderWidth = 5
     collider.colliderHeight = 3
-    collider.x = 2
-    collider.y = 1
+    collider.position = (2, 1)
 
   "collider" should "initially have its width and height" in:
     collider.colliderWidth shouldBe 5
@@ -57,50 +57,45 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.colliderHeight shouldBe 20
 
   it should "collide with another collider on top" in:
-    collider2.x = 2
-    collider2.y = -5
+    collider2.position = (2, -5)
 
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
 
-    collider2.x = 2
-    collider2.y = -1.5
+    collider2.position = (2, -1.5)
 
     collider.collides(collider2) shouldBe true
     collider2.collides(collider) shouldBe true
 
-    collider2.y = -2
+    collider2.position = collider2.position.setY(-2)
 
     collider.collides(collider2) shouldBe false
     collider2.collides(collider) shouldBe false
 
   it should "collide with another collider on left" in:
-    collider2.y = -1
-    collider2.x = -1
+    collider2.position = (-1, -1)
 
     collider.collides(collider2) shouldBe true
 
-    collider2.x = -2
+    collider2.position = collider2.position.setX(-2)
 
     collider.collides(collider2) shouldBe false
 
   it should "collide with another collider on bottom" in:
-    collider2.y = 3.5
-    collider2.x = 2
+    collider2.position = (2, 3.5)
 
     collider.collides(collider2) shouldBe true
 
-    collider2.y = 5
+    collider2.position = collider2.position.setY(5)
 
     collider.collides(collider2) shouldBe false
 
   it should "collide with another collider on right" in:
-    collider2.y = 1
-    collider2.x = 5
+    collider2.position = (5, 1)
 
     collider.collides(collider2) shouldBe true
 
-    collider2.x = 6
+    collider2.position = collider2.position.setX(6)
 
     collider.collides(collider2) shouldBe false
 
@@ -111,18 +106,16 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.colliderHeight shouldBe 9
 
   it should "collides using the scaled dimensions" in:
-    collider.x = 0
-    collider.y = 0
+    collider.position = (0, 0)
     collider.colliderWidth = 2
     collider.scale = (1, 1)
 
-    collider2.x = 5
-    collider2.y = 0
+    collider2.position = (5, 0)
     collider2.colliderWidth = 4
     collider2.scale = (2, 1)
 
     collider.collides(collider2) shouldBe true
 
-    collider2.x = 6
+    collider2.position = collider2.position.setX(6)
 
     collider.collides(collider2) shouldBe false

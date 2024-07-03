@@ -196,6 +196,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
   */
 @main def main: Unit =
   import Dimensions2D.*
+  import Vector.*
   import SwingRenderers.SwingSquareRenderer
 
   val io = SwingIO
@@ -233,18 +234,17 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
 
     private def onTeleport(input: InputButton)(engine: Engine): Unit =
       val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
-      x = pointer.x
-      y = pointer.y
+      position = pointer
       println(pointer)
 
     private def onMoveRight(input: InputButton)(engine: Engine): Unit =
-      x += v * engine.deltaTimeNanos * Math.pow(10, -9)
+      position = position + Versor.right * v * engine.deltaTimeSeconds
 
     private def onMoveLeft(input: InputButton)(engine: Engine): Unit =
-      x -= v * engine.deltaTimeNanos * Math.pow(10, -9)
+      position = position + Versor.left * v * engine.deltaTimeSeconds
 
     private def onMoveUp(input: InputButton)(engine: Engine): Unit =
-      y += v * engine.deltaTimeNanos * Math.pow(10, -9)
+      position = position + Versor.up * v * engine.deltaTimeSeconds
 
     private def onMoveDown(input: InputButton)(engine: Engine): Unit =
-      y -= v * engine.deltaTimeNanos * Math.pow(10, -9)
+      position = position + Versor.down * v * engine.deltaTimeSeconds

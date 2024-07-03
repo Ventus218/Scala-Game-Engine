@@ -14,7 +14,16 @@ class VectorTests extends AnyFlatSpec:
 
   it should "provide right versor" in:
     Versor.right shouldBe (1, 0)
-  
+
+  it should "provide x versor" in:
+    Versor.x shouldBe Versor.right
+
+  it should "provide y versor" in:
+    Versor.y shouldBe Versor.up
+
+  it should "provide identity vector" in:
+    Vector.identity shouldBe (1, 1)
+
   it should "provide a \"x\" accessor" in:
     Versor.up.x shouldBe 0
     Versor.right.x shouldBe 1
@@ -22,6 +31,16 @@ class VectorTests extends AnyFlatSpec:
   it should "provide a \"y\" accessor" in:
     Versor.up.y shouldBe 1
     Versor.right.y shouldBe 0
+
+  it should "provide a \"setX\" utility" in:
+    Versor.right.setX(3) shouldBe (3, 0)
+    Versor.right.setX(0) shouldBe (0, 0)
+    Versor.up.setX(1) shouldBe (1, 1)
+
+  it should "provide a \"setY\" utility" in:
+    Versor.up.setY(3) shouldBe (0, 3)
+    Versor.up.setY(0) shouldBe (0, 0)
+    Versor.right.setY(1) shouldBe (1, 1)
 
   it should "provide a scalar product (*)" in:
     Versor.up * 3 shouldBe (0, 3)

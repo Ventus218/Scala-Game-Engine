@@ -2,12 +2,13 @@ import SwingRenderers.*
 
 import java.awt.Color
 import Dimensions2D.Positionable
+import Dimensions2D.Vector.*
 object EngineWithSwingIOTest:
 
   trait MoveX(velocityX: Double) extends Behaviour with Positionable:
     override def onUpdate: Engine => Unit = e =>
       val dx = velocityX * e.deltaTimeNanos * Math.pow(10, -9)
-      x += dx
+      position = position + Versor.x * dx
       super.onUpdate(e)
 
   val ioBuilder: SwingIO.SwingIOBuilder = SwingIO

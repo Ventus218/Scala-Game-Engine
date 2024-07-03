@@ -46,10 +46,10 @@ object Physics2D:
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
 
-    private def right: Double = x + colliderWidth / 2
-    private def bottom: Double = y + colliderHeight / 2
-    private def left: Double = x - colliderWidth / 2
-    private def top: Double = y - colliderHeight / 2
+    private def right: Double = position.x + colliderWidth / 2
+    private def bottom: Double = position.y + colliderHeight / 2
+    private def left: Double = position.x - colliderWidth / 2
+    private def top: Double = position.y - colliderHeight / 2
 
     override final def collides(other: RectCollider): Boolean =
       this.top <= other.bottom &&
@@ -58,8 +58,7 @@ object Physics2D:
         this.bottom >= other.top
 
     override final def collides(other: CircleCollider): Boolean =
-      val cx = other.x
-      val cy = other.y
+      val (cx, cy) = other.position
 
       val dx =
         if cx < left then left - cx else if cx > right then cx - right else 0
@@ -90,8 +89,7 @@ object Physics2D:
       other.collides(this)
 
     override final def collides(other: CircleCollider): Boolean =
-      val dx = x - other.x
-      val dy = y - other.y
+      val (dx, dy) = position - other.position
 
       val distance = Math.sqrt(dx * dx + dy * dy)
 

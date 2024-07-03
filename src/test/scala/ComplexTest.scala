@@ -26,18 +26,14 @@ object ComplexTest:
 
     engine.run(MenuScene)
 
-  trait Velocity(var velX: Double = 0, var velY: Double = 0)
-      extends Positionable:
+  trait Velocity(var vel: Vector = (0, 0)) extends Positionable:
     override def onUpdate: Engine => Unit = (engine) =>
-      x += velX * engine.deltaTimeSeconds
-      y += velY * engine.deltaTimeSeconds
+      position = position + vel * engine.deltaTimeSeconds
       super.onUpdate(engine)
 
-  trait Acceleration(var accX: Double = 0, var accY: Double = 0)
-      extends Velocity:
+  trait Acceleration(var acc: Vector = (0, 0)) extends Velocity:
     override def onUpdate: Engine => Unit = (engine) =>
-      velX = velX + (accX * engine.deltaTimeSeconds)
-      velY = velY + (accY * engine.deltaTimeSeconds)
+      vel = vel + (acc * engine.deltaTimeSeconds)
       super.onUpdate(engine)
 
   class MenuObj extends Behaviour with SwingInputHandler:
@@ -67,7 +63,7 @@ object ComplexTest:
       with CircleCollider(circleRadius)
       with SwingInputHandler
       with Velocity
-      with Acceleration(accY = -100):
+      with Acceleration((0, -100)):
     var inputHandlers: Map[InputButton, Handler] = Map(
       D -> onMoveRight,
       A -> onMoveLeft,
@@ -78,16 +74,16 @@ object ComplexTest:
 
     private def onTeleport(input: InputButton)(engine: Engine): Unit =
       val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
-      x = pointer.x
-      y = pointer.y
-      velX = 0
-      velY = 0
+      position = pointer
+      vel = (0, 0)
 
     private def onMoveRight(input: InputButton)(engine: Engine): Unit =
-      x += movementVelocity * engine.deltaTimeSeconds
+      position =
+        position + Versor.right * movementVelocity * engine.deltaTimeSeconds
 
     private def onMoveLeft(input: InputButton)(engine: Engine): Unit =
-      x -= movementVelocity * engine.deltaTimeSeconds
+      position =
+        position - Versor.x * movementVelocity * engine.deltaTimeSeconds
 
     private var jumped = false
     private def onJump(input: InputButton)(engine: Engine): Unit =
@@ -105,23 +101,23 @@ object ComplexTest:
       val right = io.scenePosition(io.size).x - shapeWidth / 2
       val left = io.scenePosition((0, 0)).x + shapeWidth / 2
 
-      if y > top then
-        y = top
-        velY = 0
-      if y < bottom then
-        y = bottom
-        velY = 0
+      if position.y > top then
+        position = position.setY(top)
+        vel = vel.setY(0)
+      if position.y < bottom then
+        position = position.setY(bottom)
+        vel = vel.setY(0)
 
-      if x > right then
-        x = right
-        velX = 0
-      if x < left then
-        x = left
-        velX = 0
+      if position.x > right then
+        position = position.setX(right)
+        vel = vel.setX(0)
+      if position.x < left then
+        position = position.setX(left)
+        vel = vel.setX(0)
 
       if jumped then
         jumped = false
-        velY = 60
+        vel = vel.setY(60)
 
       // collision
       engine
