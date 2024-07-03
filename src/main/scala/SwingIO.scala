@@ -50,8 +50,8 @@ trait SwingIO extends IO:
     * @param renderer
     *   The operation to apply to the given graphic context
     * @param priority
-    *   The priority of the renderer. Higher priority means it will be rendered above others.
-    *   Defaults to 0.
+    *   The priority of the renderer. Higher priority means it will be rendered
+    *   above others. Defaults to 0.
     */
   def draw(renderer: Graphics2D => Unit, priority: Int = 0): Unit
 
@@ -204,8 +204,12 @@ object SwingIO:
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
 
     private lazy val frame: JFrame = createFrame()
-    private var bufferCanvas: DrawableCanvas = createCanvas()
-    private var activeCanvas: DrawableCanvas = createCanvas()
+
+    private var canvasTurn: Boolean = true
+    private lazy val canvas1: DrawableCanvas = createCanvas()
+    private lazy val canvas2: DrawableCanvas = createCanvas()
+    private def activeCanvas = if canvasTurn then canvas1 else canvas2
+    private def bufferCanvas = if canvasTurn then canvas2 else canvas1
 
     private val inputEventsAccumulator = SwingInputEventsAccumulator()
 
@@ -240,11 +244,9 @@ object SwingIO:
       frame.setResizable(false)
       frame.setLocationRelativeTo(null)
       frame
-    
+
     private def swapCanvases(): Unit =
-      val temp = activeCanvas
-      activeCanvas = bufferCanvas
-      bufferCanvas = temp
+      canvasTurn = !canvasTurn
 
     override def draw(renderer: Graphics2D => Unit, priority: Int): Unit =
       bufferCanvas.add((renderer, priority))
@@ -280,7 +282,7 @@ object SwingIO:
 
     setPreferredSize(new Dimension(size._1, size._2))
     setBackground(color)
-    
+
     def add(renderer: (Graphics2D => Unit, Int)): Unit =
       renderers = renderers :+ renderer
 
@@ -298,7 +300,6 @@ object SwingIO:
         renderers.sortBy((f, ord) => ord).foreach((f, ord) => f(g2))
         renderers = Seq.empty
         show = false
-
 
   /* builder class for SwingIO, with defaults */
 
