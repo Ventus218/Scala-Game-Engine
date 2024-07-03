@@ -6,6 +6,7 @@ import org.scalatest.matchers.should.Matchers.*
 
 import java.awt.Color
 import Dimensions2D.Positionable
+import Dimensions2D.Vector.*
 
 object SwingRendererTestUtilities:
 
@@ -18,54 +19,54 @@ object SwingRendererTestUtilities:
       width: Double,
       height: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
-      position: (Double, Double) = (0, 0)
+      offset: Vector = (0, 0),
+      position: Vector = (0, 0)
   ): SwingRectRenderer =
     new Behaviour
       with SwingRectRenderer(width, height, color, offset)
-      with Positionable(position._1, position._2)
+      with Positionable(position.x, position.y)
 
   def ovalRenderer(
       width: Double,
       height: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
-      position: (Double, Double) = (0, 0)
+      offset: Vector = (0, 0),
+      position: Vector = (0, 0)
   ): SwingOvalRenderer =
     new Behaviour
       with SwingOvalRenderer(width, height, color, offset)
-      with Positionable(position._1, position._2)
+      with Positionable(position.x, position.y)
 
   def squareRenderer(
       size: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
-      position: (Double, Double) = (0, 0)
+      offset: Vector = (0, 0),
+      position: Vector = (0, 0)
   ): SwingSquareRenderer =
     new Behaviour
       with SwingSquareRenderer(size, color, offset)
-      with Positionable(position._1, position._2)
+      with Positionable(position.x, position.y)
 
   def circleRenderer(
       radius: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
-      position: (Double, Double) = (0, 0)
+      offset: Vector = (0, 0),
+      position: Vector = (0, 0)
   ): SwingCircleRenderer =
     new Behaviour
       with SwingCircleRenderer(radius, color, offset)
-      with Positionable(position._1, position._2)
+      with Positionable(position.x, position.y)
 
   def imageRenderer(
       imagePath: String,
       width: Double,
       height: Double,
-      offset: (Double, Double) = (0, 0),
-      position: (Double, Double) = (0, 0)
+      offset: Vector = (0, 0),
+      position: Vector = (0, 0)
   ): SwingImageRenderer =
     new Behaviour
       with SwingImageRenderer(imagePath, width, height, offset)
-      with Positionable(position._1, position._2)
+      with Positionable(position.x, position.y)
 
   /* test for shape renderable */
   def testShapeProperties(renderer: SwingShapeRenderer): Unit =

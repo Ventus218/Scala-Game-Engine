@@ -8,6 +8,7 @@ import java.awt.Graphics2D
 import Behaviours.Identifiable
 import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
+import Dimensions2D.Vector.*
 
 class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
   var engine = newEngine
@@ -180,15 +181,15 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       super.onFrameEnd(engine)
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
       return inputButton == N_0 || (isFirstFrame && inputButton == N_1)
-    override def scenePointerPosition(): (Double, Double) = ???
+    override def scenePointerPosition(): Vector = ???
     override def title: String = ???
     override def pixelsPerUnit: Int = ???
     override def pixelsPerUnit_=(p: Int): Unit = ???
     override def draw(renderer: Graphics2D => Unit, priority: Int): Unit = ???
     override def backgroundColor: Color = ???
     override def size: (Int, Int) = ???
-    override def center_=(pos: (Double, Double)): Unit = ???
-    override def center: (Double, Double) = ???
+    override def center_=(pos: Vector): Unit = ???
+    override def center: Vector = ???
     override def show(): Unit = ???
 
 /** A complex input test, move with WASD and teleport with left mouse click
@@ -232,8 +233,8 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
 
     private def onTeleport(input: InputButton)(engine: Engine): Unit =
       val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
-      x = pointer._1
-      y = pointer._2
+      x = pointer.x
+      y = pointer.y
       println(pointer)
 
     private def onMoveRight(input: InputButton)(engine: Engine): Unit =

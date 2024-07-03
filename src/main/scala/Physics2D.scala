@@ -1,4 +1,5 @@
 import Dimensions2D.*
+import Vector.*
 
 object Physics2D:
   /** Gives colliders the methods to implement in order to detect the collisions
@@ -35,12 +36,12 @@ object Physics2D:
     */
   trait RectCollider(private var width: Double, private var height: Double)
       extends Collider
-      with Scalable[(Double, Double)]:
+      with Scalable[Vector]:
     require(width > 0)
     require(height > 0)
 
-    def colliderWidth: Double = width * scale._1
-    def colliderHeight: Double = height * scale._2
+    def colliderWidth: Double = width * scale.x
+    def colliderHeight: Double = height * scale.y
 
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h

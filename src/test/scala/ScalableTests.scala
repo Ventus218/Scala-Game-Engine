@@ -3,6 +3,7 @@ import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import org.scalatest.BeforeAndAfterEach
 import Dimensions2D.Scalable
+import Dimensions2D.Vector.*
 
 class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
   private val scaleX: Double = 0.5
@@ -33,24 +34,24 @@ class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
       new Behaviour with Scalable(0d)
 
   "scalable" should "have right scaleX and scaleY" in:
-    scalable.scale._1 shouldBe scaleX
-    scalable.scale._2 shouldBe scaleY
+    scalable.scale.x shouldBe scaleX
+    scalable.scale.y shouldBe scaleY
 
   it should "change scaleX and scaleY" in:
     scalable.scale = (10.5, 2)
-    scalable.scale._1 shouldBe 10.5
-    scalable.scale._2 shouldBe 2
+    scalable.scale.x shouldBe 10.5
+    scalable.scale.y shouldBe 2
 
     scalable.scale = (5, 0.4)
 
-    scalable.scale._1 shouldBe 5
-    scalable.scale._2 shouldBe 0.4
+    scalable.scale.x shouldBe 5
+    scalable.scale.y shouldBe 0.4
 
   it should "not accept negative values or zero" in:
     scalable.scale = (-1, 0)
 
-    scalable.scale._1 shouldBe scaleX
-    scalable.scale._2 shouldBe scaleY
+    scalable.scale.x shouldBe scaleX
+    scalable.scale.y shouldBe scaleY
 
     an[IllegalArgumentException] shouldBe thrownBy:
       new Behaviour with Scalable(-5d, 4d)

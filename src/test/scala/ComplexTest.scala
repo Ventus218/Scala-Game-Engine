@@ -5,6 +5,7 @@ import InputButton.*
 import Dimensions2D.*
 import SwingRenderers.*
 import Physics2D.*
+import Dimensions2D.Vector.*
 
 object ComplexTest:
   extension (e: Engine) def swingIO: SwingIO = e.io.asInstanceOf[SwingIO]
@@ -77,8 +78,8 @@ object ComplexTest:
 
     private def onTeleport(input: InputButton)(engine: Engine): Unit =
       val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
-      x = pointer._1
-      y = pointer._2
+      x = pointer.x
+      y = pointer.y
       velX = 0
       velY = 0
 
@@ -99,10 +100,10 @@ object ComplexTest:
 
     override def onUpdate: Engine => Unit = (engine) =>
       val io = engine.io.asInstanceOf[SwingIO]
-      val top = io.scenePosition((0, 0))._2 - shapeHeight / 2
-      val bottom = io.scenePosition(io.size)._2 + shapeHeight / 2
-      val right = io.scenePosition(io.size)._1 - shapeWidth / 2
-      val left = io.scenePosition((0, 0))._1 + shapeWidth / 2
+      val top = io.scenePosition((0, 0)).y - shapeHeight / 2
+      val bottom = io.scenePosition(io.size).y + shapeHeight / 2
+      val right = io.scenePosition(io.size).x - shapeWidth / 2
+      val left = io.scenePosition((0, 0)).x + shapeWidth / 2
 
       if y > top then
         y = top

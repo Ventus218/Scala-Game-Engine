@@ -6,6 +6,7 @@ import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
 import SwingIO.InputButton
 import java.awt.event.MouseEvent
 import java.awt.MouseInfo
+import Dimensions2D.Vector.*
 
 /** An implementation of IO trait using Java Swing
   */
@@ -32,13 +33,13 @@ trait SwingIO extends IO:
   /** The position of the center of the window translated to game coordinates.
     * Can be modified at runtime
     */
-  def center: (Double, Double)
+  def center: Vector
 
   /** Set the center to a new position
     * @param pos
     *   the new center position
     */
-  def center_=(pos: (Double, Double)): Unit
+  def center_=(pos: Vector): Unit
 
   /** The background color of the window frame
     */
@@ -50,8 +51,8 @@ trait SwingIO extends IO:
     * @param renderer
     *   The operation to apply to the given graphic context
     * @param priority
-    *   The priority of the renderer. Higher priority means it will be rendered above others.
-    *   Defaults to 0.
+    *   The priority of the renderer. Higher priority means it will be rendered
+    *   above others. Defaults to 0.
     */
   def draw(renderer: Graphics2D => Unit, priority: Int = 0): Unit
 
@@ -71,7 +72,7 @@ trait SwingIO extends IO:
     *
     * @return
     */
-  def scenePointerPosition(): (Double, Double)
+  def scenePointerPosition(): Vector
 
 extension (io: SwingIO)
   /** Converts game-coordinates positions to screen-coordinates positions
@@ -81,10 +82,10 @@ extension (io: SwingIO)
     * @return
     *   The screen-coordinates position
     */
-  def pixelPosition(scenePosition: (Double, Double)): (Int, Int) =
+  def pixelPosition(scenePosition: Vector): (Int, Int) =
     (
-      io.size._1 / 2 + (io.pixelsPerUnit * (scenePosition._1 - io.center._1)).toInt,
-      io.size._2 / 2 - (io.pixelsPerUnit * (scenePosition._2 - io.center._2)).toInt
+      io.size._1 / 2 + (io.pixelsPerUnit * (scenePosition.x - io.center.x)).toInt,
+      io.size._2 / 2 - (io.pixelsPerUnit * (scenePosition.y - io.center.y)).toInt
     )
 
   /** Converts screen-coordinates positions to game-coordinates positions
@@ -94,10 +95,10 @@ extension (io: SwingIO)
     * @return
     *   The game-coordinates position
     */
-  def scenePosition(pixelPosition: (Int, Int)): (Double, Double) =
+  def scenePosition(pixelPosition: (Int, Int)): Vector =
     (
-      io.center._1 + (pixelPosition._1 - io.size._1 / 2) / io.pixelsPerUnit,
-      io.center._2 - (pixelPosition._2 - io.size._2 / 2) / io.pixelsPerUnit
+      io.center.x + (pixelPosition._1 - io.size._1 / 2) / io.pixelsPerUnit,
+      io.center.y - (pixelPosition._2 - io.size._2 / 2) / io.pixelsPerUnit
     )
 
 /** Utility object for SwingIO
@@ -185,7 +186,7 @@ object SwingIO:
       title: String,
       size: (Int, Int),
       pixelsPerUnit: Int = 100,
-      center: (Double, Double) = (0, 0),
+      center: Vector = (0, 0),
       background: Color = Color.white
   ): SwingIO =
     new SwingIOImpl(title, size, pixelsPerUnit, center, background)
@@ -197,7 +198,7 @@ object SwingIO:
       val title: String,
       val size: (Int, Int),
       private var _pixelsPerUnit: Int,
-      var center: (Double, Double),
+      var center: Vector,
       val backgroundColor: Color
   ) extends SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
@@ -240,7 +241,7 @@ object SwingIO:
       frame.setResizable(false)
       frame.setLocationRelativeTo(null)
       frame
-    
+
     private def swapCanvases(): Unit =
       val temp = activeCanvas
       activeCanvas = bufferCanvas
@@ -265,7 +266,7 @@ object SwingIO:
             InputEvent.Pressed
           )
 
-    override def scenePointerPosition(): (Double, Double) =
+    override def scenePointerPosition(): Vector =
       val absolutePointerPos = MouseInfo.getPointerInfo().getLocation()
       SwingUtilities.convertPointFromScreen(absolutePointerPos, activeCanvas)
       this.scenePosition((absolutePointerPos.x, absolutePointerPos.y))
@@ -280,7 +281,7 @@ object SwingIO:
 
     setPreferredSize(new Dimension(size._1, size._2))
     setBackground(color)
-    
+
     def add(renderer: (Graphics2D => Unit, Int)): Unit =
       renderers = renderers :+ renderer
 
@@ -298,7 +299,6 @@ object SwingIO:
         renderers.sortBy((f, ord) => ord).foreach((f, ord) => f(g2))
         renderers = Seq.empty
         show = false
-
 
   /* builder class for SwingIO, with defaults */
 
@@ -318,7 +318,7 @@ object SwingIO:
       title: String = "Title",
       size: (Int, Int) = (0, 0),
       pixelsPerUnit: Int = 100,
-      center: (Double, Double) = (0, 0),
+      center: Vector = (0, 0),
       background: Color = Color.white
   )
 
@@ -359,7 +359,7 @@ object SwingIO:
     * @return
     *   a new builder
     */
-  def withCenter(center: (Double, Double)): SwingIOBuilder =
+  def withCenter(center: Vector): SwingIOBuilder =
     SwingIOBuilder(center = center)
 
   /** Build a SwingIO with a new background color
@@ -441,7 +441,7 @@ object SwingIO:
       * @return
       *   a new builder
       */
-    def withCenter(center: (Double, Double)): SwingIOBuilder =
+    def withCenter(center: Vector): SwingIOBuilder =
       SwingIOBuilder(
         builder.title,
         builder.size,
