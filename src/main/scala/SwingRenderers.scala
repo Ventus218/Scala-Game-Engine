@@ -1,4 +1,5 @@
 import Dimensions2D.Positionable
+import SwingRenderers.Text.{FontName, TextStyle}
 
 import java.awt.image.BufferedImage
 import java.awt.{Color, Font, FontMetrics, Graphics2D, Image}
@@ -250,9 +251,74 @@ object SwingRenderers:
         height
       )
 
+  object Text:
+    import GameElements.*
+
+    enum TextStyle(val style: Int):
+      case Plain extends TextStyle(Font.PLAIN)
+      case Bold extends TextStyle(Font.BOLD)
+      case Italic extends TextStyle(Font.ITALIC)
+
+    type FontName = String
+
+    trait SwingText extends SwingGameElement:
+      def textContent: String
+      def textContent_=(text: String): Unit
+      def textStyle: TextStyle
+      def textStyle_=(style: TextStyle): Unit
+      def textFont: FontName
+      def textFont_=(font: FontName): Unit
+      def textColor: Color
+      def textColor_=(color: Color): Unit
+
+      override def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit =
+        g2d =>
+          (posX, posY, w, h) =>
+            g2d.setFont(Font(textFont, textStyle.style, h))
+            g2d.setPaint(textColor)
+            g2d.drawString(textContent, posX, posY)
+
+    private class OneLineSwingText(
+        private var text: String,
+        private var size: Double,
+        private var color: Color,
+        private var font: FontName,
+        private var style: TextStyle
+    ) extends BaseSwingGameElement(size, size) with SwingText:
+      import java.awt.font.FontRenderContext
+      textContent = text
+      textColor = color
+      override def textContent: String = text
+      override def textContent_=(text: String): Unit =
+        require(text != null, "text content can't be null")
+        this.text = text
+      override def textStyle: TextStyle = style
+      override def textStyle_=(style: TextStyle): Unit = this.style = style
+      override def textFont: FontName = font
+      override def textFont_=(font: FontName): Unit = this.font = font
+      override def textColor: Color = color
+      override def textColor_=(color: Color): Unit =
+        require(color != null, "text color can't be null")
+        this.color = color
+      override def elementWidth: Double =
+        val dummyFont = Font(textFont, textStyle.style, 64)
+        val fontRenderContext = FontRenderContext(dummyFont.getTransform, true, true)
+        val ratio: Double = dummyFont.getStringBounds(textContent, fontRenderContext).getWidth / 64
+        elementHeight * ratio
+        
+    def oneLineText(
+        text: String,
+        size: Double,
+        color: Color,
+        font: FontName = "Arial",
+        style: TextStyle = TextStyle.Plain
+    ): SwingText =
+      OneLineSwingText(text, size, color, font, style)
+
   import GameElements.*
   import Shapes.*
   import Images.*
+  import Text.*
 
   /** Behaviour for rendering an object on a SwingIO.
     */
@@ -400,6 +466,35 @@ object SwingRenderers:
     }
     this.renderOffset = offset
     this.renderingPriority = priority
+    
+  trait SwingTextRenderer(
+      text: String,
+      size: Double,
+      color: Color,
+      fontFamily: FontName = "Arial",
+      fontStyle: TextStyle = TextStyle.Plain,
+      offset: (Double, Double) = (0, 0),
+      priority: Int = 0
+  ) extends SwingGameElementRenderer:
+    protected val element: SwingText = 
+      Text.oneLineText(text, size, color, fontFamily, fontStyle)
+      
+    export element.{
+      elementWidth => textWidth,
+      elementHeight => textSize,
+      elementHeight_= => textSize_=,
+      textContent,
+      textContent_=,
+      textFont,
+      textFont_=,
+      textStyle,
+      textStyle_=,
+      textColor,
+      textColor_=
+    }
+    this.renderOffset = offset
+    this.renderingPriority = priority
+    
 
   /** The anchor position used to compute the true screen position of a
     * UI element. It represents the starting point on the screen for calculating
@@ -420,7 +515,7 @@ object SwingRenderers:
     * based on its anchor point and its offset. By default the anchor is in the top-left
     * corner.
     */
-  trait SwingTextRenderer(
+  trait SwingUITextRenderer(
       private var text: String,
       private var font: Font,
       private var color: Color,

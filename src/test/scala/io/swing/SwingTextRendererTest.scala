@@ -1,99 +1,45 @@
+import Dimensions2D.Positionable
+import SwingRenderers.SwingTextRenderer
+import SwingRenderers.Text.{FontName, TextStyle}
 import SwingRendererTestUtilities.*
-import SwingRenderers.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 
-import java.awt.{Color, Font}
-
-object SwingTextRendererTest:
-
-  @main def testSwingRendererText(): Unit =
-    testSwingRenderer:
-      textRenderer(
-        "Hello World!",
-        20,
-        Color.blue
-      )
-
-  @main def testSwingRendererTextPlacement(): Unit =
-    testSwingRendererPlacement(
-      centered = textRenderer(
-        "Hello World!",
-        20,
-        Color.red,
-        offset = (0, 0),
-        anchor = UIAnchor.Center
-      ),
-      topLeft = textRenderer(
-        "Ciao Mondo!",
-        14,
-        Color.blue,
-        offset = (0, 0),
-        anchor = UIAnchor.TopLeft
-      ),
-      topRight = textRenderer(
-        "Hola Mundo!",
-        17,
-        Color.green,
-        offset = (0, 0),
-        anchor = UIAnchor.TopRight
-      )
-    )
-
-  @main def testSwingRendererTextAllPlacements(): Unit =
-    val io: SwingIO = SwingIO
-      .withSize(600, 500)
-      .build()
-
-    UIAnchor.values.foreach(a =>
-      val text = textRenderer(
-        "Hello World!",
-        20,
-        Color.red,
-        offset = (0, 0),
-        anchor = a
-      )
-      io.draw(text.renderer(io))
-    )
-    io.show()
+import java.awt.Color
 
 class SwingTextRendererTest extends AnyFlatSpec:
 
-  val font: Font = Font("Arial", Font.PLAIN, 10)
-  def textTest: SwingTextRenderer = new Behaviour
-    with SwingTextRenderer(
+  val font: FontName = "Arial"
+  val style: TextStyle = TextStyle.Plain
+  def textTest: SwingTextRenderer = textRenderer(
       "Test",
+      10,
+      Color.red,
       font,
-      Color.red
-    )
+      style
+  )
 
   "SwingTextRenderer" should "be initialized correctly" in:
     val text = textTest
     text.textContent shouldBe "Test"
     text.textSize shouldBe 10
     text.textColor shouldBe Color.red
-    text.textOffset shouldBe (0, 0)
-    text.textAnchor shouldBe UIAnchor.TopLeft
+    text.textStyle shouldBe style
+    text.textFont shouldBe font
+    text.renderOffset shouldBe (0, 0)
 
-  it should "not be initialized with null text, color or font" in:
+  it should "not be initialized with null text or color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      new Behaviour with SwingTextRenderer(
+      textRenderer(
         null,
-        font,
+        10,
         Color.red
       )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      new Behaviour with SwingTextRenderer(
+      textRenderer(
         "Test",
-        null,
-        Color.red
-      )
-    }
-    an[IllegalArgumentException] shouldBe thrownBy {
-      new Behaviour with SwingTextRenderer(
-        "Test",
-        font,
+        10,
         null
       )
     }
@@ -109,7 +55,6 @@ class SwingTextRendererTest extends AnyFlatSpec:
 
   it should "always have positive size" in:
     val text = textTest
-    println(text.textContent)
     an[IllegalArgumentException] shouldBe thrownBy {
       text.textSize = -2
     }
@@ -125,10 +70,3 @@ class SwingTextRendererTest extends AnyFlatSpec:
     an[IllegalArgumentException] shouldBe thrownBy {
       text.textColor = null
     }
-
-  it should "be able to change its offset and anchor point" in:
-    val text = textTest
-    text.textAnchor = UIAnchor.BottomCenter
-    text.textAnchor shouldBe UIAnchor.BottomCenter
-    text.textOffset = (100, 0)
-    text.textOffset shouldBe (100, 0)
