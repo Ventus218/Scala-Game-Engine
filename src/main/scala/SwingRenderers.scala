@@ -276,7 +276,7 @@ object SwingRenderers:
           (posX, posY, w, h) =>
             g2d.setFont(Font(textFont, textStyle.style, h))
             g2d.setPaint(textColor)
-            g2d.drawString(textContent, posX, posY)
+            g2d.drawString(textContent, posX, posY + h)
 
     private class OneLineSwingText(
         private var text: String,
@@ -305,7 +305,7 @@ object SwingRenderers:
         val fontRenderContext = FontRenderContext(dummyFont.getTransform, true, true)
         val ratio: Double = dummyFont.getStringBounds(textContent, fontRenderContext).getWidth / 64
         elementHeight * ratio
-        
+
     def oneLineText(
         text: String,
         size: Double,
@@ -466,7 +466,7 @@ object SwingRenderers:
     }
     this.renderOffset = offset
     this.renderingPriority = priority
-    
+
   trait SwingTextRenderer(
       text: String,
       size: Double,
@@ -476,9 +476,9 @@ object SwingRenderers:
       offset: (Double, Double) = (0, 0),
       priority: Int = 0
   ) extends SwingGameElementRenderer:
-    protected val element: SwingText = 
+    protected val element: SwingText =
       Text.oneLineText(text, size, color, fontFamily, fontStyle)
-      
+
     export element.{
       elementWidth => textWidth,
       elementHeight => textSize,
@@ -494,7 +494,7 @@ object SwingRenderers:
     }
     this.renderOffset = offset
     this.renderingPriority = priority
-    
+
 
   /** The anchor position used to compute the true screen position of a
     * UI element. It represents the starting point on the screen for calculating

@@ -7,6 +7,39 @@ import org.scalatest.matchers.should.Matchers.*
 
 import java.awt.Color
 
+object SwingTextRendererTest:
+
+  @main def testSwingRendererText(): Unit =
+    testSwingRenderer:
+      textRenderer(
+        "Hello World!",
+        0.3,
+        Color.blue,
+        position = (0, 0)
+      )
+
+  @main def testSwingRendererTextPlacement(): Unit =
+    testSwingRendererPlacement(
+      centered = textRenderer(
+        "Hello World!",
+        0.2,
+        Color.red,
+        offset = (0, 0),
+      ),
+      topLeft = textRenderer(
+        "Ciao Mondo!",
+        0.25,
+        Color.blue,
+        offset = (-1.5, 1.7),
+      ),
+      topRight = textRenderer(
+        "Hola Mundo!",
+        0.15,
+        Color.green,
+        position = (1.5, 1.7),
+      )
+    )
+
 class SwingTextRendererTest extends AnyFlatSpec:
 
   val font: FontName = "Arial"

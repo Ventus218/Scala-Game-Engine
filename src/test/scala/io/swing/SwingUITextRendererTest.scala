@@ -7,7 +7,7 @@ import java.awt.{Color, Font}
 
 object SwingUITextRendererTest:
 
-  @main def testSwingRendererText(): Unit =
+  @main def testSwingRendererUIText(): Unit =
     testSwingRenderer:
       uiTextRenderer(
         "Hello World!",
@@ -15,7 +15,7 @@ object SwingUITextRendererTest:
         Color.blue
       )
 
-  @main def testSwingRendererTextPlacement(): Unit =
+  @main def testSwingRendererUITextPlacement(): Unit =
     testSwingRendererPlacement(
       centered = uiTextRenderer(
         "Hello World!",
@@ -40,7 +40,7 @@ object SwingUITextRendererTest:
       )
     )
 
-  @main def testSwingRendererTextAllPlacements(): Unit =
+  @main def testSwingRendererUITextAllPlacements(): Unit =
     val io: SwingIO = SwingIO
       .withSize(600, 500)
       .build()
