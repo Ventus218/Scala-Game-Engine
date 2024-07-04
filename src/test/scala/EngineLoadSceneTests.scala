@@ -25,7 +25,7 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
   val scene2: Scene = () => Seq(id2, id3)
 
   "loadScene" should "change the active scene" in:
-    engine.testOnGameloopEvents(scene1):
+    test(engine) on scene1 soThat:
       _.onUpdate:
         engine.find[Identifiable]() should contain theSameElementsAs scene1()
 
@@ -36,7 +36,7 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
               .find[Identifiable]() should contain theSameElementsAs scene2()
 
   it should "change the scene after finishing the current frame" in:
-    engine.testOnGameloopEvents(scene1):
+    test(engine) on scene1 soThat:
       _.onEarlyUpdate:
         engine.loadSceneTestingOnGameloopEvents(scene2):
           _.onUpdate:
@@ -47,7 +47,7 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "deinitialize all the game objects before swapping scenes" in:
     var hasCalledDeinit = false
-    engine.testOnGameloopEvents(scene1):
+    test(engine) on scene1 soThat:
       _.onStart:
         engine.loadSceneTestingOnGameloopEvents(scene2)()
       .onDeinit:
@@ -57,7 +57,7 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "initialize all the game objects after swapping scenes" in:
     var hasCalledInit = false
-    engine.testOnGameloopEvents(scene1, nFramesToRun = 2):
+    test(engine) on scene1 runningFor 2 frames so that:
       _.onUpdate:
         engine.loadSceneTestingOnGameloopEvents(scene2):
           _.onInit:
@@ -66,7 +66,7 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "invoke onStart on the new game objects if enabled" in:
     var hasCalledStart = false
-    engine.testOnGameloopEvents(scene1, nFramesToRun = 2):
+    test(engine) on scene1 runningFor 2 frames so that:
       _.onUpdate:
         engine.loadSceneTestingOnGameloopEvents(scene2):
           _.onStart:

@@ -3,7 +3,7 @@ import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.Positionable
 import Dimensions2D.Vector.*
 import Physics2D.Velocity
-import TestUtils.testOnGameloopEvents
+import TestUtils.*
 
 class VelocityTests extends AnyFlatSpec:
   val velocity = new Behaviour with Velocity with Positionable
@@ -26,7 +26,7 @@ class VelocityTests extends AnyFlatSpec:
 
     val engine = Engine(new IO {}, Storage())
     val scene = () => Seq(velocity)
-    engine.testOnGameloopEvents(scene, nFramesToRun = 2):
+    test(engine) on scene runningFor 2 frames so that:
       _.onEarlyUpdate:
         initialPosition = velocity.position
       .onLateUpdate:

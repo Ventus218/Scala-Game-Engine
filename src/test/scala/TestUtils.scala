@@ -162,26 +162,6 @@ object TestUtils:
     ): Unit =
       engine.loadScene(scene.joined(() => Seq(testerObject)))
 
-    /** Runs the engine and injects a tester object into the scene.
-      *
-      * @param scene
-      * @param nFramesToRun
-      *   number of frames the engine will run, defaults to 1
-      * @param testerObjectBuilder
-      *   a builder for defining the testing functions to execute
-      */
-    def testOnGameloopEvents(
-        scene: Scene = () => Seq.empty,
-        nFramesToRun: Int = 1
-    )(
-        testerObjectBuilder: TesterObjectBuilder => TesterObjectBuilder = (_) =>
-          TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
-    ): Unit =
-      engine.testWithTesterObject(scene):
-        testerObjectBuilder(
-          TesterObjectBuilderImpl(nFramesToRun = nFramesToRun)
-        ).build
-
     /** Loads a new scene on a running engine and injects a tester object into
       * the scene.
       *

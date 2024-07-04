@@ -39,7 +39,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> a
           )
       )
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onStart:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 0
@@ -55,7 +55,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and b)
           )
       )
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onStart:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 0
@@ -73,7 +73,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and b.onlyWhenPressed)
           )
       )
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onDeinit:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 3
@@ -87,7 +87,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and b.onlyWhenHeld)
           )
       )
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onDeinit:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 3
@@ -104,7 +104,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       )
 
     var frame = 0
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onUpdate:
         val obj = engine.find[InputCounterObject](objId).get
         if frame == 0 then obj.bRuns shouldBe 0
@@ -123,7 +123,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and a)
           )
       )
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onDeinit:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 2
@@ -136,7 +136,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
             N_0 -> (a and b).onlyWhenPressed
           )
       )
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onDeinit:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 1
@@ -152,7 +152,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
       )
 
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onDeinit:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe obj.bRuns

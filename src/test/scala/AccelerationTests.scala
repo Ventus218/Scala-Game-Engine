@@ -3,7 +3,7 @@ import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.Positionable
 import Physics2D.Velocity
 import Physics2D.Acceleration
-import TestUtils.testOnGameloopEvents
+import TestUtils.*
 
 class AccelerationTests extends AnyFlatSpec:
     val acceleration = new Behaviour with Acceleration with Velocity with Positionable
@@ -27,7 +27,7 @@ class AccelerationTests extends AnyFlatSpec:
         val engine = Engine(new IO {}, Storage())
         val scene = () => Seq(acceleration)
         
-        engine.testOnGameloopEvents(scene, nFramesToRun = 2):
+        test(engine) on scene runningFor 2 frames so that:
             _.onUpdate:
                 acceleration.velocity._1 shouldBe velX + acceleration.acceleration._1 * engine.deltaTimeSeconds
                 acceleration.velocity._2 shouldBe velY + acceleration.acceleration._2 * engine.deltaTimeSeconds
