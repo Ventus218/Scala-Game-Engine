@@ -163,6 +163,7 @@ Se non si chiama `show` almeno una volta, la finestra rimane nascosta.
 Per disegnare su schermo i vari renderer, viene utilizzata la classe di utility `DrawableCanvas`, che è un JPanel di Swing con il metodo `paintComponent` modificato per poter applicare sul proprio oggetto grafico anche le operazioni
 registrate con la `draw`. Per ottimizzare le prestazioni ed evitare il lampeggiamento degli oggetti sulla scena, si usa una tecnica di buffering: SwingIO utilizza due buffer per disegnare, chiamati `activeCanvas` e `bufferCanvas`; `activeCanvas` è il canvas
 visibile all'utente, mentre `bufferCanvas` quello nascosto. Tutte le operazioni di rendering vengono eseguite sul `bufferCanvas` mentre non è visibile, e quando viene invocato il metodo `show`, i due canvas vengono scambiati, rendendo visibili i cambiamenti sulla view.
+La creazione di entrambi i buffer è lazy per evitare alcuni strani comporamenti durante la fase di unit testing (vengono aperte applicazioni grafiche invisibili.)
 
 SwingIO permette di definire la dimensione in pixel della finestra di gioco (`size`), il nome della finestra (`title`), e il colore di background (`background`). 
 Inoltre, permette di lavorare con coordinate espresse non in pixels, ma in unità logiche di gioco, così da astrarre la logica dei behaviours dalla loro effettiva rappresentazione grafica.
@@ -251,6 +252,10 @@ positionable.y = 3
 Il **PositionFollower** si occupa di tenere aggiornata la posizione del proprio **Positionable** in base alla posizione del `followed`, aggiungendoci il `positionOffset`.
 La posizione viene inizializzata nella `onInit` e aggiornata nella `onLateUpdate`.
 
+### Velocity
+**Velocity** è un mixin che accetta come parametro di inizializzazione `velocity` di tipo `(Double, Double)`.
+Un **Positionable** che ha questo trait come mixin si vedrà la propria posizione aggiornata ogni volta che verrà chiamata la `onUpdate`, secondo la velocità impostata. Tale velocità sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour si muovi secondo il frameRate (se in un secondo vengono eseguiti 60 frame, e la velocità è di 2, si vuole muovere il behaviour di 2 pixel nel giro di un secondo, quindi di 2/60 pixel ad ogni frame).
+
 ### Scalable
 **Scalable** è un mixin generico su un tipo `T` che ne rappresenta la dimensione su cui scalare i valori. Per esempio, se si vuole scalare un singolo valore `Double`, allora il tipo `T` sarà proprio `Double`, se invece si vogliono scalare due valori `Double`, il tipo `T` sarà `(Double, Double)`.
 Oltre al tipo generico e ad un valore di inizializzazione dello scaling, **Scalable** utilizza un contesto di tipo **IsValid** generico anch'esso sul tipo `T`, che si occuperà di indicare se lo scaling è valido oppure no.
@@ -307,7 +312,6 @@ println(collider3.collides(collider2)) //false
 #### CircleCollider
 **CircleCollider** è un mixin che aggiunge ad un oggetto un collider tondo con il centro in `(Positionable.x, Positionable.y)` e raggio passato in input.
 Il suo raggio scala in base allo `scale` di **Scalable**.
-
 
 ### SwingRenderer
 Un behaviour con **SwingRenderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.

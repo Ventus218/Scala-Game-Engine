@@ -94,3 +94,20 @@ object Physics2D:
       val distance = Math.sqrt(dx * dx + dy * dy)
 
       distance <= radius + other.radius
+
+  /** Add velocity to a Positionable behaviour, in order to move it once the
+    * onUpdate is called.
+    *
+    * @param _velocity
+    *   value of X and Y to add to the position in order to move the behaviour.
+    *   It must be not null or otherwise throws an IllegalArgumentException.
+    */
+  trait Velocity(private var _velocity: (Double, Double) = (0, 0)) extends Positionable:
+    def velocity: (Double, Double) = _velocity
+    def velocity_=(v: (Double, Double)) = _velocity = v
+
+    override def onUpdate: Engine => Unit =
+      engine =>
+        super.onUpdate(engine)
+        this.x = this.x + velocity._1 * engine.deltaTimeSeconds
+        this.y = this.y + velocity._2 * engine.deltaTimeSeconds

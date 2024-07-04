@@ -205,8 +205,12 @@ object SwingIO:
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
 
     private lazy val frame: JFrame = createFrame()
-    private var bufferCanvas: DrawableCanvas = createCanvas()
-    private var activeCanvas: DrawableCanvas = createCanvas()
+
+    private var canvasTurn: Boolean = true
+    private lazy val canvas1: DrawableCanvas = createCanvas()
+    private lazy val canvas2: DrawableCanvas = createCanvas()
+    private def activeCanvas = if canvasTurn then canvas1 else canvas2
+    private def bufferCanvas = if canvasTurn then canvas2 else canvas1
 
     private val inputEventsAccumulator = SwingInputEventsAccumulator()
 
@@ -243,9 +247,7 @@ object SwingIO:
       frame
 
     private def swapCanvases(): Unit =
-      val temp = activeCanvas
-      activeCanvas = bufferCanvas
-      bufferCanvas = temp
+      canvasTurn = !canvasTurn
 
     override def draw(renderer: Graphics2D => Unit, priority: Int): Unit =
       bufferCanvas.add((renderer, priority))
