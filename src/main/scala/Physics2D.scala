@@ -99,7 +99,7 @@ object Physics2D:
     * onUpdate is called.
     *
     * @param _velocity
-    *   value of X and Y to add to the position in order to move the behaviour.
+    *   vecto added to position according to its X and Y.
     */
   trait Velocity(var velocity: Vector = (0, 0)) extends Positionable:
     override def onUpdate: Engine => Unit =
@@ -111,8 +111,7 @@ object Physics2D:
     * decrement) its velocity every time the onEarlyUpdate is called.
     *
     * @param _acceleration
-    *   value of X and Y to add to the velocity in order to change it. It must
-    *   be not null or otherwise throws an IllegalArgumentException
+    *   vector added to velocity according to its X and Y
     */
   trait Acceleration(var acceleration: Vector = (0, 0)) extends Velocity:
     override def onEarlyUpdate: Engine => Unit =
