@@ -2,14 +2,24 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import TestUtils.*
+import org.scalatest.BeforeAndAfterEach
 
-class EngineLoadSceneTests extends AnyFlatSpec:
+class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
   val id0 = new Behaviour with Identifiable("0")
   val id1 = new Behaviour with Identifiable("1")
   val id2 = new Behaviour with Identifiable("2")
   val id3 = new Behaviour with Identifiable("3")
 
-  val engine = Engine(new IO() {}, Storage())
+  var engine = Engine(
+    io = new IO() {},
+    storage = Storage()
+  )
+
+  override protected def beforeEach(): Unit = 
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
 
   val scene1: Scene = () => Seq(id0, id1)
   val scene2: Scene = () => Seq(id2, id3)

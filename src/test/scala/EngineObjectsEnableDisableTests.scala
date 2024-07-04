@@ -4,12 +4,23 @@ import Behaviours.*
 import TestUtils.*
 import GameloopTester.*
 import GameloopEvent.*
+import org.scalatest.BeforeAndAfterEach
 
-class EngineObjectsEnableDisableTests extends AnyFlatSpec:
+class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEach:
   val enabledId = "enabled"
   val disabledId = "disabled"
 
-  val engine = Engine(new IO() {}, Storage())
+  var engine = Engine(
+    io = new IO() {},
+    storage = Storage()
+  )
+
+  override protected def beforeEach(): Unit = 
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
+
   def testScene: Scene = () =>
     Seq(
       TestObj(enabled = true, id = enabledId),
@@ -49,6 +60,11 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec:
           Update,
           LateUpdate
         )
+    
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
 
     engine.testOnGameloopEvents(testScene, nFramesToRun = 2):
       _.onUpdate:

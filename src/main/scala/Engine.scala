@@ -155,13 +155,14 @@ object Engine:
       gameObjectsToRemove.foreach(_.onDeinit(this))
       gameObjectsToRemove = Set.empty
 
-    private var shouldStop = true
+    private var shouldStop = false
+    private var alreadyStarted = false
 
     override def run(initialScene: Scene): Unit =
-      if !shouldStop then
-        throw IllegalStateException("Engine is already running")
+      if alreadyStarted then
+        throw IllegalStateException("Engine has already been started")
+      alreadyStarted = true
 
-      shouldStop = false
       deltaTimeNanos = 0
       loadScene(initialScene)
 
