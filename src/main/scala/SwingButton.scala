@@ -1,0 +1,3 @@
+import SwingRenderers.SwingRectRenderer
+
+trait SwingButton extends Behaviour with SwingRectRenderer
