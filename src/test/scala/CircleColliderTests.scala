@@ -3,6 +3,7 @@ import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.Positionable
 import Dimensions2D.Scalable
+import Dimensions2D.Vector.*
 import Physics2D.CircleCollider
 import Physics2D.RectCollider
 
@@ -19,8 +20,7 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   override protected def beforeEach(): Unit =
     circle.radius = 2
-    circle.x = 2
-    circle.y = 2
+    circle.position = (2, 2)
 
   it should "initially have its radius" in:
     circle.radius shouldBe 2
@@ -62,60 +62,53 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     circle.collides(rect) shouldBe false
     rect.collides(circle) shouldBe false
 
-    rect.x = 2
-    rect.y = 5
+    rect.position = (2, 5)
 
     circle.collides(rect) shouldBe true
     rect.collides(circle) shouldBe true
 
-    rect.y = 6
+    rect.position = rect.position.setY(6)
 
     circle.collides(rect) shouldBe false
     rect.collides(circle) shouldBe false
 
   it should "collides with a Rectangle Collider on its right" in:
-    rect.x = -1
-    rect.y = 2
+    rect.position = (-1, 2)
 
     circle.collides(rect) shouldBe true
 
-    rect.x = -2
+    rect.position = rect.position.setX(-2)
 
     circle.collides(rect) shouldBe false
 
   it should "collides with a Rectangle Collider on it bottom" in:
-    rect.x = 2
-    rect.y = -1
+    rect.position = (2, -1)
 
     circle.collides(rect) shouldBe true
 
-    rect.y = -2
+    rect.position = rect.position.setY(-2)
 
     circle.collides(rect) shouldBe false
 
   it should "collides with a Rectangle Collider on it left" in:
-    rect.x = 5
-    rect.y = 2
+    rect.position = (5, 2)
 
     circle.collides(rect) shouldBe true
 
-    rect.x = 6
+    rect.position = rect.position.setX(6)
 
     circle.collides(rect) shouldBe false
 
   it should "collides with a Rectangle Collider also in diagonal" in:
-    rect.x = 5
-    rect.y = 5
+    rect.position = (5, 5)
 
     circle.collides(rect) shouldBe false
 
-    rect.x = 3 + Math.sqrt(2)
-    rect.y = 3 + Math.sqrt(2)
+    rect.position = Vector.identity * (3 + Math.sqrt(2))
 
     circle.collides(rect) shouldBe true
 
-    rect.x = rect.x + 0.1
-    rect.y = rect.y + 0.1
+    rect.position = rect.position + Vector.identity * 0.1
 
     circle.collides(rect) shouldBe false
 
@@ -128,19 +121,16 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     circle.collides(circle2) shouldBe false
     circle2.collides(circle) shouldBe false
 
-    circle2.x = 6
-    circle2.y = 2
+    circle2.position = (6, 2)
 
     circle.collides(circle2) shouldBe true
     circle2.collides(circle) shouldBe true
 
-    circle2.x = 2 + 2 * Math.sqrt(2)
-    circle2.y = 2 + 2 * Math.sqrt(2)
+    circle2.position = Vector.identity * (2 + 2 * Math.sqrt(2))
 
     circle.collides(circle2) shouldBe true
 
-    circle2.x = circle2.x + 0.1
-    circle2.y = circle2.y + 0.1
+    circle2.position = circle2.position + Vector.identity * 0.1
 
     circle.collides(circle2) shouldBe false
 

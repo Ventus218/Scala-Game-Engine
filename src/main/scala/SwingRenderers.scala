@@ -6,6 +6,7 @@ import java.awt.{Color, Font, FontMetrics, Graphics2D, Image}
 import java.io.File
 import javax.imageio.ImageIO
 import scala.util.Try
+import Dimensions2D.Vector.*
 
 object SwingRenderers:
 
@@ -407,8 +408,8 @@ object SwingRenderers:
       */
     def renderer: SwingIO => Graphics2D => Unit
 
-    /** The rendering priority of this renderer. Higher priority means that 
-      * the renderer is drawn above the others. It can be modified.
+    /** The rendering priority of this renderer. Higher priority means that the
+      * renderer is drawn above the others. It can be modified.
       */
     var renderingPriority: Int = 0
 
@@ -424,7 +425,7 @@ object SwingRenderers:
     /** The offset of the element. it is used to translate the element starting
       * from the position of the Positionable.
       */
-    var renderOffset: (Double, Double) = (0, 0)
+    var renderOffset: Vector = (0, 0)
 
     /** The element to draw
       */
@@ -433,8 +434,8 @@ object SwingRenderers:
       g2d =>
         val pos = io.pixelPosition(
           (
-            x + renderOffset._1 - element.elementWidth / 2,
-            y + renderOffset._2 + element.elementHeight / 2
+            position.x + renderOffset.x - element.elementWidth / 2,
+            position.y + renderOffset.y + element.elementHeight / 2
           )
         )
         val w = (element.elementWidth * io.pixelsPerUnit).toInt
@@ -466,7 +467,7 @@ object SwingRenderers:
       width: Double,
       height: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
+      offset: Vector = (0, 0),
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingRect =
@@ -481,7 +482,7 @@ object SwingRenderers:
   trait SwingSquareRenderer(
       size: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
+      offset: Vector = (0, 0),
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingSquare = Shapes.square(size, color)
@@ -495,7 +496,7 @@ object SwingRenderers:
       width: Double,
       height: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
+      offset: Vector = (0, 0),
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingOval =
@@ -510,7 +511,7 @@ object SwingRenderers:
   trait SwingCircleRenderer(
       radius: Double,
       color: Color,
-      offset: (Double, Double) = (0, 0),
+      offset: Vector = (0, 0),
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingCircle = Shapes.circle(radius, color)
@@ -526,7 +527,7 @@ object SwingRenderers:
       imagePath: String,
       width: Double,
       height: Double,
-      offset: (Double, Double) = (0, 0),
+      offset: Vector = (0, 0),
       priority: Int = 0
   ) extends SwingGameElementRenderer:
     protected val element: SwingImage =
