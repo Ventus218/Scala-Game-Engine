@@ -18,13 +18,6 @@ class AccelerationTests extends AnyFlatSpec:
         acceleration.acceleration = (3, 1)
         acceleration.acceleration shouldBe (3, 1)
 
-    it should "throw an IllegalArgumentException if acceleration is null" in:
-        an[IllegalArgumentException] shouldBe thrownBy:
-            acceleration.acceleration = null
-
-        an[IllegalArgumentException] shouldBe thrownBy:
-            new Behaviour with Acceleration(null) with Velocity with Positionable
-
     it should "update the velocity of the behaviour" in:
         acceleration.acceleration = (2, 3)
         var velX: Double = 0

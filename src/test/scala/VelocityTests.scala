@@ -17,13 +17,6 @@ class VelocityTests extends AnyFlatSpec:
         velocity.velocity = (3, -5)
         velocity.velocity shouldBe (3, -5)
 
-    it should "throw an excpetion if null is passed as velocity" in:
-        an[IllegalArgumentException] shouldBe thrownBy:
-            velocity.velocity = null
-
-        an[IllegalArgumentException] shouldBe thrownBy:
-            new Behaviour with Velocity(null) with Positionable
-
     it should "update the position of the behaviour" in:
         velocity.velocity = (2, 3)
 

@@ -105,12 +105,8 @@ object Physics2D:
     */
   trait Velocity(private var _velocity: (Double, Double) = (0, 0))
       extends Positionable:
-    require(_velocity != null)
-
     def velocity: (Double, Double) = _velocity
-    def velocity_=(v: (Double, Double)) =
-      require(v != null)
-      _velocity = v
+    def velocity_=(v: (Double, Double)) = _velocity = v
 
     protected def velocityX = velocity._1
     protected def velocityY = velocity._2
@@ -130,12 +126,8 @@ object Physics2D:
     */
   trait Acceleration(private var _acceleration: (Double, Double) = (0, 0))
       extends Velocity:
-    require(_acceleration != null)
-
     def acceleration = _acceleration
-    def acceleration_=(a: (Double, Double)) =
-      require(a != null)
-      _acceleration = a
+    def acceleration_=(a: (Double, Double)) = _acceleration = a
 
     protected def accelerationX = acceleration._1
     protected def accelerationY = acceleration._2
