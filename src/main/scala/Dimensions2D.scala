@@ -53,18 +53,9 @@ object Dimensions2D:
         super.onLateUpdate(engine)
         position = followed.position + positionOffset
 
-  /** Tells if a generic T scale is valid
-    */
-  trait IsValid[T]:
-    /** Returns true if the scale is valid, false otherwise
-      *
-      * @param scale
-      */
-    def apply(scale: T): Boolean
-
   /** Gives the scaling component for width and height
     */
-  trait ScalableElement:
+  trait ScalableElement extends Behaviour:
     def scaleWidth: Double = 1
     def scaleHeight: Double = 1
 
@@ -76,8 +67,7 @@ object Dimensions2D:
     *   zero or otherwise throws an IllegalArgumentException.
     */
   trait SingleScalable(private var _size: Double = 1)
-      extends Behaviour
-      with ScalableElement:
+      extends ScalableElement:
     require(_size > 0)
 
     def scale = _size
@@ -100,8 +90,7 @@ object Dimensions2D:
   trait Scalable(
       private var _scaleWidth: Double = 1,
       private var _scaleHeight: Double = 1
-  ) extends Behaviour
-      with ScalableElement:
+  ) extends ScalableElement:
     require(_scaleWidth > 0 && _scaleHeight > 0)
 
     override def scaleWidth: Double = _scaleWidth
