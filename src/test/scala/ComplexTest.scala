@@ -26,16 +26,6 @@ object ComplexTest:
 
     engine.run(MenuScene)
 
-  trait Velocity(var vel: Vector = (0, 0)) extends Positionable:
-    override def onUpdate: Engine => Unit = (engine) =>
-      position = position + vel * engine.deltaTimeSeconds
-      super.onUpdate(engine)
-
-  trait Acceleration(var acc: Vector = (0, 0)) extends Velocity:
-    override def onUpdate: Engine => Unit = (engine) =>
-      vel = vel + (acc * engine.deltaTimeSeconds)
-      super.onUpdate(engine)
-
   class MenuObj extends Behaviour with SwingInputHandler:
     var inputHandlers: Map[InputButton, Handler] = Map(
       P -> onPlay
@@ -75,7 +65,7 @@ object ComplexTest:
     private def onTeleport(input: InputButton)(engine: Engine): Unit =
       val pointer = engine.io.asInstanceOf[SwingIO].scenePointerPosition()
       position = pointer
-      vel = (0, 0)
+      velocity = (0, 0)
 
     private def onMoveRight(input: InputButton)(engine: Engine): Unit =
       position =
@@ -103,21 +93,21 @@ object ComplexTest:
 
       if position.y > top then
         position = position.setY(top)
-        vel = vel.setY(0)
+        velocity = velocity.setY(0)
       if position.y < bottom then
         position = position.setY(bottom)
-        vel = vel.setY(0)
+        velocity = velocity.setY(0)
 
       if position.x > right then
         position = position.setX(right)
-        vel = vel.setX(0)
+        velocity = velocity.setX(0)
       if position.x < left then
         position = position.setX(left)
-        vel = vel.setX(0)
+        velocity = velocity.setX(0)
 
       if jumped then
         jumped = false
-        vel = vel.setY(60)
+        velocity = velocity.setY(60)
 
       // collision
       engine
