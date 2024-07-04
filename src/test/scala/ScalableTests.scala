@@ -7,19 +7,19 @@ import Dimensions2D.Vector.*
 import Dimensions2D.SingleScalable
 
 class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
-  private val scaleX: Double = 0.5
-  private val scaleY: Double = 2
+  private val scaleWidth: Double = 0.5
+  private val scaleHeight: Double = 2
 
-  private val singleScalable = new Behaviour with SingleScalable(scaleX)
-  private val scalable = new Behaviour with Scalable(scaleX, scaleY)
+  private val singleScalable = new Behaviour with SingleScalable(scaleWidth)
+  private val scalable = new Behaviour with Scalable(scaleWidth, scaleHeight)
 
   override protected def beforeEach(): Unit =
-    singleScalable.scale = scaleX
-    scalable.scaleX = scaleX
-    scalable.scaleY = scaleY
+    singleScalable.scale = scaleWidth
+    scalable.scaleWidth = scaleWidth
+    scalable.scaleHeight = scaleHeight
 
   "single scalable" should "have right scale" in:
-    singleScalable.scale shouldBe scaleX
+    singleScalable.scale shouldBe scaleWidth
 
   it should "change scale" in:
     singleScalable.scale = 5
@@ -35,28 +35,28 @@ class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
     an[IllegalArgumentException] shouldBe thrownBy:
       new Behaviour with SingleScalable(0d)
 
-  "scalable" should "have right scaleX and scaleY" in:
-    scalable.scaleX shouldBe scaleX
-    scalable.scaleY shouldBe scaleY
+  "scalable" should "have right scaleWidth and scaleHeight" in:
+    scalable.scaleWidth shouldBe scaleWidth
+    scalable.scaleHeight shouldBe scaleHeight
 
-  it should "change scaleX and scaleY" in:
-    scalable.scaleX = 10.5 
-    scalable.scaleY = 2
-    scalable.scaleX shouldBe 10.5
-    scalable.scaleY shouldBe 2
+  it should "change scaleWidth and scaleHeight" in:
+    scalable.scaleWidth = 10.5 
+    scalable.scaleHeight = 2
+    scalable.scaleWidth shouldBe 10.5
+    scalable.scaleHeight shouldBe 2
 
-    scalable.scaleX = 5
-    scalable.scaleY = 0.4
+    scalable.scaleWidth = 5
+    scalable.scaleHeight = 0.4
 
-    scalable.scaleX shouldBe 5
-    scalable.scaleY shouldBe 0.4
+    scalable.scaleWidth shouldBe 5
+    scalable.scaleHeight shouldBe 0.4
 
   it should "not accept negative values or zero" in:
     an[IllegalArgumentException] shouldBe thrownBy:
-      scalable.scaleX = -1.0
+      scalable.scaleWidth = -1.0
 
     an[IllegalArgumentException] shouldBe thrownBy:
-      scalable.scaleY = 0
+      scalable.scaleHeight = 0
 
     an[IllegalArgumentException] shouldBe thrownBy:
       new Behaviour with Scalable(-5d, 4d)

@@ -260,23 +260,21 @@ Un **Positionable** che ha questo trait come mixin si vedrà la propria posizion
 **Acceleration** è un mixin che accetta come parametro di inizializzazione un tipo `acceleration` di tipo `Vector`.
 Un **Velocity** che ha questo trait come mixin si vedrà la propria velocità aggiornata ogni volta che verrà chiamata la `onEarlyUpdate`, secondo l'accelerazione impostata. Tale accelerazione sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour acceleri secondo il frameRate.
 
-### Scalable
-**Scalable** è un mixin generico su un tipo `T` che ne rappresenta la dimensione su cui scalare i valori. Per esempio, se si vuole scalare un singolo valore `Double`, allora il tipo `T` sarà proprio `Double`, se invece si vogliono scalare due valori `Double`, il tipo `T` sarà `(Double, Double)`.
-Oltre al tipo generico e ad un valore di inizializzazione dello scaling, **Scalable** utilizza un contesto di tipo **IsValid** generico anch'esso sul tipo `T`, che si occuperà di indicare se lo scaling è valido oppure no.
-Sono presenti due implementazioni di default del contesto **IsValid**, una per `Double` e una per `Vector`, in modo che controlli che lo scaling sia positivo e maggiore di zero (nel caso di due dimensioni, entrambe devono essere positive e maggiori di zero).
-Se il parametro in input al costruttore di **Scalable** non è valido secondo il contesto, viene tirata un'eccezzione del tipo `IllegalArgumentException`.
+### Scalable e SingleScalable
+**Scalable** e **SingleScalable** sono due mixin che offrono la possibilità di scalare le dimensioni di un behaviour.
+**Scalable** permette di scalare due dimensioni, `width` ed `height`, mentre **SingleScalable** scala una singola dimensione.
+Se uno dei valori qualsiasi di scaling è inferiore o uguale a zero viene lanciata una `IllegalArgumentException`.
 
 *Esempio*
 ```scala
 // create a scalable that scales two dimensions, with (1, 1) as value of the scaling
 val scalable: Scalable[Vector] = new Behaviour with Scalable(1d, 1d) // equivalent to Scalable((1d, 1d)) in Scala
-scalable.scale = (4, 3)
-println(scalable.scale) // (4, 3)
-scalable.scale = (10, -2)
-// it is not possible to change either one of the values if one of them is not valid (according to the given context)
-println(scalable.scale) // (4, 3)
+scalable.scaleY = 3
+println(scalable.scaleY) // 3
+scalable.scaleX = 10
+println(scalable.scaleX) // 10
 
-val singleScalable: Scalable[Double] = new Behaviour with Scalable(1.0)
+val singleScalable: SingleScalable[Double] = new Behaviour with SingleScalable(1.0)
 singleScalable.scale = 5
 println(singleScalable.scale) // 5
 ```

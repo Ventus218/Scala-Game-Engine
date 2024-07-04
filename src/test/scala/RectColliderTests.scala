@@ -100,8 +100,8 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     collider.collides(collider2) shouldBe false
 
   it should "scale its dimension based on Scalable1 X and Y" in:
-    collider.scaleX = 2
-    collider.scaleY = 3
+    collider.scaleWidth = 2
+    collider.scaleHeight = 3
 
     collider.colliderWidth shouldBe 10
     collider.colliderHeight shouldBe 9
@@ -109,13 +109,13 @@ class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   it should "collides using the scaled dimensions" in:
     collider.position = (0, 0)
     collider.colliderWidth = 2
-    collider.scaleX = 1
-    collider.scaleY = 1
+    collider.scaleWidth = 1
+    collider.scaleHeight = 1
 
     collider2.position = (5, 0)
     collider2.colliderWidth = 4
-    collider2.scaleX = 2
-    collider2.scaleY = 1
+    collider2.scaleWidth = 2
+    collider2.scaleHeight = 1
 
     collider.collides(collider2) shouldBe true
 

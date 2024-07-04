@@ -39,8 +39,8 @@ object Physics2D:
     require(width > 0)
     require(height > 0)
 
-    def colliderWidth: Double = width * scaleX
-    def colliderHeight: Double = height * scaleY
+    def colliderWidth: Double = width * scaleWidth
+    def colliderHeight: Double = height * scaleHeight
 
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h

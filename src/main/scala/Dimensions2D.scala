@@ -63,8 +63,8 @@ object Dimensions2D:
     def apply(scale: T): Boolean
 
   trait ScalableElement:
-    def scaleX: Double = 1
-    def scaleY: Double = 1
+    def scaleWidth: Double = 1
+    def scaleHeight: Double = 1
 
   trait SingleScalable(private var _size: Double = 1) extends Behaviour with ScalableElement:
     require(_size > 0)
@@ -74,18 +74,18 @@ object Dimensions2D:
       require(s > 0)
       _size = s
 
-    override def scaleX: Double = scale
-    override def scaleY: Double = scale
+    override def scaleWidth: Double = scale
+    override def scaleHeight: Double = scale
 
   trait Scalable(private var _scaleX: Double = 1, private var _scaleY: Double = 1) extends Behaviour with ScalableElement:
     require(_scaleX > 0 && _scaleY > 0)
 
-    override def scaleX: Double = _scaleX
-    def scaleX_=(s: Double) =
+    override def scaleWidth: Double = _scaleX
+    def scaleWidth_=(s: Double) =
       require(s > 0) 
       _scaleX = s
 
-    override def scaleY: Double = _scaleY
-    def scaleY_=(s: Double) = 
+    override def scaleHeight: Double = _scaleY
+    def scaleHeight_=(s: Double) = 
       require(s > 0) 
       _scaleY = s
