@@ -9,9 +9,6 @@ L'idea è che l'oggetto di gioco offre la possibilità di eseguire test in ogni 
 ## TestUtils
 Il modulo `TestUtils` racchiude tutte le utility necessarie per semplificare il testing del gameloop.
 
-### `testOnGameloopEvents`
-Questa è la funzione (fornita come extension su `Engine`) per testare il gameloop, accetta una scena e il numero di frame per il quale l'engine dovrà essere eseguito. Inoltre fornisce un [builder](#testerobjectbuilder) per definire la logica di testing sugli specifici eventi del gameloop.
-
 ### `TestBuilder`
 Questo builder consente di configurare gli aspetti fondamentali di un test ovvero:
 - su quale engine eseguirlo
@@ -26,7 +23,7 @@ Ora è possibile configurarlo con una sintassi domain-specific grazie a dei meto
 - `runningFor` che richiede il numero di frame
 - `on` che richiede la scena da caricare
 
-Per eseguire il test è necessario invocare `that` oppure `soThat` in modo da ottenere il [`TesterObjectBuilder`](#testerobjectbuilder) da configurare.
+Per eseguire il test è necessario invocare `that` oppure `soThat` in modo da ottenere il [`TesterObjectBuilder`](#testerobjectbuilder) per definire la logica di testing sugli specifici eventi del gameloop.
 
 [Qui](#utilizzo-di-testutils) è possibile vedere come risulta la sintassi.
 
