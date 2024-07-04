@@ -2,27 +2,24 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.Positionable
 import Dimensions2D.PositionFollower
+import Dimensions2D.Vector.*
 import TestUtils.*
 
 class PositionFollowerTests extends AnyFlatSpec:
-  val positionableX: Double = 1
-  val positionableY: Double = 4
+  val positionablePosition: Vector = (1, 4)
 
-  val positionable = new Behaviour
-    with Positionable(positionableX, positionableY):
+  val positionable = new Behaviour with Positionable(positionablePosition):
     override def onEarlyUpdate: Engine => Unit =
       engine =>
         super.onEarlyUpdate(engine)
-        this.x = 5
-        this.y = 7
+        this.position = (5, 7)
 
-  val offsetX: Double = 10
-  val offsetY: Double = 10
+  val offset: Vector = (10, 10)
 
   val positionableFollower = new Behaviour
     with PositionFollower(
       followed = positionable,
-      positionOffset = (offsetX, offsetY)
+      positionOffset = offset
     )
     with Positionable(0, 0)
 
@@ -33,24 +30,19 @@ class PositionFollowerTests extends AnyFlatSpec:
   "positionFollower" should "follow the position of the Positionable after onInit, with an Offset" in:
     engine.testOnGameloopEvents(scene):
       _.onStart:
-        positionableFollower.x shouldBe positionable.x + offsetX
-        positionableFollower.y shouldBe positionable.y + offsetY
+        positionableFollower.position shouldBe positionable.position + offset
 
   it should "follow the position of the Positionable after onLateUpdate, with an Offset" in:
-    positionable.x = positionableX
-    positionable.y = positionableY
+    positionable.position = positionablePosition
 
     engine.testOnGameloopEvents(scene):
       _.onUpdate:
-        positionableFollower.x shouldBe positionableX + offsetX
-        positionableFollower.y shouldBe positionableY + offsetY
-        positionable.x should not be positionableX
-        positionable.y should not be positionableY
+        positionableFollower.position shouldBe positionablePosition + offset
+        positionable.position should not be positionablePosition
 
     engine.testOnGameloopEvents(scene):
       _.onEarlyUpdate:
-        positionableFollower.x shouldBe positionable.x + offsetX
-        positionableFollower.y shouldBe positionable.y + offsetY
+        positionableFollower.position shouldBe positionable.position + offset
 
   it should "be able to change its offset" in:
     positionableFollower.positionOffset = (0, 20)

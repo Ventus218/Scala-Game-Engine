@@ -163,6 +163,7 @@ Se non si chiama `show` almeno una volta, la finestra rimane nascosta.
 Per disegnare su schermo i vari renderer, viene utilizzata la classe di utility `DrawableCanvas`, che è un JPanel di Swing con il metodo `paintComponent` modificato per poter applicare sul proprio oggetto grafico anche le operazioni
 registrate con la `draw`. Per ottimizzare le prestazioni ed evitare il lampeggiamento degli oggetti sulla scena, si usa una tecnica di buffering: SwingIO utilizza due buffer per disegnare, chiamati `activeCanvas` e `bufferCanvas`; `activeCanvas` è il canvas
 visibile all'utente, mentre `bufferCanvas` quello nascosto. Tutte le operazioni di rendering vengono eseguite sul `bufferCanvas` mentre non è visibile, e quando viene invocato il metodo `show`, i due canvas vengono scambiati, rendendo visibili i cambiamenti sulla view.
+La creazione di entrambi i buffer è lazy per evitare alcuni strani comporamenti durante la fase di unit testing (vengono aperte applicazioni grafiche invisibili.)
 
 SwingIO permette di definire la dimensione in pixel della finestra di gioco (`size`), il nome della finestra (`title`), e il colore di background (`background`). 
 Inoltre, permette di lavorare con coordinate espresse non in pixels, ma in unità logiche di gioco, così da astrarre la logica dei behaviours dalla loro effettiva rappresentazione grafica.
@@ -236,23 +237,23 @@ Da notare che ogni behaviour built-in è un mixin di Behaviour.
 Un oggetto che viene mixato con il behaviour **Identifiable** avrà a disposizione un `id` e potrà essere cercato attraverso questo tra tutti gli altri oggetti.
 
 ### Positionable
-Quando un behaviour usa **Positionable** come mixin, avrà accesso ad una `x` ed una `y` settate a 0 di default.
-Si possono passare i valori iniziali di `x` e `y` se non si vuole inizializzarle a 0 e si possono cambiare una volta creato il behaviour.
+Quando un behaviour usa **Positionable** come mixin, avrà accesso ad un campo position di tipo `Vector` settato a (0, 0) di default.
+E' anche possibile inizializzare **Positionable** con valori diversi così come modificare la posizione del behaviour a runtime.
 
 *Esempio*
 ```scala
 // create a Positionable with x = 5, y = 0 then change y to 3
-val positionable: Positionable = new Behaviour with Positionable(5)
-positionable.y = 3
+val positionable: Positionable = new Behaviour with Positionable((5, 0))
+positionable.position = positionable.position.setX(3)
 ```
 
 ### PositionFollower
-**PositionFollower** è un mixin che accetta come parametro un `followed` di tipo **Positionable** e un `positionOffset` del tipo `(Double, Double)`, ed esso stesso richiede in mixin un **Positionable**.
+**PositionFollower** è un mixin che accetta come parametro un `followed` di tipo **Positionable** e un `positionOffset` del tipo `Vector`, ed esso stesso richiede in mixin un **Positionable**.
 Il **PositionFollower** si occupa di tenere aggiornata la posizione del proprio **Positionable** in base alla posizione del `followed`, aggiungendoci il `positionOffset`.
 La posizione viene inizializzata nella `onInit` e aggiornata nella `onLateUpdate`.
 
 ### Velocity
-**Velocity** è un mixin che accetta come parametro di inizializzazione un tipo `(Double, Double)`.
+**Velocity** è un mixin che accetta come parametro di inizializzazione `velocity` di tipo `Vector`.
 Un **Positionable** che ha questo trait come mixin si vedrà la propria posizione aggiornata ogni volta che verrà chiamata la `onUpdate`, secondo la velocità impostata. Tale velocità sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour si muovi secondo il frameRate (se in un secondo vengono eseguiti 60 frame, e la velocità è di 2, si vuole muovere il behaviour di 2 pixel nel giro di un secondo, quindi di 2/60 pixel ad ogni frame).
 
 ### Acceleration
@@ -262,13 +263,13 @@ Un **Velocity** che ha questo trait come mixin si vedrà la propria velocità ag
 ### Scalable
 **Scalable** è un mixin generico su un tipo `T` che ne rappresenta la dimensione su cui scalare i valori. Per esempio, se si vuole scalare un singolo valore `Double`, allora il tipo `T` sarà proprio `Double`, se invece si vogliono scalare due valori `Double`, il tipo `T` sarà `(Double, Double)`.
 Oltre al tipo generico e ad un valore di inizializzazione dello scaling, **Scalable** utilizza un contesto di tipo **IsValid** generico anch'esso sul tipo `T`, che si occuperà di indicare se lo scaling è valido oppure no.
-Sono presenti due implementazioni di default del contesto **IsValid**, una per `Double` e una per `(Double, Double)`, in modo che controlli che lo scaling sia positivo e maggiore di zero (nel caso di due dimensioni, entrambe devono essere positive e maggiori di zero).
+Sono presenti due implementazioni di default del contesto **IsValid**, una per `Double` e una per `Vector`, in modo che controlli che lo scaling sia positivo e maggiore di zero (nel caso di due dimensioni, entrambe devono essere positive e maggiori di zero).
 Se il parametro in input al costruttore di **Scalable** non è valido secondo il contesto, viene tirata un'eccezzione del tipo `IllegalArgumentException`.
 
 *Esempio*
 ```scala
 // create a scalable that scales two dimensions, with (1, 1) as value of the scaling
-val scalable: Scalable[(Double,Double)] = new Behaviour with Scalable(1d, 1d) // equivalent to Scalable((1d, 1d)) in Scala
+val scalable: Scalable[Vector] = new Behaviour with Scalable(1d, 1d) // equivalent to Scalable((1d, 1d)) in Scala
 scalable.scale = (4, 3)
 println(scalable.scale) // (4, 3)
 scalable.scale = (10, -2)
@@ -291,20 +292,19 @@ La sua dimensione scala in base allo `scale` di **Scalable**.
 *Esempio*
 ```scala
 // Creation of a collider with dimension 5x5 at x = 0, y = 0
-val collider = new Behaviour with RectCollider(5, 5) with Scalable(1.0, 1.0) with Positionable
+val collider = new Behaviour with RectCollider(5, 5) with Scalable((1.0, 1.0)) with Positionable
 
 // Creation of a collider with dimension 5x5 at x = 4, y = 4
-val collider2 = new Behaviour with RectCollider(5, 5) with Scalable(1.0, 1.0) with Positionable(4, 4)
+val collider2 = new Behaviour with RectCollider(5, 5) with Scalable((1.0, 1.0)) with Positionable((4, 4))
 
 // Creation of a collider with dimension 2x2 at x = 6, y = 6
-val collider3 = new Behaviour with RectCollider(2, 2) with Scalable(1.0, 1.0) with Positionable(6, 6)
+val collider3 = new Behaviour with RectCollider(2, 2) with Scalable((1.0, 1.0)) with Positionable((6, 6))
 
 println(collider.collides(collider2)) //true
 println(collider.collides(collider3)) //false
 println(collider2.collides(collider3)) //true
 
-collider3.y = -5
-collider3.x = 0
+collider3.position = (0, -5)
 collider3.colliderHeight = 5
 
 println(collider3.collides(collider)) //true

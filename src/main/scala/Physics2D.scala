@@ -1,4 +1,5 @@
 import Dimensions2D.*
+import Vector.*
 
 object Physics2D:
   /** Gives colliders the methods to implement in order to detect the collisions
@@ -35,20 +36,20 @@ object Physics2D:
     */
   trait RectCollider(private var width: Double, private var height: Double)
       extends Collider
-      with Scalable[(Double, Double)]:
+      with Scalable[Vector]:
     require(width > 0)
     require(height > 0)
 
-    def colliderWidth: Double = width * scale._1
-    def colliderHeight: Double = height * scale._2
+    def colliderWidth: Double = width * scale.x
+    def colliderHeight: Double = height * scale.y
 
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
 
-    private def right: Double = x + colliderWidth / 2
-    private def bottom: Double = y + colliderHeight / 2
-    private def left: Double = x - colliderWidth / 2
-    private def top: Double = y - colliderHeight / 2
+    private def right: Double = position.x + colliderWidth / 2
+    private def bottom: Double = position.y + colliderHeight / 2
+    private def left: Double = position.x - colliderWidth / 2
+    private def top: Double = position.y - colliderHeight / 2
 
     override final def collides(other: RectCollider): Boolean =
       this.top <= other.bottom &&
@@ -57,8 +58,7 @@ object Physics2D:
         this.bottom >= other.top
 
     override final def collides(other: CircleCollider): Boolean =
-      val cx = other.x
-      val cy = other.y
+      val (cx, cy) = other.position
 
       val dx =
         if cx < left then left - cx else if cx > right then cx - right else 0
@@ -89,8 +89,7 @@ object Physics2D:
       other.collides(this)
 
     override final def collides(other: CircleCollider): Boolean =
-      val dx = x - other.x
-      val dy = y - other.y
+      val (dx, dy) = position - other.position
 
       val distance = Math.sqrt(dx * dx + dy * dy)
 
@@ -101,41 +100,10 @@ object Physics2D:
     *
     * @param _velocity
     *   value of X and Y to add to the position in order to move the behaviour.
-    *   It must be not null or otherwise throws an IllegalArgumentException.
     */
-  trait Velocity(private var _velocity: (Double, Double) = (0, 0))
-      extends Positionable:
-    def velocity: (Double, Double) = _velocity
-    def velocity_=(v: (Double, Double)) = _velocity = v
-
-    protected def velocityX = velocity._1
-    protected def velocityY = velocity._2
+  trait Velocity(var velocity: Vector = (0, 0)) extends Positionable:
 
     override def onUpdate: Engine => Unit =
       engine =>
         super.onUpdate(engine)
-        this.x = this.x + velocityX * engine.deltaTimeSeconds
-        this.y = this.y + velocityY * engine.deltaTimeSeconds
-
-  /** Add an acceleration to a Velocity behaviour in order to increment (or
-    * decrement) its velocity every time the onEarlyUpdate is called.
-    *
-    * @param _acceleration
-    *   value of X and Y to add to the velocity in order to change it. It must
-    *   be not null or otherwise throws an IllegalArgumentException
-    */
-  trait Acceleration(private var _acceleration: (Double, Double) = (0, 0))
-      extends Velocity:
-    def acceleration = _acceleration
-    def acceleration_=(a: (Double, Double)) = _acceleration = a
-
-    protected def accelerationX = acceleration._1
-    protected def accelerationY = acceleration._2
-
-    override def onEarlyUpdate: Engine => Unit =
-      engine =>
-        super.onEarlyUpdate(engine)
-        this.velocity = (
-          this.velocityX + accelerationX * engine.deltaTimeSeconds,
-          this.velocityY + accelerationY * engine.deltaTimeSeconds
-        )
+        position = position + velocity * engine.deltaTimeSeconds
