@@ -321,7 +321,7 @@ Se l'engine non contiene un IO di tipo SwingIO, allora SwingRenderer lancia un'e
 
 SwingRenderable è esteso dal trait **SwingGameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
 Questo a sua volta è esteso dai trait **SwingShapeRenderer** che rappresenta una forma geometrica, **SwingImageRenderer** che rappresenta un'immagine, e da **SwingTextRenderer** che rappresenta un testo sulla scena.
-Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli.
+Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli. Inoltre questi trait sono di tipo `ScalableElement`, per cui le loro dimensioni vengono calcolate in proporzione ai propri fattori di scaling, sia che siano forniti da uno `Scalable` oppure da un `SingleScalable`.
 Questi renderer hanno anche un `renderOffset`, che indica di quanto il disegno debba essere traslato rispetto alla posizione attuale del behaviour.
 
 SwingRenderable è esteso dal trait **SwingUITextRenderer**, che disegna un testo su shermo, e che a differenza degli altri renderer rappresenta un elemento di overlay del gioco. Questo significa che non ha una posizione definita in termini di unità di gioco, bensì in pixel; Inoltre la sua posizione è
