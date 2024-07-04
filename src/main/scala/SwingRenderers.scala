@@ -8,15 +8,17 @@ import javax.imageio.ImageIO
 import scala.util.Try
 import Dimensions2D.Vector.*
 
+import java.awt.geom.AffineTransform
+
 object SwingRenderers:
 
   object Angle:
     type Angle = Double
     extension[N <: Int | Double] (n: N)
-      def degrees: Angle = n match
+      def radians: Angle = n match
         case i: Int     => i.toDouble
         case d: Double  => d
-      def radians: Angle = n.degrees.toDegrees
+      def degrees: Angle = n.radians.toRadians
 
 
   object GameElements:
@@ -444,15 +446,20 @@ object SwingRenderers:
     protected def element: SwingGameElement
     override def renderer: SwingIO => Graphics2D => Unit = io =>
       g2d =>
-        val pos = io.pixelPosition(
+        val offsetPos = io.pixelPosition(
           (
             position.x + renderOffset.x - element.elementWidth / 2,
             position.y + renderOffset.y + element.elementHeight / 2
           )
         )
+        val rotationPos = io.pixelPosition(
+          (position.x, position.y)
+        )
         val w = (element.elementWidth * io.pixelsPerUnit).toInt
         val h = (element.elementHeight * io.pixelsPerUnit).toInt
-        element.drawElement(g2d)(pos._1, pos._2, w, h)
+        g2d.rotate(renderRotation, rotationPos._1, rotationPos._2)
+        element.drawElement(g2d)(offsetPos._1, offsetPos._2, w, h)
+        g2d.setTransform(AffineTransform())
 
   /** Behaviour for rendering geometric shapes on a SwingIO.
     */
