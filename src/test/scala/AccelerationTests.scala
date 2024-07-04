@@ -6,31 +6,34 @@ import Physics2D.Acceleration
 import TestUtils.*
 
 class AccelerationTests extends AnyFlatSpec:
-    val acceleration = new Behaviour with Acceleration with Velocity with Positionable
+  val acceleration = new Behaviour
+    with Acceleration
+    with Velocity
+    with Positionable
 
-    "acceleration" should "be created with parameters" in:
-        new Behaviour with Acceleration(2, 2) with Velocity with Positionable
+  "acceleration" should "be created with parameters" in:
+    new Behaviour with Acceleration(2, 2) with Velocity with Positionable
 
-    it should "be created with default values" in:
-        acceleration.acceleration shouldBe (0, 0)
+  it should "be created with default values" in:
+    acceleration.acceleration shouldBe (0, 0)
 
-    it should "be able to change its acceleration" in:
-        acceleration.acceleration = (3, 1)
-        acceleration.acceleration shouldBe (3, 1)
+  it should "be able to change its acceleration" in:
+    acceleration.acceleration = (3, 1)
+    acceleration.acceleration shouldBe (3, 1)
 
-    it should "update the velocity of the behaviour" in:
-        acceleration.acceleration = (2, 3)
-        var velX: Double = 0
-        var velY: Double = 0
-        acceleration.velocity = (velX, velY)
+  it should "update the velocity of the behaviour" in:
+    acceleration.acceleration = (2, 3)
+    var velX: Double = 0
+    var velY: Double = 0
+    acceleration.velocity = (velX, velY)
 
-        val engine = Engine(new IO {}, Storage())
-        val scene = () => Seq(acceleration)
-        
-        test(engine) on scene runningFor 2 frames so that:
-            _.onUpdate:
-                acceleration.velocity._1 shouldBe velX + acceleration.acceleration._1 * engine.deltaTimeSeconds
-                acceleration.velocity._2 shouldBe velY + acceleration.acceleration._2 * engine.deltaTimeSeconds
-            .onLateUpdate:
-                velX = acceleration.velocity._1
-                velY = acceleration.velocity._2
+    val engine = Engine(new IO {}, Storage())
+    val scene = () => Seq(acceleration)
+
+    test(engine) on scene runningFor 2 frames so that:
+      _.onUpdate:
+        acceleration.velocity._1 shouldBe velX + acceleration.acceleration._1 * engine.deltaTimeSeconds
+        acceleration.velocity._2 shouldBe velY + acceleration.acceleration._2 * engine.deltaTimeSeconds
+      .onLateUpdate:
+        velX = acceleration.velocity._1
+        velY = acceleration.velocity._2
