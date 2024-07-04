@@ -102,8 +102,20 @@ object Physics2D:
     *   value of X and Y to add to the position in order to move the behaviour.
     */
   trait Velocity(var velocity: Vector = (0, 0)) extends Positionable:
-
     override def onUpdate: Engine => Unit =
       engine =>
         super.onUpdate(engine)
         position = position + velocity * engine.deltaTimeSeconds
+
+  /** Add an acceleration to a Velocity behaviour in order to increment (or
+    * decrement) its velocity every time the onEarlyUpdate is called.
+    *
+    * @param _acceleration
+    *   value of X and Y to add to the velocity in order to change it. It must
+    *   be not null or otherwise throws an IllegalArgumentException
+    */
+  trait Acceleration(var acceleration: Vector = (0, 0)) extends Velocity:
+    override def onEarlyUpdate: Engine => Unit =
+      engine =>
+        super.onEarlyUpdate(engine)
+        velocity = velocity + acceleration * engine.deltaTimeSeconds
