@@ -4,9 +4,10 @@ import SwingRenderers.*
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 
-import java.awt.Color
+import java.awt.{Color, Font}
 import Dimensions2D.Positionable
 import Dimensions2D.Vector.*
+import SwingRenderers.Text.{FontName, TextStyle}
 
 object SwingRendererTestUtilities:
 
@@ -67,6 +68,29 @@ object SwingRendererTestUtilities:
     new Behaviour
       with SwingImageRenderer(imagePath, width, height, offset)
       with Positionable(position.x, position.y)
+
+  def textRenderer(
+      text: String,
+      size: Double,
+      color: Color,
+      fontFamily: FontName = "Arial",
+      fontStyle: TextStyle = TextStyle.Plain,
+      offset: (Double, Double) = (0, 0),
+      position: (Double, Double) = (0, 0)
+  ): SwingTextRenderer =
+    new Behaviour
+      with SwingTextRenderer(text, size, color, fontFamily, fontStyle, offset)
+      with Positionable(position._1, position._2)
+  
+  def uiTextRenderer(
+      text: String,
+      size: Int,
+      color: Color,
+      offset: (Int, Int) = (0, 0),
+      anchor: UIAnchor = UIAnchor.Center
+  ): SwingUITextRenderer = 
+    new Behaviour
+      with SwingUITextRenderer(text, Font("Arial", Font.PLAIN, size), color, textAnchor = anchor, textOffset = offset)
 
   /* test for shape renderable */
   def testShapeProperties(renderer: SwingShapeRenderer): Unit =
