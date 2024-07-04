@@ -10,6 +10,15 @@ import Dimensions2D.Vector.*
 
 object SwingRenderers:
 
+  object Angle:
+    type Angle = Double
+    extension[N <: Int | Double] (n: N)
+      def degrees: Angle = n match
+        case i: Int     => i.toDouble
+        case d: Double  => d
+      def radians: Angle = n.degrees.toDegrees
+
+
   object GameElements:
     /** Basic trait for manipulating and drawing game entities using Swing. The
       * main properties of the element (width, height) are mutable, and are
@@ -394,6 +403,7 @@ object SwingRenderers:
     ): SwingText =
       OneLineSwingText(text, size, color, font, style)
 
+  import Angle.*
   import GameElements.*
   import Shapes.*
   import Images.*
@@ -426,6 +436,8 @@ object SwingRenderers:
       * from the position of the Positionable.
       */
     var renderOffset: Vector = (0, 0)
+
+    var renderRotation: Angle = 0
 
     /** The element to draw
       */
@@ -468,11 +480,13 @@ object SwingRenderers:
       height: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingRect =
       Shapes.rect(width, height, color)
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering a square on a SwingIO. Size must be > 0. The
@@ -483,10 +497,12 @@ object SwingRenderers:
       size: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingSquare = Shapes.square(size, color)
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering an oval on a SwingIO. Sizes must be > 0. The oval
@@ -497,11 +513,13 @@ object SwingRenderers:
       height: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingOval =
       Shapes.oval(width, height, color)
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering a circle on a SwingIO. Radius must be > 0. The
@@ -512,11 +530,13 @@ object SwingRenderers:
       radius: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingCircle = Shapes.circle(radius, color)
     export element.{shapeRadius, shapeRadius_=}
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering an image on a SwingIO. Sizes must be > 0, and the
@@ -528,6 +548,7 @@ object SwingRenderers:
       width: Double,
       height: Double,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingGameElementRenderer:
     protected val element: SwingImage =
@@ -544,6 +565,7 @@ object SwingRenderers:
       image
     }
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering a text on a SwingIO. Size must be > 0.
@@ -556,6 +578,7 @@ object SwingRenderers:
       fontFamily: FontName = "Arial",
       fontStyle: TextStyle = TextStyle.Plain,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingGameElementRenderer:
     protected val element: SwingText =
@@ -575,6 +598,7 @@ object SwingRenderers:
       textColor_=
     }
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
 

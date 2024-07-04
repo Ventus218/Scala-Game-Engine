@@ -7,6 +7,7 @@ import org.scalatest.matchers.should.Matchers.*
 import java.awt.{Color, Font}
 import Dimensions2D.Positionable
 import Dimensions2D.Vector.*
+import SwingRenderers.Angle.*
 import SwingRenderers.Text.{FontName, TextStyle}
 
 object SwingRendererTestUtilities:
@@ -21,10 +22,11 @@ object SwingRendererTestUtilities:
       height: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       position: Vector = (0, 0)
   ): SwingRectRenderer =
     new Behaviour
-      with SwingRectRenderer(width, height, color, offset)
+      with SwingRectRenderer(width, height, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def ovalRenderer(
@@ -32,30 +34,33 @@ object SwingRendererTestUtilities:
       height: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       position: Vector = (0, 0)
   ): SwingOvalRenderer =
     new Behaviour
-      with SwingOvalRenderer(width, height, color, offset)
+      with SwingOvalRenderer(width, height, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def squareRenderer(
       size: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       position: Vector = (0, 0)
   ): SwingSquareRenderer =
     new Behaviour
-      with SwingSquareRenderer(size, color, offset)
+      with SwingSquareRenderer(size, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def circleRenderer(
       radius: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       position: Vector = (0, 0)
   ): SwingCircleRenderer =
     new Behaviour
-      with SwingCircleRenderer(radius, color, offset)
+      with SwingCircleRenderer(radius, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def imageRenderer(
@@ -63,10 +68,11 @@ object SwingRendererTestUtilities:
       width: Double,
       height: Double,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       position: Vector = (0, 0)
   ): SwingImageRenderer =
     new Behaviour
-      with SwingImageRenderer(imagePath, width, height, offset)
+      with SwingImageRenderer(imagePath, width, height, offset, rotation)
       with Positionable(position.x, position.y)
 
   def textRenderer(
@@ -76,10 +82,11 @@ object SwingRendererTestUtilities:
       fontFamily: FontName = "Arial",
       fontStyle: TextStyle = TextStyle.Plain,
       offset: (Double, Double) = (0, 0),
+      rotation: Angle = 0.degrees,
       position: (Double, Double) = (0, 0)
   ): SwingTextRenderer =
     new Behaviour
-      with SwingTextRenderer(text, size, color, fontFamily, fontStyle, offset)
+      with SwingTextRenderer(text, size, color, fontFamily, fontStyle, offset, rotation)
       with Positionable(position._1, position._2)
   
   def uiTextRenderer(
