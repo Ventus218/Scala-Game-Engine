@@ -1,4 +1,4 @@
-import Dimensions2D.Positionable
+import Dimensions2D.{Positionable, ScalableElement, SingleScalable}
 import SwingRenderers.Text.{FontName, TextStyle}
 
 import java.awt.image.BufferedImage
@@ -421,7 +421,7 @@ object SwingRenderers:
 
   /** Behaviour for rendering a generic swing game element on a SwingIO
     */
-  trait SwingGameElementRenderer extends SwingRenderer with Positionable:
+  trait SwingGameElementRenderer extends SwingRenderer with Positionable with ScalableElement:
     /** The offset of the element. it is used to translate the element starting
       * from the position of the Positionable.
       */
@@ -434,12 +434,12 @@ object SwingRenderers:
       g2d =>
         val pos = io.pixelPosition(
           (
-            position.x + renderOffset.x - element.elementWidth / 2,
-            position.y + renderOffset.y + element.elementHeight / 2
+            position.x + renderOffset.x - element.elementWidth * scaleWidth / 2,
+            position.y + renderOffset.y + element.elementHeight * scaleHeight / 2
           )
         )
-        val w = (element.elementWidth * io.pixelsPerUnit).toInt
-        val h = (element.elementHeight * io.pixelsPerUnit).toInt
+        val w = (element.elementWidth * scaleWidth * io.pixelsPerUnit).toInt
+        val h = (element.elementHeight * scaleHeight * io.pixelsPerUnit).toInt
         element.drawElement(g2d)(pos._1, pos._2, w, h)
 
   /** Behaviour for rendering geometric shapes on a SwingIO.
