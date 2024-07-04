@@ -53,36 +53,52 @@ object Dimensions2D:
         super.onLateUpdate(engine)
         position = followed.position + positionOffset
 
-  /** Tells if a generic T scale is valid
+  /** Gives the scaling component for width and height
     */
-  trait IsValid[T]:
-    /** Returns true if the scale is valid, false otherwise
-      *
-      * @param scale
-      */
-    def apply(scale: T): Boolean
+  trait ScalableElement extends Behaviour:
+    def scaleWidth: Double = 1
+    def scaleHeight: Double = 1
 
-  given IsValid[Double] with
-    override def apply(scale: Double): Boolean = scale > 0
-
-  given IsValid[Vector] with
-    override def apply(scale: Vector): Boolean =
-      scale.x > 0 && scale.y > 0
-
-  /** Add a scale to a behaviour in order to change its dimension. T is the type
-    * of the dimension to scale (e.g. if it's radius, it has one dimension so it
-    * will use a Double as T, if two dimension are needed, it is possible to use
-    * Vector, ecc.)
+  /** Gives the capability to a Behaviour to scale based on a single value.
     *
-    * @param _scale
-    *   init value of the scale of the dimension, must be valid or otherwise
-    *   will throw an IllegalArgumentException
-    * @param isValid
-    *   tell the trait how to decide if the value of the scale is valid
+    * @param _size
+    *   value of the scaling, ScalableElement.scaleWidth and
+    *   ScalableElement.scaleHeight will be equal to this. Must be greater than
+    *   zero or otherwise throws an IllegalArgumentException.
     */
-  trait Scalable[T](private var _scale: T)(using isValid: IsValid[T])
-      extends Behaviour:
-    require(isValid(_scale))
+  trait SingleScalable(private var _size: Double = 1)
+      extends ScalableElement:
+    require(_size > 0)
 
-    def scale: T = _scale
-    def scale_=(s: T) = if isValid(s) then _scale = s
+    def scale = _size
+    def scale_=(s: Double) =
+      require(s > 0)
+      _size = s
+
+    override def scaleWidth: Double = scale
+    override def scaleHeight: Double = scale
+
+  /** Gives the capability to a Behaviour to scale based on two values.
+    *
+    * @param _scaleWidth
+    *   scale value for the width, must be greater than zero or otherwise throws
+    *   an IllegalArgumentException.
+    * @param _scaleHeight
+    *   scale value for the height, must be greater than zero or otherwise
+    *   throws an IllegalArgumentException.
+    */
+  trait Scalable(
+      private var _scaleWidth: Double = 1,
+      private var _scaleHeight: Double = 1
+  ) extends ScalableElement:
+    require(_scaleWidth > 0 && _scaleHeight > 0)
+
+    override def scaleWidth: Double = _scaleWidth
+    def scaleWidth_=(s: Double) =
+      require(s > 0)
+      _scaleWidth = s
+
+    override def scaleHeight: Double = _scaleHeight
+    def scaleHeight_=(s: Double) =
+      require(s > 0)
+      _scaleHeight = s

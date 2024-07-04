@@ -35,13 +35,12 @@ object Physics2D:
     *   IllegalArgumentException
     */
   trait RectCollider(private var width: Double, private var height: Double)
-      extends Collider
-      with Scalable[Vector]:
+      extends Collider with Scalable:
     require(width > 0)
     require(height > 0)
 
-    def colliderWidth: Double = width * scale.x
-    def colliderHeight: Double = height * scale.y
+    def colliderWidth: Double = width * scaleWidth
+    def colliderHeight: Double = height * scaleHeight
 
     def colliderWidth_=(w: Double): Unit = if w > 0 then width = w
     def colliderHeight_=(h: Double): Unit = if h > 0 then height = h
@@ -79,9 +78,8 @@ object Physics2D:
     */
   trait CircleCollider(private var r: Double)
       extends Collider
-      with Scalable[Double]:
+      with SingleScalable:
     require(r > 0)
-
     def radius: Double = scale * r
     def radius_=(radius: Double) = if radius > 0 then r = radius
 

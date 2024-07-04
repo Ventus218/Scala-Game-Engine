@@ -1,4 +1,4 @@
-import Dimensions2D.Positionable
+import Dimensions2D.{Positionable, ScalableElement, SingleScalable}
 import SwingRenderers.Text.{FontName, TextStyle}
 
 import java.awt.image.BufferedImage
@@ -444,7 +444,7 @@ object SwingRenderers:
 
   /** Behaviour for rendering a generic swing game element on a SwingIO
     */
-  trait SwingGameElementRenderer extends SwingRenderer with Positionable:
+  trait SwingGameElementRenderer extends SwingRenderer with Positionable with ScalableElement:
     /** The offset of the element. It is used to translate the element starting
       * from the position of the Positionable. Translation is applied before rotation.
       */
@@ -462,15 +462,15 @@ object SwingRenderers:
       g2d =>
         val offsetPos = io.pixelPosition(
           (
-            position.x + renderOffset.x - element.elementWidth / 2,
-            position.y + renderOffset.y + element.elementHeight / 2
+            position.x + renderOffset.x - element.elementWidth * scaleWidth / 2,
+            position.y + renderOffset.y + element.elementHeight * scaleHeight / 2
           )
         )
         val rotationPos = io.pixelPosition(
           (position.x, position.y)
         )
-        val w = (element.elementWidth * io.pixelsPerUnit).toInt
-        val h = (element.elementHeight * io.pixelsPerUnit).toInt
+        val w = (element.elementWidth * scaleWidth * io.pixelsPerUnit).toInt
+        val h = (element.elementHeight * scaleHeight * io.pixelsPerUnit).toInt
         g2d.rotate(renderRotation, rotationPos._1, rotationPos._2)
         element.drawElement(g2d)(offsetPos._1, offsetPos._2, w, h)
         g2d.setTransform(AffineTransform())

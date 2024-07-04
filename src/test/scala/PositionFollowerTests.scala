@@ -4,8 +4,9 @@ import Dimensions2D.Positionable
 import Dimensions2D.PositionFollower
 import Dimensions2D.Vector.*
 import TestUtils.*
+import org.scalatest.BeforeAndAfterEach
 
-class PositionFollowerTests extends AnyFlatSpec:
+class PositionFollowerTests extends AnyFlatSpec with BeforeAndAfterEach:
   val positionablePosition: Vector = (1, 4)
 
   val positionable = new Behaviour with Positionable(positionablePosition):
@@ -21,11 +22,20 @@ class PositionFollowerTests extends AnyFlatSpec:
       followed = positionable,
       positionOffset = offset
     )
-    with Positionable(0, 0)
+    with Positionable
 
   val scene = () => Seq(positionableFollower, positionable)
 
-  val engine = Engine(new IO {}, Storage())
+  var engine = Engine(
+    io = new IO() {},
+    storage = Storage()
+  )
+
+  override protected def beforeEach(): Unit =
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
 
   "positionFollower" should "follow the position of the Positionable after onInit, with an Offset" in:
     engine.testOnGameloopEvents(scene):
@@ -39,6 +49,11 @@ class PositionFollowerTests extends AnyFlatSpec:
       _.onUpdate:
         positionableFollower.position shouldBe positionablePosition + offset
         positionable.position should not be positionablePosition
+
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
 
     engine.testOnGameloopEvents(scene):
       _.onEarlyUpdate:

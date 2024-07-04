@@ -16,7 +16,17 @@ Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop
 
 I metodi `onEnabled` e `onDisabled` vengono invece invocati non appena un behaviour modifica il proprio stato da abilitato a disabilitato, e viceversa.
 
-Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
+Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects.
+
+Un `engine` può essere avviato una sola volta, quindi bisogna crearne di nuovi se all'interno di più programmi si vogliono eseguire più `run`.
+
+*Esempio*
+```scala
+val engine = Engine(MyIO(), Storage())
+engine.run(myScene)
+val engine = Engine(MyIO(), Storage())
+engine.run(myScene)
+```
 
 ### Delta time nanos
 L'engine offre la possibilità di ricavare il tempo trascorso dallo scorso frame al frame corrente attraverso `engine.deltaTimeNanos`.
@@ -260,23 +270,21 @@ Un **Positionable** che ha questo trait come mixin si vedrà la propria posizion
 **Acceleration** è un mixin che accetta come parametro di inizializzazione un tipo `acceleration` di tipo `Vector`.
 Un **Velocity** che ha questo trait come mixin si vedrà la propria velocità aggiornata ogni volta che verrà chiamata la `onEarlyUpdate`, secondo l'accelerazione impostata. Tale accelerazione sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour acceleri secondo il frameRate.
 
-### Scalable
-**Scalable** è un mixin generico su un tipo `T` che ne rappresenta la dimensione su cui scalare i valori. Per esempio, se si vuole scalare un singolo valore `Double`, allora il tipo `T` sarà proprio `Double`, se invece si vogliono scalare due valori `Double`, il tipo `T` sarà `(Double, Double)`.
-Oltre al tipo generico e ad un valore di inizializzazione dello scaling, **Scalable** utilizza un contesto di tipo **IsValid** generico anch'esso sul tipo `T`, che si occuperà di indicare se lo scaling è valido oppure no.
-Sono presenti due implementazioni di default del contesto **IsValid**, una per `Double` e una per `Vector`, in modo che controlli che lo scaling sia positivo e maggiore di zero (nel caso di due dimensioni, entrambe devono essere positive e maggiori di zero).
-Se il parametro in input al costruttore di **Scalable** non è valido secondo il contesto, viene tirata un'eccezzione del tipo `IllegalArgumentException`.
+### Scalable e SingleScalable
+**Scalable** e **SingleScalable** sono due mixin che offrono la possibilità di scalare le dimensioni di un behaviour.
+**Scalable** permette di scalare due dimensioni, `width` ed `height`, mentre **SingleScalable** scala una singola dimensione.
+Se uno dei valori qualsiasi di scaling è inferiore o uguale a zero viene lanciata una `IllegalArgumentException`.
 
 *Esempio*
 ```scala
 // create a scalable that scales two dimensions, with (1, 1) as value of the scaling
 val scalable: Scalable[Vector] = new Behaviour with Scalable(1d, 1d) // equivalent to Scalable((1d, 1d)) in Scala
-scalable.scale = (4, 3)
-println(scalable.scale) // (4, 3)
-scalable.scale = (10, -2)
-// it is not possible to change either one of the values if one of them is not valid (according to the given context)
-println(scalable.scale) // (4, 3)
+scalable.scaleY = 3
+println(scalable.scaleY) // 3
+scalable.scaleX = 10
+println(scalable.scaleX) // 10
 
-val singleScalable: Scalable[Double] = new Behaviour with Scalable(1.0)
+val singleScalable: SingleScalable[Double] = new Behaviour with SingleScalable(1.0)
 singleScalable.scale = 5
 println(singleScalable.scale) // 5
 ```
@@ -323,7 +331,8 @@ Se l'engine non contiene un IO di tipo SwingIO, allora SwingRenderer lancia un'e
 
 SwingRenderable è esteso dal trait **SwingGameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
 Questo a sua volta è esteso dai trait **SwingShapeRenderer** che rappresenta una forma geometrica, **SwingImageRenderer** che rappresenta un'immagine, e da **SwingTextRenderer** che rappresenta un testo sulla scena.
-Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli.
+
+Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli. Inoltre questi trait sono di tipo `ScalableElement`, per cui le loro dimensioni vengono calcolate in proporzione ai propri fattori di scaling, sia che siano forniti da uno `Scalable` oppure da un `SingleScalable`.
 Questi renderer hanno anche un `renderOffset`, che indica di quanto il disegno debba essere traslato rispetto alla posizione attuale del behaviour, e una `renderRotation`, che indica di quale angolo il renderer deve essere ruotato. La rotazione viene eseguita dopo la traslazione, e con centro di rotazione nella posizione non traslata dell'oggetto.
 
 SwingRenderable è esteso dal trait **SwingUITextRenderer**, che disegna un testo su shermo, e che a differenza degli altri renderer rappresenta un elemento di overlay del gioco. Questo significa che non ha una posizione definita in termini di unità di gioco, bensì in pixel; Inoltre la sua posizione è

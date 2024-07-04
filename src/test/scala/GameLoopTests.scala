@@ -7,7 +7,7 @@ import GameloopTester.*
 import GameloopEvent.*
 import org.scalatest.exceptions.TestFailedException
 
-class GameLoopTests extends AnyFlatSpec:
+class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
   private def getSequenceOfActions(): Seq[GameloopEvent] =
     Seq(Init, Start)
 
@@ -24,12 +24,23 @@ class GameLoopTests extends AnyFlatSpec:
       new Behaviour(enabled = false) with GameloopTester
     )
 
-  val engine = Engine(
+  var engine = Engine(
     io = new IO() {},
     storage = Storage()
   )
 
-  "Engine" should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
+  override protected def beforeEach(): Unit = 
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
+
+  "Engine" should "call run only one time then throws an exception" in:
+    engine.testOnGameloopEvents(() => Seq())()
+    an[IllegalStateException] shouldBe thrownBy:
+      engine.testOnGameloopEvents(() => Seq())()
+
+  it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
     var sequenceOfActions = getSequenceOfActions()
 
     for i <- 0 until numSteps do
@@ -85,42 +96,6 @@ class GameLoopTests extends AnyFlatSpec:
             _.happenedEvents should (
               contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
                 or contain theSameElementsInOrderAs sequenceOfActions
-            )
-          )
-
-  it should "do the loop again if called run after being stopped" in:
-    engine.testOnGameloopEvents(testScene)()
-    engine.stop()
-
-    var sequenceOfActions = getSequenceOfActions()
-
-    for i <- 0 until numSteps do
-      sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
-
-    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps):
-      _.onDeinit:
-        /** This tests has to deal with undeterministic behaviour:
-          *
-          * Given the fact that the order of objects is not defined. The tester
-          * object may run its test while other objects "onDeinit" may not have
-          * been called yet. This is why the test succedes in both cases.
-          */
-        engine
-          .find[GameloopTester]()
-          .filter(_.enabled)
-          .foreach(
-            _.happenedEvents should (
-              contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
-                or contain theSameElementsInOrderAs sequenceOfActions
-            )
-          )
-        engine
-          .find[GameloopTester]()
-          .filter(!_.enabled)
-          .foreach(
-            _.happenedEvents should (
-              contain theSameElementsInOrderAs Seq(Init) :+ Deinit
-                or contain theSameElementsInOrderAs Seq(Init)
             )
           )
 
