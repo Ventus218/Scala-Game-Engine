@@ -62,27 +62,30 @@ object Dimensions2D:
       */
     def apply(scale: T): Boolean
 
-  given IsValid[Double] with
-    override def apply(scale: Double): Boolean = scale > 0
+  trait ScalableElement:
+    def scaleX: Double = 1
+    def scaleY: Double = 1
 
-  given IsValid[Vector] with
-    override def apply(scale: Vector): Boolean =
-      scale.x > 0 && scale.y > 0
+  trait SingleScalable(private var _size: Double = 1) extends Behaviour with ScalableElement:
+    require(_size > 0)
 
-  /** Add a scale to a behaviour in order to change its dimension. T is the type
-    * of the dimension to scale (e.g. if it's radius, it has one dimension so it
-    * will use a Double as T, if two dimension are needed, it is possible to use
-    * Vector, ecc.)
-    *
-    * @param _scale
-    *   init value of the scale of the dimension, must be valid or otherwise
-    *   will throw an IllegalArgumentException
-    * @param isValid
-    *   tell the trait how to decide if the value of the scale is valid
-    */
-  trait Scalable[T](private var _scale: T)(using isValid: IsValid[T])
-      extends Behaviour:
-    require(isValid(_scale))
+    def scale = _size
+    def scale_=(s: Double) =
+      require(s > 0)
+      _size = s
 
-    def scale: T = _scale
-    def scale_=(s: T) = if isValid(s) then _scale = s
+    override def scaleX: Double = scale
+    override def scaleY: Double = scale
+
+  trait Scalable(private var _scaleX: Double = 1, private var _scaleY: Double = 1) extends Behaviour with ScalableElement:
+    require(_scaleX > 0 && _scaleY > 0)
+
+    override def scaleX: Double = _scaleX
+    def scaleX_=(s: Double) =
+      require(s > 0) 
+      _scaleX = s
+
+    override def scaleY: Double = _scaleY
+    def scaleY_=(s: Double) = 
+      require(s > 0) 
+      _scaleY = s
