@@ -12,6 +12,10 @@ Priority goes from top to bottom.
 |29|Refactor: I Renderer devono adottare il nuovo Scalable||
 |30|Bugfix: Fare in modo che swingIO crei i canvas in modo lazy||
 |31|Implementazione dei behaviour built-in **Velocity** e **Acceleration**||
+|32|Refactor del framework per una migliore suddivisione in package||
+|33|Refactor del framework per una migliore suddivisione in package||
+|34|L'engine non deve essere runnabile più di una volta, aggiornare i test, e l'implementazione che deve lanciare delle eccezioni se necessario||
+|35|Refactor: togliere tuple dove vengono passati x e y e mettere un tipo ad-hoc||
 |13|Scelta e design dei videogiochi di esempio||
 |12|Refactor e pulizia di TestUtils||
 |14|Realizzazione dei videogiochi di esempio||
