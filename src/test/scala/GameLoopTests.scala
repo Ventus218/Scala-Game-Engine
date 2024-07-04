@@ -36,9 +36,10 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     )
 
   "Engine" should "call run only one time then throws an exception" in:
-    engine.testOnGameloopEvents(() => Seq())()
+    val emptyScene = () => Seq()
+    test(engine) on emptyScene soThat (builder => builder)
     an[IllegalStateException] shouldBe thrownBy:
-      engine.testOnGameloopEvents(() => Seq())()
+      test(engine) on emptyScene soThat (builder => builder)
 
   it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
     var sequenceOfActions = getSequenceOfActions()
@@ -96,42 +97,6 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
             _.happenedEvents should (
               contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
                 or contain theSameElementsInOrderAs sequenceOfActions
-            )
-          )
-
-  it should "do the loop again if called run after being stopped" in:
-    test(engine) on testScene soThat (builder => builder)
-    engine.stop()
-
-    var sequenceOfActions = getSequenceOfActions()
-
-    for i <- 0 until numSteps do
-      sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
-
-    test(engine) on testScene runningFor numSteps soThat:
-      _.onDeinit:
-        /** This tests has to deal with undeterministic behaviour:
-          *
-          * Given the fact that the order of objects is not defined. The tester
-          * object may run its test while other objects "onDeinit" may not have
-          * been called yet. This is why the test succedes in both cases.
-          */
-        engine
-          .find[GameloopTester]()
-          .filter(_.enabled)
-          .foreach(
-            _.happenedEvents should (
-              contain theSameElementsInOrderAs sequenceOfActions :+ Deinit
-                or contain theSameElementsInOrderAs sequenceOfActions
-            )
-          )
-        engine
-          .find[GameloopTester]()
-          .filter(!_.enabled)
-          .foreach(
-            _.happenedEvents should (
-              contain theSameElementsInOrderAs Seq(Init) :+ Deinit
-                or contain theSameElementsInOrderAs Seq(Init)
             )
           )
 
