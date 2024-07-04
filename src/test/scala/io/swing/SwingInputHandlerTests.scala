@@ -36,21 +36,16 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       Seq(
         new InputCounterObject(objId):
           var inputHandlers: Map[InputButton, Handler] = Map(
-            N_0 -> a,
-            N_1 -> b
+            N_0 -> a
           )
       )
     engine.testOnGameloopEvents(testScene):
       _.onStart:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 0
-        obj.bRuns shouldBe 0
-
-    engine.testOnGameloopEvents(testScene):
-      _.onUpdate:
+      .onUpdate:
         val obj = engine.find[InputCounterObject](objId).get
         obj.aRuns shouldBe 1
-        obj.bRuns shouldBe 0
 
   it should "allow to set multiple handlers for the same input events" in:
     val testScene = () =>

@@ -3,10 +3,20 @@ import org.scalatest.matchers.should.Matchers.*
 import Behaviours.*
 import GameloopTester.*
 import GameloopEvent.*
+import org.scalatest.BeforeAndAfterEach
 
 // TestUtils cannot be used here as they exploit NFrameStopper themselves
-class NFrameStopperTests extends AnyFlatSpec:
-  val engine = Engine(new IO() {}, Storage())
+class NFrameStopperTests extends AnyFlatSpec with BeforeAndAfterEach:
+  var engine = Engine(
+    io = new IO() {},
+    storage = Storage()
+  )
+
+  override protected def beforeEach(): Unit = 
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
 
   val loopGameloopEvents = Seq(EarlyUpdate, Update, LateUpdate)
 

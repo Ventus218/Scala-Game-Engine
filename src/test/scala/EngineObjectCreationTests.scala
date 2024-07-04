@@ -4,12 +4,22 @@ import Behaviours.*
 import TestUtils.{*, given}
 import GameloopTester.*
 import GameloopEvent.*
+import org.scalatest.BeforeAndAfterEach
 
-class EngineObjectCreationTests extends AnyFlatSpec:
+class EngineObjectCreationTests extends AnyFlatSpec with BeforeAndAfterEach:
   val obj1 = new GameObjectMock() with Identifiable("1")
   val obj2 = new GameObjectMock() with Identifiable("2")
   val obj3 = new GameObjectMock() with Identifiable("3")
-  val engine = Engine(new IO() {}, Storage())
+  var engine = Engine(
+    io = new IO() {},
+    storage = Storage()
+  )
+
+  override protected def beforeEach(): Unit = 
+    engine = Engine(
+      io = new IO() {},
+      storage = Storage()
+    )
 
   val scene: Scene = () => Seq(obj1, obj2, obj3)
 
