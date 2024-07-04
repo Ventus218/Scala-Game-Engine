@@ -1,6 +1,7 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.Positionable
+import Dimensions2D.Vector.*
 import Physics2D.Velocity
 import Physics2D.Acceleration
 import TestUtils.*
@@ -23,17 +24,15 @@ class AccelerationTests extends AnyFlatSpec:
 
   it should "update the velocity of the behaviour" in:
     acceleration.acceleration = (2, 3)
-    var velX: Double = 0
-    var velY: Double = 0
-    acceleration.velocity = (velX, velY)
+
+    var initialVelocity: Vector = (0, 0)
+    acceleration.velocity = initialVelocity
 
     val engine = Engine(new IO {}, Storage())
     val scene = () => Seq(acceleration)
 
     test(engine) on scene runningFor 2 frames so that:
       _.onUpdate:
-        acceleration.velocity._1 shouldBe velX + acceleration.acceleration._1 * engine.deltaTimeSeconds
-        acceleration.velocity._2 shouldBe velY + acceleration.acceleration._2 * engine.deltaTimeSeconds
+        acceleration.velocity shouldBe initialVelocity + acceleration.acceleration * engine.deltaTimeSeconds
       .onLateUpdate:
-        velX = acceleration.velocity._1
-        velY = acceleration.velocity._2
+        initialVelocity = acceleration.velocity
