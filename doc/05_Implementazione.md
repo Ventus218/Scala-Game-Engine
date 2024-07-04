@@ -16,7 +16,17 @@ Una volta avviato il game loop attraverso il metodo `engine.run()`, il game loop
 
 I metodi `onEnabled` e `onDisabled` vengono invece invocati non appena un behaviour modifica il proprio stato da abilitato a disabilitato, e viceversa.
 
-Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects
+Chiamando il metodo `engine.stop()` l'engine capirà che si deve fermare ed una volta finito l'attuale ciclo (quindi dopo aver chiamato la onLateUpdate sui gameObjects abilitati) uscirà da esso per chiamare la onDeinit su tutti i gameObjects.
+
+Un `engine` può essere avviato una sola volta, quindi bisogna crearne di nuovi se all'interno di più programmi si vogliono eseguire più `run`.
+
+*Esempio*
+```scala
+val engine = Engine(MyIO(), Storage())
+engine.run(myScene)
+val engine = Engine(MyIO(), Storage())
+engine.run(myScene)
+```
 
 ### Delta time nanos
 L'engine offre la possibilità di ricavare il tempo trascorso dallo scorso frame al frame corrente attraverso `engine.deltaTimeNanos`.
