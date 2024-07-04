@@ -1,4 +1,3 @@
-import Dimensions2D.Positionable
 import SwingRenderers.SwingTextRenderer
 import SwingRenderers.Text.{FontName, TextStyle}
 import SwingRendererTestUtilities.*

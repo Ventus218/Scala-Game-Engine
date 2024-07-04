@@ -555,7 +555,7 @@ object SwingRenderers:
       color: Color,
       fontFamily: FontName = "Arial",
       fontStyle: TextStyle = TextStyle.Plain,
-      offset: (Double, Double) = (0, 0),
+      offset: Vector = (0, 0),
       priority: Int = 0
   ) extends SwingGameElementRenderer:
     protected val element: SwingText =
