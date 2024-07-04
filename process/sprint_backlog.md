@@ -58,8 +58,8 @@
 ## Sprint 3 (inizio 1/07/2024)
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
-|25|Inserire uno SwingRenderer per il testo (overlay)|Michele|X|||
-|25|Inserire uno SwingRenderer per il testo (in-game)|Michele|X|||
+|25|Inserire uno SwingRenderer per il testo (overlay)|Michele|||X|
+|25|Inserire uno SwingRenderer per il testo (in-game)|Michele|||X|
 |26|Inserire un behaviour built-in PositionFollower|Corrado|||X|
 |27|Inserire un behaviour built-in per un bottone (overlay)|Alessandro|X|||
 |27|Inserire un behaviour built-in per un bottone (in-game)|Alessandro|X|||
