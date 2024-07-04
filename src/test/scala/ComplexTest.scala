@@ -48,7 +48,7 @@ object ComplexTest:
       val movementVelocity: Double = 40
   ) extends Behaviour
       with Positionable(initX, initY)
-      with Scalable(1.0)
+      with SingleScalable(1.0)
       with SwingCircleRenderer(circleRadius, Color.blue)
       with CircleCollider(circleRadius)
       with SwingInputHandler
