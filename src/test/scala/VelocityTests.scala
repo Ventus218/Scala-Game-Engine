@@ -1,6 +1,7 @@
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Dimensions2D.Positionable
+import Dimensions2D.Vector.*
 import Physics2D.Velocity
 import TestUtils.testOnGameloopEvents
 
@@ -20,17 +21,14 @@ class VelocityTests extends AnyFlatSpec:
     it should "update the position of the behaviour" in:
         velocity.velocity = (2, 3)
 
-        var x: Double = 0
-        var y: Double = 0
-        velocity.x = x
-        velocity.y = y
+        var initialPosition: Vector = (0, 0)
+        velocity.position = initialPosition
 
         val engine = Engine(new IO {}, Storage())
         val scene = () => Seq(velocity)
         engine.testOnGameloopEvents(scene, nFramesToRun = 2):
-            _.onLateUpdate:
-                velocity.x shouldBe x + velocity.velocity._1 * engine.deltaTimeSeconds
-                velocity.y shouldBe y + velocity.velocity._2 * engine.deltaTimeSeconds
-            .onEarlyUpdate:
-                x = velocity.x
-                y = velocity.y
+            _.onEarlyUpdate:
+                initialPosition = velocity.position
+            .onLateUpdate:
+                velocity.position shouldBe initialPosition + velocity.velocity * engine.deltaTimeSeconds
+            

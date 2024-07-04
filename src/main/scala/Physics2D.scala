@@ -100,14 +100,10 @@ object Physics2D:
     *
     * @param _velocity
     *   value of X and Y to add to the position in order to move the behaviour.
-    *   It must be not null or otherwise throws an IllegalArgumentException.
     */
-  trait Velocity(private var _velocity: (Double, Double) = (0, 0)) extends Positionable:
-    def velocity: (Double, Double) = _velocity
-    def velocity_=(v: (Double, Double)) = _velocity = v
+  trait Velocity(var velocity: Vector = (0, 0)) extends Positionable:
 
     override def onUpdate: Engine => Unit =
       engine =>
         super.onUpdate(engine)
-        this.x = this.x + velocity._1 * engine.deltaTimeSeconds
-        this.y = this.y + velocity._2 * engine.deltaTimeSeconds
+        position = position + velocity * engine.deltaTimeSeconds
