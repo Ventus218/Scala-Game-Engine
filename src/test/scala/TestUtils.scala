@@ -29,9 +29,68 @@ object TestUtils:
   given Conversion[Unit, TestingFunction] with
     def apply(x: Unit): TestingFunction = _ => ()
 
-  /** A builder for defining a testing function for each gameloop event and a
-    * number of frames for the engine to run
+  /** A builder for testing an engine execution on one scene (empty by default)
+    * for a finite number of frames which defaults to 1.
     */
+  opaque type TestBuilder = TestBuilderImpl
+  private case class TestBuilderImpl(
+      val engine: Engine,
+      val scene: Scene = () => Seq.empty,
+      val nFramesToRun: Int = 1
+  )
+
+  final class SoWord
+
+  /** This field enable syntax like
+    *
+    * `test(engine) on scene runningFor 1 frame so that:`
+    */
+  val so: SoWord = SoWord()
+
+  /** Instantiate a `TestBuilder` for defining a test to be run on the given
+    * engine.
+    */
+  def test(engine: Engine): TestBuilder =
+    TestBuilderImpl(engine = engine)
+  extension (builder: TestBuilder)
+    /** Sets the scene on which the test will be run */
+    infix def on(scene: Scene): TestBuilder =
+      builder.copy(scene = scene)
+
+    /** Sets the number of frames that the engine will run before stopping
+      * automatically
+      */
+    infix def runningFor(frames: Int): TestBuilder =
+      builder.copy(nFramesToRun = frames)
+
+    /** Builds the `TestBuilder`, allows to configure the `TesterObjectBuilder`
+      * and then runs the engine and injecting a tester object into the scene.
+      */
+    infix def soThat(
+        testerObjectBuilder: TesterObjectBuilder => TesterObjectBuilder
+    ): Unit = builder.engine.testWithTesterObject(builder.scene):
+      testerObjectBuilder(
+        TesterObjectBuilderImpl(nFramesToRun = builder.nFramesToRun)
+      ).build
+
+    /** An alias for soThat */
+    infix def that(
+        testerObjectBuilder: TesterObjectBuilder => TesterObjectBuilder
+    ): Unit = builder.soThat(testerObjectBuilder)
+
+    /** Enables this syntax:
+      *
+      * `test(engine) on scene runningFor 1 frame`
+      */
+    infix def frame(so: SoWord): TestBuilder = builder
+
+    /** Enables this syntax:
+      *
+      * `test(engine) on scene runningFor 2 frames`
+      */
+    infix def frames(so: SoWord): TestBuilder = builder
+
+  /** A builder for defining a testing function for each gameloop event */
   opaque type TesterObjectBuilder = TesterObjectBuilderImpl
   case class TesterObjectBuilderImpl(
       val init: () => TestingFunction = () => (),
