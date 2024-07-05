@@ -3,7 +3,11 @@ package sge.swing.behaviours.ingame
 import sge.core.*
 import metrics.Vector.*
 import behaviours.dimension2d.*
-import sge.swing.input.InputButton
+import sge.swing.*
+import Utils.*
+import input.InputButton
+import output.*
+import Text.*
 import InputButton.*
 import SwingInputHandler.{*, given}
 import java.awt.{Graphics2D, Color}
