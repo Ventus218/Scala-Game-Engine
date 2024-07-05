@@ -24,7 +24,7 @@ jobs:
     - name: Fixing relative paths and copying README.md into docs
       run: |
         sed -i 's|./docs/|./|g' README.md
-        cp REAMDE.md docs/00_Indice.md
+        cp README.md docs/00_Indice.md
     - uses: baileyjm02/markdown-to-pdf@v1
       with:
         input_dir: docs
