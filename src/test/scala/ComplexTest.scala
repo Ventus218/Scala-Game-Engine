@@ -26,13 +26,20 @@ object ComplexTest:
 
     engine.run(MenuScene)
 
-  class MenuObj extends Behaviour with SwingInputHandler:
-    var inputHandlers: Map[InputButton, Handler] = Map(
-      P -> onPlay
-    )
-
-    private def onPlay(input: InputButton)(engine: Engine): Unit =
+  class PlayButton
+      extends Behaviour
+      with SwingButton(
+        _buttonText = "Play",
+        _inputButtonTriggers = Set(MouseButton1, P)
+      )
+      with Positionable
+      with SwingRectRenderer(20, 8, Color.gray):
+    override def onButtonPressed: Engine => Unit = engine =>
       engine.loadScene(GameScene)
+
+    override def onUpdate: Engine => Unit = engine =>
+      position = position + Versor.right * 0.1
+      super.onUpdate(engine)
 
   class Obstacle(initX: Double, initY: Double, squareSide: Double)
       extends Behaviour
@@ -118,7 +125,7 @@ object ComplexTest:
 
   object MenuScene extends Scene:
     override def apply(): Iterable[Behaviour] =
-      Seq(MenuObj())
+      Seq(PlayButton())
 
   object GameScene extends Scene:
     override def apply(): Iterable[Behaviour] =

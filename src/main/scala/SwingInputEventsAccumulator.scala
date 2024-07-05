@@ -119,7 +119,6 @@ class SwingInputEventsAccumulator extends KeyListener, MouseListener:
               case None      => Some(Seq(event))
             )
         case None =>
-          // Logging instead of throwing may be a better choice
-          throw Exception(
-            s"Missing $InputButton enum value for received Swing KeyEvent: $e"
+          System.err.println(
+            s"Missing $InputButton enum value for received Swing InputEvent"
           )

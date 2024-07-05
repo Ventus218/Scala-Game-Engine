@@ -429,3 +429,11 @@ class GameObject extends Behaviour
 
         super.onUpdate(engine)
 ```
+
+### SwingButton
+E' un bottone rettangolare con testo.
+Mixa un SwingRectRenderer per lo sfondo e ha internamente un SwingTextRenderer per il testo (per questo è necessario chiamare su questo campo tutti gli eventi del game loop).
+
+Permette di definire quali tasti (tastiera o mouse) possono premerlo.
+
+Viene premuto solo al rilascio del tasto ed inoltre si assicura che la pressione sia anche incominciata sul tasto.
