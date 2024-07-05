@@ -1,13 +1,12 @@
-import SwingRenderers.SwingRectRenderer
-import SwingIO.*
+package sge.swing.behaviours.ingame
+
+import sge.core.*
+import metrics.Vector.*
+import behaviours.dimension2d.*
+import sge.swing.input.InputButton
 import InputButton.*
 import SwingInputHandler.{*, given}
-import Dimensions2D.Vector.*
-import SwingRenderers.SwingTextRenderer
-import SwingRenderers.Text.*
-import java.awt.Color
-import Dimensions2D.Positionable
-import java.awt.Graphics2D
+import java.awt.{Graphics2D, Color}
 
 /** A swing button with text.
   *

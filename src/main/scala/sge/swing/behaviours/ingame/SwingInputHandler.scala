@@ -1,4 +1,9 @@
-import SwingIO.InputButton
+package sge.swing.behaviours.ingame
+
+import sge.core.*
+import sge.swing.*
+import input.InputButton
+import Utils.*
 
 object SwingInputHandler:
 
@@ -66,7 +71,7 @@ object SwingInputHandler:
     private var lastFrameReceivedInputs: Set[InputButton] = Set()
 
     override def onEarlyUpdate: Engine => Unit = (engine) =>
-      val io = engine.io.asInstanceOf[SwingIO]
+      val io = engine.swingIO
 
       val receivedInputs = inputHandlers
         .filterKeys(io.inputButtonWasPressed(_))

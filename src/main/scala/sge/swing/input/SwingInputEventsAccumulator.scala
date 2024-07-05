@@ -1,18 +1,19 @@
-import java.awt.event.KeyListener
+package sge.swing.input
+
 import java.awt.event.{InputEvent as SwingInputEvent}
 import java.awt.event.{KeyEvent as SwingKeyEvent}
 import java.awt.event.{MouseEvent as SwingMouseEvent}
-import SwingIO.*
-import SwingIO.InputButton.*
-import SwingIO.InputEvent.*
-import java.awt.event.MouseListener
+import java.awt.event.{KeyListener, MouseListener}
+import InputEvent.*
 
 /** Accumulates InputEvents organising them frame by frame.
   *
   * onFrameEnd must be called on every frame to let the accumulator to work
   * properly.
   */
-class SwingInputEventsAccumulator extends KeyListener, MouseListener:
+private[swing] class SwingInputEventsAccumulator
+    extends KeyListener,
+      MouseListener:
 
   private var _lastInputEventBeforeLastFrame: Map[InputButton, InputEvent] =
     Map()
