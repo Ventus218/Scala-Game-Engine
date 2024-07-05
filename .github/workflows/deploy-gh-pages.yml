@@ -27,14 +27,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          path: ./_site
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Duplicate README into index.md
-        working-directory: _site
         run: |
           cp README.md index.md
+      - name: Build
+        uses: actions/jekyll-build-pages@v1
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
 
