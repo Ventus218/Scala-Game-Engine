@@ -30,9 +30,11 @@ jobs:
       uses: shrink/actions-document-publish@v1
       with:
         sources: 'README.md docs/*.md'
+    - name: Rename pdf file
+      run: mv ${{ steps.publish-document.outputs.pdf }} "./Documentazione.pdf"
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
           SGE.jar
-          ${{ steps.publish-document.outputs.pdf }}
+          Documentazione.pdf
