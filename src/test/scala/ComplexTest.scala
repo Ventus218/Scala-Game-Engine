@@ -1,4 +1,5 @@
 import SwingInputHandler.{*, given}
+import SwingRenderers.Angle.*
 import java.awt.Color
 import SwingIO.InputButton
 import InputButton.*
@@ -46,7 +47,11 @@ object ComplexTest:
       with Positionable(initX, initY)
       with Scalable(1.0, 1.0)
       with SwingSquareRenderer(squareSide, Color.red)
-      with RectCollider(squareSide, squareSide)
+      with RectCollider(squareSide, squareSide):
+
+    override def onUpdate: Engine => Unit = engine =>
+      // rotate obstacle
+      renderRotation = renderRotation + 15.degrees * engine.deltaTimeSeconds
 
   class GameObject(
       initX: Double,
