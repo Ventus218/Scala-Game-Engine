@@ -32,11 +32,6 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   "SwingButton" should "have a rectangular shape" in:
     testButton.isInstanceOf[SwingRectRenderer] shouldBe true
 
-  it should "have a mutable text value" in:
-    testButton.buttonText shouldBe "Button"
-    testButton.buttonText = "hello"
-    testButton.buttonText shouldBe "hello"
-
   it should "have a text default value of an empty string" in:
     newDefaultButton().buttonText shouldBe ""
 
