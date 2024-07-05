@@ -9,8 +9,23 @@ L'idea è che l'oggetto di gioco offre la possibilità di eseguire test in ogni 
 ## TestUtils
 Il modulo `TestUtils` racchiude tutte le utility necessarie per semplificare il testing del gameloop.
 
-### `testOnGameloopEvents`
-Questa è la funzione (fornita come extension su `Engine`) per testare il gameloop, accetta una scena e il numero di frame per il quale l'engine dovrà essere eseguito. Inoltre fornisce un [builder](#testerobjectbuilder) per definire la logica di testing sugli specifici eventi del gameloop.
+### `TestBuilder`
+Questo builder consente di configurare gli aspetti fondamentali di un test ovvero:
+- su quale engine eseguirlo
+- quale scena caricare
+- per quanti frame eseguire il test prima di fermare automaticamente l'engine
+
+Per ottenere un test builder basta semplicemente chiamare la funzione `test` con l'engine come parametro:
+```scala
+test(engine)
+```
+Ora è possibile configurarlo con una sintassi domain-specific grazie a dei metodi specifici come:
+- `runningFor` che richiede il numero di frame
+- `on` che richiede la scena da caricare
+
+Per eseguire il test è necessario invocare `that` oppure `soThat` in modo da ottenere il [`TesterObjectBuilder`](#testerobjectbuilder) per definire la logica di testing sugli specifici eventi del gameloop.
+
+[Qui](#utilizzo-di-testutils) è possibile vedere come risulta la sintassi.
 
 ### `TesterObjectBuilder`
 Questo builder permette di configurare l'oggetto tester che verrà iniettato nella scena, consente quindi di definire una [`TestingFunction`](#testingfunction) per ogni fase del gameloop che verrà eseguita quando l'oggetto tester arriverà in tale fase.
@@ -30,7 +45,7 @@ In questo modo è possibile passare un semplice blocco di codice o delle asserzi
 Le `TestingFunction` ricevono un `TestingContext` che contiene riferimenti utili, in particolare un riferimento all'oggetto tester permettendo di riconoscerlo ed escluderlo da alcune logiche di test.
 
 ### Altri metodi per testare l'`Engine`
-- `loadSceneTestingOnGameloopEvents` come [`testOnGameloopEvents`](#testongameloopevents) però pensata per essere utilizzata mentre l'engine è già in esecuzione per cambiare scena iniettando nuovamente un oggetto tester.
+- `loadSceneTestingOnGameloopEvents` è pensata per essere utilizzata mentre l'engine è già in esecuzione per cambiare scena iniettando nuovamente un oggetto tester.
 - `testWithTesterObject` è il metodo di test più generico disponibile.
 
     Accetta una scena su cui lanciare l'engine, e un oggetto tester (che servirà ad eseguire le funzioni di test e verrà iniettato nell'engine).
@@ -39,12 +54,24 @@ Le `TestingFunction` ricevono un `TestingContext` che contiene riferimenti utili
 Tutti questi metodi sono forniti come extension su `Engine`
 
 ## Utilizzo di TestUtils
+Tutti i test possono utilizzare una sintassi del seguente tipo:
+```scala
+// Si legge "test engine on testScene runningFor 2 frames so that onUpdate x shouldBe 3
+test(engine) on testScene runningFor 2 frames so that: 
+    _.onUpdate:
+        x shouldBe 3
+
+// E' anche possibile non specificare il numero di frame, nel qual caso di default verrà eseguito un solo frame
+test(engine) on testScene soThat: 
+    _.onUpdate:
+        x shouldBe 3
+```
 
 ```scala
 // Verrà testato che nella fase di update non sono
 // presenti in gioco oggetti mixati con Identifiable
 "find(id)" should "retrieve no object if none is found with the given identifier" in:
-    engine.testOnGameloopEvents(scene): // avvio dell'engine sulla scena "scene"
+    test(engine) on scene soThat: // avvio dell'engine sulla scena "scene"
         _.onUpdate: // configurazione del builder per l'evento onUpdate
             engine.find[Identifiable]("3") shouldBe None // funzione di test
 ```
@@ -55,7 +82,7 @@ Tutti questi metodi sono forniti come extension su `Engine`
 "find" should "retrieve all objects if Behaviour is given as type parameters" in:
     // Si noti che in questo caso serve conoscere quale fosse
     // l'oggetto tester per poterlo escludere.
-    engine.testOnGameloopEvents(scene):
+    test(engine) on scene soThat:
         _.onUpdate: (testingContext) => // Si noti come la sintassi è la stessa ma basta aggiungere il parametro
             engine.find[Behaviour]() should contain theSameElementsAs gameObjects + testingContext.testerObject
 ```
@@ -63,7 +90,7 @@ Tutti questi metodi sono forniti come extension su `Engine`
 ```scala
 // Si vuole testare che al primo frame il delta time sia 0
 "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
         // si noti come è semplice configurare il builder
         _.onEarlyUpdate:
             engine.deltaTimeNanos shouldBe 0
@@ -84,7 +111,7 @@ Tutti questi metodi sono forniti come extension su `Engine`
 
     // L'idea è che i test facciano girare l'engine per 5 volte, ma dato che
     // un NFrameStopper(1) è stato aggiunto, si fermerà dopo un solo frame
-    engine.testOnGameloopEvents(oneFrameScene, nFramesToRun = 5):
+    test(engine) on oneFrameScene runningFor 5 frames so that:
         _.onDeinit:
             /** This tests has to deal with undeterministic behaviour:
             *
@@ -105,7 +132,7 @@ Tutti questi metodi sono forniti come extension su `Engine`
 
 ```scala
 "Engine.loadScene" should "change the scene after finishing the current frame" in:
-    engine.testOnGameloopEvents(scene1):
+    test(engine) on scene1 soThat:
         _.onEarlyUpdate:
             // Si noti come cambiando scena è necessario ridefinire il testing da effettuare
             engine.loadSceneTestingOnGameloopEvents(scene2):

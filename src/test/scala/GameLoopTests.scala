@@ -29,16 +29,17 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     storage = Storage()
   )
 
-  override protected def beforeEach(): Unit = 
+  override protected def beforeEach(): Unit =
     engine = Engine(
       io = new IO() {},
       storage = Storage()
     )
 
   "Engine" should "call run only one time then throws an exception" in:
-    engine.testOnGameloopEvents(() => Seq())()
+    val emptyScene = () => Seq()
+    test(engine) on emptyScene soThat (builder => builder)
     an[IllegalStateException] shouldBe thrownBy:
-      engine.testOnGameloopEvents(() => Seq())()
+      test(engine) on emptyScene soThat (builder => builder)
 
   it should "call all methods on enabled gameObjects and just init and deinit on disabled gameObjects" in:
     var sequenceOfActions = getSequenceOfActions()
@@ -46,7 +47,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     for i <- 0 until numSteps do
       sequenceOfActions = sequenceOfActions ++ getUpdatesSequenceOfActions()
 
-    engine.testOnGameloopEvents(testScene, nFramesToRun = numSteps):
+    test(engine) on testScene runningFor numSteps frames so that:
       _.onDeinit:
         /** This tests has to deal with undeterministic behaviour:
           *
@@ -81,7 +82,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
       getSequenceOfActions() ++ getUpdatesSequenceOfActions()
 
     // The idea is that the test should run the engine for 5 frames but since a NFrameStopper(1) has been added it should stop only after one frame
-    engine.testOnGameloopEvents(oneFrameScene, nFramesToRun = 5):
+    test(engine) on oneFrameScene runningFor 5 frames so that:
       _.onDeinit:
         /** This tests has to deal with undeterministic behaviour:
           *
@@ -100,7 +101,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
           )
 
   it should "throw an exception if the user tries to run again the engine while it's already running" in:
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onStart:
         an[IllegalStateException] shouldBe thrownBy:
           engine.run(() => Seq())
@@ -112,7 +113,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     val engine = Engine(new IO {}, Storage(), fpsLimit)
 
     val start = System.currentTimeMillis()
-    engine.testOnGameloopEvents(nFramesToRun = fpsLimit)()
+    test(engine) runningFor fpsLimit soThat (builder => builder)
     val end = System.currentTimeMillis()
 
     val elapsedTimeSeconds = (end - start) / 1_000d
@@ -125,7 +126,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
       case throwable => throw throwable
 
   "Engine.deltaTimeNanos" should "be 0 for all the iteration of the game loop" in:
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onEarlyUpdate:
         engine.deltaTimeNanos shouldBe 0
       .onUpdate:
@@ -134,14 +135,14 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
         engine.deltaTimeNanos shouldBe 0
 
   it should "be 0 if the game loop is not executed" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 0):
+    test(engine) on testScene runningFor 0 frames so that:
       _.onDeinit:
         engine.deltaTimeNanos shouldBe 0
 
     engine.deltaTimeNanos shouldBe 0
 
   it should "be higher than 0 after a game loop iteration" in:
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onDeinit:
         engine.deltaTimeNanos should be > 0L
 
@@ -150,7 +151,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
     val expectedElapsedTimeNanos =
       (slowDownDurationMillis * Math.pow(10, 6)).toLong * 3
 
-    engine.testOnGameloopEvents():
+    test(engine) soThat:
       _.onEarlyUpdate:
         Thread.sleep(slowDownDurationMillis)
       .onUpdate:

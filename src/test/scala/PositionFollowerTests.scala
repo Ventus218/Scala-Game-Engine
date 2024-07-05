@@ -38,14 +38,14 @@ class PositionFollowerTests extends AnyFlatSpec with BeforeAndAfterEach:
     )
 
   "positionFollower" should "follow the position of the Positionable after onInit, with an Offset" in:
-    engine.testOnGameloopEvents(scene):
+    test(engine) on scene soThat:
       _.onStart:
         positionableFollower.position shouldBe positionable.position + offset
 
   it should "follow the position of the Positionable after onLateUpdate, with an Offset" in:
     positionable.position = positionablePosition
 
-    engine.testOnGameloopEvents(scene):
+    test(engine) on scene soThat:
       _.onUpdate:
         positionableFollower.position shouldBe positionablePosition + offset
         positionable.position should not be positionablePosition
@@ -54,8 +54,7 @@ class PositionFollowerTests extends AnyFlatSpec with BeforeAndAfterEach:
       io = new IO() {},
       storage = Storage()
     )
-
-    engine.testOnGameloopEvents(scene):
+    test(engine) on scene soThat:
       _.onEarlyUpdate:
         positionableFollower.position shouldBe positionable.position + offset
 

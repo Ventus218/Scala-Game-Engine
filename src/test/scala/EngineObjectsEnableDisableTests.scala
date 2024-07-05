@@ -28,7 +28,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
     )
 
   "Engine" should "allow to dinamically enable objects" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 2):
+    test(engine) on testScene runningFor 2 frames so that:
       _.onUpdate:
         val obj = engine.find[TestObj](disabledId).get
         if !obj.enabled then engine.enable(obj)
@@ -37,7 +37,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
         obj.happenedEvents should contain(Enable)
 
   "Dinamically enabled objects" should "execute onEnabled only at the beginning of the next frame" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 2):
+    test(engine) on testScene runningFor 2 frames so that:
       _.onUpdate:
         val obj = engine.find[TestObj](disabledId).get
         if !obj.enabled then
@@ -48,7 +48,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
         obj.happenedEvents should contain(Enable)
 
   it should "execute onStart and all three onUpdates only in the next frame after being enabled" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 1):
+    test(engine) on testScene soThat:
       _.onUpdate:
         val obj = engine.find[TestObj](disabledId).get
         engine.enable(obj)
@@ -66,7 +66,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
       storage = Storage()
     )
 
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 2):
+    test(engine) on testScene runningFor 2 frames so that:
       _.onUpdate:
         val obj = engine.find[TestObj](disabledId).get
         engine.enable(obj)
@@ -77,7 +77,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
         ) shouldBe true
 
   "enable" should "not execute onEnabled for objects that are already enabled" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onUpdate:
         val obj = engine.find[TestObj](disabledId).get
         engine.enable(obj)
@@ -86,7 +86,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
         obj.happenedEvents.count(_ == Enable) shouldBe 1
 
   "Engine" should "allow to dinamically disable objects" in:
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onUpdate:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
@@ -95,7 +95,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
         obj.happenedEvents should contain(Disable)
 
   "Dinamically disabled objects" should "execute onDisabled only at the end of the loop" in:
-    engine.testOnGameloopEvents(testScene):
+    test(engine) on testScene soThat:
       _.onUpdate:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
@@ -106,7 +106,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
         ) shouldBe true
 
   it should "not execute all three onUpdates the frames after being disabled" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 2):
+    test(engine) on testScene runningFor 2 frames so that:
       _.onUpdate:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
@@ -130,7 +130,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
         ))
 
   "disable" should "not execute onDisabled for objects that are already disabled" in:
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onUpdate:
         val obj = engine.find[TestObj](enabledId).get
         engine.disable(obj)
@@ -140,7 +140,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
 
   "Engine" should "allow to disable and enable the same object multiple times" in:
     var frame = 1
-    engine.testOnGameloopEvents(testScene, nFramesToRun = 3):
+    test(engine) on testScene runningFor 3 frames so that:
       _.onUpdate:
         val obj = engine.find[TestObj](enabledId).get
         if (frame % 2) != 0 then engine.disable(obj)
