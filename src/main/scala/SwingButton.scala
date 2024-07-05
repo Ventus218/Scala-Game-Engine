@@ -16,12 +16,12 @@ import java.awt.Graphics2D
   *   button
   */
 trait SwingButton(
-    val buttonText: String = "",
-    private var _textSize: Double = 5,
-    private var _textColor: Color = Color.black,
-    val fontFamily: FontName = "Arial",
-    private var _fontStyle: TextStyle = TextStyle.Plain,
-    private var _textOffset: Vector = (0, 1),
+    _buttonText: String = "",
+    _textSize: Double = 5,
+    _textColor: Color = Color.black,
+    _textFont: FontName = "Arial",
+    _textStyle: TextStyle = TextStyle.Plain,
+    _textOffset: Vector = (0, 1),
     private var _inputButtonTriggers: Set[InputButton] = Set(MouseButton1)
 ) extends Behaviour
     with SwingRectRenderer
@@ -29,12 +29,12 @@ trait SwingButton(
 
   private val textRenderer: SwingTextRenderer = new Behaviour
     with SwingTextRenderer(
-      buttonText,
-      textSize,
-      textColor,
-      fontFamily,
-      fontStyle,
-      textOffset,
+      _buttonText,
+      _textSize,
+      _textColor,
+      _textFont,
+      _textStyle,
+      _textOffset,
       priority = renderingPriority + 1
     )
     with Positionable(position)
@@ -98,22 +98,20 @@ trait SwingButton(
   def onButtonPressed: Engine => Unit = _ => ()
 
   // Ensure that changes to button text elements reflect on textRenderer
-  def textSize: Double = _textSize
-  def textSize_=(newValue: Double): Unit =
-    textRenderer.textSize = newValue
-    _textSize = newValue
-  def textColor: Color = _textColor
-  def textColor_=(newValue: Color): Unit =
-    textRenderer.textColor = newValue
-    _textColor = newValue
-  def fontStyle: TextStyle = _fontStyle
-  def fontStyle_=(newValue: TextStyle): Unit =
-    textRenderer.textStyle = newValue
-    _fontStyle = newValue
-  def textOffset: Vector = _textOffset
-  def textOffset_=(newValue: Vector): Unit =
-    textRenderer.renderOffset = newValue
-    _textOffset = newValue
+  export textRenderer.{
+    textContent => buttonText,
+    textContent_= => buttonText_=,
+    textSize,
+    textSize_=,
+    textColor,
+    textColor_=,
+    textFont,
+    textFont_=,
+    textStyle,
+    textStyle_=
+  }
+  def textOffset = textRenderer.renderOffset
+  def textOffset_=(newValue: Vector) = textRenderer.renderOffset = newValue
 
   // Just relaying every gameloop event call to textRenderer and making it follow the button on Update
   override def onInit: Engine => Unit = engine =>

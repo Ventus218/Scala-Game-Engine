@@ -29,7 +29,7 @@ object ComplexTest:
   class PlayButton
       extends Behaviour
       with SwingButton(
-        buttonText = "Play",
+        _buttonText = "Play",
         _inputButtonTriggers = Set(MouseButton1, P)
       )
       with Positionable
