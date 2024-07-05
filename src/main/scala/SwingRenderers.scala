@@ -11,26 +11,25 @@ import Dimensions2D.Vector.*
 import java.awt.geom.AffineTransform
 
 object SwingRenderers:
-  
+
   object Angle:
     /** Basic type for manipulating angles in a simpler way.
       */
     type Angle = Double
-    extension[N <: Int | Double] (n: N)
+    extension [N <: Int | Double](n: N)
       /** Convert the angle from radians to Angle
         * @return
         *   the corresponding angle
         */
       def radians: Angle = n match
-        case i: Int     => i.toDouble
-        case d: Double  => d
-        
+        case i: Int    => i.toDouble
+        case d: Double => d
+
       /** Convert the angle from degrees to Angle
         * @return
         *   the corresponding angle
         */
       def degrees: Angle = n.radians.toRadians
-
 
   object GameElements:
     /** Basic trait for manipulating and drawing game entities using Swing. The
@@ -277,8 +276,7 @@ object SwingRenderers:
   object Text:
     import GameElements.*
 
-    /** The style of the font.
-      * Can be Plain, Bold or Italic.
+    /** The style of the font. Can be Plain, Bold or Italic.
       * @param style
       *   the Swing keycode for the style
       */
@@ -316,31 +314,31 @@ object SwingRenderers:
 
       /** Set the style of the text.
         * @param style
-        *    the new style
+        *   the new style
         */
       def textStyle_=(style: TextStyle): Unit
 
       /** The font family of the text.
         * @return
-        *    the font family
+        *   the font family
         */
       def textFont: FontName
 
       /** Set the font family of the text.
         * @param font
-        * the new font family
+        *   the new font family
         */
       def textFont_=(font: FontName): Unit
 
       /** The color of the text.
         * @return
-        *    the color
+        *   the color
         */
       def textColor: Color
 
       /** Set the color of the text.
         * @param color
-        * the new color
+        *   the new color
         */
       def textColor_=(color: Color): Unit
 
@@ -351,19 +349,19 @@ object SwingRenderers:
             g2d.setPaint(textColor)
             g2d.drawString(textContent, posX, posY + h)
 
-    /** Simple implementation of SwingText, that represents a one-line text.
-      * Its width cannot be modified, and is automatically computed given the font size
-      * and the text.
+    /** Simple implementation of SwingText, that represents a one-line text. Its
+      * width cannot be modified, and is automatically computed given the font
+      * size and the text.
       * @param text
-      *    the content
+      *   the content
       * @param size
-      *    the size in game-units
+      *   the size in game-units
       * @param color
-      *    the color
+      *   the color
       * @param font
-      *    the font family
+      *   the font family
       * @param style
-      *    the font style
+      *   the font style
       */
     private class OneLineSwingText(
         private var text: String,
@@ -371,7 +369,8 @@ object SwingRenderers:
         private var color: Color,
         private var font: FontName,
         private var style: TextStyle
-    ) extends BaseSwingGameElement(size, size) with SwingText:
+    ) extends BaseSwingGameElement(size, size)
+        with SwingText:
       import java.awt.font.FontRenderContext
       textContent = text
       textColor = color
@@ -389,23 +388,26 @@ object SwingRenderers:
         this.color = color
       override def elementWidth: Double =
         val dummyFont = Font(textFont, textStyle.style, 64)
-        val fontRenderContext = FontRenderContext(dummyFont.getTransform, true, true)
-        val ratio: Double = dummyFont.getStringBounds(textContent, fontRenderContext).getWidth / 64
+        val fontRenderContext =
+          FontRenderContext(dummyFont.getTransform, true, true)
+        val ratio: Double = dummyFont
+          .getStringBounds(textContent, fontRenderContext)
+          .getWidth / 64
         elementHeight * ratio
 
     /** Create a one-line text game element.
       * @param text
-      *    the content
+      *   the content
       * @param size
-      *    the size in game-units
+      *   the size in game-units
       * @param color
-      *    the color
+      *   the color
       * @param font
-      *    the font family
+      *   the font family
       * @param style
-      *    the font style
+      *   the font style
       * @return
-      *    the SwingText
+      *   the SwingText
       */
     def oneLineText(
         text: String,
@@ -444,14 +446,18 @@ object SwingRenderers:
 
   /** Behaviour for rendering a generic swing game element on a SwingIO
     */
-  trait SwingGameElementRenderer extends SwingRenderer with Positionable with ScalableElement:
+  trait SwingGameElementRenderer
+      extends SwingRenderer
+      with Positionable
+      with ScalableElement:
     /** The offset of the element. It is used to translate the element starting
-      * from the position of the Positionable. Translation is applied before rotation.
+      * from the position of the Positionable. Translation is applied before
+      * rotation.
       */
     var renderOffset: Vector = (0, 0)
-    
-    /** The angle of rotation of the element. It is used to rotate the element around its position.
-      * Rotation is applied after translation.
+
+    /** The angle of rotation of the element. It is used to rotate the element
+      * around its position. Rotation is applied after translation.
       */
     var renderRotation: Angle = 0
 
@@ -528,7 +534,8 @@ object SwingRenderers:
     this.renderingPriority = priority
 
   /** Behaviour for rendering an oval on a SwingIO. Sizes must be > 0. The oval
-    * is centered at the position of the behaviour, then moved by offset units and then rotated by rotation angle.
+    * is centered at the position of the behaviour, then moved by offset units
+    * and then rotated by rotation angle.
     */
   trait SwingOvalRenderer(
       width: Double,
@@ -563,7 +570,8 @@ object SwingRenderers:
 
   /** Behaviour for rendering an image on a SwingIO. Sizes must be > 0, and the
     * image must be located in a resource folder. The image is centered at the
-    * position of the behaviour, then moved by offset units and then rotated by rotation angle.
+    * position of the behaviour, then moved by offset units and then rotated by
+    * rotation angle.
     */
   trait SwingImageRenderer(
       imagePath: String,
@@ -590,8 +598,9 @@ object SwingRenderers:
     this.renderRotation = rotation
     this.renderingPriority = priority
 
-  /** Behaviour for rendering a text on a SwingIO. Size must be > 0.
-    * The text is centered at the position of the behaviour, then moved by offset units and then rotated by rotation angle.
+  /** Behaviour for rendering a text on a SwingIO. Size must be > 0. The text is
+    * centered at the position of the behaviour, then moved by offset units and
+    * then rotated by rotation angle.
     */
   trait SwingTextRenderer(
       text: String,
@@ -623,9 +632,8 @@ object SwingRenderers:
     this.renderRotation = rotation
     this.renderingPriority = priority
 
-
-  /** The anchor position used to compute the true screen position of a
-    * UI element. It represents the starting point on the screen for calculating
+  /** The anchor position used to compute the true screen position of a UI
+    * element. It represents the starting point on the screen for calculating
     * the relative UI element position.
     */
   enum UIAnchor:
@@ -639,9 +647,9 @@ object SwingRenderers:
     case BottomCenter
     case BottomRight
 
-  /** Behaviour for rendering an text on a SwingIO. The text is positioned on the screen
-    * based on its anchor point and its offset. By default the anchor is in the top-left
-    * corner.
+  /** Behaviour for rendering an text on a SwingIO. The text is positioned on
+    * the screen based on its anchor point and its offset. By default the anchor
+    * is in the top-left corner.
     */
   trait SwingUITextRenderer(
       private var text: String,
@@ -671,9 +679,12 @@ object SwingRenderers:
 
     /** Compute the screen position relative to the anchor point.
       *
-      * @param io the SwingIO
-      * @param g2d the graphic context
-      * @return the screen position of this UI element
+      * @param io
+      *   the SwingIO
+      * @param g2d
+      *   the graphic context
+      * @return
+      *   the screen position of this UI element
       */
     private def anchoredPosition(io: SwingIO)(g2d: Graphics2D): (Int, Int) =
       val width: Int = g2d.getFontMetrics(font).stringWidth(textContent)
@@ -681,19 +692,23 @@ object SwingRenderers:
       val screenWidth: Int = io.size._1
       val screenHeight: Int = io.size._2
       textAnchor match
-        case TopLeft => (0, height)
-        case TopCenter => ((screenWidth - width)/2, height)
-        case TopRight => (screenWidth - width, height)
-        case CenterLeft => (0, (screenHeight + height)/2)
-        case Center => ((screenWidth - width)/2, (screenHeight + height)/2)
-        case CenterRight => (screenWidth - width, (screenHeight + height)/2)
-        case BottomLeft => (0, screenHeight)
-        case BottomCenter => ((screenWidth - width)/2, screenHeight)
-        case BottomRight => (screenWidth - width, screenHeight)
+        case TopLeft    => (0, height)
+        case TopCenter  => ((screenWidth - width) / 2, height)
+        case TopRight   => (screenWidth - width, height)
+        case CenterLeft => (0, (screenHeight + height) / 2)
+        case Center => ((screenWidth - width) / 2, (screenHeight + height) / 2)
+        case CenterRight  => (screenWidth - width, (screenHeight + height) / 2)
+        case BottomLeft   => (0, screenHeight)
+        case BottomCenter => ((screenWidth - width) / 2, screenHeight)
+        case BottomRight  => (screenWidth - width, screenHeight)
 
     override def renderer: SwingIO => Graphics2D => Unit = io =>
       g2d =>
         g2d.setFont(font)
         g2d.setPaint(color)
         val position = anchoredPosition(io)(g2d)
-        g2d.drawString(text, position._1 + textOffset._1, position._2 + textOffset._2)
+        g2d.drawString(
+          text,
+          position._1 + textOffset._1,
+          position._2 + textOffset._2
+        )
