@@ -3,13 +3,35 @@ import SwingIO.*
 import InputButton.*
 import SwingInputHandler.{*, given}
 import Dimensions2D.Vector.*
+import SwingRenderers.SwingTextRenderer
+import SwingRenderers.Text.*
+import java.awt.Color
+import Dimensions2D.Positionable
+import java.awt.Graphics2D
 
 trait SwingButton(
     var buttonText: String = "",
+    var textSize: Double = 5,
+    var textColor: Color = Color.black,
+    var fontFamily: FontName = "Arial",
+    var fontStyle: TextStyle = TextStyle.Plain,
+    var offset: Vector = (0, 1),
     private var _inputButtonTriggers: Set[InputButton] = Set(MouseButton1)
 ) extends Behaviour
     with SwingRectRenderer
     with SwingInputHandler:
+
+  private val textRenderer: SwingTextRenderer = new Behaviour
+    with SwingTextRenderer(
+      buttonText,
+      textSize,
+      textColor,
+      fontFamily,
+      fontStyle,
+      offset,
+      priority = renderingPriority + 1
+    )
+    with Positionable(position)
 
   var inputHandlers: Map[InputButton, Handler] = makeInputHandlers()
 
@@ -68,3 +90,30 @@ trait SwingButton(
         isPressed = isPressed.updated(inputButton, false)
 
   def onButtonPressed: Engine => Unit = _ => ()
+
+  // Just relaying every gameloop event call to textRenderer and making it follow the button on Update
+  override def onInit: Engine => Unit = engine =>
+    textRenderer.onInit(engine)
+    super.onInit(engine)
+  override def onStart: Engine => Unit = engine =>
+    textRenderer.onStart(engine)
+    super.onStart(engine)
+  override def onEarlyUpdate: Engine => Unit = engine =>
+    textRenderer.onEarlyUpdate(engine)
+    super.onEarlyUpdate(engine)
+  override def onUpdate: Engine => Unit = engine =>
+    textRenderer.onUpdate(engine)
+    textRenderer.position = position
+    super.onUpdate(engine)
+  override def onLateUpdate: Engine => Unit = engine =>
+    textRenderer.onLateUpdate(engine)
+    super.onLateUpdate(engine)
+  override def onDeinit: Engine => Unit = engine =>
+    textRenderer.onDeinit(engine)
+    super.onDeinit(engine)
+  override def onEnabled: Engine => Unit = engine =>
+    textRenderer.onEnabled(engine)
+    super.onEnabled(engine)
+  override def onDisabled: Engine => Unit = engine =>
+    textRenderer.onDisabled(engine)
+    super.onDisabled(engine)

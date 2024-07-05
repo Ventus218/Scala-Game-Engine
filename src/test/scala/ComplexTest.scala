@@ -37,6 +37,10 @@ object ComplexTest:
     override def onButtonPressed: Engine => Unit = engine =>
       engine.loadScene(GameScene)
 
+    override def onUpdate: Engine => Unit = engine =>
+      position = position + Versor.right * 0.1
+      super.onUpdate(engine)
+
   class Obstacle(initX: Double, initY: Double, squareSide: Double)
       extends Behaviour
       with Positionable(initX, initY)
