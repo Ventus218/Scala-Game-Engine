@@ -1,7 +1,7 @@
 package sge.swing.behaviours.ingame
 
 import sge.core.*
-import metrics.Vector2D.*
+import metrics.Vector.*
 import behaviours.dimension2d.*
 import sge.swing.*
 import Utils.*
@@ -24,7 +24,7 @@ trait SwingButton(
     _textColor: Color = Color.black,
     _textFont: FontName = "Arial",
     _textStyle: TextStyle = TextStyle.Plain,
-    _textOffset: Vector2D = (0, 1),
+    _textOffset: Vector = (0, 1),
     private var _inputButtonTriggers: Set[InputButton] = Set(MouseButton1)
 ) extends Behaviour
     with SwingRectRenderer
@@ -114,7 +114,7 @@ trait SwingButton(
     textStyle_=
   }
   def textOffset = textRenderer.renderOffset
-  def textOffset_=(newValue: Vector2D) = textRenderer.renderOffset = newValue
+  def textOffset_=(newValue: Vector) = textRenderer.renderOffset = newValue
 
   // Just relaying every gameloop event call to textRenderer and making it follow the button on Update
   override def onInit: Engine => Unit = engine =>

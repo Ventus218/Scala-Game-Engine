@@ -1,7 +1,7 @@
 package sge.swing
 
 import sge.core.*
-import metrics.Vector2D.*
+import metrics.Vector.*
 
 /** Utility object for SwingIO */
 object Utils:
@@ -13,7 +13,7 @@ object Utils:
       * @return
       *   The screen-coordinates position
       */
-    def pixelPosition(scenePosition: Vector2D): (Int, Int) =
+    def pixelPosition(scenePosition: Vector): (Int, Int) =
       (
         io.size._1 / 2 + (io.pixelsPerUnit * (scenePosition.x - io.center.x)).toInt,
         io.size._2 / 2 - (io.pixelsPerUnit * (scenePosition.y - io.center.y)).toInt
@@ -26,7 +26,7 @@ object Utils:
       * @return
       *   The game-coordinates position
       */
-    def scenePosition(pixelPosition: (Int, Int)): Vector2D =
+    def scenePosition(pixelPosition: (Int, Int)): Vector =
       (
         io.center.x + (pixelPosition._1 - io.size._1 / 2) / io.pixelsPerUnit,
         io.center.y - (pixelPosition._2 - io.size._2 / 2) / io.pixelsPerUnit

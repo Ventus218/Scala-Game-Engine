@@ -1,7 +1,7 @@
 package sge.core.behaviours.physics2d
 
 import sge.core.*
-import metrics.Vector2D.*
+import metrics.Vector.*
 import EngineUtils.*
 
 /** Add an acceleration to a Velocity behaviour in order to increment (or
@@ -10,7 +10,7 @@ import EngineUtils.*
   * @param _acceleration
   *   vector added to velocity according to its X and Y
   */
-trait Acceleration(var acceleration: Vector2D = (0, 0)) extends Velocity:
+trait Acceleration(var acceleration: Vector = (0, 0)) extends Velocity:
   override def onEarlyUpdate: Engine => Unit =
     engine =>
       super.onEarlyUpdate(engine)
