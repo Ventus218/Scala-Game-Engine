@@ -61,8 +61,7 @@
 |25|Inserire uno SwingRenderer per il testo (overlay)|Michele|||X|
 |25|Inserire uno SwingRenderer per il testo (in-game)|Michele|||X|
 |26|Inserire un behaviour built-in PositionFollower|Corrado|||X|
-|27|Inserire un behaviour built-in per un bottone (overlay)|Alessandro|X|||
-|27|Inserire un behaviour built-in per un bottone (in-game)|Alessandro||X||
+|27|Inserire un behaviour built-in per un bottone (in-game)|Alessandro|||X|
 |28|Refactor: un unico Scalable generico|Corrado|||X|
 |29|Refactor: I Renderer devono adottare il nuovo Scalable|Michele|X|||
 |30|Bugfix: Fare in modo che swingIO crei i canvas in modo lazy|Alessandro|||X|
