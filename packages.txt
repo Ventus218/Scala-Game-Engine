@@ -1,0 +1,59 @@
+* -> package-private
+
+- main
+    - scala
+        - sge
+            - swing
+                Utils.scala
+                SwingIO.scala
+                SwingIOBuilder.scala
+                - output
+                    GameElements.scala
+                    Shapes.scala
+                    Images.scala
+                    Text.scala
+                - input
+                    InputEvent.scala
+                    InputButton.scala
+                    InputEventsAccumulator.scala*
+                - behaviours
+                    - overlay
+                        TextUIRenderer.scala
+                    - ingame
+                        Renderers.scala
+                        Button.scala
+                        InputHandler.scala
+            - core
+                Behaviour.scala
+                BehaviourUtils.scala*
+                Engine.scala  
+                IO.scala     
+                Scene.scala      
+                Storage.scala
+                FPSLimiter*
+                - metrics
+                    Vector2D.scala
+                    Angle.scala
+                - behaviours
+                    Identifiable.scala
+                    - dimension2d
+                        Positionable.scala
+                        PositionFollower.scala
+                        Scalable.scala
+                    - phisics2d
+                        Collider.scala
+                        Velocity.scala
+                        Acceleration.scala
+
+            - testing
+                - behaviour
+                    NFrameStopper.scala
+                    TestUtils.scala ( le implementazioni in file package private*)
+
+
+
+- test
+    - scala
+        - mocks
+
+        (tutto il resto come in main)

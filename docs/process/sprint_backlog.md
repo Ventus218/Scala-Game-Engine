@@ -70,7 +70,7 @@
 |30|Bugfix: Fare in modo che swingIO crei i canvas in modo lazy|Alessandro|||X|
 |31|Behaviour **Velocity**|Corrado|||X|
 |31|Behaviour **Acceleration**|Corrado|||X|
-|32|Refactor package|Tutti|X|||
+|32|Refactor package|Tutti||X||
 |34|L'engine non deve essere runnabile più di una volta, aggiornare i test, e l'implementazione che deve lanciare delle eccezioni se necessario|Corrado|||X|
 |35|Refactor: togliere tuple dove vengono passati x e y e mettere un tipo ad-hoc|Tutti|||X|
 |13|Scelta e design dei videogiochi di esempio|Tutti|||X|
