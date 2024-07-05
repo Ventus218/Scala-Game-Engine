@@ -9,6 +9,12 @@ import java.awt.Color
 import Dimensions2D.Positionable
 import java.awt.Graphics2D
 
+/** A swing button with text.
+  *
+  * @param _inputButtonTriggers
+  *   defines the input buttons (like mouse or spacebar) that can trigger the
+  *   button
+  */
 trait SwingButton(
     val buttonText: String = "",
     private var _textSize: Double = 5,
