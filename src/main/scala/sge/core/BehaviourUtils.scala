@@ -1,7 +1,9 @@
-object BehaviourUtils:
-  import scala.reflect.TypeTest
-  import Behaviours.*
+package sge.core
 
+import scala.reflect.TypeTest
+import behaviours.Identifiable
+
+private[core] object BehaviourUtils:
   extension [T <: Behaviour](iterable: Iterable[T])
     def filter[B <: Behaviour](using
         tt: TypeTest[T, B]

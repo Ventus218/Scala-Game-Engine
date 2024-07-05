@@ -1,3 +1,5 @@
+package sge.core
+
 trait Behaviour(var enabled: Boolean = true):
   // The order of the methods below reflects the order on which the engine will call them.
 

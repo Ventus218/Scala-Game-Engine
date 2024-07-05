@@ -1,3 +1,5 @@
+package sge.core
+
 import scala.reflect.TypeTest
 
 /** Is a key-value storage that allows to persist some data in the volatile

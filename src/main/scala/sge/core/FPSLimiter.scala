@@ -1,3 +1,5 @@
+package sge.core
+
 /** Provides the utilities to wait for the right amount of time to implement an
   * fps limit logic
   */

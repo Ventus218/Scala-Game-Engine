@@ -1,5 +1,7 @@
+package sge.core
+
 import scala.annotation.targetName
-import Behaviours.*
+import behaviours.Identifiable
 import BehaviourUtils.*
 import scala.reflect.TypeTest
 
@@ -215,9 +217,3 @@ object Engine:
 
   def apply(io: IO, storage: Storage, fpsLimit: Int = 60): Engine =
     new EngineImpl(io = io, storage = storage, fpsLimit = fpsLimit)
-
-  extension (e: Engine)
-    /** The amount of time elapsed between the last frame and the current one in
-      * seconds
-      */
-    def deltaTimeSeconds: Double = e.deltaTimeNanos / Math.pow(10, 9)
