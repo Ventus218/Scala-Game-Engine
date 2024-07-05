@@ -1,13 +1,12 @@
 import SwingRenderers.SwingRectRenderer
 import SwingIO.*
+import InputButton.*
 import SwingInputHandler.{*, given}
 import Dimensions2D.Vector.*
 
 trait SwingButton(
     var buttonText: String = "",
-    private var _inputButtonTriggers: Set[InputButton] = Set(
-      InputButton.MouseButton1
-    )
+    private var _inputButtonTriggers: Set[InputButton] = Set(MouseButton1)
 ) extends Behaviour
     with SwingRectRenderer
     with SwingInputHandler:
