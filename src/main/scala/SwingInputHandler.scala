@@ -36,9 +36,18 @@ object SwingInputHandler:
     def onlyWhenHeld: Handler =
       h.map(h => SingleHandlerImpl(h.handler, false, false, true))
 
-  given Conversion[InputButton => Engine => Unit, Handler] with
+  given fullHandlerConversion
+      : Conversion[InputButton => Engine => Unit, Handler] with
     def apply(f: InputButton => Engine => Unit): Handler =
       Seq(SingleHandlerImpl(f, true, false, true))
+
+  given partialHandlerConversion: Conversion[Engine => Unit, Handler] with
+    def apply(f: Engine => Unit): Handler =
+      Seq(SingleHandlerImpl((_) => f, true, false, true))
+
+  given unitHandlerConversion: Conversion[Unit, Handler] with
+    def apply(f: Unit): Handler =
+      Seq(SingleHandlerImpl((_) => (_) => f, true, false, true))
 
   /** A behaviour which enables to specify some event handlers to fire when
     * specific inputs are received.
