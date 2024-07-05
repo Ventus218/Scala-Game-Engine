@@ -104,6 +104,10 @@ extension (io: SwingIO)
 /** Utility object for SwingIO
   */
 object SwingIO:
+  extension (engine: Engine)
+    /** Utility for casting the engine IO to a SwingIO */
+    def swingIO: SwingIO = engine.io.asInstanceOf[SwingIO]
+
   import java.awt.event.KeyEvent.*
 
   /** The type of input event (like Pressed or Released)
