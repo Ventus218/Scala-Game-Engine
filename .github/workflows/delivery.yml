@@ -25,15 +25,13 @@ jobs:
       run: |
         sed -i 's|./docs/|./|g' README.md
         cp README.md docs/00_Indice.md
-    - uses: baileyjm02/markdown-to-pdf@v1
+    - name: Publish PDF Document
+      uses: shrink/actions-document-publish@v1
       with:
-        input_dir: docs
-        output_dir: pdfs
-        images_dir: docs/img
-        build_html: false
+        sources: 'README.md docs/*.md'
     - name: Release
       uses: softprops/action-gh-release@v2
       with:
         files: |
           SGE.jar
-          pdfs/*
+          document.pdf
