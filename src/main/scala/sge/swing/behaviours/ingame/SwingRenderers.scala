@@ -2,7 +2,7 @@ package sge.swing.behaviours.ingame
 
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import metrics.Angle.*
 import sge.swing.*
 import sge.swing.behaviours.SwingRenderer
@@ -24,7 +24,7 @@ trait SwingGameElementRenderer
     * from the position of the Positionable. Translation is applied before
     * rotation.
     */
-  var renderOffset: Vector = (0, 0)
+  var renderOffset: Vector2D = (0, 0)
 
   /** The angle of rotation of the element. It is used to rotate the element
     * around its position. Rotation is applied after translation.
@@ -77,7 +77,7 @@ trait SwingRectRenderer(
     width: Double,
     height: Double,
     color: Color,
-    offset: Vector = (0, 0),
+    offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends SwingShapeRenderer:
@@ -94,7 +94,7 @@ trait SwingRectRenderer(
 trait SwingSquareRenderer(
     size: Double,
     color: Color,
-    offset: Vector = (0, 0),
+    offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends SwingShapeRenderer:
@@ -111,7 +111,7 @@ trait SwingOvalRenderer(
     width: Double,
     height: Double,
     color: Color,
-    offset: Vector = (0, 0),
+    offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends SwingShapeRenderer:
@@ -128,7 +128,7 @@ trait SwingOvalRenderer(
 trait SwingCircleRenderer(
     radius: Double,
     color: Color,
-    offset: Vector = (0, 0),
+    offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends SwingShapeRenderer:
@@ -147,7 +147,7 @@ trait SwingImageRenderer(
     imagePath: String,
     width: Double,
     height: Double,
-    offset: Vector = (0, 0),
+    offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends SwingGameElementRenderer:
@@ -178,7 +178,7 @@ trait SwingTextRenderer(
     color: Color,
     fontFamily: FontName = "Arial",
     fontStyle: TextStyle = TextStyle.Plain,
-    offset: Vector = (0, 0),
+    offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends SwingGameElementRenderer:

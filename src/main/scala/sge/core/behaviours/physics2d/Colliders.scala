@@ -1,7 +1,7 @@
 package sge.core.behaviours.physics2d
 
 import sge.core.behaviours.dimension2d.*
-import sge.core.metrics.Vector.*
+import sge.core.metrics.Vector2D.*
 
 /** Gives colliders the methods to implement in order to detect the collisions
   * with other colliders
