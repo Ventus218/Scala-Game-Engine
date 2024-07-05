@@ -471,9 +471,10 @@ object SwingRenderers:
         )
         val w = (element.elementWidth * scaleWidth * io.pixelsPerUnit).toInt
         val h = (element.elementHeight * scaleHeight * io.pixelsPerUnit).toInt
+        val initialTransform = g2d.getTransform()
         g2d.rotate(renderRotation, rotationPos._1, rotationPos._2)
         element.drawElement(g2d)(offsetPos._1, offsetPos._2, w, h)
-        g2d.setTransform(AffineTransform())
+        g2d.setTransform(initialTransform)
 
   /** Behaviour for rendering geometric shapes on a SwingIO.
     */
