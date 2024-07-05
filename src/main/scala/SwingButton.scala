@@ -5,18 +5,41 @@ import Dimensions2D.Vector.*
 
 trait SwingButton(
     var buttonText: String = "",
-    var inputButtonTriggers: Set[InputButton] = Set(InputButton.MouseButton1)
+    private var _inputButtonTriggers: Set[InputButton] = Set(
+      InputButton.MouseButton1
+    )
 ) extends Behaviour
     with SwingRectRenderer
     with SwingInputHandler:
 
-  var inputHandlers: Map[InputButton, Handler] =
+  var inputHandlers: Map[InputButton, Handler] = makeInputHandlers()
+
+  def inputButtonTriggers: Set[InputButton] = _inputButtonTriggers
+  def inputButtonTriggers_=(newValue: Set[InputButton]) =
+    _inputButtonTriggers = newValue
+    inputHandlers = makeInputHandlers()
+    isPressed = makeIsPressedMap(Option(isPressed))
+
+  private def makeInputHandlers(): Map[InputButton, Handler] =
     /* Apparently needs to be explicit about the type to let the conversion work */
     val tuples: Set[(InputButton, Handler)] =
       inputButtonTriggers.map(
-        _ -> triggerOnButtonPressedIfPointerOntoButton.onlyWhenReleased
+        _ -> (buttonReleased.onlyWhenReleased and buttonPressed.onlyWhenPressed)
       )
     Map(tuples.toSeq*)
+
+  var isPressed: Map[InputButton, Boolean] = makeIsPressedMap()
+
+  private def makeIsPressedMap(
+      currentIsPressedMap: Option[Map[InputButton, Boolean]] = None
+  ): Map[InputButton, Boolean] =
+    inputHandlers.keySet
+      .map(key =>
+        currentIsPressedMap match
+          case Some(currentMap) => (key, currentMap.getOrElse(key, false))
+          case None             => (key, false)
+      )
+      .toMap
 
   private def isPointerOntoButton(io: SwingIO): Boolean =
     val pointer = io.scenePointerPosition()
@@ -30,10 +53,19 @@ trait SwingButton(
     pointer.y >= bottom &&
     pointer.y <= top
 
-  private def triggerOnButtonPressedIfPointerOntoButton: Engine => Unit =
-    engine =>
-      isPointerOntoButton(engine.swingIO) match
-        case true  => onButtonPressed(engine)
-        case false => ()
+  private def buttonPressed: InputButton => Engine => Unit =
+    inputButton =>
+      engine =>
+        isPointerOntoButton(engine.swingIO) match
+          case true  => isPressed = isPressed.updated(inputButton, true)
+          case false => ()
+
+  private def buttonReleased: InputButton => Engine => Unit =
+    inputButton =>
+      engine =>
+        isPointerOntoButton(engine.swingIO) match
+          case true if isPressed(inputButton) => onButtonPressed(engine)
+          case _                              => ()
+        isPressed = isPressed.updated(inputButton, false)
 
   def onButtonPressed: Engine => Unit = _ => ()

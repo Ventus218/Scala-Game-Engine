@@ -94,6 +94,24 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
           case 1 => ()
           case 2 => testButton.buttonPresses shouldBe 0
 
+  it should "not trigger if InputButton is released onto the button but the press was not" in:
+    val engine = newEngine(CornerPressCenterReleaseMockSwingIO())
+
+    test(engine) on testScene runningFor 2 frames so that:
+      _.onUpdate:
+        engine.mockIO.frameCount match
+          case 1 => ()
+          case 2 => testButton.buttonPresses shouldBe 0
+
+  it should "not trigger if InputButton is pressed onto the button but the release is not" in:
+    val engine = newEngine(CenterPressCornerReleaseMockSwingIO())
+
+    test(engine) on testScene runningFor 2 frames so that:
+      _.onUpdate:
+        engine.mockIO.frameCount match
+          case 1 => ()
+          case 2 => testButton.buttonPresses shouldBe 0
+
   class TestButton(
       buttonText: String,
       inputButtonTriggers: Set[InputButton],
@@ -102,7 +120,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   ) extends Behaviour
       with SwingButton(
         buttonText = buttonText,
-        inputButtonTriggers = inputButtonTriggers
+        _inputButtonTriggers = inputButtonTriggers
       )
       with Positionable(position)
       with SwingRectRenderer(dimension.x, dimension.y, Color.gray):
