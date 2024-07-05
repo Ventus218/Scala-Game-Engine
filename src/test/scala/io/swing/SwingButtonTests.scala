@@ -21,10 +21,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   var engine: Engine = newEngine()
   def newEngine(io: MockSwingIO = CenterPressReleaseMockSwingIO()): Engine =
-    Engine(
-      io,
-      Storage()
-    )
+    Engine(io, Storage())
 
   def testScene: Scene = () => Seq(testButton)
 
@@ -43,6 +40,24 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   it should "have a text default value of an empty string" in:
     newDefaultButton().buttonText shouldBe ""
 
+  it should "be triggered on InputButton release and not on press" in:
+    test(engine) on testScene runningFor 2 frames so that:
+      _.onUpdate:
+        engine.mockIO.frameCount match
+          case 1 => testButton.buttonPresses shouldBe 0
+          case 2 => testButton.buttonPresses shouldBe 1
+
+  it should "be triggered during EarlyUpdate" in:
+    test(engine) on testScene runningFor 2 frames so that:
+      _.onUpdate:
+        engine.mockIO.frameCount match
+          case 1 => testButton.buttonPresses shouldBe 0
+          case 2 => testButton.buttonPresses shouldBe 1
+      .onLateUpdate:
+        engine.mockIO.frameCount match
+          case 1 => testButton.buttonPresses shouldBe 0
+          case 2 => testButton.buttonPresses shouldBe 1
+
   it should "accept a set of InputButtons from which it can be triggered" in:
     val triggers = Set(MouseButton1, MouseButton2)
     val b = TestButton("", inputButtonTriggers = triggers)
@@ -51,18 +66,16 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   it should "be triggered only by the specified InputButtons" in:
     val triggers = Set(MouseButton1, MouseButton3)
     val b = TestButton("", inputButtonTriggers = triggers)
-    val engine = newEngine(CenterPressReleaseMockSwingIO())
 
     test(engine) on (() => Seq(b)) runningFor 2 frames so that:
       _.onUpdate:
         engine.mockIO.frameCount match
           case 1 => b.buttonPresses shouldBe 0
           case 2 => b.buttonPresses shouldBe 1
-  
+
   it should "be triggered by all the specified InputButtons" in:
     val triggers = Set(MouseButton1, MouseButton2)
     val b = TestButton("", inputButtonTriggers = triggers)
-    val engine = newEngine(CenterPressReleaseMockSwingIO())
 
     test(engine) on (() => Seq(b)) runningFor 2 frames so that:
       _.onUpdate:
@@ -70,12 +83,8 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
           case 1 => b.buttonPresses shouldBe 0
           case 2 => b.buttonPresses shouldBe 2
 
-  it should "have MouseButton1 only as default inputButtonTriggers" in:
+  it should "have MouseButton1 as default inputButtonTriggers" in:
     newDefaultButton().inputButtonTriggers should contain only MouseButton1
-
-  // it should "have a onButtonPressed callback which is called during EarlyUpdate to handle that event" in:
-  //   test(engine) on testScene soThat:
-  //     _.on
 
   class TestButton(
       buttonText: String,
@@ -141,11 +150,11 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     override def size: (Int, Int) = ???
     override def center_=(pos: Dimensions2D.Vector.Vector): Unit = ???
     override def backgroundColor: Color = ???
-    override def draw(renderer: Graphics2D => Unit, priority: Int): Unit = ???
+    override def draw(renderer: Graphics2D => Unit, priority: Int): Unit = ()
     override def pixelsPerUnit_=(p: Int): Unit = ???
-    override def show(): Unit = ???
+    override def show(): Unit = ()
     override def pixelsPerUnit: Int = ???
-    override def title: String = ???
+    override def title: String = "???"
     override def center: Dimensions2D.Vector.Vector = ???
 
   extension (e: Engine) def mockIO: MockSwingIO = e.io.asInstanceOf[MockSwingIO]
