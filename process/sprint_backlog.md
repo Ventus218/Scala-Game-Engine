@@ -63,12 +63,12 @@
 |26|Inserire un behaviour built-in PositionFollower|Corrado|||X|
 |27|Inserire un behaviour built-in per un bottone (in-game)|Alessandro|||X|
 |28|Refactor: un unico Scalable generico|Corrado|||X|
-|29|Refactor: I Renderer devono adottare il nuovo Scalable|Michele|X|||
+|29|Refactor: I Renderer devono adottare il nuovo Scalable|Michele|||X|
 |30|Bugfix: Fare in modo che swingIO crei i canvas in modo lazy|Alessandro|||X|
 |31|Behaviour **Velocity**|Corrado|||X|
 |31|Behaviour **Acceleration**|Corrado|||X|
 |32|Refactor package|Tutti|X|||
 |34|L'engine non deve essere runnabile più di una volta, aggiornare i test, e l'implementazione che deve lanciare delle eccezioni se necessario|Corrado|||X|
 |35|Refactor: togliere tuple dove vengono passati x e y e mettere un tipo ad-hoc|Tutti|||X|
-|13|Scelta e design dei videogiochi di esempio|Tutti|X|||
+|13|Scelta e design dei videogiochi di esempio|Tutti|||X|
 |12|Refactor e pulizia di TestUtils|Alessandro|||X|
