@@ -86,17 +86,26 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   it should "have MouseButton1 as default inputButtonTriggers" in:
     newDefaultButton().inputButtonTriggers should contain only MouseButton1
 
+  it should "not trigger if the pointer is not the button area when releasing InputButton" in:
+    testButton.position = testButton.position + Versor.up * 100
+    test(engine) on testScene runningFor 2 frames so that:
+      _.onUpdate:
+        engine.mockIO.frameCount match
+          case 1 => ()
+          case 2 => testButton.buttonPresses shouldBe 0
+
   class TestButton(
       buttonText: String,
       inputButtonTriggers: Set[InputButton],
-      position: Vector = (0, 0)
+      position: Vector = (0, 0),
+      dimension: Vector = (100, 20)
   ) extends Behaviour
       with SwingButton(
         buttonText = buttonText,
         inputButtonTriggers = inputButtonTriggers
       )
       with Positionable(position)
-      with SwingRectRenderer(100, 20, Color.gray):
+      with SwingRectRenderer(dimension.x, dimension.y, Color.gray):
     var buttonPresses = 0
     override def onButtonPressed: Engine => Unit = _ => buttonPresses += 1
 
