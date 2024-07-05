@@ -26,6 +26,7 @@ jobs:
         sed -i 's|./docs/|./|g' README.md
         cp README.md docs/00_Indice.md
     - name: Publish PDF Document
+      id: publish-document
       uses: shrink/actions-document-publish@v1
       with:
         sources: 'README.md docs/*.md'
@@ -34,4 +35,4 @@ jobs:
       with:
         files: |
           SGE.jar
-          document.pdf
+          ${{ steps.publish-document.outputs.pdf }}
