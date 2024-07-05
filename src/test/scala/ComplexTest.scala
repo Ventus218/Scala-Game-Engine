@@ -28,7 +28,10 @@ object ComplexTest:
 
   class PlayButton
       extends Behaviour
-      with SwingButton(buttonText = "Play")
+      with SwingButton(
+        buttonText = "Play",
+        _inputButtonTriggers = Set(MouseButton1, P)
+      )
       with Positionable
       with SwingRectRenderer(20, 8, Color.gray):
     override def onButtonPressed: Engine => Unit = engine =>
