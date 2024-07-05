@@ -19,6 +19,7 @@ Priority goes from top to bottom.
 |13|Scelta e design dei videogiochi di esempio||
 |12|Refactor e pulizia di TestUtils||
 |14|Realizzazione dei videogiochi di esempio||
+|36|Aggiornare diagramma modello del dominio||
 
 
 ## Done
