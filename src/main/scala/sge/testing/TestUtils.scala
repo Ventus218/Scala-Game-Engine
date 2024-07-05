@@ -1,3 +1,7 @@
+package sge.testing
+
+import sge.core.*
+
 /** Utils to test Engine while it's running. These utils allow to inject a
   * testerObject into the engine to that it can run tests in the various hooks
   * of the engine game loop
@@ -23,11 +27,9 @@ object TestUtils:
   // which has a TestingContext.
   // It may be an option to define just one implicit conversion from
   // Any to TestingFunciton, it's possible to do it in the future if needed.
-  import org.scalatest.compatible.Assertion
-  given Conversion[Assertion, TestingFunction] with
-    def apply(x: Assertion): TestingFunction = _ => ()
-  given Conversion[Unit, TestingFunction] with
-    def apply(x: Unit): TestingFunction = _ => ()
+
+  given Conversion[Any, TestingFunction] with
+    def apply(x: Any): TestingFunction = _ => ()
 
   /** A builder for testing an engine execution on one scene (empty by default)
     * for a finite number of frames which defaults to 1.
@@ -136,7 +138,7 @@ object TestUtils:
       builder.copy(disabled = () => testingFunction)
 
     private def build: Behaviour =
-      import Behaviours.NFrameStopper
+      import sge.testing.behaviours.NFrameStopper
       new Behaviour
         with NFrameStopper(builder.nFramesToRun)
         with TesterObject(builder)

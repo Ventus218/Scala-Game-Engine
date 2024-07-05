@@ -46,9 +46,9 @@
                         Acceleration.scala
 
             - testing
+                TestUtils.scala ( le implementazioni in file package private*)
                 - behaviour
                     NFrameStopper.scala
-                    TestUtils.scala ( le implementazioni in file package private*)
 
 
 
