@@ -3,7 +3,7 @@ package sge.core
 /** Provides the utilities to wait for the right amount of time to implement an
   * fps limit logic
   */
-trait FPSLimiter:
+private[core] trait FPSLimiter:
   /** The current fps limit.
     *
     * If changed it will be applied only after the current frame is ended (call
