@@ -20,6 +20,7 @@
 |3|Definizione delle interfacce base|Tutti|||X|
 
 ## Sprint 1 (inizio 16/06/2024)
+
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |4|Specifica|Tutti|||X|
@@ -38,6 +39,7 @@
 |11|Implementazione **SwingInputB**|Alessandro||X||
 
 ## Sprint 2 (inizio 24/06/2024)
+
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |9|Implementazione **Engine** caricamento scena e distruzione/creazione|Michele|||X|
@@ -56,6 +58,7 @@
 |24|Inserire un main complesso di test|Tutti|||X|
 
 ## Sprint 3 (inizio 1/07/2024)
+
 |Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
 |------------|-----------|------------|:-:|:-:|:-:|
 |25|Inserire uno SwingRenderer per il testo (overlay)|Michele|||X|

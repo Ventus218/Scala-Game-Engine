@@ -22,6 +22,7 @@ Priority goes from top to bottom.
 
 
 ## Done
+
 |Id|Item|Details|
 |--|----|-------|
 |1|Requisiti e specifica|Raccogliere i requisiti e definire in maniera formale la specifica del sistema|

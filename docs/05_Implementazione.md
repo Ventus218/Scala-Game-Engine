@@ -210,6 +210,7 @@ Per semplicità si immagini che gli eventi siano raggruppati per tasto.
 A questo punto è possibile analizzare gli eventi per ogni tasto e decidere se l'azione associata deve essere eseguita.
 
 Si prenda in considerazione un tasto T, gli eventi P = premuto e R = rilasciato, i casi di eventi accumulati possono essere i seguenti:
+
 |Ultimo evento registrato (prima della coda)|Coda eventi (a destra il più recente)|Interpretazione|Esecuzione dell'azione associata|
 |:----------------------:|-------------------------------------|-----------|:---------:|
 || [ ]             |T non è mai stato premuto o rilasciato| |
