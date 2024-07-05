@@ -8,7 +8,29 @@ import javax.imageio.ImageIO
 import scala.util.Try
 import Dimensions2D.Vector.*
 
+import java.awt.geom.AffineTransform
+
 object SwingRenderers:
+  
+  object Angle:
+    /** Basic type for manipulating angles in a simpler way.
+      */
+    type Angle = Double
+    extension[N <: Int | Double] (n: N)
+      /** Convert the angle from radians to Angle
+        * @return
+        *   the corresponding angle
+        */
+      def radians: Angle = n match
+        case i: Int     => i.toDouble
+        case d: Double  => d
+        
+      /** Convert the angle from degrees to Angle
+        * @return
+        *   the corresponding angle
+        */
+      def degrees: Angle = n.radians.toRadians
+
 
   object GameElements:
     /** Basic trait for manipulating and drawing game entities using Swing. The
@@ -394,6 +416,7 @@ object SwingRenderers:
     ): SwingText =
       OneLineSwingText(text, size, color, font, style)
 
+  import Angle.*
   import GameElements.*
   import Shapes.*
   import Images.*
@@ -422,25 +445,35 @@ object SwingRenderers:
   /** Behaviour for rendering a generic swing game element on a SwingIO
     */
   trait SwingGameElementRenderer extends SwingRenderer with Positionable with ScalableElement:
-    /** The offset of the element. it is used to translate the element starting
-      * from the position of the Positionable.
+    /** The offset of the element. It is used to translate the element starting
+      * from the position of the Positionable. Translation is applied before rotation.
       */
     var renderOffset: Vector = (0, 0)
+    
+    /** The angle of rotation of the element. It is used to rotate the element around its position.
+      * Rotation is applied after translation.
+      */
+    var renderRotation: Angle = 0
 
     /** The element to draw
       */
     protected def element: SwingGameElement
     override def renderer: SwingIO => Graphics2D => Unit = io =>
       g2d =>
-        val pos = io.pixelPosition(
+        val offsetPos = io.pixelPosition(
           (
             position.x + renderOffset.x - element.elementWidth * scaleWidth / 2,
             position.y + renderOffset.y + element.elementHeight * scaleHeight / 2
           )
         )
+        val rotationPos = io.pixelPosition(
+          (position.x, position.y)
+        )
         val w = (element.elementWidth * scaleWidth * io.pixelsPerUnit).toInt
         val h = (element.elementHeight * scaleHeight * io.pixelsPerUnit).toInt
-        element.drawElement(g2d)(pos._1, pos._2, w, h)
+        g2d.rotate(renderRotation, rotationPos._1, rotationPos._2)
+        element.drawElement(g2d)(offsetPos._1, offsetPos._2, w, h)
+        g2d.setTransform(AffineTransform())
 
   /** Behaviour for rendering geometric shapes on a SwingIO.
     */
@@ -461,73 +494,82 @@ object SwingRenderers:
 
   /** Behaviour for rendering a rectangle on a SwingIO. Sizes must be > 0. The
     * rectangle is centered at the position of the behaviour, then moved by
-    * offset units.
+    * offset units and then rotated by rotation angle.
     */
   trait SwingRectRenderer(
       width: Double,
       height: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingRect =
       Shapes.rect(width, height, color)
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering a square on a SwingIO. Size must be > 0. The
     * square is centered at the position of the behaviour, then moved by offset
-    * units.
+    * units and then rotated by rotation angle.
     */
   trait SwingSquareRenderer(
       size: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingSquare = Shapes.square(size, color)
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering an oval on a SwingIO. Sizes must be > 0. The oval
-    * is centered at the position of the behaviour, then moved by offset units.
+    * is centered at the position of the behaviour, then moved by offset units and then rotated by rotation angle.
     */
   trait SwingOvalRenderer(
       width: Double,
       height: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingOval =
       Shapes.oval(width, height, color)
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering a circle on a SwingIO. Radius must be > 0. The
     * circle is centered at the position of the behaviour, then moved by offset
-    * units.
+    * units and then rotated by rotation angle.
     */
   trait SwingCircleRenderer(
       radius: Double,
       color: Color,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingShapeRenderer:
     override protected val element: SwingCircle = Shapes.circle(radius, color)
     export element.{shapeRadius, shapeRadius_=}
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering an image on a SwingIO. Sizes must be > 0, and the
     * image must be located in a resource folder. The image is centered at the
-    * position of the behaviour, then moved by offset units.
+    * position of the behaviour, then moved by offset units and then rotated by rotation angle.
     */
   trait SwingImageRenderer(
       imagePath: String,
       width: Double,
       height: Double,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingGameElementRenderer:
     protected val element: SwingImage =
@@ -544,10 +586,11 @@ object SwingRenderers:
       image
     }
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
   /** Behaviour for rendering a text on a SwingIO. Size must be > 0.
-    * The text is centered at the position of the behaviour, then moved by offset units.
+    * The text is centered at the position of the behaviour, then moved by offset units and then rotated by rotation angle.
     */
   trait SwingTextRenderer(
       text: String,
@@ -556,6 +599,7 @@ object SwingRenderers:
       fontFamily: FontName = "Arial",
       fontStyle: TextStyle = TextStyle.Plain,
       offset: Vector = (0, 0),
+      rotation: Angle = 0.degrees,
       priority: Int = 0
   ) extends SwingGameElementRenderer:
     protected val element: SwingText =
@@ -575,6 +619,7 @@ object SwingRenderers:
       textColor_=
     }
     this.renderOffset = offset
+    this.renderRotation = rotation
     this.renderingPriority = priority
 
 
