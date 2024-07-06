@@ -1,9 +1,12 @@
+package sge.core.behaviours.physics2d
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Dimensions2D.Positionable
-import Dimensions2D.Vector.*
-import Physics2D.Velocity
-import TestUtils.*
+import sge.core.*
+import EngineUtils.*
+import metrics.Vector.*
+import behaviours.dimension2d.*
+import sge.testing.TestUtils.*
 
 class VelocityTests extends AnyFlatSpec:
   val velocity = new Behaviour with Velocity with Positionable

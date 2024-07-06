@@ -1,12 +1,11 @@
+package sge.core.behaviours.physics2d
+
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.BeforeAndAfterEach
 import org.scalatest.matchers.should.Matchers.*
-import Dimensions2D.Positionable
-import Dimensions2D.Scalable
-import Dimensions2D.Vector.*
-import Physics2D.CircleCollider
-import Physics2D.RectCollider
-import Dimensions2D.SingleScalable
+import org.scalatest.BeforeAndAfterEach
+import sge.core.*
+import metrics.Vector.*
+import behaviours.dimension2d.*
 
 class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   val circle = new Behaviour

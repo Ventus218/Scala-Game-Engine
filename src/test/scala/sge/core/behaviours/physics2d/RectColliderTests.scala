@@ -1,9 +1,11 @@
+package sge.core.behaviours.physics2d
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Dimensions2D.*
 import org.scalatest.BeforeAndAfterEach
-import Physics2D.RectCollider
-import Dimensions2D.Vector.*
+import sge.core.*
+import metrics.Vector.*
+import behaviours.dimension2d.*
 
 class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
   val collider = new Behaviour
