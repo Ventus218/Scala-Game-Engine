@@ -9,7 +9,7 @@ object Shapes:
   /** Basic trait for manipulating and drawing geometric shapes using Swing. The
     * main properties of the shape (width, height, and color) are mutable.
     */
-  trait SwingShape extends GameElement:
+  trait Shape extends GameElement:
     /** The color of the shape.
       * @return
       *   the color
@@ -22,7 +22,7 @@ object Shapes:
       */
     def shapeColor_=(c: Color): Unit
 
-  /** Base implementation of SwingShape.
+  /** Base implementation of BaseShape.
     * @param width
     *   the width. It can't be negative or 0.
     * @param height
@@ -30,12 +30,12 @@ object Shapes:
     * @param color
     *   the color. It can't be null.
     */
-  private abstract class BaseSwingShape(
+  private abstract class BaseShape(
       width: Double,
       height: Double,
       private var color: Color
   ) extends BaseGameElement(width, height)
-      with SwingShape:
+      with Shape:
     shapeColor = color
 
     override def shapeColor: Color = color
@@ -45,7 +45,7 @@ object Shapes:
 
   /** A rectangular shape.
     */
-  trait SwingRect extends SwingShape:
+  trait SwingRect extends Shape:
     override def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit =
       g2d =>
         (posX, posY, w, h) =>
@@ -60,7 +60,7 @@ object Shapes:
 
   /** An oval shape.
     */
-  trait SwingOval extends SwingShape:
+  trait SwingOval extends Shape:
     override def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit =
       g2d =>
         (posX, posY, w, h) =>
@@ -86,7 +86,7 @@ object Shapes:
     override def elementHeight: Double = elementWidth
     override def elementHeight_=(h: Double): Unit = elementWidth = h
 
-  /** Create a rectangular SwingShape.
+  /** Create a rectangular BaseShape.
     * @param width
     *   the width in game units
     * @param height
@@ -97,9 +97,9 @@ object Shapes:
     *   a new SwingRect
     */
   def rect(width: Double, height: Double, color: Color): SwingRect =
-    new BaseSwingShape(width, height, color) with SwingRect
+    new BaseShape(width, height, color) with SwingRect
 
-  /** Create a square SwingShape.
+  /** Create a square BaseShape.
     * @param size
     *   the size in game units
     * @param color
@@ -108,9 +108,9 @@ object Shapes:
     *   a new SwingSquare
     */
   def square(size: Double, color: Color): SwingSquare =
-    new BaseSwingShape(size, size, color) with SwingSquare
+    new BaseShape(size, size, color) with SwingSquare
 
-  /** Create an oval SwingShape.
+  /** Create an oval BaseShape.
     * @param width
     *   the width in game units
     * @param height
@@ -121,9 +121,9 @@ object Shapes:
     *   a new SwingOval
     */
   def oval(width: Double, height: Double, color: Color): SwingOval =
-    new BaseSwingShape(width, height, color) with SwingOval
+    new BaseShape(width, height, color) with SwingOval
 
-  /** Create a circular SwingShape.
+  /** Create a circular BaseShape.
     * @param radius
     *   the radius in game units
     * @param color
@@ -132,4 +132,4 @@ object Shapes:
     *   a new SwingCircle
     */
   def circle(radius: Double, color: Color): SwingCircle =
-    new BaseSwingShape(radius * 2, radius * 2, color) with SwingCircle
+    new BaseShape(radius * 2, radius * 2, color) with SwingCircle

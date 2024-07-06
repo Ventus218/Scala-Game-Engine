@@ -119,7 +119,7 @@ object SwingRendererTestUtilities:
       )
 
   /* test for shape renderable */
-  def testShapeProperties(renderer: SwingShapeRenderer): Unit =
+  def testShapeProperties(renderer: ShapeRenderer): Unit =
     renderer.shapeWidth = 2
     renderer.shapeWidth shouldBe 2
     renderer.shapeHeight = 1.5
@@ -130,7 +130,7 @@ object SwingRendererTestUtilities:
     renderer.renderOffset shouldBe (1, 9)
 
   /* test for shape renderable */
-  def testShapeInvalidValues(renderer: SwingShapeRenderer): Unit =
+  def testShapeInvalidValues(renderer: ShapeRenderer): Unit =
     an[IllegalArgumentException] shouldBe thrownBy {
       renderer.shapeWidth = -2
     }

@@ -54,8 +54,8 @@ trait GameElementRenderer
 
 /** Behaviour for rendering geometric shapes on a SwingIO.
   */
-trait SwingShapeRenderer extends GameElementRenderer:
-  protected val element: SwingShape
+trait ShapeRenderer extends GameElementRenderer:
+  protected val element: Shape
 
   /* Using the "=>" syntax instead of "as" because Metals didn't like this code
    * formatted using the default formatter
@@ -80,7 +80,7 @@ trait SwingRectRenderer(
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
-) extends SwingShapeRenderer:
+) extends ShapeRenderer:
   override protected val element: SwingRect =
     Shapes.rect(width, height, color)
   this.renderOffset = offset
@@ -97,7 +97,7 @@ trait SwingSquareRenderer(
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
-) extends SwingShapeRenderer:
+) extends ShapeRenderer:
   override protected val element: SwingSquare = Shapes.square(size, color)
   this.renderOffset = offset
   this.renderRotation = rotation
@@ -114,7 +114,7 @@ trait SwingOvalRenderer(
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
-) extends SwingShapeRenderer:
+) extends ShapeRenderer:
   override protected val element: SwingOval =
     Shapes.oval(width, height, color)
   this.renderOffset = offset
@@ -131,7 +131,7 @@ trait SwingCircleRenderer(
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
-) extends SwingShapeRenderer:
+) extends ShapeRenderer:
   override protected val element: SwingCircle = Shapes.circle(radius, color)
   export element.{shapeRadius, shapeRadius_=}
   this.renderOffset = offset
