@@ -1,4 +1,4 @@
-package sge.core.mock
+package sge.core.mocks
 
 import sge.core.*
 import scala.reflect.TypeTest
