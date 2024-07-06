@@ -7,7 +7,7 @@ object GameElements:
     * main properties of the element (width, height) are mutable, and are
     * represented in game units.
     */
-  trait SwingGameElement:
+  trait GameElement:
     /** The width of the element in game units.
       *
       * @return
@@ -44,16 +44,16 @@ object GameElements:
       */
     def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit
 
-  /** Base implementation of SwingGameElement.
+  /** Base implementation of GameElement.
     * @param width
     *   the width. It can't be negative or 0.
     * @param height
     *   the height. It can't be negative or 0.
     */
-  abstract class BaseSwingGameElement(
+  abstract class BaseGameElement(
       private var width: Double,
       private var height: Double
-  ) extends SwingGameElement:
+  ) extends GameElement:
     elementWidth = width
     elementHeight = height
     override def elementWidth: Double = width

@@ -33,7 +33,7 @@ trait GameElementRenderer
 
   /** The element to draw
     */
-  protected def element: SwingGameElement
+  protected def element: GameElement
   override def renderer: SwingIO => Graphics2D => Unit = io =>
     g2d =>
       val offsetPos = io.pixelPosition(

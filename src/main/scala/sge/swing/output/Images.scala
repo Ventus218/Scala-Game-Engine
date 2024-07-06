@@ -11,7 +11,7 @@ object Images:
     * properties of the element (width, height) are mutable, and are represented
     * in game units.
     */
-  trait SwingImage extends SwingGameElement:
+  trait SwingImage extends GameElement:
     /** The image to draw
       */
     val image: Image
@@ -25,7 +25,7 @@ object Images:
       override val image: Image,
       width: Double,
       height: Double
-  ) extends BaseSwingGameElement(width, height)
+  ) extends BaseGameElement(width, height)
       with SwingImage
 
   /** Create a SwingImage from an image path

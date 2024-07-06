@@ -9,7 +9,7 @@ object Shapes:
   /** Basic trait for manipulating and drawing geometric shapes using Swing. The
     * main properties of the shape (width, height, and color) are mutable.
     */
-  trait SwingShape extends SwingGameElement:
+  trait SwingShape extends GameElement:
     /** The color of the shape.
       * @return
       *   the color
@@ -34,7 +34,7 @@ object Shapes:
       width: Double,
       height: Double,
       private var color: Color
-  ) extends BaseSwingGameElement(width, height)
+  ) extends BaseGameElement(width, height)
       with SwingShape:
     shapeColor = color
 

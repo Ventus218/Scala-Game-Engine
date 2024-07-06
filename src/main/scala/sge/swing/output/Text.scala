@@ -23,7 +23,7 @@ object Text:
     * properties of the element (content, size, style, font) are mutable.
     * Dimensions are represented in game units.
     */
-  trait SwingText extends SwingGameElement:
+  trait SwingText extends GameElement:
     /** The content of the text.
       * @return
       *   the text
@@ -99,7 +99,7 @@ object Text:
       private var color: Color,
       private var font: FontName,
       private var style: TextStyle
-  ) extends BaseSwingGameElement(size, size)
+  ) extends BaseGameElement(size, size)
       with SwingText:
     import java.awt.font.FontRenderContext
     textContent = text
