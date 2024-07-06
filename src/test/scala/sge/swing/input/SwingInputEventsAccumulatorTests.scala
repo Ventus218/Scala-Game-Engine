@@ -1,13 +1,14 @@
+package sge.swing.input
+
 import org.scalatest.flatspec.AnyFlatSpec
-import java.awt.event.KeyListener
-import java.awt.event.MouseListener
-import java.awt.event.{KeyEvent as SwingKeyEvent}
 import org.scalatest.matchers.should.Matchers.*
-import SwingIO.*
-import SwingIO.InputButton.*
-import SwingIO.InputEvent.*
 import javax.swing.JButton
 import java.awt.Component
+import java.awt.event.{KeyListener, MouseListener, KeyEvent as SwingKeyEvent}
+import sge.swing.*
+import SwingIO.*
+import InputButton.*
+import InputEvent.*
 
 class SwingInputEventsAccumulatorTests extends AnyFlatSpec:
 
