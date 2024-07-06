@@ -108,9 +108,9 @@ object SwingRendererTestUtilities:
       color: Color,
       offset: (Int, Int) = (0, 0),
       anchor: UIAnchor = UIAnchor.Center
-  ): SwingUITextRenderer =
+  ): UITextRenderer =
     new Behaviour
-      with SwingUITextRenderer(
+      with UITextRenderer(
         text,
         Font("Arial", Font.PLAIN, size),
         color,

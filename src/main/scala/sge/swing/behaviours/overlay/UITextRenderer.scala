@@ -9,7 +9,7 @@ import java.awt.{Color, Font, Graphics2D}
   * screen based on its anchor point and its offset. By default the anchor is in
   * the top-left corner.
   */
-trait SwingUITextRenderer(
+trait UITextRenderer(
     private var text: String,
     private var font: Font,
     private var color: Color,

@@ -8,7 +8,7 @@ import sge.core.*
 import output.overlay.UIAnchor
 import java.awt.{Color, Font}
 
-object SwingUITextRendererTest:
+object UITextRendererTest:
 
   @main def testSwingRendererUIText(): Unit =
     testSwingRenderer:
@@ -60,17 +60,17 @@ object SwingUITextRendererTest:
     )
     io.show()
 
-class SwingUITextRendererTest extends AnyFlatSpec:
+class UITextRendererTest extends AnyFlatSpec:
 
   val font: Font = Font("Arial", Font.PLAIN, 10)
-  def textTest: SwingUITextRenderer = new Behaviour
-    with SwingUITextRenderer(
+  def textTest: UITextRenderer = new Behaviour
+    with UITextRenderer(
       "Test",
       font,
       Color.red
     )
 
-  "SwingUITextRenderer" should "be initialized correctly" in:
+  "UITextRenderer" should "be initialized correctly" in:
     val text = textTest
     text.textContent shouldBe "Test"
     text.textSize shouldBe 10
@@ -81,7 +81,7 @@ class SwingUITextRendererTest extends AnyFlatSpec:
   it should "not be initialized with null text, color or font" in:
     an[IllegalArgumentException] shouldBe thrownBy {
       new Behaviour
-        with SwingUITextRenderer(
+        with UITextRenderer(
           null,
           font,
           Color.red
@@ -89,7 +89,7 @@ class SwingUITextRendererTest extends AnyFlatSpec:
     }
     an[IllegalArgumentException] shouldBe thrownBy {
       new Behaviour
-        with SwingUITextRenderer(
+        with UITextRenderer(
           "Test",
           null,
           Color.red
@@ -97,7 +97,7 @@ class SwingUITextRendererTest extends AnyFlatSpec:
     }
     an[IllegalArgumentException] shouldBe thrownBy {
       new Behaviour
-        with SwingUITextRenderer(
+        with UITextRenderer(
           "Test",
           font,
           null
