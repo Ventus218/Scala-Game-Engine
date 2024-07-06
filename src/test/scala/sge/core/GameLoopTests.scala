@@ -1,11 +1,15 @@
+package sge.core
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
-import TestUtils.*
+import org.scalatest.exceptions.TestFailedException
 import org.scalatest.BeforeAndAfterEach
+import behaviours.Identifiable
+import sge.testing.TestUtils.*
+import sge.testing.behaviours.NFrameStopper
+import mocks.*
 import GameloopTester.*
 import GameloopEvent.*
-import org.scalatest.exceptions.TestFailedException
 
 class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
   private def getSequenceOfActions(): Seq[GameloopEvent] =
@@ -184,6 +188,7 @@ class GameLoopTests extends AnyFlatSpec with BeforeAndAfterEach:
         override def create(gameObject: Behaviour): Unit = ???
       }
 
+    import EngineUtils.*
     engineMock(10_000_000).deltaTimeSeconds shouldBe 0.01
     engineMock(15_000_000).deltaTimeSeconds shouldBe 0.015
     engineMock(166_000_005).deltaTimeSeconds shouldBe 0.166000005

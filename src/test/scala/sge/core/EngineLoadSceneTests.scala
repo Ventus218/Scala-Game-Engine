@@ -1,8 +1,11 @@
+package sge.core
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
-import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
+import sge.testing.TestUtils.*
+import behaviours.Identifiable
+import mocks.*
 
 class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
   val id0 = new Behaviour with Identifiable("0")
@@ -15,7 +18,7 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
     storage = Storage()
   )
 
-  override protected def beforeEach(): Unit = 
+  override protected def beforeEach(): Unit =
     engine = Engine(
       io = new IO() {},
       storage = Storage()

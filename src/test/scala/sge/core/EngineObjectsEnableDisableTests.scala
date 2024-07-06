@@ -1,12 +1,17 @@
+package sge.core
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
-import TestUtils.*
+import org.scalatest.BeforeAndAfterEach
+import behaviours.Identifiable
+import sge.testing.TestUtils.*
+import mocks.*
 import GameloopTester.*
 import GameloopEvent.*
-import org.scalatest.BeforeAndAfterEach
 
-class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEach:
+class EngineObjectsEnableDisableTests
+    extends AnyFlatSpec
+    with BeforeAndAfterEach:
   val enabledId = "enabled"
   val disabledId = "disabled"
 
@@ -15,7 +20,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
     storage = Storage()
   )
 
-  override protected def beforeEach(): Unit = 
+  override protected def beforeEach(): Unit =
     engine = Engine(
       io = new IO() {},
       storage = Storage()
@@ -60,7 +65,7 @@ class EngineObjectsEnableDisableTests extends AnyFlatSpec with BeforeAndAfterEac
           Update,
           LateUpdate
         )
-    
+
     engine = Engine(
       io = new IO() {},
       storage = Storage()

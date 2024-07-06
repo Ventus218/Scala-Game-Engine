@@ -1,3 +1,5 @@
+package sge.core
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.exceptions.TestFailedException

@@ -1,7 +1,10 @@
+package sge.core
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
+import behaviours.Identifiable
 import BehaviourUtils.*
+import mocks.*
 
 class SceneTests extends AnyFlatSpec:
   private def makeMockWithId(id: String) =

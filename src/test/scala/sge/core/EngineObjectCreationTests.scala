@@ -1,10 +1,13 @@
+package sge.core
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
-import TestUtils.{*, given}
+import org.scalatest.BeforeAndAfterEach
+import behaviours.Identifiable
+import sge.testing.TestUtils.*
+import mocks.*
 import GameloopTester.*
 import GameloopEvent.*
-import org.scalatest.BeforeAndAfterEach
 
 class EngineObjectCreationTests extends AnyFlatSpec with BeforeAndAfterEach:
   val obj1 = new GameObjectMock() with Identifiable("1")

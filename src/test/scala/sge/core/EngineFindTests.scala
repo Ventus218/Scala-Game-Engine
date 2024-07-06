@@ -1,9 +1,12 @@
+package sge.core
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
-import TestUtils.*
-import Dimensions2D.Positionable
 import org.scalatest.BeforeAndAfterEach
+import sge.testing.TestUtils.*
+import behaviours.*
+import mocks.*
+import dimension2d.*
 
 class EngineFindTests extends AnyFlatSpec with BeforeAndAfterEach:
   val mock1 = GameObjectMock()
@@ -17,7 +20,7 @@ class EngineFindTests extends AnyFlatSpec with BeforeAndAfterEach:
     storage = Storage()
   )
 
-  override protected def beforeEach(): Unit = 
+  override protected def beforeEach(): Unit =
     engine = Engine(
       io = new IO() {},
       storage = Storage()
