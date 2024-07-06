@@ -54,7 +54,7 @@ object ComplexTest:
       extends Behaviour
       with Positionable(initX, initY)
       with Scalable(1.0, 1.0)
-      with SwingSquareRenderer(squareSide, Color.red)
+      with SwingImageRenderer("epic-crocodile.png", squareSide, squareSide)
       with RectCollider(squareSide, squareSide):
 
     override def onUpdate: Engine => Unit = engine =>
