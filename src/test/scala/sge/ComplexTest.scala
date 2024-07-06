@@ -7,7 +7,7 @@ import swing.*
 import Utils.*
 import swing.behaviours.*
 import ingame.*
-import SwingInputHandler.*
+import InputHandler.*
 import input.*
 import InputButton.*
 import dimension2d.*
@@ -37,7 +37,7 @@ object ComplexTest:
 
   class PlayButton
       extends Behaviour
-      with SwingButton(
+      with Button(
         _buttonText = "Play",
         _inputButtonTriggers = Set(MouseButton1, P)
       )
@@ -71,7 +71,7 @@ object ComplexTest:
       with SingleScalable(1.0)
       with SwingCircleRenderer(circleRadius, Color.blue)
       with CircleCollider(circleRadius)
-      with SwingInputHandler
+      with InputHandler
       with Velocity
       with Acceleration((0, -100)):
     var inputHandlers: Map[InputButton, Handler] = Map(

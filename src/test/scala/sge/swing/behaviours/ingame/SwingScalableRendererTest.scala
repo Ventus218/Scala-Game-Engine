@@ -4,7 +4,7 @@ import sge.core.*
 import metrics.Vector2D.*
 import behaviours.dimension2d.*
 import sge.swing.*
-import sge.swing.behaviours.SwingRenderer
+import sge.swing.behaviours.Renderer
 import sge.swing.behaviours.SwingRendererTestUtilities.*
 import SwingIO.*
 import java.awt.{Color, Graphics2D}
@@ -21,8 +21,8 @@ object SwingScalableRendererTest:
       with SwingSquareRenderer(1, color)
       with Positionable
       with SingleScalable(scale)
-  private def multiRenderer(renderers: Seq[SwingRenderer]): SwingRenderer =
-    new Behaviour with SwingRenderer:
+  private def multiRenderer(renderers: Seq[Renderer]): Renderer =
+    new Behaviour with Renderer:
       override def renderer: SwingIO => Graphics2D => Unit =
         io => g2d => renderers.foreach(_.renderer(io)(g2d))
   @main def testScalableSwingRenderer(): Unit =

@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers.*
 import Vector2D.*
 
 class VectorTests extends AnyFlatSpec:
-  "Vector" should "provide up versor" in:
+  "Vector2D" should "provide up versor" in:
     Versor2D.up shouldBe (0, 1)
 
   it should "provide down versor" in:

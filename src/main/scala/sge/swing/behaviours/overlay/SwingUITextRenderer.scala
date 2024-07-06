@@ -2,7 +2,7 @@ package sge.swing.behaviours.overlay
 
 import sge.swing.*
 import output.overlay.UIAnchor
-import behaviours.SwingRenderer
+import behaviours.Renderer
 import java.awt.{Color, Font, Graphics2D}
 
 /** Behaviour for rendering an text on a SwingIO. The text is positioned on the
@@ -15,7 +15,7 @@ trait SwingUITextRenderer(
     private var color: Color,
     var textAnchor: UIAnchor = UIAnchor.TopLeft,
     var textOffset: (Int, Int) = (0, 0)
-) extends SwingRenderer:
+) extends Renderer:
   require(font != null, "text font can't be null")
   textContent = text
   textColor = color

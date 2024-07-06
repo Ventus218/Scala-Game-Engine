@@ -5,7 +5,7 @@ import sge.swing.*
 import java.awt.Graphics2D
 
 /** Behaviour for rendering an object on a SwingIO. */
-trait SwingRenderer extends Behaviour:
+trait Renderer extends Behaviour:
   /** The function defining the operation to apply on the graphic context of the
     * Swing GUI. It accepts in input a Swing IO, and the graphic context of the
     * window.

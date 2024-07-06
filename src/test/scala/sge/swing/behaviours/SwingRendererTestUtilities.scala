@@ -142,16 +142,16 @@ object SwingRendererTestUtilities:
     }
 
   /* visual test for swing renderable */
-  def testSwingRenderer(renderer: SwingRenderer): Unit =
+  def testSwingRenderer(renderer: Renderer): Unit =
     val frame: SwingIO = io.build()
     frame.draw(renderer.renderer(frame))
     frame.show()
 
   /* visual test for swing renderable */
   def testSwingRendererPlacement(
-      centered: SwingRenderer,
-      topLeft: SwingRenderer,
-      topRight: SwingRenderer
+      centered: Renderer,
+      topLeft: Renderer,
+      topRight: Renderer
   ): Unit =
     val frame: SwingIO = io.build()
     frame.draw(centered.renderer(frame))

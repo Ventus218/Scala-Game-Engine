@@ -5,7 +5,7 @@ import behaviours.dimension2d.*
 import metrics.Vector2D.*
 import metrics.Angle.*
 import sge.swing.*
-import sge.swing.behaviours.SwingRenderer
+import sge.swing.behaviours.Renderer
 import Utils.*
 import output.*
 import GameElements.*
@@ -16,8 +16,8 @@ import java.awt.{Graphics2D, Color}
 
 /** Behaviour for rendering a generic swing game element on a SwingIO
   */
-trait SwingGameElementRenderer
-    extends SwingRenderer
+trait GameElementRenderer
+    extends Renderer
     with Positionable
     with ScalableElement:
   /** The offset of the element. It is used to translate the element starting
@@ -54,7 +54,7 @@ trait SwingGameElementRenderer
 
 /** Behaviour for rendering geometric shapes on a SwingIO.
   */
-trait SwingShapeRenderer extends SwingGameElementRenderer:
+trait SwingShapeRenderer extends GameElementRenderer:
   protected val element: SwingShape
 
   /* Using the "=>" syntax instead of "as" because Metals didn't like this code
@@ -150,7 +150,7 @@ trait SwingImageRenderer(
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
-) extends SwingGameElementRenderer:
+) extends GameElementRenderer:
   protected val element: SwingImage =
     Images.simpleImage(imagePath, width, height)
 
@@ -181,7 +181,7 @@ trait SwingTextRenderer(
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
-) extends SwingGameElementRenderer:
+) extends GameElementRenderer:
   protected val element: SwingText =
     Text.oneLineText(text, size, color, fontFamily, fontStyle)
 

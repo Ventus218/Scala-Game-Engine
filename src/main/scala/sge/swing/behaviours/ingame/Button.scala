@@ -9,7 +9,7 @@ import input.InputButton
 import output.*
 import Text.*
 import InputButton.*
-import SwingInputHandler.{*, given}
+import InputHandler.{*, given}
 import java.awt.{Graphics2D, Color}
 
 /** A swing button with text.
@@ -18,7 +18,7 @@ import java.awt.{Graphics2D, Color}
   *   defines the input buttons (like mouse or spacebar) that can trigger the
   *   button
   */
-trait SwingButton(
+trait Button(
     _buttonText: String = "",
     _textSize: Double = 5,
     _textColor: Color = Color.black,
@@ -28,7 +28,7 @@ trait SwingButton(
     private var _inputButtonTriggers: Set[InputButton] = Set(MouseButton1)
 ) extends Behaviour
     with SwingRectRenderer
-    with SwingInputHandler:
+    with InputHandler:
 
   private val textRenderer: SwingTextRenderer = new Behaviour
     with SwingTextRenderer(

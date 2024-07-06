@@ -5,7 +5,7 @@ import sge.swing.*
 import input.InputButton
 import Utils.*
 
-object SwingInputHandler:
+object InputHandler:
 
   /** A Handler represents what should be done in response of an input event.
     *
@@ -60,7 +60,7 @@ object SwingInputHandler:
     * All the handlers that need to be fired are executed automatically during
     * the EarlyUpdate phase of the game loop.
     */
-  trait SwingInputHandler extends Behaviour:
+  trait InputHandler extends Behaviour:
     /** A mapping between input buttons and their handlers.
       */
     var inputHandlers: Map[InputButton, Handler]

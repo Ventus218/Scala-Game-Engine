@@ -12,12 +12,12 @@ import sge.swing.input.*
 import sge.swing.SwingIO
 import InputButton.*
 
-class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
+class ButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   var testButton: TestButton = newTestButton()
   def newTestButton(): TestButton =
     TestButton("Button", Set(MouseButton1), position = (0, 0))
-  def newDefaultButton(): SwingButton = new Behaviour
-    with SwingButton
+  def newDefaultButton(): Button = new Behaviour
+    with Button
     with Positionable
     with SwingRectRenderer(1, 1, Color.gray)
 
@@ -31,7 +31,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     testButton = newTestButton()
     engine = newEngine()
 
-  "SwingButton" should "have a rectangular shape" in:
+  "Button" should "have a rectangular shape" in:
     testButton.isInstanceOf[SwingRectRenderer] shouldBe true
 
   it should "have a mutable text value" in:
@@ -120,7 +120,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
       position: Vector2D = (0, 0),
       dimension: Vector2D = (100, 20)
   ) extends Behaviour
-      with SwingButton(
+      with Button(
         _buttonText = _buttonText,
         _inputButtonTriggers = inputButtonTriggers
       )

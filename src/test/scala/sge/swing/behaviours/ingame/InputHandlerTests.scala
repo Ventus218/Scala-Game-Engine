@@ -11,11 +11,11 @@ import sge.swing.*
 import input.*
 import SwingIO.*
 import InputButton.*
-import SwingInputHandler.*
+import InputHandler.*
 import sge.testing.TestUtils.*
 import java.awt.{Color, Graphics2D}
 
-class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
+class InputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
   var engine = newEngine
   val objId = "1"
 
@@ -23,7 +23,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
   override protected def beforeEach(): Unit =
     engine = newEngine
 
-  "SwingInputHandler" should "accept a mapping between input events and handlers" in:
+  "InputHandler" should "accept a mapping between input events and handlers" in:
     val f: Handler = (_: InputButton) => (_: Engine) => {}
     val h: Handler = (_: InputButton) => (_: Engine) => {}
     val initialInputHandlers = Map(
@@ -31,7 +31,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       N_1 -> h
     )
 
-    val handler = new Behaviour with SwingInputHandler {
+    val handler = new Behaviour with InputHandler {
       var inputHandlers: Map[InputButton, Handler] = initialInputHandlers
     }
     handler.inputHandlers should contain theSameElementsAs initialInputHandlers
@@ -165,7 +165,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
   private abstract class InputCounterObject(id: String)
       extends Behaviour
       with Identifiable(id)
-      with SwingInputHandler:
+      with InputHandler:
     var aRuns = 0
     var bRuns = 0
     def a(input: InputButton)(engine: Engine): Unit = aRuns += 1
@@ -215,7 +215,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       extends Behaviour
       with Positionable
       with SwingSquareRenderer(2, Color.blue)
-      with SwingInputHandler:
+      with InputHandler:
     var inputHandlers: Map[InputButton, Handler] = Map(
       D -> onMoveRight,
       A -> onMoveLeft,
