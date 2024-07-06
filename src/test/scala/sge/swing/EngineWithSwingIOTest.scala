@@ -3,14 +3,14 @@ package sge.swing
 import behaviours.ingame.*
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import java.awt.Color
 
 object EngineWithSwingIOTest:
   trait MoveX(velocityX: Double) extends Behaviour with Positionable:
     override def onUpdate: Engine => Unit = e =>
       val dx = velocityX * e.deltaTimeNanos * Math.pow(10, -9)
-      position = position + Versor.x * dx
+      position = position + Versor2D.x * dx
       super.onUpdate(e)
 
   val ioBuilder: SwingIO.SwingIOBuilder = SwingIO

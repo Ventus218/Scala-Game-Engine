@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.core.*
 import EngineUtils.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import behaviours.dimension2d.*
 import sge.testing.TestUtils.*
 
@@ -27,7 +27,7 @@ class AccelerationTests extends AnyFlatSpec:
   it should "update the velocity of the behaviour" in:
     acceleration.acceleration = (2, 3)
 
-    var initialVelocity: Vector = (0, 0)
+    var initialVelocity: Vector2D = (0, 0)
     acceleration.velocity = initialVelocity
 
     val engine = Engine(new IO {}, Storage())

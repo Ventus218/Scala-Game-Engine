@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import metrics.Angle.*
 import sge.swing.*
 import SwingIO.*
@@ -26,9 +26,9 @@ object SwingRendererTestUtilities:
       width: Double,
       height: Double,
       color: Color,
-      offset: Vector = (0, 0),
+      offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
-      position: Vector = (0, 0)
+      position: Vector2D = (0, 0)
   ): SwingRectRenderer =
     new Behaviour
       with SwingRectRenderer(width, height, color, offset, rotation)
@@ -38,9 +38,9 @@ object SwingRendererTestUtilities:
       width: Double,
       height: Double,
       color: Color,
-      offset: Vector = (0, 0),
+      offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
-      position: Vector = (0, 0)
+      position: Vector2D = (0, 0)
   ): SwingOvalRenderer =
     new Behaviour
       with SwingOvalRenderer(width, height, color, offset, rotation)
@@ -49,9 +49,9 @@ object SwingRendererTestUtilities:
   def squareRenderer(
       size: Double,
       color: Color,
-      offset: Vector = (0, 0),
+      offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
-      position: Vector = (0, 0)
+      position: Vector2D = (0, 0)
   ): SwingSquareRenderer =
     new Behaviour
       with SwingSquareRenderer(size, color, offset, rotation)
@@ -60,9 +60,9 @@ object SwingRendererTestUtilities:
   def circleRenderer(
       radius: Double,
       color: Color,
-      offset: Vector = (0, 0),
+      offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
-      position: Vector = (0, 0)
+      position: Vector2D = (0, 0)
   ): SwingCircleRenderer =
     new Behaviour
       with SwingCircleRenderer(radius, color, offset, rotation)
@@ -72,9 +72,9 @@ object SwingRendererTestUtilities:
       imagePath: String,
       width: Double,
       height: Double,
-      offset: Vector = (0, 0),
+      offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
-      position: Vector = (0, 0)
+      position: Vector2D = (0, 0)
   ): SwingImageRenderer =
     new Behaviour
       with SwingImageRenderer(imagePath, width, height, offset, rotation)

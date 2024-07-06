@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.core.*
 import EngineUtils.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import behaviours.dimension2d.*
 import sge.testing.TestUtils.*
 
@@ -24,7 +24,7 @@ class VelocityTests extends AnyFlatSpec:
   it should "update the position of the behaviour" in:
     velocity.velocity = (2, 3)
 
-    var initialPosition: Vector = (0, 0)
+    var initialPosition: Vector2D = (0, 0)
     velocity.position = initialPosition
 
     val engine = Engine(new IO {}, Storage())

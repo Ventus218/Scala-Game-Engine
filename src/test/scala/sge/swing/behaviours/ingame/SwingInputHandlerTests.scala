@@ -6,7 +6,7 @@ import org.scalatest.BeforeAndAfterEach
 import sge.core.*
 import behaviours.*
 import EngineUtils.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import sge.swing.*
 import input.*
 import SwingIO.*
@@ -181,15 +181,15 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       super.onFrameEnd(engine)
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
       return inputButton == N_0 || (isFirstFrame && inputButton == N_1)
-    override def scenePointerPosition(): Vector = ???
+    override def scenePointerPosition(): Vector2D = ???
     override def title: String = ???
     override def pixelsPerUnit: Int = ???
     override def pixelsPerUnit_=(p: Int): Unit = ???
     override def draw(renderer: Graphics2D => Unit, priority: Int): Unit = ???
     override def backgroundColor: Color = ???
     override def size: (Int, Int) = ???
-    override def center_=(pos: Vector): Unit = ???
-    override def center: Vector = ???
+    override def center_=(pos: Vector2D): Unit = ???
+    override def center: Vector2D = ???
     override def show(): Unit = ???
 
 /** A complex input test, move with WASD and teleport with left mouse click
@@ -236,13 +236,13 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
       println(pointer)
 
     private def onMoveRight(input: InputButton)(engine: Engine): Unit =
-      position = position + Versor.right * v * engine.deltaTimeSeconds
+      position = position + Versor2D.right * v * engine.deltaTimeSeconds
 
     private def onMoveLeft(input: InputButton)(engine: Engine): Unit =
-      position = position + Versor.left * v * engine.deltaTimeSeconds
+      position = position + Versor2D.left * v * engine.deltaTimeSeconds
 
     private def onMoveUp(input: InputButton)(engine: Engine): Unit =
-      position = position + Versor.up * v * engine.deltaTimeSeconds
+      position = position + Versor2D.up * v * engine.deltaTimeSeconds
 
     private def onMoveDown(input: InputButton)(engine: Engine): Unit =
-      position = position + Versor.down * v * engine.deltaTimeSeconds
+      position = position + Versor2D.down * v * engine.deltaTimeSeconds

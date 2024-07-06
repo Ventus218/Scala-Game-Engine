@@ -4,11 +4,11 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import sge.testing.TestUtils.*
 
 class PositionFollowerTests extends AnyFlatSpec with BeforeAndAfterEach:
-  val positionablePosition: Vector = (1, 4)
+  val positionablePosition: Vector2D = (1, 4)
 
   val positionable = new Behaviour with Positionable(positionablePosition):
     override def onEarlyUpdate: Engine => Unit =
@@ -16,7 +16,7 @@ class PositionFollowerTests extends AnyFlatSpec with BeforeAndAfterEach:
         super.onEarlyUpdate(engine)
         this.position = (5, 7)
 
-  val offset: Vector = (10, 10)
+  val offset: Vector2D = (10, 10)
 
   val positionableFollower = new Behaviour
     with PositionFollower(

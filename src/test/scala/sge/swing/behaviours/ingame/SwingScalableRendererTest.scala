@@ -1,7 +1,7 @@
 package sge.swing.behaviours.ingame
 
 import sge.core.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import behaviours.dimension2d.*
 import sge.swing.*
 import sge.swing.behaviours.SwingRenderer
@@ -10,7 +10,7 @@ import SwingIO.*
 import java.awt.{Color, Graphics2D}
 
 object SwingScalableRendererTest:
-  private def oval(scale: Vector, color: Color): SwingOvalRenderer =
+  private def oval(scale: Vector2D, color: Color): SwingOvalRenderer =
     new Behaviour
       with SwingOvalRenderer(1, 0.6, color)
       with Positionable

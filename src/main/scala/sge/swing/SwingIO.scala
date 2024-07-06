@@ -1,7 +1,7 @@
 package sge.swing
 
 import sge.core.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import input.*
 import Utils.*
 import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D, RenderingHints}
@@ -33,13 +33,13 @@ trait SwingIO extends IO:
   /** The position of the center of the window translated to game coordinates.
     * Can be modified at runtime
     */
-  def center: Vector
+  def center: Vector2D
 
   /** Set the center to a new position
     * @param pos
     *   the new center position
     */
-  def center_=(pos: Vector): Unit
+  def center_=(pos: Vector2D): Unit
 
   /** The background color of the window frame
     */
@@ -72,7 +72,7 @@ trait SwingIO extends IO:
     *
     * @return
     */
-  def scenePointerPosition(): Vector
+  def scenePointerPosition(): Vector2D
 
 /** Utility object for SwingIO
   */
@@ -96,7 +96,7 @@ object SwingIO:
       title: String,
       size: (Int, Int),
       pixelsPerUnit: Int = 100,
-      center: Vector = (0, 0),
+      center: Vector2D = (0, 0),
       background: Color = Color.white
   ): SwingIO =
     new SwingIOImpl(title, size, pixelsPerUnit, center, background)
@@ -108,7 +108,7 @@ object SwingIO:
       val title: String,
       val size: (Int, Int),
       private var _pixelsPerUnit: Int,
-      var center: Vector,
+      var center: Vector2D,
       val backgroundColor: Color
   ) extends SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
@@ -178,7 +178,7 @@ object SwingIO:
             InputEvent.Pressed
           )
 
-    override def scenePointerPosition(): Vector =
+    override def scenePointerPosition(): Vector2D =
       val absolutePointerPos = MouseInfo.getPointerInfo().getLocation()
       SwingUtilities.convertPointFromScreen(absolutePointerPos, activeCanvas)
       this.scenePosition((absolutePointerPos.x, absolutePointerPos.y))
@@ -230,7 +230,7 @@ object SwingIO:
       title: String = "Title",
       size: (Int, Int) = (0, 0),
       pixelsPerUnit: Int = 100,
-      center: Vector = (0, 0),
+      center: Vector2D = (0, 0),
       background: Color = Color.white
   )
 
@@ -271,7 +271,7 @@ object SwingIO:
     * @return
     *   a new builder
     */
-  def withCenter(center: Vector): SwingIOBuilder =
+  def withCenter(center: Vector2D): SwingIOBuilder =
     SwingIOBuilder(center = center)
 
   /** Build a SwingIO with a new background color
@@ -353,7 +353,7 @@ object SwingIO:
       * @return
       *   a new builder
       */
-    def withCenter(center: Vector): SwingIOBuilder =
+    def withCenter(center: Vector2D): SwingIOBuilder =
       SwingIOBuilder(
         builder.title,
         builder.size,

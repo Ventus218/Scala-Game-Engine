@@ -11,7 +11,7 @@ import SwingInputHandler.*
 import input.*
 import InputButton.*
 import dimension2d.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import metrics.Angle.*
 import physics2d.*
 import java.awt.Color
@@ -47,7 +47,7 @@ object ComplexTest:
       engine.loadScene(GameScene)
 
     override def onUpdate: Engine => Unit = engine =>
-      position = position + Versor.right * 0.1
+      position = position + Versor2D.right * 0.1
       super.onUpdate(engine)
 
   class Obstacle(initX: Double, initY: Double, squareSide: Double)
@@ -89,11 +89,11 @@ object ComplexTest:
 
     private def onMoveRight(input: InputButton)(engine: Engine): Unit =
       position =
-        position + Versor.right * movementVelocity * engine.deltaTimeSeconds
+        position + Versor2D.right * movementVelocity * engine.deltaTimeSeconds
 
     private def onMoveLeft(input: InputButton)(engine: Engine): Unit =
       position =
-        position - Versor.x * movementVelocity * engine.deltaTimeSeconds
+        position - Versor2D.x * movementVelocity * engine.deltaTimeSeconds
 
     private var jumped = false
     private def onJump(input: InputButton)(engine: Engine): Unit =

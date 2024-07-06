@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import behaviours.dimension2d.*
 
 class RectColliderTests extends AnyFlatSpec with BeforeAndAfterEach:

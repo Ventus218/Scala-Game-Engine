@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import sge.testing.TestUtils.*
 import java.awt.{Graphics2D, Color}
 import sge.swing.input.*
@@ -89,7 +89,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     newDefaultButton().inputButtonTriggers should contain only MouseButton1
 
   it should "not trigger if the pointer is not the button area when releasing InputButton" in:
-    testButton.position = testButton.position + Versor.up * 100
+    testButton.position = testButton.position + Versor2D.up * 100
     test(engine) on testScene runningFor 2 frames so that:
       _.onUpdate:
         engine.mockIO.frameCount match
@@ -117,8 +117,8 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   class TestButton(
       _buttonText: String,
       inputButtonTriggers: Set[InputButton],
-      position: Vector = (0, 0),
-      dimension: Vector = (100, 20)
+      position: Vector2D = (0, 0),
+      dimension: Vector2D = (100, 20)
   ) extends Behaviour
       with SwingButton(
         _buttonText = _buttonText,
@@ -138,7 +138,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     *     - The MouseButton1 and MouseButton2 are not pressed
     */
   class CenterPressReleaseMockSwingIO extends MockSwingIO:
-    override def scenePointerPosition(): Vector = (0, 0)
+    override def scenePointerPosition(): Vector2D = (0, 0)
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
       frameCount == 1 && Set(MouseButton1, MouseButton2).contains(inputButton)
 
@@ -151,7 +151,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     *     - The MouseButton1 and MouseButton2 are not pressed
     */
   class CenterPressCornerReleaseMockSwingIO extends MockSwingIO:
-    override def scenePointerPosition(): Vector =
+    override def scenePointerPosition(): Vector2D =
       if frameCount == 1 then (0, 0) else (1000, 1000)
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
       frameCount == 1 && Set(MouseButton1, MouseButton2).contains(inputButton)
@@ -165,7 +165,7 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     *     - The MouseButton1 and MouseButton2 are not pressed
     */
   class CornerPressCenterReleaseMockSwingIO extends MockSwingIO:
-    override def scenePointerPosition(): Vector =
+    override def scenePointerPosition(): Vector2D =
       if frameCount == 1 then (1000, 1000) else (0, 0)
     override def inputButtonWasPressed(inputButton: InputButton): Boolean =
       frameCount == 1 && Set(MouseButton1, MouseButton2).contains(inputButton)
@@ -174,16 +174,16 @@ class SwingButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     var frameCount = 1
     override def onFrameEnd: Engine => Unit = _ => frameCount += 1
 
-    override def scenePointerPosition(): Vector = ???
+    override def scenePointerPosition(): Vector2D = ???
     override def inputButtonWasPressed(inputButton: InputButton): Boolean = ???
     override def size: (Int, Int) = ???
-    override def center_=(pos: Vector): Unit = ???
+    override def center_=(pos: Vector2D): Unit = ???
     override def backgroundColor: Color = ???
     override def draw(renderer: Graphics2D => Unit, priority: Int): Unit = ()
     override def pixelsPerUnit_=(p: Int): Unit = ???
     override def show(): Unit = ()
     override def pixelsPerUnit: Int = ???
     override def title: String = "???"
-    override def center: Vector = ???
+    override def center: Vector2D = ???
 
   extension (e: Engine) def mockIO: MockSwingIO = e.io.asInstanceOf[MockSwingIO]

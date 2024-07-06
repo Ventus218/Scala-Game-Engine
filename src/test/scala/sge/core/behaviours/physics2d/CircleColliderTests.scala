@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
-import metrics.Vector.*
+import metrics.Vector2D.*
 import behaviours.dimension2d.*
 
 class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
@@ -104,11 +104,11 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
 
     circle.collides(rect) shouldBe false
 
-    rect.position = Vector.identity * (3 + Math.sqrt(2))
+    rect.position = Vector2D.identity * (3 + Math.sqrt(2))
 
     circle.collides(rect) shouldBe true
 
-    rect.position = rect.position + Vector.identity * 0.1
+    rect.position = rect.position + Vector2D.identity * 0.1
 
     circle.collides(rect) shouldBe false
 
@@ -126,11 +126,11 @@ class CircleColliderTests extends AnyFlatSpec with BeforeAndAfterEach:
     circle.collides(circle2) shouldBe true
     circle2.collides(circle) shouldBe true
 
-    circle2.position = Vector.identity * (2 + 2 * Math.sqrt(2))
+    circle2.position = Vector2D.identity * (2 + 2 * Math.sqrt(2))
 
     circle.collides(circle2) shouldBe true
 
-    circle2.position = circle2.position + Vector.identity * 0.1
+    circle2.position = circle2.position + Vector2D.identity * 0.1
 
     circle.collides(circle2) shouldBe false
 
