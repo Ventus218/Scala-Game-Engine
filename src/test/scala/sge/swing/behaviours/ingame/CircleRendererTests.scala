@@ -2,14 +2,14 @@ package sge.swing.behaviours.ingame
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import sge.swing.behaviours.SwingRendererTestUtilities
-import SwingRendererTestUtilities.*
+import sge.swing.behaviours.RendererTestUtilities
+import RendererTestUtilities.*
 import java.awt.Color
 
 object CircleRendererTests:
-  @main def testSwingRendererCircle(): Unit =
+  @main def testRendererCircle(): Unit =
     // it should display a circle
-    testSwingRenderer:
+    testRenderer:
       circleRenderer(
         radius = 0.7,
         color = Color.magenta,
@@ -17,9 +17,9 @@ object CircleRendererTests:
         position = (0, 0)
       )
 
-  @main def testSwingRendererCirclePlacement(): Unit =
+  @main def testRendererCirclePlacement(): Unit =
     val r: Double = 0.3
-    testSwingRendererPlacement(
+    testRendererPlacement(
       centered = circleRenderer(
         r,
         color = Color.red,
@@ -42,8 +42,8 @@ object CircleRendererTests:
 
 class CircleRendererTests extends AnyFlatSpec:
 
-  "Swing Circle" should "be initialized correctly" in:
-    val circle = SwingRendererTestUtilities.circleRenderer(
+  "Circle" should "be initialized correctly" in:
+    val circle = RendererTestUtilities.circleRenderer(
       radius = 1,
       color = Color.red,
       offset = (0, 0)
@@ -56,36 +56,36 @@ class CircleRendererTests extends AnyFlatSpec:
 
   it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.circleRenderer(radius = 0, color = Color.red)
+      RendererTestUtilities.circleRenderer(radius = 0, color = Color.red)
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.circleRenderer(radius = -4, color = Color.red)
+      RendererTestUtilities.circleRenderer(radius = -4, color = Color.red)
     }
 
   it should "not be initialized with null color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.circleRenderer(radius = 1, color = null)
+      RendererTestUtilities.circleRenderer(radius = 1, color = null)
     }
 
   it should "be able to change its properties" in:
-    val circle = SwingRendererTestUtilities.circleRenderer(
+    val circle = RendererTestUtilities.circleRenderer(
       radius = 1,
       color = Color.red,
       offset = (0, 0)
     )
-    SwingRendererTestUtilities.testShapeProperties(circle)
+    RendererTestUtilities.testShapeProperties(circle)
 
   it should "not be able to change its properties to invalid values" in:
-    val circle = SwingRendererTestUtilities.circleRenderer(
+    val circle = RendererTestUtilities.circleRenderer(
       radius = 1,
       color = Color.red,
       offset = (0, 0)
     )
-    SwingRendererTestUtilities.testShapeInvalidValues(circle)
+    RendererTestUtilities.testShapeInvalidValues(circle)
 
   it should "always have the radius be half the width and height" in:
     val circle =
-      SwingRendererTestUtilities.circleRenderer(radius = 1, color = Color.red)
+      RendererTestUtilities.circleRenderer(radius = 1, color = Color.red)
     for i <- 1 to 10 do
       circle.shapeRadius = i
       circle.shapeRadius shouldBe circle.shapeWidth / 2

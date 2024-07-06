@@ -2,14 +2,14 @@ package sge.swing.behaviours.ingame
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import sge.swing.behaviours.SwingRendererTestUtilities
-import SwingRendererTestUtilities.*
+import sge.swing.behaviours.RendererTestUtilities
+import RendererTestUtilities.*
 import java.awt.Color
 
 object OvalRendererTests:
-  @main def testSwingRendererOval(): Unit =
+  @main def testRendererOval(): Unit =
     // it should display an oval
-    testSwingRenderer:
+    testRenderer:
       ovalRenderer(
         width = 1.2,
         height = 2,
@@ -18,10 +18,10 @@ object OvalRendererTests:
         position = (0, 0)
       )
 
-  @main def testSwingRendererOvalPlacement(): Unit =
+  @main def testRendererOvalPlacement(): Unit =
     val w: Double = 0.5
     val h: Double = 0.3
-    testSwingRendererPlacement(
+    testRendererPlacement(
       centered = ovalRenderer(
         w,
         h,
@@ -47,8 +47,8 @@ object OvalRendererTests:
 
 class OvalRendererTests extends AnyFlatSpec:
 
-  "Swing Oval" should "be initialized correctly" in:
-    val oval = SwingRendererTestUtilities.ovalRenderer(
+  "Oval" should "be initialized correctly" in:
+    val oval = RendererTestUtilities.ovalRenderer(
       width = 1,
       height = 2,
       color = Color.blue,
@@ -61,21 +61,21 @@ class OvalRendererTests extends AnyFlatSpec:
 
   it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.ovalRenderer(
+      RendererTestUtilities.ovalRenderer(
         width = 0,
         height = 1,
         color = Color.red
       )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.ovalRenderer(
+      RendererTestUtilities.ovalRenderer(
         width = -4,
         height = 5,
         color = Color.red
       )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.ovalRenderer(
+      RendererTestUtilities.ovalRenderer(
         width = 2,
         height = -6,
         color = Color.red
@@ -84,7 +84,7 @@ class OvalRendererTests extends AnyFlatSpec:
 
   it should "not be initialized with null color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.ovalRenderer(
+      RendererTestUtilities.ovalRenderer(
         width = 1,
         height = 1,
         color = null
@@ -92,19 +92,19 @@ class OvalRendererTests extends AnyFlatSpec:
     }
 
   it should "be able to change its properties" in:
-    val oval = SwingRendererTestUtilities.ovalRenderer(
+    val oval = RendererTestUtilities.ovalRenderer(
       width = 1,
       height = 2,
       color = Color.red,
       offset = (0, 0)
     )
-    SwingRendererTestUtilities.testShapeProperties(oval)
+    RendererTestUtilities.testShapeProperties(oval)
 
   it should "not be able to change its properties to invalid values" in:
-    val oval = SwingRendererTestUtilities.ovalRenderer(
+    val oval = RendererTestUtilities.ovalRenderer(
       width = 1,
       height = 2,
       color = Color.red,
       offset = (0, 0)
     )
-    SwingRendererTestUtilities.testShapeInvalidValues(oval)
+    RendererTestUtilities.testShapeInvalidValues(oval)

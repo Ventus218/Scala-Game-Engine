@@ -2,15 +2,15 @@ package sge.swing.behaviours.ingame
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import sge.swing.behaviours.SwingRendererTestUtilities
-import SwingRendererTestUtilities.*
+import sge.swing.behaviours.RendererTestUtilities
+import RendererTestUtilities.*
 
 object ImageRendererTests:
-  @main def testSwingRendererImagePlacement(): Unit =
+  @main def testRendererImagePlacement(): Unit =
     val img: String = "epic-crocodile.png"
     val w: Double = 1
     val h: Double = 1
-    testSwingRendererPlacement(
+    testRendererPlacement(
       centered = imageRenderer(img, w, h, offset = (0, 0), position = (0, 0)),
       topLeft = imageRenderer(
         img,
@@ -28,9 +28,9 @@ object ImageRendererTests:
       )
     )
 
-  @main def testSwingRendererImage(): Unit =
+  @main def testRendererImage(): Unit =
     // it should display an image
-    testSwingRenderer:
+    testRenderer:
       imageRenderer(
         "epic-crocodile.png",
         width = 3,
@@ -41,8 +41,8 @@ object ImageRendererTests:
 
 class ImageRendererTests extends AnyFlatSpec:
 
-  "Swing Image" should "be initialized correctly" in:
-    val image = SwingRendererTestUtilities.imageRenderer(
+  "Image" should "be initialized correctly" in:
+    val image = RendererTestUtilities.imageRenderer(
       "epic-crocodile.png",
       width = 3,
       height = 3,
@@ -55,21 +55,21 @@ class ImageRendererTests extends AnyFlatSpec:
 
   it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.imageRenderer(
+      RendererTestUtilities.imageRenderer(
         "epic-crocodile.png",
         width = 0,
         height = 0
       )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.imageRenderer(
+      RendererTestUtilities.imageRenderer(
         "epic-crocodile.png",
         width = -4,
         height = 5
       )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.imageRenderer(
+      RendererTestUtilities.imageRenderer(
         "epic-crocodile.png",
         width = 2,
         height = -6
@@ -77,7 +77,7 @@ class ImageRendererTests extends AnyFlatSpec:
     }
 
   it should "be able to change its properties" in:
-    val image = SwingRendererTestUtilities.imageRenderer(
+    val image = RendererTestUtilities.imageRenderer(
       "epic-crocodile.png",
       width = 3,
       height = 3,
@@ -91,7 +91,7 @@ class ImageRendererTests extends AnyFlatSpec:
     image.renderOffset shouldBe (1, 9)
 
   it should "not be able to change its properties to invalid values" in:
-    val image = SwingRendererTestUtilities.imageRenderer(
+    val image = RendererTestUtilities.imageRenderer(
       "epic-crocodile.png",
       width = 3,
       height = 3,

@@ -3,13 +3,13 @@ package sge.swing.behaviours.ingame
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.swing.output.Text.{FontName, TextStyle}
-import sge.swing.behaviours.SwingRendererTestUtilities.*
+import sge.swing.behaviours.RendererTestUtilities.*
 import java.awt.Color
 
 object TextRendererTests:
 
-  @main def testSwingRendererText(): Unit =
-    testSwingRenderer:
+  @main def testRendererText(): Unit =
+    testRenderer:
       textRenderer(
         "Hello World!",
         0.3,
@@ -17,8 +17,8 @@ object TextRendererTests:
         position = (0, 0)
       )
 
-  @main def testSwingRendererTextPlacement(): Unit =
-    testSwingRendererPlacement(
+  @main def testRendererTextPlacement(): Unit =
+    testRendererPlacement(
       centered = textRenderer(
         "Hello World!",
         0.2,

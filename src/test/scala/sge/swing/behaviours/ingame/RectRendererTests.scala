@@ -2,14 +2,14 @@ package sge.swing.behaviours.ingame
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import sge.swing.behaviours.SwingRendererTestUtilities
-import SwingRendererTestUtilities.*
+import sge.swing.behaviours.RendererTestUtilities
+import RendererTestUtilities.*
 import java.awt.Color
 
 object RectRendererTests:
-  @main def testSwingRendererRect(): Unit =
+  @main def testRendererRect(): Unit =
     // it should display a rectangle
-    testSwingRenderer:
+    testRenderer:
       rectRenderer(
         width = 1.5,
         height = 1,
@@ -18,10 +18,10 @@ object RectRendererTests:
         position = (0, 0)
       )
 
-  @main def testSwingRendererRectPlacement(): Unit =
+  @main def testRendererRectPlacement(): Unit =
     val w: Double = 0.5
     val h: Double = 0.3
-    testSwingRendererPlacement(
+    testRendererPlacement(
       centered = rectRenderer(
         w,
         h,
@@ -47,8 +47,8 @@ object RectRendererTests:
 
 class RectRendererTests extends AnyFlatSpec:
 
-  "Swing Rectangle" should "be initialized correctly" in:
-    val rect = SwingRendererTestUtilities.rectRenderer(
+  "Rectangle" should "be initialized correctly" in:
+    val rect = RendererTestUtilities.rectRenderer(
       width = 1,
       height = 2,
       color = Color.red,
@@ -61,21 +61,21 @@ class RectRendererTests extends AnyFlatSpec:
 
   it should "not be initialized with negative sizes" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.rectRenderer(
+      RendererTestUtilities.rectRenderer(
         width = 0,
         height = 0,
         color = Color.red
       )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.rectRenderer(
+      RendererTestUtilities.rectRenderer(
         width = -4,
         height = 5,
         color = Color.red
       )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.rectRenderer(
+      RendererTestUtilities.rectRenderer(
         width = 2,
         height = -6,
         color = Color.red
@@ -84,7 +84,7 @@ class RectRendererTests extends AnyFlatSpec:
 
   it should "not be initialized with null color" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      SwingRendererTestUtilities.rectRenderer(
+      RendererTestUtilities.rectRenderer(
         width = 1,
         height = 1,
         color = null
@@ -92,19 +92,19 @@ class RectRendererTests extends AnyFlatSpec:
     }
 
   it should "be able to change its properties" in:
-    val rect = SwingRendererTestUtilities.rectRenderer(
+    val rect = RendererTestUtilities.rectRenderer(
       width = 1,
       height = 2,
       color = Color.red,
       offset = (0, 0)
     )
-    SwingRendererTestUtilities.testShapeProperties(rect)
+    RendererTestUtilities.testShapeProperties(rect)
 
   it should "not be able to change its properties to invalid values" in:
-    val rect = SwingRendererTestUtilities.rectRenderer(
+    val rect = RendererTestUtilities.rectRenderer(
       width = 1,
       height = 2,
       color = Color.red,
       offset = (0, 0)
     )
-    SwingRendererTestUtilities.testShapeInvalidValues(rect)
+    RendererTestUtilities.testShapeInvalidValues(rect)

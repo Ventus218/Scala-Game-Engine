@@ -5,11 +5,11 @@ import metrics.Vector2D.*
 import behaviours.dimension2d.*
 import sge.swing.*
 import sge.swing.behaviours.Renderer
-import sge.swing.behaviours.SwingRendererTestUtilities.*
+import sge.swing.behaviours.RendererTestUtilities.*
 import SwingIO.*
 import java.awt.{Color, Graphics2D}
 
-object SwingScalableRendererTest:
+object ScalableRendererTests:
   private def oval(scale: Vector2D, color: Color): OvalRenderer =
     new Behaviour
       with OvalRenderer(1, 0.6, color)
@@ -26,7 +26,7 @@ object SwingScalableRendererTest:
       override def renderer: SwingIO => Graphics2D => Unit =
         io => g2d => renderers.foreach(_.renderer(io)(g2d))
   @main def testScalableSwingRenderer(): Unit =
-    testSwingRenderer:
+    testRenderer:
       multiRenderer(
         Seq(
           oval((3, 3), Color.red),
@@ -36,7 +36,7 @@ object SwingScalableRendererTest:
       )
 
   @main def testSingleScalableSwingRenderer(): Unit =
-    testSwingRenderer:
+    testRenderer:
       multiRenderer(
         Seq(
           square(3, Color.red),

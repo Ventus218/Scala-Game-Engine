@@ -3,14 +3,14 @@ package sge.swing.behaviours.ingame
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.core.metrics.Angle.*
-import sge.swing.behaviours.SwingRendererTestUtilities
-import SwingRendererTestUtilities.*
+import sge.swing.behaviours.RendererTestUtilities
+import RendererTestUtilities.*
 import java.awt.Color
 
 object RendererRotationTests:
-  @main def testSwingSquareRotation(): Unit =
+  @main def testSquareRotation(): Unit =
     // it should display a rotated square
-    testSwingRenderer:
+    testRenderer:
       squareRenderer(
         size = 2,
         color = Color.orange,
@@ -20,7 +20,7 @@ object RendererRotationTests:
       )
   @main def testImageRotation(): Unit =
     // it should display a rotated image
-    testSwingRenderer:
+    testRenderer:
       imageRenderer(
         "epic-crocodile.png",
         3,
@@ -30,10 +30,10 @@ object RendererRotationTests:
         position = (0, 0)
       )
 
-  @main def testSwingSquareMultipleRotations(): Unit =
+  @main def testSquareMultipleRotations(): Unit =
     // it should display several rotated squares
     val s: Double = 1
-    testSwingRendererPlacement(
+    testRendererPlacement(
       centered = squareRenderer(
         s,
         color = Color.red,
@@ -60,7 +60,7 @@ object RendererRotationTests:
 class RendererRotationTests extends AnyFlatSpec:
 
   "A game-element swing renderer" should "be able initialize its rotation correctly" in:
-    val square = SwingRendererTestUtilities.squareRenderer(
+    val square = RendererTestUtilities.squareRenderer(
       size = 2,
       color = Color.red,
       rotation = 5.degrees
@@ -68,7 +68,7 @@ class RendererRotationTests extends AnyFlatSpec:
     square.renderRotation shouldBe 5.degrees
 
   it should "be able to change its rotation" in:
-    val square = SwingRendererTestUtilities.squareRenderer(
+    val square = RendererTestUtilities.squareRenderer(
       size = 2,
       color = Color.red
     )

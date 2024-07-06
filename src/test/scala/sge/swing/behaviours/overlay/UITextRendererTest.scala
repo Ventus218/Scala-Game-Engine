@@ -3,23 +3,23 @@ package sge.swing.behaviours.overlay
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.swing.*
-import behaviours.SwingRendererTestUtilities.*
+import behaviours.RendererTestUtilities.*
 import sge.core.*
 import output.overlay.UIAnchor
 import java.awt.{Color, Font}
 
 object UITextRendererTest:
 
-  @main def testSwingRendererUIText(): Unit =
-    testSwingRenderer:
+  @main def testRendererUIText(): Unit =
+    testRenderer:
       uiTextRenderer(
         "Hello World!",
         20,
         Color.blue
       )
 
-  @main def testSwingRendererUITextPlacement(): Unit =
-    testSwingRendererPlacement(
+  @main def testRendererUITextPlacement(): Unit =
+    testRendererPlacement(
       centered = uiTextRenderer(
         "Hello World!",
         20,
@@ -43,7 +43,7 @@ object UITextRendererTest:
       )
     )
 
-  @main def testSwingRendererUITextAllPlacements(): Unit =
+  @main def testRendererUITextAllPlacements(): Unit =
     val io: SwingIO = SwingIO
       .withSize(600, 500)
       .build()

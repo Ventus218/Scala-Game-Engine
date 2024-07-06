@@ -15,7 +15,7 @@ import sge.swing.behaviours.ingame.*
 import sge.swing.behaviours.overlay.*
 import java.awt.{Color, Font}
 
-object SwingRendererTestUtilities:
+object RendererTestUtilities:
 
   private val io: SwingIOBuilder = SwingIO
     .withSize((400, 400))
@@ -142,13 +142,13 @@ object SwingRendererTestUtilities:
     }
 
   /* visual test for swing renderable */
-  def testSwingRenderer(renderer: Renderer): Unit =
+  def testRenderer(renderer: Renderer): Unit =
     val frame: SwingIO = io.build()
     frame.draw(renderer.renderer(frame))
     frame.show()
 
   /* visual test for swing renderable */
-  def testSwingRendererPlacement(
+  def testRendererPlacement(
       centered: Renderer,
       topLeft: Renderer,
       topRight: Renderer
