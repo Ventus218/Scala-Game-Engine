@@ -1,7 +1,8 @@
+package sge.core.behaviours.dimension2d
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
-import Dimensions2D.Positionable
+import sge.core.*
 
 class PositionableTests extends AnyFlatSpec:
   val positionable = new Behaviour() with Positionable()

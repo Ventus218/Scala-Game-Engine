@@ -1,10 +1,11 @@
+package sge.core.behaviours.dimension2d
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Dimensions2D.Positionable
-import Dimensions2D.PositionFollower
-import Dimensions2D.Vector.*
-import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
+import sge.core.*
+import metrics.Vector.*
+import sge.testing.TestUtils.*
 
 class PositionFollowerTests extends AnyFlatSpec with BeforeAndAfterEach:
   val positionablePosition: Vector = (1, 4)

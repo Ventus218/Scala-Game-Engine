@@ -1,10 +1,10 @@
+package sge.core.behaviours.dimension2d
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
 import org.scalatest.BeforeAndAfterEach
-import Dimensions2D.Scalable
-import Dimensions2D.Vector.*
-import Dimensions2D.SingleScalable
+import sge.core.*
+import behaviours.*
 
 class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
   private val scaleWidth: Double = 0.5
@@ -40,7 +40,7 @@ class ScalableTests extends AnyFlatSpec with BeforeAndAfterEach:
     scalable.scaleHeight shouldBe scaleHeight
 
   it should "change scaleWidth and scaleHeight" in:
-    scalable.scaleWidth = 10.5 
+    scalable.scaleWidth = 10.5
     scalable.scaleHeight = 2
     scalable.scaleWidth shouldBe 10.5
     scalable.scaleHeight shouldBe 2
