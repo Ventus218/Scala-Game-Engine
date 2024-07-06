@@ -1,14 +1,19 @@
-import Behaviours.*
-import SwingIO.SwingIOBuilder
-import SwingRenderers.*
+package sge.swing.behaviours
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-
+import sge.core.*
+import behaviours.dimension2d.*
+import metrics.Vector.*
+import metrics.Angle.*
+import sge.swing.*
+import SwingIO.*
+import output.*
+import overlay.*
+import Text.*
+import sge.swing.behaviours.ingame.*
+import sge.swing.behaviours.overlay.*
 import java.awt.{Color, Font}
-import Dimensions2D.Positionable
-import Dimensions2D.Vector.*
-import SwingRenderers.Angle.*
-import SwingRenderers.Text.{FontName, TextStyle}
 
 object SwingRendererTestUtilities:
 
@@ -86,18 +91,32 @@ object SwingRendererTestUtilities:
       position: (Double, Double) = (0, 0)
   ): SwingTextRenderer =
     new Behaviour
-      with SwingTextRenderer(text, size, color, fontFamily, fontStyle, offset, rotation)
+      with SwingTextRenderer(
+        text,
+        size,
+        color,
+        fontFamily,
+        fontStyle,
+        offset,
+        rotation
+      )
       with Positionable(position._1, position._2)
-  
+
   def uiTextRenderer(
       text: String,
       size: Int,
       color: Color,
       offset: (Int, Int) = (0, 0),
       anchor: UIAnchor = UIAnchor.Center
-  ): SwingUITextRenderer = 
+  ): SwingUITextRenderer =
     new Behaviour
-      with SwingUITextRenderer(text, Font("Arial", Font.PLAIN, size), color, textAnchor = anchor, textOffset = offset)
+      with SwingUITextRenderer(
+        text,
+        Font("Arial", Font.PLAIN, size),
+        color,
+        textAnchor = anchor,
+        textOffset = offset
+      )
 
   /* test for shape renderable */
   def testShapeProperties(renderer: SwingShapeRenderer): Unit =

@@ -1,8 +1,11 @@
-import SwingRendererTestUtilities.*
-import SwingRenderers.*
+package sge.swing.behaviours.overlay
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-
+import sge.swing.*
+import behaviours.SwingRendererTestUtilities.*
+import sge.core.*
+import output.overlay.UIAnchor
 import java.awt.{Color, Font}
 
 object SwingUITextRendererTest:
@@ -77,25 +80,28 @@ class SwingUITextRendererTest extends AnyFlatSpec:
 
   it should "not be initialized with null text, color or font" in:
     an[IllegalArgumentException] shouldBe thrownBy {
-      new Behaviour with SwingUITextRenderer(
-        null,
-        font,
-        Color.red
-      )
+      new Behaviour
+        with SwingUITextRenderer(
+          null,
+          font,
+          Color.red
+        )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      new Behaviour with SwingUITextRenderer(
-        "Test",
-        null,
-        Color.red
-      )
+      new Behaviour
+        with SwingUITextRenderer(
+          "Test",
+          null,
+          Color.red
+        )
     }
     an[IllegalArgumentException] shouldBe thrownBy {
-      new Behaviour with SwingUITextRenderer(
-        "Test",
-        font,
-        null
-      )
+      new Behaviour
+        with SwingUITextRenderer(
+          "Test",
+          font,
+          null
+        )
     }
 
   it should "be able to change text, size and color" in:

@@ -1,14 +1,19 @@
+package sge.swing.behaviours.ingame
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import SwingIO.InputButton
-import SwingIO.InputButton.*
-import SwingInputHandler.{*, given}
-import java.awt.Color
-import java.awt.Graphics2D
-import Behaviours.Identifiable
-import TestUtils.*
 import org.scalatest.BeforeAndAfterEach
-import Dimensions2D.Vector.*
+import sge.core.*
+import behaviours.*
+import EngineUtils.*
+import metrics.Vector.*
+import sge.swing.*
+import input.*
+import SwingIO.*
+import InputButton.*
+import SwingInputHandler.*
+import sge.testing.TestUtils.*
+import java.awt.{Color, Graphics2D}
 
 class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
   var engine = newEngine
@@ -190,9 +195,7 @@ class SwingInputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
 /** A complex input test, move with WASD and teleport with left mouse click
   */
 @main def main: Unit =
-  import Dimensions2D.*
-  import Vector.*
-  import SwingRenderers.SwingSquareRenderer
+  import dimension2d.Positionable
 
   val io = SwingIO
     .withTitle("Test")
