@@ -1,12 +1,20 @@
-import SwingInputHandler.{*, given}
-import SwingRenderers.Angle.*
-import java.awt.Color
-import SwingIO.InputButton
+package sge
+
+import core.*
+import core.behaviours.*
+import EngineUtils.*
+import swing.*
+import Utils.*
+import swing.behaviours.*
+import ingame.*
+import SwingInputHandler.*
+import input.*
 import InputButton.*
-import Dimensions2D.*
-import SwingRenderers.*
-import Physics2D.*
-import Dimensions2D.Vector.*
+import dimension2d.*
+import metrics.Vector.*
+import metrics.Angle.*
+import physics2d.*
+import java.awt.Color
 
 object ComplexTest:
   extension (e: Engine) def swingIO: SwingIO = e.io.asInstanceOf[SwingIO]
