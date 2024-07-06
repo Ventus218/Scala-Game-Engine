@@ -1,3 +1,7 @@
+package sge.core.mock
+
+import sge.core.*
+
 object GameloopTester:
   enum GameloopEvent:
     case Init

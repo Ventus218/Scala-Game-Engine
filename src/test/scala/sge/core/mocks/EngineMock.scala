@@ -1,5 +1,8 @@
+package sge.core.mock
+
+import sge.core.*
+import behaviours.Identifiable
 import scala.reflect.TypeTest
-import Behaviours.Identifiable
 
 class EngineMock(
     val io: IO,
