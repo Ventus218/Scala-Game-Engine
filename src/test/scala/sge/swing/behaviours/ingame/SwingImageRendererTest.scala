@@ -1,6 +1,9 @@
-import SwingRendererTestUtilities.*
+package sge.swing.behaviours.ingame
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
+import sge.swing.behaviours.SwingRendererTestUtilities
+import SwingRendererTestUtilities.*
 
 object SwingImageRendererTest:
   @main def testSwingRendererImagePlacement(): Unit =

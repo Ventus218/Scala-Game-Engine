@@ -1,9 +1,9 @@
-import SwingRenderers.SwingTextRenderer
-import SwingRenderers.Text.{FontName, TextStyle}
-import SwingRendererTestUtilities.*
+package sge.swing.behaviours.ingame
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-
+import sge.swing.output.Text.{FontName, TextStyle}
+import sge.swing.behaviours.SwingRendererTestUtilities.*
 import java.awt.Color
 
 object SwingTextRendererTest:
@@ -23,19 +23,19 @@ object SwingTextRendererTest:
         "Hello World!",
         0.2,
         Color.red,
-        offset = (0, 0),
+        offset = (0, 0)
       ),
       topLeft = textRenderer(
         "Ciao Mondo!",
         0.25,
         Color.blue,
-        offset = (-1.5, 1.7),
+        offset = (-1.5, 1.7)
       ),
       topRight = textRenderer(
         "Hola Mundo!",
         0.15,
         Color.green,
-        position = (1.5, 1.7),
+        position = (1.5, 1.7)
       )
     )
 
@@ -44,11 +44,11 @@ class SwingTextRendererTest extends AnyFlatSpec:
   val font: FontName = "Arial"
   val style: TextStyle = TextStyle.Plain
   def textTest: SwingTextRenderer = textRenderer(
-      "Test",
-      10,
-      Color.red,
-      font,
-      style
+    "Test",
+    10,
+    Color.red,
+    font,
+    style
   )
 
   "SwingTextRenderer" should "be initialized correctly" in:

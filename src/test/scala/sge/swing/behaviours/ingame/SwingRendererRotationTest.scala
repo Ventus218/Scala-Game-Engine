@@ -1,8 +1,10 @@
-import SwingRendererTestUtilities.*
+package sge.swing.behaviours.ingame
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import SwingRenderers.Angle.*
-
+import sge.core.metrics.Angle.*
+import sge.swing.behaviours.SwingRendererTestUtilities
+import SwingRendererTestUtilities.*
 import java.awt.Color
 
 object SwingRendererRotationTest:
@@ -68,7 +70,7 @@ class SwingRendererRotationTest extends AnyFlatSpec:
   it should "be able to change its rotation" in:
     val square = SwingRendererTestUtilities.squareRenderer(
       size = 2,
-      color = Color.red,
+      color = Color.red
     )
     square.renderRotation = 10.degrees
     square.renderRotation shouldBe 10.degrees

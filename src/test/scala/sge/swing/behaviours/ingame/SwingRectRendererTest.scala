@@ -1,8 +1,11 @@
-import SwingRendererTestUtilities.*
+package sge.swing.behaviours.ingame
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-
+import sge.swing.behaviours.SwingRendererTestUtilities
+import SwingRendererTestUtilities.*
 import java.awt.Color
+
 object SwingRectRendererTest:
   @main def testSwingRendererRect(): Unit =
     // it should display a rectangle

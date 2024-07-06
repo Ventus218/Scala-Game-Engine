@@ -44,7 +44,7 @@ object Images:
       height: Double
   ): SwingImage =
     SingleSwingImage(
-      ImageIO.read(getClass.getResourceAsStream(imgPath)),
+      ImageIO.read(getClass.getResourceAsStream(s"/$imgPath")),
       width,
       height
     )
