@@ -151,7 +151,7 @@ trait ImageRenderer(
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends GameElementRenderer:
-  protected val element: SwingImage =
+  protected val element: Image =
     Images.simpleImage(imagePath, width, height)
 
   /* Using the "=>" syntax instead of "as" because Metals didn't like this code
@@ -172,7 +172,7 @@ trait ImageRenderer(
   * centered at the position of the behaviour, then moved by offset units and
   * then rotated by rotation angle.
   */
-trait SwingTextRenderer(
+trait TextRenderer(
     text: String,
     size: Double,
     color: Color,
@@ -182,7 +182,7 @@ trait SwingTextRenderer(
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends GameElementRenderer:
-  protected val element: SwingText =
+  protected val element: Text =
     Text.oneLineText(text, size, color, fontFamily, fontStyle)
 
   export element.{

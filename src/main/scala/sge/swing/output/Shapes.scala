@@ -94,7 +94,7 @@ object Shapes:
     * @param color
     *   the color of the shape
     * @return
-    *   a new SwingRect
+    *   a new Rect
     */
   def rect(width: Double, height: Double, color: Color): Rect =
     new BaseShape(width, height, color) with Rect
@@ -105,7 +105,7 @@ object Shapes:
     * @param color
     *   the color of the shape
     * @return
-    *   a new SwingSquare
+    *   a new Square
     */
   def square(size: Double, color: Color): Square =
     new BaseShape(size, size, color) with Square
@@ -118,7 +118,7 @@ object Shapes:
     * @param color
     *   the color of the shape
     * @return
-    *   a new SwingOval
+    *   a new Oval
     */
   def oval(width: Double, height: Double, color: Color): Oval =
     new BaseShape(width, height, color) with Oval
@@ -129,7 +129,7 @@ object Shapes:
     * @param color
     *   the color of the shape
     * @return
-    *   a new SwingCircle
+    *   a new Circle
     */
   def circle(radius: Double, color: Color): Circle =
     new BaseShape(radius * 2, radius * 2, color) with Circle

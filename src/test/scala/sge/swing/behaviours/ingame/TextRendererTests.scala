@@ -6,7 +6,7 @@ import sge.swing.output.Text.{FontName, TextStyle}
 import sge.swing.behaviours.SwingRendererTestUtilities.*
 import java.awt.Color
 
-object SwingTextRendererTest:
+object TextRendererTests:
 
   @main def testSwingRendererText(): Unit =
     testSwingRenderer:
@@ -39,11 +39,11 @@ object SwingTextRendererTest:
       )
     )
 
-class SwingTextRendererTest extends AnyFlatSpec:
+class TextRendererTests extends AnyFlatSpec:
 
   val font: FontName = "Arial"
   val style: TextStyle = TextStyle.Plain
-  def textTest: SwingTextRenderer = textRenderer(
+  def textTest: TextRenderer = textRenderer(
     "Test",
     10,
     Color.red,
@@ -51,7 +51,7 @@ class SwingTextRendererTest extends AnyFlatSpec:
     style
   )
 
-  "SwingTextRenderer" should "be initialized correctly" in:
+  "TextRenderer" should "be initialized correctly" in:
     val text = textTest
     text.textContent shouldBe "Test"
     text.textSize shouldBe 10

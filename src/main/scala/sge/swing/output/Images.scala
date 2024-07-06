@@ -1,6 +1,6 @@
 package sge.swing.output
 
-import java.awt.{Graphics2D, Image}
+import java.awt.{Graphics2D, Image as AWTImage}
 import javax.imageio.ImageIO
 
 /* Utility object for images */
@@ -11,24 +11,24 @@ object Images:
     * properties of the element (width, height) are mutable, and are represented
     * in game units.
     */
-  trait SwingImage extends GameElement:
+  trait Image extends GameElement:
     /** The image to draw
       */
-    val image: Image
+    val image: AWTImage
     override def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit =
       g2d =>
         (posX, posY, w, h) =>
-          val img = image.getScaledInstance(w, h, Image.SCALE_DEFAULT)
+          val img = image.getScaledInstance(w, h, AWTImage.SCALE_DEFAULT)
           g2d.drawImage(img, posX, posY, null)
 
-  private class SingleSwingImage(
-      override val image: Image,
+  private class SingleImage(
+      override val image: AWTImage,
       width: Double,
       height: Double
   ) extends BaseGameElement(width, height)
-      with SwingImage
+      with Image
 
-  /** Create a SwingImage from an image path
+  /** Create a Image from an image path
     * @param imgPath
     *   the path of the image file. Must be in a resource folder
     * @param width
@@ -36,14 +36,14 @@ object Images:
     * @param height
     *   the wanted height of the image in game units
     * @return
-    *   a new SwingImage
+    *   a new Image
     */
   def simpleImage(
       imgPath: String,
       width: Double,
       height: Double
-  ): SwingImage =
-    SingleSwingImage(
+  ): Image =
+    SingleImage(
       ImageIO.read(getClass.getResourceAsStream(s"/$imgPath")),
       width,
       height

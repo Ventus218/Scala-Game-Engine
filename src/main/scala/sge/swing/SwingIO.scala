@@ -122,7 +122,7 @@ object SwingIO:
     private def activeCanvas = if canvasTurn then canvas1 else canvas2
     private def bufferCanvas = if canvasTurn then canvas2 else canvas1
 
-    private val inputEventsAccumulator = SwingInputEventsAccumulator()
+    private val inputEventsAccumulator = InputEventsAccumulator()
 
     override def pixelsPerUnit: Int = _pixelsPerUnit
     override def pixelsPerUnit_=(p: Int): Unit =

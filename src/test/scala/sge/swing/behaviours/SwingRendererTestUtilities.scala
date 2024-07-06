@@ -89,9 +89,9 @@ object SwingRendererTestUtilities:
       offset: (Double, Double) = (0, 0),
       rotation: Angle = 0.degrees,
       position: (Double, Double) = (0, 0)
-  ): SwingTextRenderer =
+  ): TextRenderer =
     new Behaviour
-      with SwingTextRenderer(
+      with TextRenderer(
         text,
         size,
         color,

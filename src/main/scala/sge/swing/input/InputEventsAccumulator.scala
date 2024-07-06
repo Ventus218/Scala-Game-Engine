@@ -11,7 +11,7 @@ import InputEvent.*
   * onFrameEnd must be called on every frame to let the accumulator to work
   * properly.
   */
-private[swing] class SwingInputEventsAccumulator
+private[swing] class InputEventsAccumulator
     extends KeyListener,
       MouseListener:
 

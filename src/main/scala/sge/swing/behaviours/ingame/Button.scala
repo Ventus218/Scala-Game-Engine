@@ -30,8 +30,8 @@ trait Button(
     with RectRenderer
     with InputHandler:
 
-  private val textRenderer: SwingTextRenderer = new Behaviour
-    with SwingTextRenderer(
+  private val textRenderer: TextRenderer = new Behaviour
+    with TextRenderer(
       _buttonText,
       _textSize,
       _textColor,

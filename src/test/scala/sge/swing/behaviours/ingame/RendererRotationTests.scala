@@ -18,7 +18,7 @@ object RendererRotationTests:
         rotation = 45.degrees,
         position = (1, 0)
       )
-  @main def testSwingImageRotation(): Unit =
+  @main def testImageRotation(): Unit =
     // it should display a rotated image
     testSwingRenderer:
       imageRenderer(

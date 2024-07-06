@@ -23,7 +23,7 @@ object Text:
     * properties of the element (content, size, style, font) are mutable.
     * Dimensions are represented in game units.
     */
-  trait SwingText extends GameElement:
+  trait Text extends GameElement:
     /** The content of the text.
       * @return
       *   the text
@@ -79,7 +79,7 @@ object Text:
           g2d.setPaint(textColor)
           g2d.drawString(textContent, posX, posY + h)
 
-  /** Simple implementation of SwingText, that represents a one-line text. Its
+  /** Simple implementation of Text, that represents a one-line text. Its
     * width cannot be modified, and is automatically computed given the font
     * size and the text.
     * @param text
@@ -93,14 +93,14 @@ object Text:
     * @param style
     *   the font style
     */
-  private class OneLineSwingText(
+  private class OneLineText(
       private var text: String,
       private var size: Double,
       private var color: Color,
       private var font: FontName,
       private var style: TextStyle
   ) extends BaseGameElement(size, size)
-      with SwingText:
+      with Text:
     import java.awt.font.FontRenderContext
     textContent = text
     textColor = color
@@ -137,7 +137,7 @@ object Text:
     * @param style
     *   the font style
     * @return
-    *   the SwingText
+    *   the Text
     */
   def oneLineText(
       text: String,
@@ -145,5 +145,5 @@ object Text:
       color: Color,
       font: FontName = "Arial",
       style: TextStyle = TextStyle.Plain
-  ): SwingText =
-    OneLineSwingText(text, size, color, font, style)
+  ): Text =
+    OneLineText(text, size, color, font, style)
