@@ -5,7 +5,7 @@ import org.scalatest.matchers.should.Matchers.*
 import sge.swing.behaviours.SwingRendererTestUtilities
 import SwingRendererTestUtilities.*
 
-object SwingImageRendererTest:
+object ImageRendererTests:
   @main def testSwingRendererImagePlacement(): Unit =
     val img: String = "epic-crocodile.png"
     val w: Double = 1
@@ -39,7 +39,7 @@ object SwingImageRendererTest:
         position = (0, 0)
       )
 
-class SwingImageRendererTest extends AnyFlatSpec:
+class ImageRendererTests extends AnyFlatSpec:
 
   "Swing Image" should "be initialized correctly" in:
     val image = SwingRendererTestUtilities.imageRenderer(

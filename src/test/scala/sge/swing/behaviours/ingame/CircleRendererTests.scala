@@ -6,7 +6,7 @@ import sge.swing.behaviours.SwingRendererTestUtilities
 import SwingRendererTestUtilities.*
 import java.awt.Color
 
-object SwingCircleRendererTest:
+object CircleRendererTests:
   @main def testSwingRendererCircle(): Unit =
     // it should display a circle
     testSwingRenderer:
@@ -40,7 +40,7 @@ object SwingCircleRendererTest:
       )
     )
 
-class SwingCircleRendererTest extends AnyFlatSpec:
+class CircleRendererTests extends AnyFlatSpec:
 
   "Swing Circle" should "be initialized correctly" in:
     val circle = SwingRendererTestUtilities.circleRenderer(

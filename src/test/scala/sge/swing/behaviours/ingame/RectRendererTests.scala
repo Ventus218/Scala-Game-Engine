@@ -6,7 +6,7 @@ import sge.swing.behaviours.SwingRendererTestUtilities
 import SwingRendererTestUtilities.*
 import java.awt.Color
 
-object SwingRectRendererTest:
+object RectRendererTests:
   @main def testSwingRendererRect(): Unit =
     // it should display a rectangle
     testSwingRenderer:
@@ -45,7 +45,7 @@ object SwingRectRendererTest:
       )
     )
 
-class SwingRectRendererTest extends AnyFlatSpec:
+class RectRendererTests extends AnyFlatSpec:
 
   "Swing Rectangle" should "be initialized correctly" in:
     val rect = SwingRendererTestUtilities.rectRenderer(

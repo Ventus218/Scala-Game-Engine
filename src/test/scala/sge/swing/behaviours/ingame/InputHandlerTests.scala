@@ -214,7 +214,7 @@ class InputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
   class GameObject
       extends Behaviour
       with Positionable
-      with SwingSquareRenderer(2, Color.blue)
+      with SquareRenderer(2, Color.blue)
       with InputHandler:
     var inputHandlers: Map[InputButton, Handler] = Map(
       D -> onMoveRight,

@@ -27,7 +27,7 @@ trait Button(
     _textOffset: Vector2D = (0, 1),
     private var _inputButtonTriggers: Set[InputButton] = Set(MouseButton1)
 ) extends Behaviour
-    with SwingRectRenderer
+    with RectRenderer
     with InputHandler:
 
   private val textRenderer: SwingTextRenderer = new Behaviour

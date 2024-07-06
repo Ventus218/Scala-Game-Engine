@@ -10,15 +10,15 @@ import SwingIO.*
 import java.awt.{Color, Graphics2D}
 
 object SwingScalableRendererTest:
-  private def oval(scale: Vector2D, color: Color): SwingOvalRenderer =
+  private def oval(scale: Vector2D, color: Color): OvalRenderer =
     new Behaviour
-      with SwingOvalRenderer(1, 0.6, color)
+      with OvalRenderer(1, 0.6, color)
       with Positionable
       with Scalable(scale.x, scale.y)
 
-  private def square(scale: Double, color: Color): SwingSquareRenderer =
+  private def square(scale: Double, color: Color): SquareRenderer =
     new Behaviour
-      with SwingSquareRenderer(1, color)
+      with SquareRenderer(1, color)
       with Positionable
       with SingleScalable(scale)
   private def multiRenderer(renderers: Seq[Renderer]): Renderer =

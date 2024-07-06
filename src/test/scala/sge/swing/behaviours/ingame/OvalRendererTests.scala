@@ -6,7 +6,7 @@ import sge.swing.behaviours.SwingRendererTestUtilities
 import SwingRendererTestUtilities.*
 import java.awt.Color
 
-object SwingOvalRendererTest:
+object OvalRendererTests:
   @main def testSwingRendererOval(): Unit =
     // it should display an oval
     testSwingRenderer:
@@ -45,7 +45,7 @@ object SwingOvalRendererTest:
       )
     )
 
-class SwingOvalRendererTest extends AnyFlatSpec:
+class OvalRendererTests extends AnyFlatSpec:
 
   "Swing Oval" should "be initialized correctly" in:
     val oval = SwingRendererTestUtilities.ovalRenderer(

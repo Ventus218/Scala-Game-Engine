@@ -6,7 +6,7 @@ import sge.swing.behaviours.SwingRendererTestUtilities
 import SwingRendererTestUtilities.*
 import java.awt.Color
 
-object SwingSquareRendererTest:
+object SquareRendererTests:
   @main def testSwingRendererSquare(): Unit =
     // it should display a square
     testSwingRenderer:
@@ -40,7 +40,7 @@ object SwingSquareRendererTest:
       )
     )
 
-class SwingSquareRendererTest extends AnyFlatSpec:
+class SquareRendererTests extends AnyFlatSpec:
 
   "Swing Square" should "be initialized correctly" in:
     val square = SwingRendererTestUtilities.squareRenderer(

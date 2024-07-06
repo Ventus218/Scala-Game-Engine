@@ -73,7 +73,7 @@ trait ShapeRenderer extends GameElementRenderer:
   * rectangle is centered at the position of the behaviour, then moved by offset
   * units and then rotated by rotation angle.
   */
-trait SwingRectRenderer(
+trait RectRenderer(
     width: Double,
     height: Double,
     color: Color,
@@ -81,7 +81,7 @@ trait SwingRectRenderer(
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends ShapeRenderer:
-  override protected val element: SwingRect =
+  override protected val element: Rect =
     Shapes.rect(width, height, color)
   this.renderOffset = offset
   this.renderRotation = rotation
@@ -91,14 +91,14 @@ trait SwingRectRenderer(
   * is centered at the position of the behaviour, then moved by offset units and
   * then rotated by rotation angle.
   */
-trait SwingSquareRenderer(
+trait SquareRenderer(
     size: Double,
     color: Color,
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends ShapeRenderer:
-  override protected val element: SwingSquare = Shapes.square(size, color)
+  override protected val element: Square = Shapes.square(size, color)
   this.renderOffset = offset
   this.renderRotation = rotation
   this.renderingPriority = priority
@@ -107,7 +107,7 @@ trait SwingSquareRenderer(
   * centered at the position of the behaviour, then moved by offset units and
   * then rotated by rotation angle.
   */
-trait SwingOvalRenderer(
+trait OvalRenderer(
     width: Double,
     height: Double,
     color: Color,
@@ -115,7 +115,7 @@ trait SwingOvalRenderer(
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends ShapeRenderer:
-  override protected val element: SwingOval =
+  override protected val element: Oval =
     Shapes.oval(width, height, color)
   this.renderOffset = offset
   this.renderRotation = rotation
@@ -125,14 +125,14 @@ trait SwingOvalRenderer(
   * circle is centered at the position of the behaviour, then moved by offset
   * units and then rotated by rotation angle.
   */
-trait SwingCircleRenderer(
+trait CircleRenderer(
     radius: Double,
     color: Color,
     offset: Vector2D = (0, 0),
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends ShapeRenderer:
-  override protected val element: SwingCircle = Shapes.circle(radius, color)
+  override protected val element: Circle = Shapes.circle(radius, color)
   export element.{shapeRadius, shapeRadius_=}
   this.renderOffset = offset
   this.renderRotation = rotation
@@ -143,7 +143,7 @@ trait SwingCircleRenderer(
   * position of the behaviour, then moved by offset units and then rotated by
   * rotation angle.
   */
-trait SwingImageRenderer(
+trait ImageRenderer(
     imagePath: String,
     width: Double,
     height: Double,

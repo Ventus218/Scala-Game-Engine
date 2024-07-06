@@ -7,7 +7,7 @@ import sge.swing.behaviours.SwingRendererTestUtilities
 import SwingRendererTestUtilities.*
 import java.awt.Color
 
-object SwingRendererRotationTest:
+object RendererRotationTests:
   @main def testSwingSquareRotation(): Unit =
     // it should display a rotated square
     testSwingRenderer:
@@ -57,7 +57,7 @@ object SwingRendererRotationTest:
       )
     )
 
-class SwingRendererRotationTest extends AnyFlatSpec:
+class RendererRotationTests extends AnyFlatSpec:
 
   "A game-element swing renderer" should "be able initialize its rotation correctly" in:
     val square = SwingRendererTestUtilities.squareRenderer(

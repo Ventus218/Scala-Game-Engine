@@ -20,12 +20,12 @@ object EngineWithSwingIOTest:
 
   val redRect = new Behaviour
     with MoveX(1)
-    with SwingRectRenderer(3, 2, Color.red)
+    with RectRenderer(3, 2, Color.red)
     with Positionable(-5, 1)
 
   val blueCircle = new Behaviour
     with MoveX(1)
-    with SwingCircleRenderer(1, Color.blue)
+    with CircleRenderer(1, Color.blue)
     with Positionable(-5, 0)
 
   @main def runEngineWithSwingIO(): Unit =

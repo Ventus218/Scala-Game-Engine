@@ -45,7 +45,7 @@ object Shapes:
 
   /** A rectangular shape.
     */
-  trait SwingRect extends Shape:
+  trait Rect extends Shape:
     override def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit =
       g2d =>
         (posX, posY, w, h) =>
@@ -54,13 +54,13 @@ object Shapes:
 
   /** A square shape.
     */
-  trait SwingSquare extends SwingRect:
+  trait Square extends Rect:
     override def elementHeight: Double = elementWidth
     override def elementHeight_=(h: Double): Unit = elementWidth = h
 
   /** An oval shape.
     */
-  trait SwingOval extends Shape:
+  trait Oval extends Shape:
     override def drawElement: Graphics2D => (Int, Int, Int, Int) => Unit =
       g2d =>
         (posX, posY, w, h) =>
@@ -69,7 +69,7 @@ object Shapes:
 
   /** A circular shape.
     */
-  trait SwingCircle extends SwingOval:
+  trait Circle extends Oval:
     /** The radius of the circle in game units.
       * @return
       *   the radius
@@ -96,8 +96,8 @@ object Shapes:
     * @return
     *   a new SwingRect
     */
-  def rect(width: Double, height: Double, color: Color): SwingRect =
-    new BaseShape(width, height, color) with SwingRect
+  def rect(width: Double, height: Double, color: Color): Rect =
+    new BaseShape(width, height, color) with Rect
 
   /** Create a square BaseShape.
     * @param size
@@ -107,8 +107,8 @@ object Shapes:
     * @return
     *   a new SwingSquare
     */
-  def square(size: Double, color: Color): SwingSquare =
-    new BaseShape(size, size, color) with SwingSquare
+  def square(size: Double, color: Color): Square =
+    new BaseShape(size, size, color) with Square
 
   /** Create an oval BaseShape.
     * @param width
@@ -120,8 +120,8 @@ object Shapes:
     * @return
     *   a new SwingOval
     */
-  def oval(width: Double, height: Double, color: Color): SwingOval =
-    new BaseShape(width, height, color) with SwingOval
+  def oval(width: Double, height: Double, color: Color): Oval =
+    new BaseShape(width, height, color) with Oval
 
   /** Create a circular BaseShape.
     * @param radius
@@ -131,5 +131,5 @@ object Shapes:
     * @return
     *   a new SwingCircle
     */
-  def circle(radius: Double, color: Color): SwingCircle =
-    new BaseShape(radius * 2, radius * 2, color) with SwingCircle
+  def circle(radius: Double, color: Color): Circle =
+    new BaseShape(radius * 2, radius * 2, color) with Circle

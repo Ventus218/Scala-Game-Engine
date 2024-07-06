@@ -19,7 +19,7 @@ class ButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   def newDefaultButton(): Button = new Behaviour
     with Button
     with Positionable
-    with SwingRectRenderer(1, 1, Color.gray)
+    with RectRenderer(1, 1, Color.gray)
 
   var engine: Engine = newEngine()
   def newEngine(io: MockSwingIO = CenterPressReleaseMockSwingIO()): Engine =
@@ -32,7 +32,7 @@ class ButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     engine = newEngine()
 
   "Button" should "have a rectangular shape" in:
-    testButton.isInstanceOf[SwingRectRenderer] shouldBe true
+    testButton.isInstanceOf[RectRenderer] shouldBe true
 
   it should "have a mutable text value" in:
     testButton.buttonText shouldBe "Button"
@@ -125,7 +125,7 @@ class ButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
         _inputButtonTriggers = inputButtonTriggers
       )
       with Positionable(position)
-      with SwingRectRenderer(dimension.x, dimension.y, Color.gray):
+      with RectRenderer(dimension.x, dimension.y, Color.gray):
     var buttonPresses = 0
     override def onButtonPressed: Engine => Unit = _ => buttonPresses += 1
 

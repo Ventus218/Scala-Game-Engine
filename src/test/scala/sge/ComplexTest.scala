@@ -42,7 +42,7 @@ object ComplexTest:
         _inputButtonTriggers = Set(MouseButton1, P)
       )
       with Positionable
-      with SwingRectRenderer(20, 8, Color.gray):
+      with RectRenderer(20, 8, Color.gray):
     override def onButtonPressed: Engine => Unit = engine =>
       engine.loadScene(GameScene)
 
@@ -54,7 +54,7 @@ object ComplexTest:
       extends Behaviour
       with Positionable(initX, initY)
       with Scalable(1.0, 1.0)
-      with SwingImageRenderer("epic-crocodile.png", squareSide, squareSide)
+      with ImageRenderer("epic-crocodile.png", squareSide, squareSide)
       with RectCollider(squareSide, squareSide):
 
     override def onUpdate: Engine => Unit = engine =>
@@ -69,7 +69,7 @@ object ComplexTest:
   ) extends Behaviour
       with Positionable(initX, initY)
       with SingleScalable(1.0)
-      with SwingCircleRenderer(circleRadius, Color.blue)
+      with CircleRenderer(circleRadius, Color.blue)
       with CircleCollider(circleRadius)
       with InputHandler
       with Velocity

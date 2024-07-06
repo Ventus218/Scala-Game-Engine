@@ -29,9 +29,9 @@ object SwingRendererTestUtilities:
       offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
       position: Vector2D = (0, 0)
-  ): SwingRectRenderer =
+  ): RectRenderer =
     new Behaviour
-      with SwingRectRenderer(width, height, color, offset, rotation)
+      with RectRenderer(width, height, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def ovalRenderer(
@@ -41,9 +41,9 @@ object SwingRendererTestUtilities:
       offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
       position: Vector2D = (0, 0)
-  ): SwingOvalRenderer =
+  ): OvalRenderer =
     new Behaviour
-      with SwingOvalRenderer(width, height, color, offset, rotation)
+      with OvalRenderer(width, height, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def squareRenderer(
@@ -52,9 +52,9 @@ object SwingRendererTestUtilities:
       offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
       position: Vector2D = (0, 0)
-  ): SwingSquareRenderer =
+  ): SquareRenderer =
     new Behaviour
-      with SwingSquareRenderer(size, color, offset, rotation)
+      with SquareRenderer(size, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def circleRenderer(
@@ -63,9 +63,9 @@ object SwingRendererTestUtilities:
       offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
       position: Vector2D = (0, 0)
-  ): SwingCircleRenderer =
+  ): CircleRenderer =
     new Behaviour
-      with SwingCircleRenderer(radius, color, offset, rotation)
+      with CircleRenderer(radius, color, offset, rotation)
       with Positionable(position.x, position.y)
 
   def imageRenderer(
@@ -75,9 +75,9 @@ object SwingRendererTestUtilities:
       offset: Vector2D = (0, 0),
       rotation: Angle = 0.degrees,
       position: Vector2D = (0, 0)
-  ): SwingImageRenderer =
+  ): ImageRenderer =
     new Behaviour
-      with SwingImageRenderer(imagePath, width, height, offset, rotation)
+      with ImageRenderer(imagePath, width, height, offset, rotation)
       with Positionable(position.x, position.y)
 
   def textRenderer(
