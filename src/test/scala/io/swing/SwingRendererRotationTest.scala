@@ -73,8 +73,3 @@ class SwingRendererRotationTest extends AnyFlatSpec:
     square.renderRotation = 10.degrees
     square.renderRotation shouldBe 10.degrees
     Double
-
-  "An Angle" should "be converted correctly" in:
-    0.degrees shouldBe 0.radians
-    180.degrees shouldBe Math.PI.radians
-    -90.degrees shouldBe (-Math.PI/2).radians

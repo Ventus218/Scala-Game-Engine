@@ -1,6 +1,8 @@
+package sge.core.metrics
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Dimensions2D.Vector.*
+import Vector.*
 
 class VectorTests extends AnyFlatSpec:
   "Vector" should "provide up versor" in:
