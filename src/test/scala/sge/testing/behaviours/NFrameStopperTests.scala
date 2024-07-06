@@ -1,9 +1,13 @@
+package sge.testing.behaviours
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import Behaviours.*
+import org.scalatest.BeforeAndAfterEach
+import sge.core.*
+import behaviours.*
+import mocks.GameloopTester
 import GameloopTester.*
 import GameloopEvent.*
-import org.scalatest.BeforeAndAfterEach
 
 // TestUtils cannot be used here as they exploit NFrameStopper themselves
 class NFrameStopperTests extends AnyFlatSpec with BeforeAndAfterEach:
@@ -12,7 +16,7 @@ class NFrameStopperTests extends AnyFlatSpec with BeforeAndAfterEach:
     storage = Storage()
   )
 
-  override protected def beforeEach(): Unit = 
+  override protected def beforeEach(): Unit =
     engine = Engine(
       io = new IO() {},
       storage = Storage()
