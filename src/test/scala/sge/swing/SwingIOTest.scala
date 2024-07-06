@@ -1,10 +1,13 @@
+package sge.swing
+
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-
-import java.awt.{Color, Graphics2D}
 import scala.reflect.TypeTest
-import SwingIO.*
-import scala.compiletime.ops.double
+import java.awt.{Color, Graphics2D}
+import sge.core.*
+import mocks.*
+import Utils.*
+import input.InputButton
 
 object SwingIOTest:
 
@@ -72,7 +75,9 @@ object SwingIOTest:
       // Change this sleep time for debugging
       Thread.sleep(10)
       ioFrame.onFrameEnd(engine)
-      println(s"Frame $frame:\t${ioFrame.inputButtonWasPressed(InputButton.N_0)}")
+      println(
+        s"Frame $frame:\t${ioFrame.inputButtonWasPressed(InputButton.N_0)}"
+      )
       frame += 1
 
   @main def testSwingPointerPosition(): Unit =
@@ -86,7 +91,6 @@ object SwingIOTest:
     while true do
       println(ioFrame.scenePointerPosition())
       Thread.sleep(200)
-
 
 class SwingIOTest extends AnyFlatSpec:
 
