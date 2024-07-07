@@ -2,7 +2,6 @@ package sge.core
 
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
-import behaviours.Identifiable
 import BehaviourUtils.*
 import mocks.*
 

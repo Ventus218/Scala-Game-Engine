@@ -2,8 +2,6 @@ package sge.core.behaviours.physics2d
 
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector2D.*
-import EngineUtils.*
 
 /** Add velocity to a Positionable behaviour, in order to move it once the
   * onUpdate is called.

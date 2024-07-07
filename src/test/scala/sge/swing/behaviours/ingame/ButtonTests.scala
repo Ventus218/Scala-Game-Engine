@@ -5,12 +5,9 @@ import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector2D.*
-import sge.testing.TestUtils.*
+import sge.testing.*
+import sge.swing.*
 import java.awt.{Graphics2D, Color}
-import sge.swing.input.*
-import sge.swing.SwingIO
-import InputButton.*
 
 class ButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
   var testButton: TestButton = newTestButton()

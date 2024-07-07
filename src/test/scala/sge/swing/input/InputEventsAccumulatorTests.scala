@@ -6,8 +6,6 @@ import javax.swing.JButton
 import java.awt.Component
 import java.awt.event.{KeyListener, MouseListener, KeyEvent as SwingKeyEvent}
 import sge.swing.*
-import SwingIO.*
-import InputButton.*
 import InputEvent.*
 
 class InputEventsAccumulatorTests extends AnyFlatSpec:

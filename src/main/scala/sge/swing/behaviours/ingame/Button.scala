@@ -1,15 +1,10 @@
 package sge.swing.behaviours.ingame
 
 import sge.core.*
-import metrics.Vector2D.*
 import behaviours.dimension2d.*
 import sge.swing.*
-import Utils.*
-import input.InputButton
 import output.*
 import Text.*
-import InputButton.*
-import InputHandler.{*, given}
 import java.awt.{Graphics2D, Color}
 
 /** A swing button with text.

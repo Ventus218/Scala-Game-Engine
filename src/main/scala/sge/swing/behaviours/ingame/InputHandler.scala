@@ -2,8 +2,6 @@ package sge.swing.behaviours.ingame
 
 import sge.core.*
 import sge.swing.*
-import input.InputButton
-import Utils.*
 
 object InputHandler:
 

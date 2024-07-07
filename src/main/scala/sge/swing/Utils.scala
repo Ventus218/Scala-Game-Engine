@@ -1,7 +1,6 @@
 package sge.swing
 
 import sge.core.*
-import metrics.Vector2D.*
 
 /** Utility object for SwingIO */
 object Utils:

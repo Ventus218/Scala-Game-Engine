@@ -1,9 +1,7 @@
 package sge.swing
 
-import behaviours.ingame.*
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector2D.*
 import java.awt.Color
 
 object EngineWithSwingIOTest:

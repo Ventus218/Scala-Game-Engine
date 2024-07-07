@@ -1,9 +1,7 @@
 package sge.swing
 
 import sge.core.*
-import metrics.Vector2D.*
 import input.*
-import Utils.*
 import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D, RenderingHints}
 import java.awt.MouseInfo
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}

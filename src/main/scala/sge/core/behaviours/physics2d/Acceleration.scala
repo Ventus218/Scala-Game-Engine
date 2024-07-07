@@ -1,8 +1,6 @@
 package sge.core.behaviours.physics2d
 
 import sge.core.*
-import metrics.Vector2D.*
-import EngineUtils.*
 
 /** Add an acceleration to a Velocity behaviour in order to increment (or
   * decrement) its velocity every time the onEarlyUpdate is called.

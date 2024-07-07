@@ -3,10 +3,9 @@ package sge.core
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
-import sge.testing.TestUtils.*
-import behaviours.*
+import behaviours.dimension2d.*
+import sge.testing.*
 import mocks.*
-import dimension2d.*
 
 class EngineFindTests extends AnyFlatSpec with BeforeAndAfterEach:
   val mock1 = GameObjectMock()

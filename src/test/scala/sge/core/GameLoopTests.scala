@@ -4,8 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.exceptions.TestFailedException
 import org.scalatest.BeforeAndAfterEach
-import behaviours.Identifiable
-import sge.testing.TestUtils.*
+import sge.testing.*
 import sge.testing.behaviours.NFrameStopper
 import mocks.*
 import GameloopTester.*

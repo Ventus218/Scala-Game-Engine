@@ -4,7 +4,6 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.testing.TestUtils.*
-import behaviours.Identifiable
 import mocks.*
 
 class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:

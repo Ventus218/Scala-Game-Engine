@@ -4,7 +4,6 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
-import behaviours.*
 import mocks.GameloopTester
 import GameloopTester.*
 import GameloopEvent.*

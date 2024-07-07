@@ -1,12 +1,10 @@
 package sge.swing.behaviours.ingame
 
 import sge.core.*
-import metrics.Vector2D.*
 import behaviours.dimension2d.*
 import sge.swing.*
 import sge.swing.behaviours.Renderer
 import sge.swing.behaviours.RendererTestUtilities.*
-import SwingIO.*
 import java.awt.{Color, Graphics2D}
 
 object ScalableRendererTests:

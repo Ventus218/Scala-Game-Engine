@@ -4,15 +4,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
-import behaviours.*
-import EngineUtils.*
-import metrics.Vector2D.*
 import sge.swing.*
-import input.*
-import SwingIO.*
-import InputButton.*
-import InputHandler.*
-import sge.testing.TestUtils.*
+import sge.testing.*
 import java.awt.{Color, Graphics2D}
 
 class InputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
@@ -195,7 +188,7 @@ class InputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
 /** A complex input test, move with WASD and teleport with left mouse click
   */
 @main def main: Unit =
-  import dimension2d.Positionable
+  import sge.core.behaviours.dimension2d.Positionable
 
   val io = SwingIO
     .withTitle("Test")

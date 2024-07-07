@@ -2,11 +2,8 @@ package sge.swing.behaviours.ingame
 
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector2D.*
-import metrics.Angle.*
 import sge.swing.*
 import sge.swing.behaviours.Renderer
-import Utils.*
 import output.*
 import GameElements.*
 import Shapes.*

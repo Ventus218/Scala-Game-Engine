@@ -4,6 +4,7 @@ import core.*
 import behaviours.dimension2d.*
 import behaviours.physics2d.*
 import swing.*
+import java.awt.Color
 
 object ComplexTest:
   extension (e: Engine) def swingIO: SwingIO = e.io.asInstanceOf[SwingIO]

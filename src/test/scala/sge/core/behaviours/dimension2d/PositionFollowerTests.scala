@@ -4,8 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import org.scalatest.BeforeAndAfterEach
 import sge.core.*
-import metrics.Vector2D.*
-import sge.testing.TestUtils.*
+import sge.testing.*
 
 class PositionFollowerTests extends AnyFlatSpec with BeforeAndAfterEach:
   val positionablePosition: Vector2D = (1, 4)

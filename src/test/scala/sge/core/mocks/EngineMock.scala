@@ -1,7 +1,6 @@
 package sge.core.mocks
 
 import sge.core.*
-import behaviours.Identifiable
 import scala.reflect.TypeTest
 
 class EngineMock(

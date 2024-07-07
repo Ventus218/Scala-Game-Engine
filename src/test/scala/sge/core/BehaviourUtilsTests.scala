@@ -3,8 +3,7 @@ package sge.core
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import mocks.*
-import behaviours.*
-import dimension2d.*
+import behaviours.dimension2d.*
 import BehaviourUtils.*
 
 class BehaviourUtilsTests extends AnyFlatSpec:

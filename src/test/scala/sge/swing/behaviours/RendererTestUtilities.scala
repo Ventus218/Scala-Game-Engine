@@ -4,15 +4,10 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.core.*
 import behaviours.dimension2d.*
-import metrics.Vector2D.*
-import metrics.Angle.*
 import sge.swing.*
-import SwingIO.*
-import output.*
-import overlay.*
-import Text.*
-import sge.swing.behaviours.ingame.*
-import sge.swing.behaviours.overlay.*
+import sge.swing.behaviours.ingame.ShapeRenderer
+import output.Text.*
+import output.overlay.UIAnchor
 import java.awt.{Color, Font}
 
 object RendererTestUtilities:

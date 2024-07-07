@@ -6,8 +6,6 @@ import scala.reflect.TypeTest
 import java.awt.{Color, Graphics2D}
 import sge.core.*
 import mocks.*
-import Utils.*
-import input.InputButton
 
 object SwingIOTest:
 

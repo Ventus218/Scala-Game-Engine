@@ -1,7 +1,6 @@
 package sge.core.behaviours.dimension2d
 
 import sge.core.*
-import sge.core.metrics.Vector2D.*
 
 /** Gives the capability to follow another Positionable. The position of this
   * Behaviour is initialized as the follower position in the init and updated on
