@@ -1,20 +1,9 @@
 package sge
 
 import core.*
-import core.behaviours.*
-import EngineUtils.*
+import behaviours.dimension2d.*
+import behaviours.physics2d.*
 import swing.*
-import Utils.*
-import swing.behaviours.*
-import ingame.*
-import InputHandler.*
-import input.*
-import InputButton.*
-import dimension2d.*
-import metrics.Vector2D.*
-import metrics.Angle.*
-import physics2d.*
-import java.awt.Color
 
 object ComplexTest:
   extension (e: Engine) def swingIO: SwingIO = e.io.asInstanceOf[SwingIO]
