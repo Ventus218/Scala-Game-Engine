@@ -248,7 +248,7 @@ Da notare che ogni behaviour built-in è un mixin di Behaviour.
 Un oggetto che viene mixato con il behaviour **Identifiable** avrà a disposizione un `id` e potrà essere cercato attraverso questo tra tutti gli altri oggetti.
 
 ### Positionable
-Quando un behaviour usa **Positionable** come mixin, avrà accesso ad un campo position di tipo `Vector` settato a (0, 0) di default.
+Quando un behaviour usa **Positionable** come mixin, avrà accesso ad un campo position di tipo `Vector2D` settato a (0, 0) di default.
 E' anche possibile inizializzare **Positionable** con valori diversi così come modificare la posizione del behaviour a runtime.
 
 *Esempio*
@@ -259,16 +259,16 @@ positionable.position = positionable.position.setX(3)
 ```
 
 ### PositionFollower
-**PositionFollower** è un mixin che accetta come parametro un `followed` di tipo **Positionable** e un `positionOffset` del tipo `Vector`, ed esso stesso richiede in mixin un **Positionable**.
+**PositionFollower** è un mixin che accetta come parametro un `followed` di tipo **Positionable** e un `positionOffset` del tipo `Vector2D`, ed esso stesso richiede in mixin un **Positionable**.
 Il **PositionFollower** si occupa di tenere aggiornata la posizione del proprio **Positionable** in base alla posizione del `followed`, aggiungendoci il `positionOffset`.
 La posizione viene inizializzata nella `onInit` e aggiornata nella `onLateUpdate`.
 
 ### Velocity
-**Velocity** è un mixin che accetta come parametro di inizializzazione `velocity` di tipo `Vector`.
+**Velocity** è un mixin che accetta come parametro di inizializzazione `velocity` di tipo `Vector2D`.
 Un **Positionable** che ha questo trait come mixin si vedrà la propria posizione aggiornata ogni volta che verrà chiamata la `onUpdate`, secondo la velocità impostata. Tale velocità sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour si muovi secondo il frameRate (se in un secondo vengono eseguiti 60 frame, e la velocità è di 2, si vuole muovere il behaviour di 2 pixel nel giro di un secondo, quindi di 2/60 pixel ad ogni frame).
 
 ### Acceleration
-**Acceleration** è un mixin che accetta come parametro di inizializzazione un tipo `acceleration` di tipo `Vector`.
+**Acceleration** è un mixin che accetta come parametro di inizializzazione un tipo `acceleration` di tipo `Vector2D`.
 Un **Velocity** che ha questo trait come mixin si vedrà la propria velocità aggiornata ogni volta che verrà chiamata la `onEarlyUpdate`, secondo l'accelerazione impostata. Tale accelerazione sarà moltiplicata per `engine.deltaTimeSeconds` per farsì che il behaviour acceleri secondo il frameRate.
 
 ### Scalable e SingleScalable
@@ -279,7 +279,7 @@ Se uno dei valori qualsiasi di scaling è inferiore o uguale a zero viene lancia
 *Esempio*
 ```scala
 // create a scalable that scales two dimensions, with (1, 1) as value of the scaling
-val scalable: Scalable[Vector] = new Behaviour with Scalable(1d, 1d) // equivalent to Scalable((1d, 1d)) in Scala
+val scalable: Scalable[Vector2D] = new Behaviour with Scalable(1d, 1d) // equivalent to Scalable((1d, 1d)) in Scala
 scalable.scaleY = 3
 println(scalable.scaleY) // 3
 scalable.scaleX = 10
