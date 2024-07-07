@@ -34,12 +34,8 @@ Inoltre permette anche di definire per quanti frame eseguire l'engine prima di f
 ### `TestingFunction`
 E' un type alias per `TestingContext => Unit` ovvero una funzione alla quale viene passato un [contesto di testing](#testingcontext) e che esegue una computazione (solitamente il test vero e proprio).
 
-Per permettere l'utilizzo di una sintassi minimale in fase di scrittura dei test si sono anche definite delle conversioni implicite da `Unit` e `Assertion` a `TestingFunction`.
+Per permettere l'utilizzo di una sintassi minimale in fase di scrittura dei test si è definita una conversion implicita da `Any` a `TestingFunction`.
 In questo modo è possibile passare un semplice blocco di codice o delle asserzioni di scalatest piuttosto che una funzione con `TestingContext` come parametro (che spesso non è necessario).
-
-> **Nota:**
->
-> Si sarebbe potuto anche definire una sola conversione implicita da `Any` a `TestingFunction` però si è deciso di non farlo in quanto potrebbe essere poco intuitivo. Per il momento sono quindi sufficienti le conversioni su `Unit` e `Assertion`, ma nel caso in futuro fosse necessario è possibile definire al loro posto una da `Any`.
 
 ### `TestingContext`
 Le `TestingFunction` ricevono un `TestingContext` che contiene riferimenti utili, in particolare un riferimento all'oggetto tester permettendo di riconoscerlo ed escluderlo da alcune logiche di test.

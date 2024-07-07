@@ -20,6 +20,7 @@ Priority goes from top to bottom.
 |12|Refactor e pulizia di TestUtils||
 |14|Realizzazione dei videogiochi di esempio||
 |36|Aggiornare diagramma modello del dominio||
+|37|Fix: cache delle immagini scalate||
 
 
 ## Done
