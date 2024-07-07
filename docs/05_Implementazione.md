@@ -198,12 +198,12 @@ val io: SwingIO = SwingIO
 Si è implementata la seguente architettura:
 - SwingIO registra gli eventi di input generati dall'utente.
 - Per gestire la concorrenza della ricezione degli eventi si è deciso di accumularli durante l'esecuzione di un frame e gestirli solo nel frame successivo.
-- Il behaviour [SwingInputHandler](#swinginputhandler) permette all'utente di definire delle associazioni `tasto premuto -> azione da eseguire`, queste azioni verrano eseguite durante la fase di EarlyUpdate. Questo permette un approccio event driven piuttosto che a polling.
+- Il behaviour [InputHandler](#inputhandler) permette all'utente di definire delle associazioni `tasto premuto -> azione da eseguire`, queste azioni verrano eseguite durante la fase di EarlyUpdate. Questo permette un approccio event driven piuttosto che a polling.
   
   Le azioni devono essere eseguite ad ogni frame se il bottone è stato premuto e rilasciato, premuto o tenuto premuto.
 
 ### Implementazione
-SwingIO (in particolare SwingInputEventsAccumulator) accoda tutti gli eventi (pressioni e rilasci di tasti) inviati da Swing. Una volta raggiunta la fine del frame la coda degli eventi viene copiata (in modo da renderla persistente fino al prossimo frame) e svuotata cosicchè i nuovi eventi possano continuare ad essere accodati. 
+SwingIO (in particolare InputEventsAccumulator) accoda tutti gli eventi (pressioni e rilasci di tasti) inviati da Swing. Una volta raggiunta la fine del frame la coda degli eventi viene copiata (in modo da renderla persistente fino al prossimo frame) e svuotata cosicchè i nuovi eventi possano continuare ad essere accodati. 
 
 Per semplicità si immagini che gli eventi siano raggruppati per tasto.
 
@@ -325,43 +325,43 @@ println(collider3.collides(collider2)) //false
 **CircleCollider** è un mixin che aggiunge ad un oggetto un collider tondo con il centro in `(Positionable.x, Positionable.y)` e raggio passato in input.
 Il suo raggio scala in base allo `scale` di **Scalable**.
 
-### SwingRenderer
-Un behaviour con **SwingRenderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
+### Renderer
+Un behaviour con **Renderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
 Il rendering avviene nell'evento di `onLateUpdate` del game loop, e viene fatto invocando la funzione `renderer`, che contiene l'operazione da eseguire sul SwingIO e sul suo contesto grafico, insieme con la `rendereringPriority` che indica la priorità da passare allo SwingIO.
-Se l'engine non contiene un IO di tipo SwingIO, allora SwingRenderer lancia un'eccezione di tipo `ClassCastException`.
+Se l'engine non contiene un IO di tipo SwingIO, allora Renderer lancia un'eccezione di tipo `ClassCastException`.
 
-SwingRenderable è esteso dal trait **SwingGameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
-Questo a sua volta è esteso dai trait **SwingShapeRenderer** che rappresenta una forma geometrica, **SwingImageRenderer** che rappresenta un'immagine, e da **SwingTextRenderer** che rappresenta un testo sulla scena.
+Renderable è esteso dal trait **GameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
+Questo a sua volta è esteso dai trait **SwingShapeRenderer** che rappresenta una forma geometrica, **ImageRenderer** che rappresenta un'immagine, e da **TextRenderer** che rappresenta un testo sulla scena.
 
 Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli. Inoltre questi trait sono di tipo `ScalableElement`, per cui le loro dimensioni vengono calcolate in proporzione ai propri fattori di scaling, sia che siano forniti da uno `Scalable` oppure da un `SingleScalable`.
 Questi renderer hanno anche un `renderOffset`, che indica di quanto il disegno debba essere traslato rispetto alla posizione attuale del behaviour, e una `renderRotation`, che indica di quale angolo il renderer deve essere ruotato. La rotazione viene eseguita dopo la traslazione, e con centro di rotazione nella posizione non traslata dell'oggetto.
 
-SwingRenderable è esteso dal trait **SwingUITextRenderer**, che disegna un testo su shermo, e che a differenza degli altri renderer rappresenta un elemento di overlay del gioco. Questo significa che non ha una posizione definita in termini di unità di gioco, bensì in pixel; Inoltre la sua posizione è
+Renderable è esteso dal trait **UITextRenderer**, che disegna un testo su shermo, e che a differenza degli altri renderer rappresenta un elemento di overlay del gioco. Questo significa che non ha una posizione definita in termini di unità di gioco, bensì in pixel; Inoltre la sua posizione è
 legata al `textAnchor`, ovvero il punto di partenza sullo schermo dal quale iniziare a disegnare l'elemento. In questo modo, gli elementi di overlay dipendono solamente dalla SwingIO dell'engine e non dalla scena nella quale sono istanziati.
 
 *Esempio*
 ```scala
 // Disegna un rettangolo in LateUpdate
-val rect: SwingShapeRenderer = new Behaviour with SwingRectRenderer(width=1, height=2, color=Color.blue) with Positionable(0, 0)
+val rect: SwingShapeRenderer = new Behaviour with RectRenderer(width=1, height=2, color=Color.blue) with Positionable(0, 0)
 
 rect.shapeWidth = 2               // cambia le dimensioni
 rect.shapeHeight = 1
 rect.renderOffset = (1, 0)        // cambia l'offset
 
 // Disegna un cerchio in LateUpdate, con offset settato in input
-val circle: SwingCircleRenderer = new Behaviour with SwingCircleRenderer(radius=2, offset=(1,0)) with Positionable(0, 0)
+val circle: CircleRenderer = new Behaviour with CircleRenderer(radius=2, offset=(1,0)) with Positionable(0, 0)
 
 circle.shapeRadius = 3            // cambia il raggio di un CircleRenderer
 
 // Disegna un'immagine in LateUpdate, ruotata di 45 gradi
-val image: SwingImageRenderer = new Behaviour with SwingImageRenderer("icon.png", width=1.5, height=1.5, rotation=45.degrees) with Positionable(0, 0)
+val image: ImageRenderer = new Behaviour with ImageRenderer("icon.png", width=1.5, height=1.5, rotation=45.degrees) with Positionable(0, 0)
 
 image.imageHeight = 2             // cambia le dimensioni
 image.imageWidth = 2
 image.renderRotation = 90.degrees // cambia l'angolo di rotazione
 
 // Disegna del testo in LateUpdate, con posizione relativa alla finestra di gioco e non alla scena
-val overlayText: SwingUITextRenderer = new Behaviour with SwingUITextRenderer(
+val overlayText: UITextRenderer = new Behaviour with UITextRenderer(
   "Hello!", 
   Font("Arial", Font.PLAIN, 10), 
   Color.green,
@@ -370,14 +370,14 @@ val overlayText: SwingUITextRenderer = new Behaviour with SwingUITextRenderer(
 
 ```
 
-### SwingInputHandler
+### InputHandler
 Permette allo sviluppatore di definire associazioni del tipo `input -> azione`
 
 ```scala
 class GameObject
       extends Behaviour
       // ...
-      with SwingInputHandler:
+      with InputHandler:
 
     var inputHandlers: Map[InputButton, Handler] = Map(
         D -> onMoveRight,
@@ -418,7 +418,7 @@ Come si può notare dall'esempio è anche possibile definire handler complessi:
 > MouseButton1 -> (onTeleport.onlyWhenPressed and onTeleport.onlyWhenHeld)
 > ```
 
-Nel caso si preferisse comunque un approccio non event-driven è possibile utilizzare direttamente SwingIO senza SwingInputHandler:
+Nel caso si preferisse comunque un approccio non event-driven è possibile utilizzare direttamente SwingIO senza InputHandler:
 
 ```scala
 class GameObject extends Behaviour
@@ -431,9 +431,9 @@ class GameObject extends Behaviour
         super.onUpdate(engine)
 ```
 
-### SwingButton
+### Swing
 E' un bottone rettangolare con testo.
-Mixa un SwingRectRenderer per lo sfondo e ha internamente un SwingTextRenderer per il testo (per questo è necessario chiamare su questo campo tutti gli eventi del game loop).
+Mixa un RectRenderer per lo sfondo e ha internamente un TextRenderer per il testo (per questo è necessario chiamare su questo campo tutti gli eventi del game loop).
 
 Permette di definire quali tasti (tastiera o mouse) possono premerlo.
 
