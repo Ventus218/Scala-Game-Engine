@@ -28,6 +28,7 @@ lazy val alessandro = project
     name := "alessandro",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % Test,
     assembly / assemblyOutputPath := file("./alessandro.jar"),
     assembly / mainClass := Some("Alessandro")
   )
