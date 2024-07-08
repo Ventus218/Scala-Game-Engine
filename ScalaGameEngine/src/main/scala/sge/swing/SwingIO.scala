@@ -147,16 +147,18 @@ object SwingIO:
         super.onFrameEnd(engine)
         show()
         inputEventsAccumulator.onFrameEnd()
+    
+    override def onEngineStop(): Unit = frame.dispose()
 
     private def initCanvas(): Unit =
-      SwingUtilities.invokeAndWait(() => {
+      SwingUtilities.invokeAndWait(() =>
         frame.add(activeCanvas)
         frame.add(bufferCanvas)
         frame.addKeyListener(inputEventsAccumulator)
         frame.addMouseListener(inputEventsAccumulator)
         frame.pack()
         frame.setVisible(true)
-      })
+      )
 
     private def createCanvas(): DrawableCanvas =
       new DrawableCanvas(size, backgroundColor)

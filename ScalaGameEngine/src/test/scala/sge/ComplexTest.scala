@@ -11,7 +11,6 @@ object ComplexTest:
 
   @main
   def test: Unit =
-
     val io = SwingIO
       .withTitle("Test")
       .withSize((600, 400))
@@ -24,6 +23,16 @@ object ComplexTest:
     )
 
     engine.run(MenuScene)
+
+  class Closebutton
+      extends Behaviour
+      with Button(
+        _buttonText = "Close"
+      )
+      with Positionable(0, 16)
+      with RectRenderer(20, 8, Color.red):
+    override def onButtonPressed: Engine => Unit = engine =>
+      engine.stop()
 
   class PlayButton
       extends Behaviour
@@ -128,7 +137,7 @@ object ComplexTest:
 
   object MenuScene extends Scene:
     override def apply(): Iterable[Behaviour] =
-      Seq(PlayButton())
+      Seq(PlayButton(), Closebutton())
 
   object GameScene extends Scene:
     override def apply(): Iterable[Behaviour] =

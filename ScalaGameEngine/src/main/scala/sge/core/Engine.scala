@@ -202,6 +202,8 @@ object Engine:
 
         gameObjects.foreach(_.onDeinit(this))
 
+      io.onEngineStop()
+
     override def stop(): Unit = shouldStop = true
 
   /** Creates the engine.

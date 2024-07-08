@@ -12,3 +12,4 @@ trait IO:
     *   the operation.
     */
   def onFrameEnd: Engine => Unit = (_) => {}
+  def onEngineStop(): Unit = ()
