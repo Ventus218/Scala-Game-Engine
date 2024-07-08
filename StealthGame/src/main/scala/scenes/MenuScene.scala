@@ -1,9 +1,11 @@
+package scenes
+
 import sge.core.*
 import sge.core.behaviours.dimension2d.*
 import sge.swing.*
 import java.awt.Color
-import Config.*
-import GameBehaviours.GameButton
+import config.*
+import gamebehaviours.GameButton
 
 object MenuScene extends Scene:
   import Privates.*
@@ -21,9 +23,7 @@ object MenuScene extends Scene:
     )
 
   private object Privates:
-
     def onPlayButton: Engine => Unit = engine =>
-      import GameUtils.*
       engine.loadScene(DifficultyScene)
 
     def onExitButton: Engine => Unit = engine => engine.stop()

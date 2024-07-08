@@ -1,11 +1,13 @@
 import sge.core.{Engine, Storage}
 import sge.swing.SwingIO
+import config.{SCREEN_HEIGHT, SCREEN_WIDTH, PIXEL_UNIT_RATIO}
+import scenes.MenuScene
 
 @main def main =
   val io = SwingIO
     .withTitle("Stealth Game")
-    .withSize(1200, 720)
-    .withPixelsPerUnitRatio(10)
+    .withSize(SCREEN_WIDTH, SCREEN_HEIGHT)
+    .withPixelsPerUnitRatio(PIXEL_UNIT_RATIO)
     .build()
 
   Engine(io, Storage(), fpsLimit = 60).run(MenuScene)

@@ -1,10 +1,11 @@
+package scenes
+
 import sge.swing.*
 import sge.core.*
 import sge.core.behaviours.dimension2d.Positionable
+import config.*
+import gamebehaviours.GameButton
 import java.awt.Color
-import Config.*
-import GameBehaviours.GameButton
-import scala.languageFeature.postfixOps
 
 object DifficultyScene extends Scene:
   import Privates.*
@@ -33,6 +34,4 @@ object DifficultyScene extends Scene:
     )
 
   private object Privates:
-    def onBackButton: Engine => Unit = engine =>
-      import GameUtils.*
-      engine.loadScene(MenuScene)
+    def onBackButton: Engine => Unit = engine => engine.loadScene(MenuScene)
