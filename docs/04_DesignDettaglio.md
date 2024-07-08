@@ -60,3 +60,7 @@ L'utente può:
     - Un identificativo (find(id))
 
 Inoltre engine mette a disposizione un riferimento ad IO, uno a Storage e l'informazione di quanto tempo è trascorso dall'utlimo frame (deltaTimeNanos).
+
+## Gameloop
+
+<img alt="Diagramma di attività del gameloop" src="./img/Gameloop.png" style="width: 400px; display: block; margin: auto"/>
