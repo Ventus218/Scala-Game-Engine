@@ -3,33 +3,27 @@ import sge.core.behaviours.dimension2d.*
 import sge.swing.*
 import java.awt.Color
 import Config.*
+import GameBehaviours.GameButton
 
 object MenuScene extends Scene:
   import Privates.*
 
   override def apply(): Iterable[Behaviour] =
     Seq(
-      PlayButton(),
-      ExitButton(initY = -offsetFromOtherButton)
+      GameButton(text = "Play", onButtonPressed = onPlayButton)(
+        buttonColor = GREEN
+      ),
+      GameButton(text = "Close", onButtonPressed = onExitButton)(
+        textColor = Color.WHITE,
+        buttonColor = Color.BLACK,
+        position = (0, -BUTTON_OFFSET)
+      )
     )
 
   private object Privates:
-    class ExitButton(
-        initX: Double = 0,
-        initY: Double = 0
-    ) extends Behaviour
-        with Positionable(initX, initY)
-        with Button("Close", _textColor = Color.WHITE)
-        with RectRenderer(buttonsWidth, buttonsHeight, Color.BLACK):
-      override def onButtonPressed: Engine => Unit = engine => engine.stop()
 
-    class PlayButton(
-        initX: Double = 0,
-        initY: Double = 0
-    ) extends Behaviour
-        with Positionable(initX, initY)
-        with Button("Play")
-        with RectRenderer(buttonsWidth, buttonsHeight, green):
-      override def onButtonPressed: Engine => Unit = engine =>
-        import GameUtils.*
-        engine.loadScene(DifficultyScene)
+    def onPlayButton: Engine => Unit = engine =>
+      import GameUtils.*
+      engine.loadScene(DifficultyScene)
+
+    def onExitButton: Engine => Unit = engine => engine.stop()
