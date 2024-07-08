@@ -137,3 +137,7 @@ test(engine) on testScene soThat:
         .onLateUpdate:
             engine.find[Identifiable]() should contain theSameElementsAs scene1()
 ```
+
+## Testing di Swing
+
+Essendo Swing un framework per la realizzazione di interfacce grafiche il testing dei componenti non è semplice. Per questo si è fatto il possibile per testare ciò che poteva essere direttamente testato e invece per quanto riguarda i componenti grafici o visivi si sono realizzati tanti piccoli `@main` da eseguire manualmente per verificare che tutto funzioni.
