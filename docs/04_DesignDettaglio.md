@@ -1,6 +1,9 @@
 # Design di dettaglio
 
-## [Behaviour](../src/main/scala/Behaviour.scala)
+Dato il modello del dominio analizzato in [requisiti e specifica](./02_RequisitiSpecifica.md) questo diagramma ne mostra invece il lato di progettazione.
+![Diagramma del design di dettaglio](./img/Design%20di%20dettaglio.png)
+
+## [Behaviour](../src/main/scala/sge/core/Behaviour.scala)
 Behaviour rappresenta il comportamento di un oggetto ed è il punto principale nel quale l'utente definisce la sua logica applicativa.
 Può essere attivo o disattivo, questo implica che salterà o meno certe fasi del game loop.
 Ogni behaviour possiede dei metodi che vengono chiamati dall'engine in momenti specifici del game loop:
@@ -15,7 +18,7 @@ Ogni behaviour possiede dei metodi che vengono chiamati dall'engine in momenti s
 
 Questi metodi ricevono come parametro l'**Engine** in modo da poterci interagire.
 
-## [IO](../src/main/scala/IO.scala)
+## [IO](../src/main/scala/sge/core/IO.scala)
 IO è pensato per essere implementato in modo che si possa definire un qualsiasi proprio sistema di input/output.
 
 Le classi che implementano IO possono inoltre agganciarsi a un momento specifico del game loop ovvero la fine dell'elaborazione di un frame:
@@ -27,17 +30,17 @@ Questo implica che l'utente utilizzando una specifica implementazione di IO assu
 
 Il caso nel quale l'utente volesse implementare più di un tipo di IO contemporaneamente sarebbe comunque realizzabile sotto al concetto di singolo IO.
 
-## [Scene](../src/main/scala/Scene.scala)
+## [Scene](../src/main/scala/sge/core/Scene.scala)
 Siccome l'engine non ha i concetti di scene o di scena attiva, ma solo di game object, allora Scene rappresenta una struttura dati che memorizza come gli oggetti andranno creati quando questa verrà caricata dall'engine.
 
-## [Storage](../src/main/scala/Storage.scala)
+## [Storage](../src/main/scala/sge/core/Storage.scala)
 Storage fornisce la possibilità all'utente di salvare coppie chiave valore in modo da permettere la persistenza di alcuni dati, cosa molto utile nel caso di passaggio da una scena all'altra.
 - set
 - get
 - getOption
 - unset
 
-## [Engine](../src/main/scala/Engine.scala)
+## [Engine](../src/main/scala/sge/core/Engine.scala)
 Engine è il motore di gioco che orchestra tutti gli altri componenti e mette a disposizione le API per farli interagire.
 
 L'utente può:
