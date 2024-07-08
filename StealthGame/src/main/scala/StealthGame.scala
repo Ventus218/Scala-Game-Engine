@@ -1,7 +1,7 @@
 import sge.core.{Engine, Storage}
 import sge.swing.SwingIO
 import config.{SCREEN_HEIGHT, SCREEN_WIDTH, PIXEL_UNIT_RATIO}
-import scenes.MenuScene
+import scenes.StartingMenu
 
 @main def main =
   val io = SwingIO
@@ -10,4 +10,4 @@ import scenes.MenuScene
     .withPixelsPerUnitRatio(PIXEL_UNIT_RATIO)
     .build()
 
-  Engine(io, Storage(), fpsLimit = 60).run(MenuScene)
+  Engine(io, Storage(), fpsLimit = 60).run(StartingMenu)

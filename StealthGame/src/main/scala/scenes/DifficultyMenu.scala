@@ -7,7 +7,7 @@ import config.*
 import gamebehaviours.GameButton
 import java.awt.Color
 
-object DifficultyScene extends Scene:
+object DifficultyMenu extends Scene:
   import Privates.*
   override def apply(): Iterable[Behaviour] =
     Seq(
@@ -34,4 +34,4 @@ object DifficultyScene extends Scene:
     )
 
   private object Privates:
-    def onBackButton: Engine => Unit = engine => engine.loadScene(MenuScene)
+    def onBackButton: Engine => Unit = engine => engine.loadScene(StartingMenu)
