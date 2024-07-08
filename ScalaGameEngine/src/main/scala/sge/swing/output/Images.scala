@@ -7,6 +7,25 @@ import javax.imageio.ImageIO
 object Images:
   import GameElements.*
 
+  /** Utility class for reading images from the resources folder. Improves the performance by caching the
+    * loaded images.
+    */
+  object ImageLoader:
+    private var images: Map[String, AWTImage] = Map.empty
+
+    /** Load an AWTImage, given its file path. The image must be located in the resources folder
+      * @param path
+      *   the path of the image file. Must be in a resource folder
+      * @return
+      *   the AWTImage
+      */
+    def load(path: String): AWTImage =
+      images.getOrElse(path, {
+        val newImage = ImageIO.read(getClass.getResourceAsStream(s"/$path"))
+        images = images + (path -> newImage)
+        newImage
+      })
+
   /** Utility class for resizing the AWTImages. Improves the performance by caching the
     * last resized image.
     * @param path
