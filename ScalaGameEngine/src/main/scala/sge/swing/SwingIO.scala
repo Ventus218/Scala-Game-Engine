@@ -165,7 +165,7 @@ object SwingIO:
 
     private def createFrame(): JFrame =
       val frame: JFrame = new JFrame(title)
-      frame.setIconImage(ImageLoader.load("frameIconPath"))
+      frame.setIconImage(ImageLoader.load(frameIconPath))
       frame.setSize(size._1, size._2)
       frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
       frame.setResizable(false)
