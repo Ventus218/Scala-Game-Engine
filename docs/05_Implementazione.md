@@ -323,20 +323,20 @@ println(collider3.collides(collider2)) //false
 
 #### CircleCollider
 **CircleCollider** è un mixin che aggiunge ad un oggetto un collider tondo con il centro in `(Positionable.x, Positionable.y)` e raggio passato in input.
-Il suo raggio scala in base allo `scale` di **Scalable**.
+Il suo raggio scala in base allo `scale` di **SingleScalable**.
 
 ### Renderer
-Un behaviour con **Renderable** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
+Un behaviour con **Renderer** come mixin potrà essere rappresentato su un IO di tipo SwingIO.
 Il rendering avviene nell'evento di `onLateUpdate` del game loop, e viene fatto invocando la funzione `renderer`, che contiene l'operazione da eseguire sul SwingIO e sul suo contesto grafico, insieme con la `rendereringPriority` che indica la priorità da passare allo SwingIO.
 Se l'engine non contiene un IO di tipo SwingIO, allora Renderer lancia un'eccezione di tipo `ClassCastException`.
 
-Renderable è esteso dal trait **GameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
+Renderer è esteso dal trait **GameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
 Questo a sua volta è esteso dai trait **ShapeRenderer** che rappresenta una forma geometrica, **ImageRenderer** che rappresenta un'immagine, e da **TextRenderer** che rappresenta un testo sulla scena.
 
 Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli. Inoltre questi trait sono di tipo `ScalableElement`, per cui le loro dimensioni vengono calcolate in proporzione ai propri fattori di scaling, sia che siano forniti da uno `Scalable` oppure da un `SingleScalable`.
 Questi renderer hanno anche un `renderOffset`, che indica di quanto il disegno debba essere traslato rispetto alla posizione attuale del behaviour, e una `renderRotation`, che indica di quale angolo il renderer deve essere ruotato. La rotazione viene eseguita dopo la traslazione, e con centro di rotazione nella posizione non traslata dell'oggetto.
 
-Renderable è esteso dal trait **UITextRenderer**, che disegna un testo su shermo, e che a differenza degli altri renderer rappresenta un elemento di overlay del gioco. Questo significa che non ha una posizione definita in termini di unità di gioco, bensì in pixel; Inoltre la sua posizione è
+Renderer è esteso dal trait **UITextRenderer**, che disegna un testo su shermo, e che a differenza degli altri renderer rappresenta un elemento di overlay del gioco. Questo significa che non ha una posizione definita in termini di unità di gioco, bensì in pixel; Inoltre la sua posizione è
 legata al `textAnchor`, ovvero il punto di partenza sullo schermo dal quale iniziare a disegnare l'elemento. In questo modo, gli elementi di overlay dipendono solamente dalla SwingIO dell'engine e non dalla scena nella quale sono istanziati.
 
 *Esempio*
@@ -431,7 +431,7 @@ class GameObject extends Behaviour
         super.onUpdate(engine)
 ```
 
-### Swing
+### Button
 E' un bottone rettangolare con testo.
 Mixa un RectRenderer per lo sfondo e ha internamente un TextRenderer per il testo (per questo è necessario chiamare su questo campo tutti gli eventi del game loop).
 

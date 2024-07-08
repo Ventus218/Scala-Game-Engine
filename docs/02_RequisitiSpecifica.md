@@ -64,5 +64,5 @@ Il framework avrà le seguenti caratteristiche:
 ## Implementazione
 - Dato lo scopo del progetto (dimostrare le competenze aquisite durante l'insegnamento) si utilizzerà Scala.
 - Gli svilupattori intendono utilizzare i mixin per realizzare quello che normalmente viene implementato con il pattern Component, in quanto sembra essere un buon campo di applicazione di questo concetto.
-- Per ottenere come risultato una codebase solida e di qualità si è deciso di implementare la tecnica del Test Drive Development (TDD).
+- Per ottenere come risultato una codebase solida e di qualità si è deciso di implementare la tecnica del Test Driven Development (TDD).
 - Per implementare l'editor testuale si è deciso di sviluppare un DSL che permetta di definire le scene.
