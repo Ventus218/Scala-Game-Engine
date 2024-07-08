@@ -2,10 +2,10 @@ package sge.swing
 
 import sge.core.*
 import input.*
+import output.Images.ImageLoader
 import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D, RenderingHints}
 import java.awt.MouseInfo
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
-import javax.imageio.ImageIO
 
 /** An implementation of IO trait using Java Swing
   */
@@ -163,9 +163,7 @@ object SwingIO:
 
     private def createFrame(): JFrame =
       val frame: JFrame = new JFrame(title)
-      frame.setIconImage(
-        ImageIO.read(getClass.getResourceAsStream(s"/$frameIconPath"))
-      )
+      frame.setIconImage(ImageLoader.load("frameIconPath"))
       frame.setSize(size._1, size._2)
       frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
       frame.setResizable(false)
