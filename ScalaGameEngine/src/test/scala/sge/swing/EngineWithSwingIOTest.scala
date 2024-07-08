@@ -3,6 +3,11 @@ package sge.swing
 import sge.core.*
 import behaviours.dimension2d.*
 import java.awt.Color
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers.*
+import sge.swing.EngineWithSwingIOTest.ioBuilder
+import sge.core.mocks.IOMock
+import sge.testing.*
 
 object EngineWithSwingIOTest:
   trait MoveX(velocityX: Double) extends Behaviour with Positionable:
@@ -40,3 +45,16 @@ object EngineWithSwingIOTest:
     blueCircle.renderingPriority = -5
 
     engine.run(scene)
+
+class EngineWithSwingIOTest extends AnyFlatSpec:
+  import sge.testing.behaviours.NFrameStopper
+  "Engine" should "call IO.onEngineStop when stopped" in:
+    val io = IOMock()
+    val emptyScene = () => Seq()
+    val engine = Engine(io, Storage())
+
+    io.isStopped shouldBe false
+
+    test(engine) on emptyScene soThat (builder => builder)
+    
+    io.isStopped shouldBe true
