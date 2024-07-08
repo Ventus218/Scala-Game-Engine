@@ -34,7 +34,7 @@ object Images:
   case class ImageResizer(path: String):
     /** The base image, used as reference for the resizing operation
       */
-    private val baseImage: AWTImage = ImageIO.read(getClass.getResourceAsStream(s"/$path"))
+    private val baseImage: AWTImage = ImageLoader.load(path)
     /** The cached image
       */
     private var imageCache: Option[(AWTImage, Int, Int)] = Option.empty
