@@ -36,5 +36,5 @@ jobs:
       uses: softprops/action-gh-release@v2
       with:
         files: |
-          SGE.jar
+          *.jar
           Documentazione.pdf
