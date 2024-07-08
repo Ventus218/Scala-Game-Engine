@@ -7,6 +7,18 @@ import javax.imageio.ImageIO
 object Images:
   import GameElements.*
 
+  case class ImageScaler(path: String):
+    val baseImage: AWTImage = ImageIO.read(getClass.getResourceAsStream(s"/$path"))
+    var imageCache: Option[(AWTImage, Int, Int)] = Option.empty
+    def resize(width: Int, height: Int): AWTImage =
+      if !imageCache.exists((_, w, h) => width == w && height == h) then
+        imageCache = Option(
+          baseImage.getScaledInstance(width, height, AWTImage.SCALE_DEFAULT),
+          width,
+          height
+        )
+      imageCache.map((img, _, _) => img).get
+
   /** Basic trait for manipulating and drawing images using Swing. The main
     * properties of the element (width, height) are mutable, and are represented
     * in game units.
