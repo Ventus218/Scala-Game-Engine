@@ -3,7 +3,7 @@ package gamebehaviours
 import sge.core.*
 import sge.swing.*
 import sge.core.behaviours.dimension2d.Positionable
-import config.*
+import config.Config.*
 import java.awt.Color
 
 class GameButton(

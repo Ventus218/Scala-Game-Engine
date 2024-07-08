@@ -5,24 +5,26 @@ import sge.core.*
 import sge.core.behaviours.dimension2d.Positionable
 import config.*
 import gamebehaviours.GameButton
+import Config.*
+import Difficulty.*
 import java.awt.Color
 
 object DifficultyMenu extends Scene:
   import Privates.*
   override def apply(): Iterable[Behaviour] =
     Seq(
-      GameButton(text = "Easy", onButtonPressed = _ => ())(
+      GameButton(text = EASY.text, onButtonPressed = onDifficultyButton(EASY))(
         buttonColor = GREEN,
         position = (0, BUTTON_OFFSET * 2)
       ),
-      GameButton(text = "Normal", onButtonPressed = _ => ())(
+      GameButton(text = NORMAL.text, onButtonPressed = onDifficultyButton(NORMAL))(
         buttonColor = GREEN,
         position = (0, BUTTON_OFFSET)
       ),
-      GameButton(text = "Hard", onButtonPressed = _ => ())(
+      GameButton(text = HARD.text, onButtonPressed = onDifficultyButton(HARD))(
         buttonColor = BROWN
       ),
-      GameButton(text = "Impossible", onButtonPressed = _ => ())(
+      GameButton(text = IMPOSSIBLE.text, onButtonPressed = onDifficultyButton(IMPOSSIBLE))(
         buttonColor = Color.red,
         position = (0, -BUTTON_OFFSET)
       ),
@@ -35,3 +37,6 @@ object DifficultyMenu extends Scene:
 
   private object Privates:
     def onBackButton: Engine => Unit = engine => engine.loadScene(StartingMenu)
+    def onDifficultyButton(difficulty: Difficulty): Engine => Unit = engine =>
+      GameConfig.difficulty = difficulty
+      engine.loadScene(LevelOne)

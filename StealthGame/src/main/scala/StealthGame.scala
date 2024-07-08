@@ -1,6 +1,6 @@
 import sge.core.{Engine, Storage}
 import sge.swing.SwingIO
-import config.{SCREEN_HEIGHT, SCREEN_WIDTH, PIXEL_UNIT_RATIO}
+import config.Config.{SCREEN_HEIGHT, SCREEN_WIDTH, PIXEL_UNIT_RATIO}
 import scenes.StartingMenu
 
 @main def main =

@@ -4,7 +4,7 @@ import sge.core.*
 import sge.core.behaviours.dimension2d.*
 import sge.swing.*
 import java.awt.Color
-import config.*
+import config.Config.*
 import gamebehaviours.GameButton
 
 object StartingMenu extends Scene:
