@@ -4,7 +4,7 @@ import sge.swing.*
 import sge.core.*
 import sge.core.behaviours.dimension2d.Positionable
 import config.*
-import gamebehaviours.GameButton
+import gamebehaviours.*
 import Config.*
 import Difficulty.*
 import java.awt.Color
@@ -14,25 +14,31 @@ object DifficultyMenu extends Scene:
   override def apply(): Iterable[Behaviour] =
     Seq(
       GameButton(text = EASY.text, onButtonPressed = onDifficultyButton(EASY))(
-        buttonColor = GREEN,
+        textColor = Color.GREEN,
         position = (0, BUTTON_OFFSET * 2)
       ),
-      GameButton(text = NORMAL.text, onButtonPressed = onDifficultyButton(NORMAL))(
-        buttonColor = GREEN,
+      GameButton(
+        text = NORMAL.text,
+        onButtonPressed = onDifficultyButton(NORMAL)
+      )(
+        textColor = Color.GREEN,
         position = (0, BUTTON_OFFSET)
       ),
       GameButton(text = HARD.text, onButtonPressed = onDifficultyButton(HARD))(
-        buttonColor = BROWN
+        textColor = Color.ORANGE
       ),
-      GameButton(text = IMPOSSIBLE.text, onButtonPressed = onDifficultyButton(IMPOSSIBLE))(
-        buttonColor = Color.red,
+      GameButton(
+        text = IMPOSSIBLE.text,
+        onButtonPressed = onDifficultyButton(IMPOSSIBLE)
+      )(
+        textColor = Color.RED,
         position = (0, -BUTTON_OFFSET)
       ),
       GameButton(text = "Back", onButtonPressed = onBackButton)(
         textColor = Color.WHITE,
-        buttonColor = Color.BLACK,
         position = (0, -BUTTON_OFFSET * 3)
-      )
+      ),
+      BackgroundImage("menu.png")
     )
 
   private object Privates:

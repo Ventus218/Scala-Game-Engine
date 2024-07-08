@@ -5,7 +5,7 @@ import sge.core.behaviours.dimension2d.*
 import sge.swing.*
 import java.awt.Color
 import config.Config.*
-import gamebehaviours.GameButton
+import gamebehaviours.*
 
 object StartingMenu extends Scene:
   import Privates.*
@@ -13,13 +13,13 @@ object StartingMenu extends Scene:
   override def apply(): Iterable[Behaviour] =
     Seq(
       GameButton(text = "Play", onButtonPressed = onPlayButton)(
-        buttonColor = GREEN
+        textColor = Color.GREEN
       ),
       GameButton(text = "Close", onButtonPressed = onExitButton)(
         textColor = Color.WHITE,
-        buttonColor = Color.BLACK,
         position = (0, -BUTTON_OFFSET)
-      )
+      ),
+      BackgroundImage("menu.png")
     )
 
   private object Privates:
