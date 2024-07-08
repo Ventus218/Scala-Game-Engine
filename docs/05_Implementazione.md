@@ -334,6 +334,10 @@ Se l'engine non contiene un IO di tipo SwingIO, allora Renderer lancia un'eccezi
 Renderer è esteso dal trait **GameElementRenderer**, che dovrà avere in mixin anche **Positionable** e rappresenta un oggetto di gioco qualsiasi posizionato all'interno della scena.
 Questo a sua volta è esteso dai trait **ShapeRenderer** che rappresenta una forma geometrica, **ImageRenderer** che rappresenta un'immagine, e da **TextRenderer** che rappresenta un testo sulla scena.
 
+> **Nota:**
+>
+> Per motivi di performance, gli ImageRenderer utilizzano le utility ImageLoader e ImageResizer, che servono per ottimizzare le prestazioni del disegno delle immagini tramite tecniche di caching. 
+
 Entrambi i trait hanno delle dimensioni espresse in unità di gioco, che sono modificabili e non possono avere valori negativi o nulli. Inoltre questi trait sono di tipo `ScalableElement`, per cui le loro dimensioni vengono calcolate in proporzione ai propri fattori di scaling, sia che siano forniti da uno `Scalable` oppure da un `SingleScalable`.
 Questi renderer hanno anche un `renderOffset`, che indica di quanto il disegno debba essere traslato rispetto alla posizione attuale del behaviour, e una `renderRotation`, che indica di quale angolo il renderer deve essere ruotato. La rotazione viene eseguita dopo la traslazione, e con centro di rotazione nella posizione non traslata dell'oggetto.
 
