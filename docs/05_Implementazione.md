@@ -175,7 +175,7 @@ registrate con la `draw`. Per ottimizzare le prestazioni ed evitare il lampeggia
 visibile all'utente, mentre `bufferCanvas` quello nascosto. Tutte le operazioni di rendering vengono eseguite sul `bufferCanvas` mentre non è visibile, e quando viene invocato il metodo `show`, i due canvas vengono scambiati, rendendo visibili i cambiamenti sulla view.
 La creazione di entrambi i buffer è lazy per evitare alcuni strani comporamenti durante la fase di unit testing (vengono aperte applicazioni grafiche invisibili.)
 
-SwingIO permette di definire la dimensione in pixel della finestra di gioco (`size`), il nome della finestra (`title`), e il colore di background (`background`). 
+SwingIO permette di definire la dimensione in pixel della finestra di gioco (`size`), il nome della finestra (`title`), il colore di background (`background`) e l'icona della finestra (`frameIconPath`). 
 Inoltre, permette di lavorare con coordinate espresse non in pixels, ma in unità logiche di gioco, così da astrarre la logica dei behaviours dalla loro effettiva rappresentazione grafica.
 SwingIO fornisce quindi metodi per impostare la posizione della finestra all'interno del gioco (`center`) e il numero di pixel da rappresentare per unità di gioco (`pixelsPerUnit`).
 Le estensioni `pixelPosition` e `scenePosition` permettono di mappare le posizioni da coordinate in pixels a coordinate in unità di gioco, e viceversa.
@@ -185,12 +185,13 @@ Per facilitare la costruzione del SwingIO, è stato implementato un builder che 
 *Esempio*
 ```scala
 val io: SwingIO = SwingIO
-  .withTitle("title")                 // imposta il nome della finestra
-  .withSize((800, 900))               // imposta la dimensione della finestra
-  .withBackgroundColor(Color.red)     // imposta il colore di sfondo
-  .withCenter((0, 0))                 // imposta la posizione logica della finestra all'interno del gioco
-  .withPixelsPerUnitRatio(100)        // imposta il rapporto #pixels/unità
-  .build()                            // costruisce la SwingIO
+  .withTitle("title")                       // imposta il nome della finestra
+  .withSize((800, 900))                     // imposta la dimensione della finestra
+  .withBackgroundColor(Color.red)           // imposta il colore di sfondo
+  .withFrameIconPath("epic-crocodile.png")  // imposta il l'icona della finestra
+  .withCenter((0, 0))                       // imposta la posizione logica della finestra all'interno del gioco
+  .withPixelsPerUnitRatio(100)              // imposta il rapporto #pixels/unità
+  .build()                                  // costruisce la SwingIO
 ```
 
 ## SwingIO (Input)
