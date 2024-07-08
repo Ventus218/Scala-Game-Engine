@@ -1,5 +1,5 @@
-import sge.core.*
-import sge.swing.*
+import sge.core.{Engine, Storage}
+import sge.swing.SwingIO
 
 @main def main =
   val io = SwingIO
@@ -7,8 +7,5 @@ import sge.swing.*
     .withSize(1200, 720)
     .withPixelsPerUnitRatio(10)
     .build()
-
-  MenuScene.buttonsWidth = 30
-  MenuScene.buttonsHeight = 5
 
   Engine(io, Storage(), fpsLimit = 60).run(MenuScene)
