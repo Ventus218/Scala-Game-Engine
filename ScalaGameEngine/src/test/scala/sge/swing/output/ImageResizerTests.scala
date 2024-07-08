@@ -3,9 +3,9 @@ package sge.swing.output
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import sge.swing.output.Images.*
-class ImageScalerTests extends AnyFlatSpec:
+class ImageResizerTests extends AnyFlatSpec:
   
-  def createScaler: ImageScaler = ImageScaler(path = "epic-crocodile.png")
+  def createScaler: ImageResizer = ImageResizer(path = "epic-crocodile.png")
   
   "ImageScaler" should "resize correctly its image" in:
     val scaler = createScaler
