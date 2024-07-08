@@ -2,6 +2,7 @@ package sge.swing
 
 import sge.core.*
 import input.*
+import output.Images.ImageLoader
 import java.awt.{Canvas, Color, Dimension, Graphics, Graphics2D, RenderingHints}
 import java.awt.MouseInfo
 import javax.swing.{JFrame, JPanel, SwingUtilities, WindowConstants}
@@ -42,6 +43,9 @@ trait SwingIO extends IO:
   /** The background color of the window frame
     */
   def backgroundColor: Color
+
+  /** The path of the icon to be used as frame icon */
+  def frameIconPath: String
 
   /** Register an operation over the graphic context of the window frame. The
     * operation will be executed when show() is called
@@ -87,6 +91,8 @@ object SwingIO:
     *   the position of the center of the window translated to game coordinates
     * @param background
     *   the background color of the window
+    * @param frameIconPath
+    *   The path of the icon to be set as frame icon
     * @return
     *   a new SwingIO
     */
@@ -95,9 +101,17 @@ object SwingIO:
       size: (Int, Int),
       pixelsPerUnit: Int = 100,
       center: Vector2D = (0, 0),
-      background: Color = Color.white
+      background: Color = Color.white,
+      frameIconPath: String = "icon.png"
   ): SwingIO =
-    new SwingIOImpl(title, size, pixelsPerUnit, center, background)
+    new SwingIOImpl(
+      title,
+      size,
+      pixelsPerUnit,
+      center,
+      background,
+      frameIconPath
+    )
 
   /** private implementation of the SwingIO trait. It uses a DrawableCanvas to
     * paint the window.
@@ -107,7 +121,8 @@ object SwingIO:
       val size: (Int, Int),
       private var _pixelsPerUnit: Int,
       var center: Vector2D,
-      val backgroundColor: Color
+      val backgroundColor: Color,
+      val frameIconPath: String
   ) extends SwingIO:
     require(size._1 > 0 && size._2 > 0, "size must be positive")
     require(pixelsPerUnit > 0, "pixels/unit ratio must be positive")
@@ -148,6 +163,7 @@ object SwingIO:
 
     private def createFrame(): JFrame =
       val frame: JFrame = new JFrame(title)
+      frame.setIconImage(ImageLoader.load("frameIconPath"))
       frame.setSize(size._1, size._2)
       frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE)
       frame.setResizable(false)
@@ -223,13 +239,16 @@ object SwingIO:
     *   The game-wise center position
     * @param background
     *   The background color
+    * @param frameIconPath
+    *   The path of the icon to be set as frame icon
     */
   case class SwingIOBuilder(
       title: String = "Title",
       size: (Int, Int) = (0, 0),
       pixelsPerUnit: Int = 100,
       center: Vector2D = (0, 0),
-      background: Color = Color.white
+      background: Color = Color.white,
+      frameIconPath: String = "icon.png"
   )
 
   /** Build a SwingIO with a new title
@@ -282,6 +301,16 @@ object SwingIO:
   def withBackgroundColor(color: Color): SwingIOBuilder =
     SwingIOBuilder(background = color)
 
+  /** Build a SwingIO with a new frame icon path
+    *
+    * @param frameIconPath
+    *   The new frame icon path
+    * @return
+    *   a new builder
+    */
+  def withFrameIconPath(frameIconPath: String): SwingIOBuilder =
+    SwingIOBuilder(frameIconPath = frameIconPath)
+
   extension (builder: SwingIOBuilder)
     /** Create a new SwingIO class from this builder configuration
       *
@@ -293,7 +322,8 @@ object SwingIO:
       builder.size,
       builder.pixelsPerUnit,
       builder.center,
-      builder.background
+      builder.background,
+      builder.frameIconPath
     )
 
     /** Build a SwingIO with a new title
@@ -304,13 +334,7 @@ object SwingIO:
       *   a new builder
       */
     def withTitle(title: String): SwingIOBuilder =
-      SwingIOBuilder(
-        title,
-        builder.size,
-        builder.pixelsPerUnit,
-        builder.center,
-        builder.background
-      )
+      builder.copy(title = title)
 
     /** Build a SwingIO with a new size
       *
@@ -320,13 +344,7 @@ object SwingIO:
       *   a new builder
       */
     def withSize(size: (Int, Int)): SwingIOBuilder =
-      SwingIOBuilder(
-        builder.title,
-        size,
-        builder.pixelsPerUnit,
-        builder.center,
-        builder.background
-      )
+      builder.copy(size = size)
 
     /** Build a SwingIO with a new pixels/unit ratio
       *
@@ -336,13 +354,7 @@ object SwingIO:
       *   a new builder
       */
     def withPixelsPerUnitRatio(pixelsPerUnit: Int): SwingIOBuilder =
-      SwingIOBuilder(
-        builder.title,
-        builder.size,
-        pixelsPerUnit,
-        builder.center,
-        builder.background
-      )
+      builder.copy(pixelsPerUnit = pixelsPerUnit)
 
     /** Build a SwingIO with a new center position
       *
@@ -352,13 +364,7 @@ object SwingIO:
       *   a new builder
       */
     def withCenter(center: Vector2D): SwingIOBuilder =
-      SwingIOBuilder(
-        builder.title,
-        builder.size,
-        builder.pixelsPerUnit,
-        center,
-        builder.background
-      )
+      builder.copy(center = center)
 
     /** Build a SwingIO with a new background color
       *
@@ -368,10 +374,14 @@ object SwingIO:
       *   a new builder
       */
     def withBackgroundColor(color: Color): SwingIOBuilder =
-      SwingIOBuilder(
-        builder.title,
-        builder.size,
-        builder.pixelsPerUnit,
-        builder.center,
-        color
-      )
+      builder.copy(background = color)
+
+    /** Build a SwingIO with a new frame icon path
+      *
+      * @param frameIconPath
+      *   The new frame icon path
+      * @return
+      *   a new builder
+      */
+    def withFrameIconPath(frameIconPath: String): SwingIOBuilder =
+      builder.copy(frameIconPath = frameIconPath)
