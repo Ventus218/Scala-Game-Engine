@@ -116,6 +116,7 @@ class SwingIOTest extends AnyFlatSpec:
         .withCenter((0, 0))
         .withPixelsPerUnitRatio(100)
         .withBackgroundColor(Color.green)
+        .withFrameIconPath("epic-crocodile.png")
         .build()
 
     frame.size shouldBe (400, 400)
@@ -123,6 +124,7 @@ class SwingIOTest extends AnyFlatSpec:
     frame.center shouldBe (0, 0)
     frame.pixelsPerUnit shouldBe 100
     frame.backgroundColor shouldBe Color.green
+    frame.frameIconPath shouldBe "epic-crocodile.png"
 
   it should "work in a game coordinate system" in:
     val frame: SwingIO =
