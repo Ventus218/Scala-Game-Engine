@@ -34,7 +34,7 @@ object Decks:
 
   opaque type ShuffledDeck = Deck
 
-  given DeckOps[ShuffledDeck] = given_DeckOps_Deck
+  given DeckOps[ShuffledDeck] = summon[DeckOps[Deck]]
 
   object ShuffledDeck:
     def apply[D: DeckOps](deck: D): ShuffledDeck =

@@ -5,31 +5,21 @@ import org.scalatest.matchers.should.Matchers.*
 import Decks.*
 import Cards.*
 
-class DecksTests extends AnyFlatSpec:
-  val deck = Deck(Card(Cups, Ace), Card(Clubs, King))
+abstract class DecksTests[D: DeckOps] extends AnyFlatSpec:
+  def deckType: String
+  def deck: D
 
-  "Deck" should "allow to deal a card" in:
+  deckType should "allow to deal a card" in:
     val (newDeck, card) = deck.deal
     newDeck.size shouldBe deck.size - 1
     card.isDefined shouldBe true
 
-  it should "Deal cards in order" in:
-    var (newDeck, card) = deck.deal
-    card shouldBe Some(Card(Cups, Ace))
-
-    card = newDeck.deal._2
-    card shouldBe Some(Card(Clubs, King))
-
   it should "deal no card if the deck is empty" in:
-    val (newDeck, card) = deck.deal._1.deal._1.deal
-    newDeck.size shouldBe 0
-    card shouldBe None
+    def _emptyDeck(d: D): D = d.size match
+      case 1 => d.deal._1
+      case _ => _emptyDeck(d.deal._1)
 
-  it should "allow to get all remaining cards in order" in:
-    deck.cards.toSeq should contain theSameElementsInOrderAs Seq(
-      Card(Cups, Ace),
-      Card(Clubs, King)
-    )
+    _emptyDeck(deck).deal._2 shouldBe None
 
   it should "not contain duplicate cards" in:
     val card = Card(Cups, Ace)
@@ -41,5 +31,50 @@ class DecksTests extends AnyFlatSpec:
     shuffledStockDeck.cards should contain theSameElementsAs initialDeck.cards
     shuffledStockDeck.cards.toSeq shouldNot contain theSameElementsInOrderAs initialDeck.cards.toSeq
 
+  it should "allow to get all cards" in:
+    deck.cards.size shouldBe deck.size
+
+class DeckTests extends DecksTests[Deck]:
+  val cards: Seq[Card] = Seq(
+    Card(Cups, Ace),
+    Card(Clubs, King),
+    Card(Coins, Three),
+    Card(Swords, Three)
+  )
+  override def deck: Deck = Deck(cards*)
+  override def deckType: String = "Deck"
+
+  it should "Deal cards in order" in:
+    def _testDealingCardsInOrder(d: Deck, expectedCards: Seq[Card]): Unit =
+      d.deal match
+        case (newDeck, Some(card)) =>
+          card shouldBe expectedCards.head;
+          _testDealingCardsInOrder(newDeck, expectedCards.tail)
+        case (newDeck, _) => ()
+
+    _testDealingCardsInOrder(deck, cards)
+
+  it should "allow to get all remaining cards in order" in:
+    deck.cards.toSeq should contain theSameElementsInOrderAs cards
+
+class ShuffledDeckTests extends DecksTests[ShuffledDeck]:
+  override def deck: ShuffledDeck = Deck.stockDeck.shuffle
+  override def deckType: String = "ShuffledDeck"
+
+class StockDeckTests extends AnyFlatSpec:
+
+  val stockDeck = Deck.stockDeck
+
   "Deck.stockDeck" should "be of size 40" in:
-    Deck.stockDeck.size shouldBe 40
+    stockDeck.size shouldBe 40
+
+  it should "have 10 cards for each Suit" in:
+    val suitsCards = stockDeck.cards.foldLeft(Map[Suit, Int]())((map, card) =>
+      map.updatedWith(card.suit)(_ match
+        case Some(cardAmount) => Some(cardAmount + 1)
+        case None             => Some(1)
+      )
+    )
+    Suit.values.foreach(
+      suitsCards(_) shouldBe 10
+    )
