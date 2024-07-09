@@ -38,13 +38,4 @@ object Decks:
 
   object ShuffledDeck:
     def apply[D: DeckOps](deck: D): ShuffledDeck =
-      import DeckUtils.getCards
-      Random.shuffle(deck.getCards())
-
-private[model] object DeckUtils:
-  import Decks.*
-  extension [D: DeckOps](deck: D)
-    def getCards(cards: ListSet[Card] = ListSet()): ListSet[Card] =
-      deck.deal match
-        case (newDeck, Some(c)) => newDeck.getCards(cards + c)
-        case _                  => cards
+      Random.shuffle(deck.cards)
