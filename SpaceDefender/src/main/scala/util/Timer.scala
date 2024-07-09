@@ -51,13 +51,31 @@ trait Timer[T]:
   def foreach(consumer: T => Unit): Unit
 
 object Timer:
-  
-  def apply[T](state: T): Timer[T] = AlwaysEnabledTimer(state)
 
-  private case class AlwaysEnabledTimer[T](state: T) extends Timer[T]:
-    override def duration: FiniteDuration = 0.millis
-    override def updated(deltaT: FiniteDuration): Timer[T] = this
-    override def map(mapper: T => T): Timer[T] = AlwaysEnabledTimer(mapper(state))
-    override def flatMap(mapper: T => Timer[T]): Timer[T] = mapper(state)
-    override def foreach(consumer: T => Unit): Unit = consumer(state)
+  def runAfter[T](duration: FiniteDuration, state: T): Timer[T] = EnableAfterTimer(state, duration)
+
+//  private case class AlwaysEnabledTimer[T](state: T) extends Timer[T]:
+//    override def duration: FiniteDuration = 0.millis
+//    override def updated(deltaT: FiniteDuration): Timer[T] = this
+//    override def map(mapper: T => T): Timer[T] = AlwaysEnabledTimer(mapper(state))
+//    override def flatMap(mapper: T => Timer[T]): Timer[T] = mapper(state)
+//    override def foreach(consumer: T => Unit): Unit = consumer(state)
+
+  private case class EnableAfterTimer[T](state: T, duration: FiniteDuration, accTime: Long = 0) extends Timer[T]:
+    override def updated(deltaT: FiniteDuration): Timer[T] = EnableAfterTimer(state, duration, accTime + deltaT.toMillis)
+    
+    override def map(mapper: T => T): Timer[T] =
+      if accTime >= duration.toMillis then
+        EnableAfterTimer(mapper(state), duration, accTime)
+      else
+        this
+        
+    override def flatMap(mapper: T => Timer[T]): Timer[T] =
+      if accTime >= duration.toMillis then
+        mapper(state)
+      else
+        this
+        
+    override def foreach(consumer: T => Unit): Unit =
+      if accTime >= duration.toMillis then consumer(state)
 
