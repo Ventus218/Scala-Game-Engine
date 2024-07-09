@@ -74,10 +74,17 @@ object Timer:
     */
   def runEvery[T](duration: FiniteDuration, state: T): Timer[T] = EnableOnceEveryTimer(state, duration)
 
+  /** Get an always disabled timer that always maintains the same state.
+    * @param state
+    * @return
+    */
+  def alwaysDisabled[T](state: T): Timer[T] = AlwaysDisableTimer(state)
+
   extension[T] (state: T)
-    @targetName("forAbout")
-    infix def ~(duration: FiniteDuration): Timer[T] = Timer.runOnceAfter(duration, state)
-  
+    infix def forAbout(duration: FiniteDuration): Timer[T] = Timer.runOnceAfter(duration, state)
+    infix def ~(duration: FiniteDuration): Timer[T] = state forAbout duration
+    infix def forever: Timer[T] = Timer.alwaysDisabled(state)
+
   private case class AlwaysDisableTimer[T](state: T) extends Timer[T]:
     override val duration: FiniteDuration = 0.millis
     override def updated(deltaT: FiniteDuration): Timer[T] = this

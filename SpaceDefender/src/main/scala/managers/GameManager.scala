@@ -9,6 +9,9 @@ object GameManager:
   val arenaWidth: Double = 10
   val pixelsPerUnit: Int = (screenSize._1.toDouble / arenaWidth).toInt
   val arenaHeight: Double = screenSize._2.toDouble / pixelsPerUnit.toDouble
+  
+  val arenaRightBorder: Double = arenaWidth / 2 - 1
+  val arenaLeftBorder: Double = -arenaRightBorder
 
   /** Check if a positionable is inside/outside the arena, aka is still visible
     * @param who

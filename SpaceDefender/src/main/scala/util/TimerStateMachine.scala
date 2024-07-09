@@ -16,29 +16,33 @@ trait TimerStateMachine[T](initialState: Timer[T]) extends Behaviour:
   /** The state of the machine
     */
   def state: T = timer.state
+  
+  protected def state_=(s: T)(engine: Engine): Unit = timer = onStateChange(s)(engine)
 
   /** Setup the actions to do while in a given state.
     * This function will be called during [[onUpdate]]
     * @param state
     *   the state to elaborate
-    * @return
-    *   the function to apply during [[onUpdate]], given the state
+    * @param engine
+    *   the engine
     */
-  def whileInState(state: T): Engine => Unit
+  def whileInState(state: T)(engine: Engine): Unit
 
   /** Setup the new state to enter when the current state timer triggers.
     * This function will be called during [[onEarlyUpdate]]
     * @param state
     *   the state to elaborate
+    * @param engine
+    *   the engine
     * @return
     *   the new timer for the FS machine
     */
-  def onStateChange(state: T): Timer[T]
+  def onStateChange(state: T)(engine: Engine): Timer[T]
 
   override def onEarlyUpdate: Engine => Unit =
     engine =>
       super.onEarlyUpdate(engine)
-      timer = timer.updated(engine.deltaTimeNanos.nanos).flatMap(onStateChange)
+      timer = timer.updated(engine.deltaTimeNanos.nanos).flatMap(onStateChange(_)(engine))
 
   override def onUpdate: Engine => Unit =
     engine =>
