@@ -8,7 +8,7 @@ object Decks:
     extension (d: T)
       def size: Int
       def deal: (T, Option[Card])
-      def shuffle: ShuffledDeck
+      def shuffle(using seed: Int): ShuffledDeck
       def cards: ListSet[Card]
 
   opaque type Deck = ListSet[Card]
@@ -18,7 +18,7 @@ object Decks:
       def size: Int = d.size
       def deal: (Deck, Option[Card]) =
         (d.drop(1), d.headOption)
-      def shuffle: ShuffledDeck =
+      def shuffle(using seed: Int): ShuffledDeck =
         ShuffledDeck(d)(using given_DeckOps_Deck)
       def cards: ListSet[Card] = d
 
@@ -37,5 +37,5 @@ object Decks:
   given DeckOps[ShuffledDeck] = summon[DeckOps[Deck]]
 
   object ShuffledDeck:
-    def apply[D: DeckOps](deck: D): ShuffledDeck =
-      Random.shuffle(deck.cards)
+    def apply[D: DeckOps](deck: D)(using seed: Int): ShuffledDeck =
+      Random(seed).shuffle(deck.cards)

@@ -25,14 +25,24 @@ abstract class DecksTests[D: DeckOps] extends AnyFlatSpec:
     val card = Card(Cups, Ace)
     Deck(card, card).size shouldBe 1
 
-  it should "allow to be shuffled" in:
-    val initialDeck = Deck.stockDeck
-    val shuffledStockDeck = initialDeck.shuffle
-    shuffledStockDeck.cards should contain theSameElementsAs initialDeck.cards
-    shuffledStockDeck.cards.toSeq shouldNot contain theSameElementsInOrderAs initialDeck.cards.toSeq
-
   it should "allow to get all cards" in:
     deck.cards.size shouldBe deck.size
+
+  given seed: Int = 10
+
+  it should "allow to be shuffled" in:
+    val shuffledStockDeck = deck.shuffle
+    shuffledStockDeck.cards should contain theSameElementsAs deck.cards
+    shuffledStockDeck.cards.toSeq shouldNot contain theSameElementsInOrderAs deck.cards.toSeq
+
+  it should "be shuffled differently based on the provided seed" in:
+    val shuffle1 = deck.shuffle
+    val shuffle2 = deck.shuffle(using seed = 20)
+    shuffle1.cards should contain theSameElementsAs shuffle2.cards
+    shuffle1.cards.toSeq shouldNot contain theSameElementsInOrderAs shuffle2.cards.toSeq
+
+  it should "be shuffled the same way if the provided seed is the same" in:
+    deck.shuffle.cards.toSeq should contain theSameElementsInOrderAs deck.shuffle.cards.toSeq
 
 class DeckTests extends DecksTests[Deck]:
   val cards: Seq[Card] = Seq(
@@ -58,7 +68,7 @@ class DeckTests extends DecksTests[Deck]:
     deck.cards.toSeq should contain theSameElementsInOrderAs cards
 
 class ShuffledDeckTests extends DecksTests[ShuffledDeck]:
-  override def deck: ShuffledDeck = Deck.stockDeck.shuffle
+  override def deck: ShuffledDeck = ShuffledDeck(Deck.stockDeck)
   override def deckType: String = "ShuffledDeck"
 
 class StockDeckTests extends AnyFlatSpec:
