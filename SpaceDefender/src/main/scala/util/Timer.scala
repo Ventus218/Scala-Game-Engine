@@ -53,13 +53,8 @@ trait Timer[T]:
 object Timer:
 
   def runAfter[T](duration: FiniteDuration, state: T): Timer[T] = EnableAfterTimer(state, duration)
-
-//  private case class AlwaysEnabledTimer[T](state: T) extends Timer[T]:
-//    override def duration: FiniteDuration = 0.millis
-//    override def updated(deltaT: FiniteDuration): Timer[T] = this
-//    override def map(mapper: T => T): Timer[T] = AlwaysEnabledTimer(mapper(state))
-//    override def flatMap(mapper: T => Timer[T]): Timer[T] = mapper(state)
-//    override def foreach(consumer: T => Unit): Unit = consumer(state)
+  def runOnceAfter[T](duration: FiniteDuration, state: T): Timer[T] = ???
+  def runEvery[T](duration: FiniteDuration, state: T): Timer[T] = ???
 
   private case class EnableAfterTimer[T](state: T, duration: FiniteDuration, accTime: Long = 0) extends Timer[T]:
     override def updated(deltaT: FiniteDuration): Timer[T] = EnableAfterTimer(state, duration, accTime + deltaT.toMillis)
