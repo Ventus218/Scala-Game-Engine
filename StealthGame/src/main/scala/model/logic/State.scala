@@ -11,6 +11,8 @@ sealed trait DirectionState:
   def turnLeft(): DirectionState
   def turnRight(): DirectionState
   def move(): DirectionState
+  def sprint(): DirectionState
+  def stop(): DirectionState
 
 enum Movement extends DirectionState:
   case IDLE(override val direction: Direction)
@@ -26,11 +28,13 @@ enum Movement extends DirectionState:
     case SPRINT(direction) => SPRINT(getLeftDirection(direction))
 
   override def turnRight(): DirectionState = this match
-    case IDLE(direction) => IDLE(getRightDirection(direction))
-    case MOVE(direction) => IDLE(direction).turnRight().move()
+    case IDLE(direction)   => IDLE(getRightDirection(direction))
+    case MOVE(direction)   => IDLE(direction).turnRight().move()
     case SPRINT(direction) => SPRINT(getRightDirection(direction))
-  
+
+  override def stop(): DirectionState = IDLE(direction)
   override def move(): DirectionState = MOVE(direction)
+  override def sprint(): DirectionState = SPRINT(direction)
 
   private object Privates:
     def getLeftDirection(direction: Direction): Direction =

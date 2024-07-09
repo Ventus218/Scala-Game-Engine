@@ -40,11 +40,27 @@ class MovementTests extends AnyFlatSpec:
       MOVE(direction).turnRight() shouldBe MOVE(rightDirection(direction))
       SPRINT(direction).turnRight() shouldBe SPRINT(rightDirection(direction))
     )
+
+  it should "stop" in:
+    Direction.values.foreach(direction =>
+      val idle = IDLE(direction)
+      MOVE(direction).stop() shouldBe idle
+      SPRINT(direction).stop() shouldBe idle
+      IDLE(direction).stop() shouldBe idle
+    )
   
   it should "move" in:
     Direction.values.foreach(direction =>
-      val movement = MOVE(direction)
-      IDLE(direction).move() shouldBe movement
-      SPRINT(direction).move() shouldBe movement
-      MOVE(direction).move() shouldBe movement
+      val move = MOVE(direction)
+      IDLE(direction).move() shouldBe move
+      SPRINT(direction).move() shouldBe move
+      MOVE(direction).move() shouldBe move
+    )
+
+  it should "sprint" in:
+    Direction.values.foreach(direction =>
+      val sprint = SPRINT(direction)
+      IDLE(direction).sprint() shouldBe sprint
+      MOVE(direction).sprint() shouldBe sprint
+      SPRINT(direction).sprint() shouldBe sprint
     )
