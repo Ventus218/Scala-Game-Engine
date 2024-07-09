@@ -7,9 +7,11 @@ import dimension2d.*
 
 object Bullets:
 
+  /** Main trait that represents a bullet entity. Has a damage value and a set of targets
+    */
   trait Bullet extends Behaviour with CircleCollider:
     def damage: Int
-    def targets: Seq[CircleCollider & Health]
+    def targets: Set[CircleCollider & Health]
 
     override def onUpdate: Engine => Unit =
       engine =>
