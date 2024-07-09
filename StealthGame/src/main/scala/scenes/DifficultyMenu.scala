@@ -4,10 +4,10 @@ import sge.swing.*
 import sge.core.*
 import sge.core.behaviours.dimension2d.Positionable
 import config.*
-import gamebehaviours.*
 import Config.*
 import Difficulty.*
 import java.awt.Color
+import scenes.gamebehaviours.{GameButton, BackgroundImage}
 
 object DifficultyMenu extends Scene:
   import Privates.*

@@ -5,7 +5,7 @@ import sge.core.behaviours.dimension2d.*
 import sge.swing.*
 import java.awt.Color
 import config.Config.*
-import gamebehaviours.*
+import scenes.gamebehaviours.{BackgroundImage, GameButton}
 
 object StartingMenu extends Scene:
   import Privates.*

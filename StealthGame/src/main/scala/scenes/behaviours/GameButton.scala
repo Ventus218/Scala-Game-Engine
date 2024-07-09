@@ -1,4 +1,4 @@
-package gamebehaviours
+package scenes.behaviours
 
 import sge.core.*
 import sge.swing.*

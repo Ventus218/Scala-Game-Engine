@@ -3,9 +3,9 @@ package scenes
 import sge.core.*
 import config.*
 import Difficulty.*
-import gamebehaviours.Player
+import model.behaviours.Player
 
 object LevelOne extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
-    Player(7, 7)
+    Player(width = 7, height = 7)
   )
