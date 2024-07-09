@@ -21,14 +21,14 @@ lazy val exampleGame = project
     assembly / mainClass := Some("ExampleGame")
   )
 
-lazy val alessandro = project
-  .in(file("./Alessandro"))
+lazy val trump = project
+  .in(file("./Trump"))
   .dependsOn(sge)
   .settings(
-    name := "alessandro",
+    name := "Trump",
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % Test,
-    assembly / assemblyOutputPath := file("./alessandro.jar"),
-    assembly / mainClass := Some("Alessandro")
+    assembly / assemblyOutputPath := file("./Trump.jar"),
+    assembly / mainClass := Some("Trump")
   )
