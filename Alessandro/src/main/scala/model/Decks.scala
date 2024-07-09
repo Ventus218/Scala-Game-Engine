@@ -1,4 +1,5 @@
 package model
+
 import Cards.*
 import scala.collection.immutable.ListSet
 import scala.util.Random
