@@ -6,41 +6,45 @@ import Movement.*
 import Direction.*
 
 class MovementTests extends AnyFlatSpec:
-  "Movement" should "have IDLE case class with direction" in:
-    val state: Directionable = IDLE(TOP)
-    state.direction shouldBe TOP
-    IDLE(LEFT).direction shouldBe LEFT
-    IDLE(BOTTOM).direction shouldBe BOTTOM
-    IDLE(RIGHT).direction shouldBe RIGHT
+  "Movement" should "have case classes with direction" in:
+    Direction.values.foreach(direction =>
+      IDLE(direction).direction shouldBe direction
+      MOVE(direction).direction shouldBe direction
+      SPRINT(direction).direction shouldBe direction
+    )
 
-  it should "have MOVE case class with direction" in:
-    MOVE(TOP).direction shouldBe TOP
-    MOVE(LEFT).direction shouldBe LEFT
-    MOVE(BOTTOM).direction shouldBe BOTTOM
-    MOVE(RIGHT).direction shouldBe RIGHT
+  private def leftDirection(direction: Direction): Direction =
+    direction match
+      case TOP    => LEFT
+      case BOTTOM => RIGHT
+      case LEFT   => BOTTOM
+      case RIGHT  => TOP
 
-  it should "have SPRINT case class with direction" in:
-    SPRINT(TOP).direction shouldBe TOP
-    SPRINT(LEFT).direction shouldBe LEFT
-    SPRINT(BOTTOM).direction shouldBe BOTTOM
-    SPRINT(RIGHT).direction shouldBe RIGHT
+  it should "turn left" in:
+    Direction.values.foreach(direction =>
+      IDLE(direction).turnLeft() shouldBe IDLE(leftDirection(direction))
+      MOVE(direction).turnLeft() shouldBe MOVE(leftDirection(direction))
+      SPRINT(direction).turnLeft() shouldBe SPRINT(leftDirection(direction))
+    )
 
-  it should "turn left IDLE" in:
-    val state: State = IDLE(TOP)
-    state.turnLeft() shouldBe IDLE(LEFT)
-    IDLE(LEFT).turnLeft() shouldBe IDLE(BOTTOM)
-    IDLE(BOTTOM).turnLeft() shouldBe IDLE(RIGHT)
-    IDLE(RIGHT).turnLeft() shouldBe state
+  private def rightDirection(direction: Direction): Direction =
+    direction match
+      case TOP    => RIGHT
+      case BOTTOM => LEFT
+      case LEFT   => TOP
+      case RIGHT  => BOTTOM
 
-  it should "turn left MOVE" in:
-    MOVE(TOP).turnLeft() shouldBe MOVE(LEFT)
-    MOVE(LEFT).turnLeft() shouldBe MOVE(BOTTOM)
-    MOVE(BOTTOM).turnLeft() shouldBe MOVE(RIGHT)
-    MOVE(RIGHT).turnLeft() shouldBe MOVE(TOP)
-
-  it should "turn left SPRINT" in:
-    SPRINT(TOP).turnLeft() shouldBe SPRINT(LEFT)
-    SPRINT(LEFT).turnLeft() shouldBe SPRINT(BOTTOM)
-    SPRINT(BOTTOM).turnLeft() shouldBe SPRINT(RIGHT)
-    SPRINT(RIGHT).turnLeft() shouldBe SPRINT(TOP)
+  it should "turn right" in:
+    Direction.values.foreach(direction =>
+      IDLE(direction).turnRight() shouldBe IDLE(rightDirection(direction))
+      MOVE(direction).turnRight() shouldBe MOVE(rightDirection(direction))
+      SPRINT(direction).turnRight() shouldBe SPRINT(rightDirection(direction))
+    )
   
+  it should "move" in:
+    Direction.values.foreach(direction =>
+      val movement = MOVE(direction)
+      IDLE(direction).move() shouldBe movement
+      SPRINT(direction).move() shouldBe movement
+      MOVE(direction).move() shouldBe movement
+    )
