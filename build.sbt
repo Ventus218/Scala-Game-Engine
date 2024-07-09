@@ -20,3 +20,14 @@ lazy val exampleGame = project
     assembly / assemblyOutputPath := file("./ExampleGame.jar"),
     assembly / mainClass := Some("ExampleGame")
   )
+
+lazy val spaceDefender = project
+  .in(file("./SpaceDefender"))
+  .dependsOn(sge)
+  .settings(
+    name := "SpaceDefender",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
+    assembly / assemblyOutputPath := file("./SpaceDefender.jar"),
+    assembly / mainClass := Some("SpaceDefender")
+  )
