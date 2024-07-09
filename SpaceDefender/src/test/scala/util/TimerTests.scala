@@ -36,3 +36,14 @@ abstract class TimerTests extends AnyFlatSpec:
     disabledTimers.foreach(
       _.map(_ + 1).state shouldBe defaultState
     )
+
+  it should "be used in for-comprehension" in :
+    val f =
+      for 
+        i <- enabledTimers.head
+        x <- enabledTimers.head.map(_ + 5)
+      yield 
+        i + x
+    
+    f.state shouldBe (2*defaultState)+5
+      

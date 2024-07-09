@@ -52,25 +52,66 @@ trait Timer[T]:
 
 object Timer:
 
+  /** Get a timer that enables after a given duration.
+    * @param duration
+    * @param state
+    * @return
+    */
   def runAfter[T](duration: FiniteDuration, state: T): Timer[T] = EnableAfterTimer(state, duration)
-  def runOnceAfter[T](duration: FiniteDuration, state: T): Timer[T] = ???
+
+  /** Get a timer that enables only once after a given duration.
+    * @param duration
+    * @param state
+    * @return
+    */
+  def runOnceAfter[T](duration: FiniteDuration, state: T): Timer[T] = EnableOnceAfterTimer[T](state, duration)
+
+  /** Get a cyclic timer that enables once every duration time passes.
+    * @param duration
+    * @param state
+    * @return
+    */
   def runEvery[T](duration: FiniteDuration, state: T): Timer[T] = ???
 
-  private case class EnableAfterTimer[T](state: T, duration: FiniteDuration, accTime: Long = 0) extends Timer[T]:
+  private case class AlwaysDisableTimer[T](state: T) extends Timer[T]:
+    override val duration: FiniteDuration = 0.millis
+    override def updated(deltaT: FiniteDuration): Timer[T] = this
+    override def map(mapper: T => T): Timer[T] = this
+    override def flatMap(mapper: T => Timer[T]): Timer[T] = this
+    override def foreach(consumer: T => Unit): Unit = ()
+
+  private class EnableAfterTimer[T](val state: T, val duration: FiniteDuration, val accTime: Long = 0) extends Timer[T]:
     override def updated(deltaT: FiniteDuration): Timer[T] = EnableAfterTimer(state, duration, accTime + deltaT.toMillis)
-    
+
+    protected def condition: Boolean = accTime >= duration.toMillis
+
     override def map(mapper: T => T): Timer[T] =
-      if accTime >= duration.toMillis then
+      if condition then
         EnableAfterTimer(mapper(state), duration, accTime)
       else
         this
-        
+
     override def flatMap(mapper: T => Timer[T]): Timer[T] =
-      if accTime >= duration.toMillis then
+      if condition then
         mapper(state)
       else
         this
-        
-    override def foreach(consumer: T => Unit): Unit =
-      if accTime >= duration.toMillis then consumer(state)
 
+    override def foreach(consumer: T => Unit): Unit =
+      if condition then consumer(state)
+
+
+  private class EnableOnceAfterTimer[T](state: T, duration: FiniteDuration, accTime: Long = 0)
+    extends EnableAfterTimer(state, duration, accTime):
+
+    override def updated(deltaT: FiniteDuration): Timer[T] =
+      if condition then
+        AlwaysDisableTimer(state)
+      else
+        EnableOnceAfterTimer(state, duration, accTime + deltaT.toMillis)
+
+    override def map(mapper: T => T): Timer[T] =
+      if condition then
+        EnableOnceAfterTimer(mapper(state), duration, accTime)
+      else
+        this
