@@ -8,6 +8,7 @@ object SpaceDefender extends App:
   val engine: Engine = Engine(
     SwingIO
       .withTitle("Space Defender")
+      .withCenter(0, 0)
       .withSize(GameManager.screenSize)
       .withPixelsPerUnitRatio(GameManager.pixelsPerUnit)
       .withBackgroundColor(Color.black)
