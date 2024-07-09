@@ -2,18 +2,16 @@ package model.behaviours
 
 import sge.core.*
 import sge.swing.*
-import sge.core.behaviours.dimension2d.Positionable
+import sge.core.behaviours.dimension2d.{Positionable, Scalable}
 import sge.core.behaviours.physics2d.RectCollider
-import sge.core.behaviours.dimension2d.Scalable
-import model.logic.DirectionState
-import model.logic.Movement
 import model.logic.Direction
 
 class Player(
     width: Double,
     height: Double,
+    initialDirection: Direction,
     scaleWidth: Double = 1,
-    scaleHeight: Double = 1
+    scaleHeight: Double = 1,
 ) extends Behaviour
     with Positionable
     with ImageRenderer("ninja.png", width, height)
@@ -31,10 +29,9 @@ class Player(
     position = position.setX(io.scenePosition(io.size).x * -1 + width)
 
   private object Privates:
-    import Movement.*
-    import Direction.*
+    // import Movement.IDLE
 
-    var movement: DirectionState = IDLE(RIGHT)
+    // var initialState: State = IDLE(initialDirection)
 
     def onMoveTop(input: InputButton): Engine => Unit = engine =>
       ???
