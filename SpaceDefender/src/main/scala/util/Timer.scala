@@ -64,14 +64,14 @@ object Timer:
     * @param state
     * @return
     */
-  def runOnceAfter[T](duration: FiniteDuration, state: T): Timer[T] = EnableOnceAfterTimer[T](state, duration)
+  def runOnceAfter[T](duration: FiniteDuration, state: T): Timer[T] = EnableOnceAfterTimer(state, duration)
 
   /** Get a cyclic timer that enables once every duration time passes.
     * @param duration
     * @param state
     * @return
     */
-  def runEvery[T](duration: FiniteDuration, state: T): Timer[T] = ???
+  def runEvery[T](duration: FiniteDuration, state: T): Timer[T] = EnableOnceEveryTimer(state, duration)
 
   private case class AlwaysDisableTimer[T](state: T) extends Timer[T]:
     override val duration: FiniteDuration = 0.millis
@@ -115,3 +115,25 @@ object Timer:
         EnableOnceAfterTimer(mapper(state), duration, accTime)
       else
         this
+
+  private case class EnableOnceEveryTimer[T](state: T, duration: FiniteDuration, accTime: Long = 0, enabled: Boolean = true) extends Timer[T]:
+    override def updated(deltaT: FiniteDuration): Timer[T] =
+      if accTime + deltaT.toMillis >= duration.toMillis then
+        EnableOnceEveryTimer(state, duration)
+      else 
+        EnableOnceEveryTimer(state, duration, accTime + deltaT.toMillis, false)
+
+    override def map(mapper: T => T): Timer[T] =
+      if enabled then
+        EnableOnceEveryTimer(mapper(state), duration, accTime)
+      else
+        this
+
+    override def flatMap(mapper: T => Timer[T]): Timer[T] =
+      if enabled then
+        mapper(state)
+      else
+        this
+
+    override def foreach(consumer: T => Unit): Unit =
+      if enabled then consumer(state)
