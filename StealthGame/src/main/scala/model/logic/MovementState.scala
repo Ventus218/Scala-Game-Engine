@@ -26,25 +26,43 @@ sealed trait State:
   def sprint(): NextState[MovementState, Unit]
   def stop(): NextState[MovementState, Unit]
 
-
 object Movement extends State:
   opaque type MovementState = (Action, Direction)
 
   import Action.*
+  import Privates.*
 
-  override def initialState(direction: Direction): MovementState = (IDLE, direction)
+  override def initialState(direction: Direction): MovementState =
+    (IDLE, direction)
 
-  override def direction: NextState[MovementState, Direction] = NextState(s => (s, s._2))
+  override def direction: NextState[MovementState, Direction] =
+    NextState(s => (s, s._2))
 
   override def action: NextState[MovementState, Action] = ???
-  
-  override def turnLeft(): NextState[MovementState, Unit] = ???
+
+  override def turnLeft(): NextState[MovementState, Unit] =
+    NextState((s, d) => ((s, getLeftDirection(d)), ()))
 
   override def turnRight(): NextState[MovementState, Unit] = ???
 
-  override def move(): NextState[MovementState, Unit] = ???
+  override def stop(): NextState[MovementState, Unit] =
+    NextState((_, d) => getState(IDLE, d))
 
-  override def stop(): NextState[MovementState, Unit] = ???
+  override def move(): NextState[MovementState, Unit] =
+    NextState((_, d) => getState(MOVE, d))
 
-  override def sprint(): NextState[MovementState, Unit] = ???
+  override def sprint(): NextState[MovementState, Unit] =
+    NextState((_, d) => getState(SPRINT, d))
 
+  private object Privates:
+    import Direction.*
+
+    def getLeftDirection(direction: Direction): Direction =
+      direction match
+        case RIGHT  => TOP
+        case TOP    => LEFT
+        case LEFT   => BOTTOM
+        case BOTTOM => RIGHT
+
+    def getState(action: Action, direction: Direction) =
+      ((action, direction), ())
