@@ -33,7 +33,7 @@ Si è differenziato un `Deck` da uno `ShuffledDeck`, questo consente di rafforza
 
 Per ridurre al minimo la duplicazione di codice (siccome un `ShuffledDeck` è sostanzialmente un Deck) si è utilizzata la typeclass `DeckOps` e polimorfismo ad-hoc, aggiungendo il fatto che `ShuffledDeck` è un alias opaco di `Deck` questo permette di utilizzare un'unica implementazione della logica di un `Deck` aggiungendo però questa differenziazione di tipi.
 
-### Monade State
+### Monade [`State`](/Trump/src/main/scala/statemonad/State.scala)
 L'utilizzo della monade State è molto comodo per semplificare la scrittura di certe operazioni.
 
 ```scala
