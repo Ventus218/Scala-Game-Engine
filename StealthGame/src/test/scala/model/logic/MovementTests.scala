@@ -3,15 +3,15 @@ package model.logic
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Direction.*
-import Movement.*
+import MovementStateImpl.*
 import Action.*
 import org.scalatest.compatible.Assertion
 
 class MovementTests extends AnyFlatSpec:
   import Privates.*
 
-  "MovementState" should "have the initial direction after being created" in:
-    val nextState: NextState[MovementState, Direction] =
+  "Movement" should "have the initial direction after being created" in:
+    val nextState: NextState[Movement, Direction] =
       for d <- direction
       yield d
 
@@ -101,7 +101,7 @@ class MovementTests extends AnyFlatSpec:
 
   private object Privates:
     var _actualDirection: Direction = RIGHT
-    def initialState = Movement.initialState(_actualDirection)
+    def initialState = MovementStateImpl(_actualDirection)
 
     def getLeftDirection(direction: Direction): Direction =
       direction match
@@ -119,9 +119,9 @@ class MovementTests extends AnyFlatSpec:
 
     def checkDirections(
         direction: Direction,
-        nextStopState: NextState[MovementState, Unit],
-        nextMoveState: NextState[MovementState, Unit],
-        nextSprintState: NextState[MovementState, Unit]
+        nextStopState: NextState[Movement, Unit],
+        nextMoveState: NextState[Movement, Unit],
+        nextSprintState: NextState[Movement, Unit]
     ): Assertion =
       nextStopState(initialState)._1 shouldBe (IDLE, direction)
       nextMoveState(initialState)._1 shouldBe (MOVE, direction)

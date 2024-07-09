@@ -11,49 +11,49 @@ enum Action:
   case MOVE
   case SPRINT
 
-sealed trait State:
-  type MovementState
+sealed trait MovementState:
+  type Movement
 
-  def initialState(direction: Direction): MovementState
+  def apply(direction: Direction): Movement
 
-  def direction: NextState[MovementState, Direction]
-  def action: NextState[MovementState, Action]
+  def direction: NextState[Movement, Direction]
+  def action: NextState[Movement, Action]
 
-  def turnLeft(): NextState[MovementState, Unit]
-  def turnRight(): NextState[MovementState, Unit]
+  def turnLeft(): NextState[Movement, Unit]
+  def turnRight(): NextState[Movement, Unit]
 
-  def move(): NextState[MovementState, Unit]
-  def sprint(): NextState[MovementState, Unit]
-  def stop(): NextState[MovementState, Unit]
+  def move(): NextState[Movement, Unit]
+  def sprint(): NextState[Movement, Unit]
+  def stop(): NextState[Movement, Unit]
 
-object Movement extends State:
-  opaque type MovementState = (Action, Direction)
+object MovementStateImpl extends MovementState:
+  opaque type Movement = (Action, Direction)
 
   import Action.*
   import Privates.*
 
-  override def initialState(direction: Direction): MovementState =
+  override def apply(direction: Direction): Movement =
     (IDLE, direction)
 
-  override def direction: NextState[MovementState, Direction] =
+  override def direction: NextState[Movement, Direction] =
     NextState(s => (s, s._2))
 
-  override def action: NextState[MovementState, Action] =
+  override def action: NextState[Movement, Action] =
     NextState(s => (s, s._1))
 
-  override def turnLeft(): NextState[MovementState, Unit] =
+  override def turnLeft(): NextState[Movement, Unit] =
     NextState((s, d) => ((s, getLeftDirection(d)), ()))
 
-  override def turnRight(): NextState[MovementState, Unit] =
+  override def turnRight(): NextState[Movement, Unit] =
     NextState((s, d) => ((s, getRightDirection(d)), ()))
 
-  override def stop(): NextState[MovementState, Unit] =
+  override def stop(): NextState[Movement, Unit] =
     NextState((_, d) => getState(IDLE, d))
 
-  override def move(): NextState[MovementState, Unit] =
+  override def move(): NextState[Movement, Unit] =
     NextState((_, d) => getState(MOVE, d))
 
-  override def sprint(): NextState[MovementState, Unit] =
+  override def sprint(): NextState[Movement, Unit] =
     NextState((_, d) => getState(SPRINT, d))
 
   private object Privates:
