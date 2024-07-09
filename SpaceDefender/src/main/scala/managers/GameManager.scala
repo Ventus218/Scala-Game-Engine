@@ -11,9 +11,9 @@ object GameManager:
   val arenaHeight: Double = screenSize._2.toDouble / pixelsPerUnit.toDouble
 
   /** Check if a positionable is inside/outside the arena, aka is still visible
-   * @param who
-   * @return
-   */
+    * @param who
+    * @return
+    */
   def isOutsideArena(who: Positionable): Boolean =
     Math.abs(who.position.x) >= arenaWidth/2 + 1 || Math.abs(who.position.y) >= arenaHeight/2 + 1
 

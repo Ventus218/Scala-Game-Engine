@@ -1,6 +1,7 @@
 package util
 
-import scala.concurrent.duration._
+import scala.annotation.targetName
+import scala.concurrent.duration.*
 
 /** Monad for managing a state evolving during some time. The changes are applied only when
   * the timer activation condition triggers.
@@ -73,6 +74,10 @@ object Timer:
     */
   def runEvery[T](duration: FiniteDuration, state: T): Timer[T] = EnableOnceEveryTimer(state, duration)
 
+  extension[T] (state: T)
+    @targetName("forAbout")
+    infix def ~(duration: FiniteDuration): Timer[T] = Timer.runOnceAfter(duration, state)
+  
   private case class AlwaysDisableTimer[T](state: T) extends Timer[T]:
     override val duration: FiniteDuration = 0.millis
     override def updated(deltaT: FiniteDuration): Timer[T] = this
