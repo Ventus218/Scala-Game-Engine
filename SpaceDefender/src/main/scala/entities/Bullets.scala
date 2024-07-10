@@ -13,13 +13,13 @@ object Bullets:
 
   val bulletDamage: Int = 1
 
-  def enemyBullet(position: Vector2D, size: Double, speed: Double): EnemyBullet =
+  def enemyBullet(position: Vector2D, size: Double, velocity: Vector2D): EnemyBullet =
     new Behaviour
       with CircleRenderer(size, Color.red)
       with CircleCollider(size)
       with SingleScalable
       with Positionable(position)
-      with Velocity(0, -speed)
+      with Velocity(velocity)
       with EnemyBullet(bulletDamage)
 
   def playerBullet(position: Vector2D): PlayerBullet =
@@ -59,5 +59,5 @@ object Bullets:
   /** A player bullet
     */
   trait PlayerBullet(override val damage: Int) extends Bullet:
-    override def targets: Set[CircleCollider & Health] = GameManager.enemies
+    override def targets: Set[CircleCollider & Health] = GameManager.enemies.toSet
 

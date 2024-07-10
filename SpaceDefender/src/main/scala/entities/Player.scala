@@ -11,7 +11,11 @@ import java.awt.Color
 
 /** Flag trait for identifying the player
   */
-trait Player extends Behaviour with CircleCollider with Health with Identifiable
+trait Player extends Behaviour 
+  with CircleCollider 
+  with Health 
+  with Positionable
+  with Identifiable
 
 object Player:
 

@@ -3,10 +3,14 @@ package entities
 import sge.core.*
 import behaviours.*
 import physics2d.*
+import sge.core.behaviours.dimension2d.Positionable
 
 /** Flag trait for identifying an enemy
  */
-trait Enemy extends Behaviour with CircleCollider with Health
+trait Enemy extends Behaviour 
+  with CircleCollider 
+  with Health 
+  with Positionable
 
 object Enemies:
 

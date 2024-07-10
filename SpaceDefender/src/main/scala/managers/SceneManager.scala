@@ -9,5 +9,5 @@ object SceneManager:
     Seq(
       GameManager,
       Player(0, 0),
-      Dropper(0, 5)
+      Ranger(0, 5)
     )

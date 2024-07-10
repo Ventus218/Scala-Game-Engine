@@ -31,7 +31,7 @@ object Dropper:
     with Enemy
     with Health(dropperHealth)
     with SquareRenderer(enemySize, Color.red, rotation = 45.degrees)
-    with CircleCollider(enemySize)
+    with CircleCollider(enemySize/2)
     with SingleScalable
     with Positionable(pos + (0, 5))
     with Velocity
@@ -77,4 +77,4 @@ object Dropper:
   
     override def onDeath(): Unit = state = Dying()
     private def fireBullet(engine: Engine): Unit =
-      engine.create(Bullets.enemyBullet(position, size = 0.15, speed = 8))
+      engine.create(Bullets.enemyBullet(position, size = 0.15, velocity = (0, -8)))
