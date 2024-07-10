@@ -35,10 +35,12 @@ object Bullets:
 
   /** Main trait that represents a bullet entity. Has a damage value and a set of targets.
     * Destroys itself on hit and if is outside the arena.
+    * @tparam T
+    *   the type of the targets. It must have a Health and a CircleCollider
     */
-  trait Bullet extends Behaviour with CircleCollider with Positionable:
+  trait Bullet[T <: CircleCollider & Health] extends Behaviour with CircleCollider with Positionable:
     def damage: Int
-    def targets: Set[CircleCollider & Health]
+    def targets: Set[T]
 
     override def onUpdate: Engine => Unit =
       engine =>
@@ -48,16 +50,16 @@ object Bullets:
           case _                 =>
         super.onUpdate(engine)
 
-    private def hitTarget: Option[Health] = targets.find(collides(_))
+    private def hitTarget: Option[T] = targets.find(collides(_))
     private def isOutside: Boolean = GameManager.isOutsideArena(this)
 
   /** An enemy bullet
     */
-  trait EnemyBullet(override val damage: Int) extends Bullet:
-    override def targets: Set[CircleCollider & Health] = GameManager.player.toSet
+  trait EnemyBullet(override val damage: Int) extends Bullet[Player]:
+    override def targets: Set[Player] = GameManager.player.toSet
 
   /** A player bullet
     */
-  trait PlayerBullet(override val damage: Int) extends Bullet:
-    override def targets: Set[CircleCollider & Health] = GameManager.enemies.toSet
+  trait PlayerBullet(override val damage: Int) extends Bullet[Enemy]:
+    override def targets: Set[Enemy] = GameManager.enemies.toSet
 

@@ -58,6 +58,7 @@ object Player:
       startingOffset = (0, -GameConstants.arenaHeight)
     )
     with Player
+    with Invulnerability
     with Identifiable("player")
     with CircleCollider(playerSize / 2)
     with SquareRenderer(playerSize, Color.cyan)
@@ -67,27 +68,25 @@ object Player:
       MouseButton1 -> (resetFireTimer.onlyWhenPressed and fire)
     )
 
-    private var invulnerable: Boolean = false
+//    private var invulnerable: Boolean = false
     private var fireTimer: Timer[Unit] = Timer.runEvery(firePeriod, ())
     override def onEntityStateChange(state: PlayerState)(engine: Engine): Timer[PlayerState] = state match
       case Hurt(0) =>
-        invulnerable = false
+        invulnerability = false
         renderOffset = (0, 0)
         Normal().forever
 
       case Hurt(i) =>
-        invulnerable = true
+        invulnerability = true
         renderOffset = (0, -100 - renderOffset.y)
         Hurt(i - 1) forAbout invulnerabilityTime / invulnerabilityFlashes
 
       case _ => Normal().forever
+      
     override def whileInEntityState(state: PlayerState)(engine: Engine): Unit =
       moveTo(engine.mousePos)
-
-    override def onHit(): Unit =
-      if !invulnerable then
-        state = Hurt(invulnerabilityFlashes)
-        super.onHit()
+      
+    override def onHit(): Unit = state = Hurt(invulnerabilityFlashes)
 
     private def moveTo(pos: Vector2D): Unit =
       position = VectorUtils.lerp(
