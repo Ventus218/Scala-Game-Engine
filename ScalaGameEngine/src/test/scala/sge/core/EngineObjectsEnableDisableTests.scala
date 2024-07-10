@@ -89,6 +89,25 @@ class EngineObjectsEnableDisableTests
         val obj = engine.find[TestObj](disabledId).get
         obj.happenedEvents.count(_ == Enable) shouldBe 1
 
+  it should "work when called inside onEnabled in a just enabled object" in:
+    var alreadyEnabled = false
+    val objEnabler = new TestObj(false, disabledId):
+      override def onEnabled: Engine => Unit = e =>
+        alreadyEnabled = true
+        val obj = engine.find[TestObj](disabledId).get
+        e.enable(obj)
+
+    val testSceneWithEnabler: Scene = testScene.joined(() => Seq(objEnabler))
+
+    test(engine) on testSceneWithEnabler runningFor 3 frames so that :
+      _.onUpdate:
+        if !alreadyEnabled then
+          val obj = engine.find[TestObj](disabledId).get
+          engine.enable(objEnabler)
+      .onDeinit:
+        val obj = engine.find[TestObj](disabledId).get
+        obj.happenedEvents should contain(Enable)
+
   "Engine" should "allow to dinamically disable objects" in:
     test(engine) on testScene soThat:
       _.onUpdate:

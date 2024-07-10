@@ -96,12 +96,13 @@ object Engine:
         gameObjectsToEnable = gameObjectsToEnable + gameObject
 
     private def enableObjectsToBeEnabled(): Unit =
-      gameObjectsToEnable.foreach: o =>
+      val enabled = Set.from(gameObjectsToEnable)
+      gameObjectsToEnable = Set.empty
+      enabled.foreach: o =>
         o.enabled = true
         o.onEnabled(this)
-      gameObjectsToEnable.foreach: o =>
+      enabled.foreach: o =>
         o.onStart(this)
-      gameObjectsToEnable = Set.empty
 
     override def disable(gameObject: Behaviour): Unit =
       if gameObject.enabled then
