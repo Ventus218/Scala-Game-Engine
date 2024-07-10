@@ -64,3 +64,9 @@ shuffleDeck.run(deck)
 > **Nota:**
 >
 > E' purtroppo necessario specificare il parametro di tipo `[Deck]` in modo da disambiguare al compilatore l'utilizzo di `DeckOps[Deck]` rispetto a quello di `DeckOps[ShuffledDeck]` (che era invece stato importato). Altrimenti si sarebbe ottenuta una computazione del tipo `State[ShuffledDeck, ShuffledDeck, Option[Card]]`
+
+### [`PlayersInfo`](/Trump/src/main/scala/model/PlayersInfo.scala)
+`PlayersInfo` funge da struttura dati di input per i dati dei giocatori e funge da loro identificativo.
+
+Per creare un `PlayersInfo` è necessario passare due valori di info diversi altrimenti si riceve un option vuoto.
+Questo consente di obbligare lo sviluppatore a gestire la validazione dell'input prima ancora di entrare nella logica applicativa (permettendo quindi al modello di gioco funzionale di poter lavorare senza preoccuparsene).
