@@ -3,9 +3,8 @@ package model.behaviours.player
 import sge.core.*
 import sge.swing.*
 import sge.core.behaviours.dimension2d.{Positionable, Scalable}
-import sge.core.behaviours.physics2d.RectCollider
-import model.logic.Direction
-import sge.core.behaviours.physics2d.Velocity
+import sge.core.behaviours.physics2d.{RectCollider, Velocity}
+import model.logic.*
 
 class Player(
     width: Double,
@@ -26,7 +25,8 @@ class Player(
   import Privates.*
 
   var inputHandlers: Map[InputButton, Handler] = Map(
-    W -> onMoveTop.onlyWhenHeld
+    W -> onMoveTop,
+    Space -> onSprint,
   )
 
   override def onInit: Engine => Unit = engine =>
@@ -43,7 +43,6 @@ class Player(
     resetSpeed()
 
   private object Privates:
-    import model.logic.*
     import Direction.*
     import Action.*
 

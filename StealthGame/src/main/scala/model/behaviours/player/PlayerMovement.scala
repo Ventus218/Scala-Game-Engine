@@ -9,6 +9,7 @@ private object PlayerMovement:
   import MovementStateImpl.*
   import State.*
   import Action.*
+  import Privates.*
 
   var movement = initialMovement
 
@@ -37,18 +38,28 @@ private object PlayerMovement:
 
       movement = turnTopState(movement)._1
 
-  def turnToTop(d: Direction): State[Movement, Direction] =
-    if d == TOP
-    then direction
-    else
+  def onSprint(input: InputButton): Engine => Unit = engine =>
+    val sprintState =
       for
-        _ <- turnLeft()
-        d <- direction
-        _ <- turnToTop(d)
-      yield d
+        a <- action
+        _ <- if a == MOVE then sprint() else stop()
+      yield ()
+
+    movement = sprintState(movement)._1
 
   def resetSpeed() =
     val stopState =
       for _ <- stop()
       yield ()
     movement = stopState(movement)._1
+
+  private object Privates:
+    def turnToTop(d: Direction): State[Movement, Direction] =
+      if d == TOP
+      then direction
+      else
+        for
+          _ <- turnLeft()
+          d <- direction
+          _ <- turnToTop(d)
+        yield d
