@@ -173,3 +173,18 @@ class EngineObjectCreationTests extends AnyFlatSpec with BeforeAndAfterEach:
           LateUpdate,
           Deinit
         )
+
+  it should "work when called inside onDeinit in a destroyed object" in :
+    var destroyed = false
+    val objCreator = new Behaviour:
+      override def onDeinit: Engine => Unit = e =>
+        destroyed = true
+        e.destroy(obj1)
+    val sceneWithCreator: Scene = () => Seq(objCreator, obj1)
+
+    test(engine) on sceneWithCreator runningFor 3 frames so that :
+      _.onUpdate:
+        if !destroyed then
+          engine.destroy(objCreator)
+      .onDeinit:
+        engine.find[GameObjectMock]() shouldBe empty

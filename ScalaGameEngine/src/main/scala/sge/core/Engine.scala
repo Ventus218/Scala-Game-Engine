@@ -155,8 +155,9 @@ object Engine:
 
     private def applyDestroy(): Unit =
       gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
-      gameObjectsToRemove.foreach(_.onDeinit(this))
+      val destroyed = Set.from(gameObjectsToRemove)
       gameObjectsToRemove = Set.empty
+      destroyed.foreach(_.onDeinit(this))
 
     private var shouldStop = false
     private var alreadyStarted = false
