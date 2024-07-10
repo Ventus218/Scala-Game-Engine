@@ -16,8 +16,6 @@ class Player(
     sprint: Double = 1.5
 ) extends Character(width, height, speed, "ninja.png")(scaleWidth, scaleHeight)
     with InputHandler:
-  import Privates.*
-
   var inputHandlers: Map[InputButton, Handler] = Map(
     W -> (onMoveTop and onResetSpeed.onlyWhenReleased),
     A -> (onMoveLeft and onResetSpeed.onlyWhenReleased),
@@ -31,22 +29,6 @@ class Player(
     val io = engine.io.asInstanceOf[SwingIO]
     position = position.setX(io.scenePosition(io.size).x * -1 + width)
 
-  override def onUpdate: Engine => Unit = engine =>
-    updateSpeed()
-    super.onUpdate(engine)
-
-  private object Privates:
-    import Direction.*
-    import Action.*
-
-    def updateSpeed() =
-      velocity = getDirection match
-        case TOP    => (0, speed.y)
-        case BOTTOM => (0, -speed.y)
-        case LEFT   => (-speed.x, 0)
-        case RIGHT  => (speed.x, 0)
-
-      velocity = getAction match
-        case IDLE   => (0, 0)
-        case MOVE   => velocity
-        case SPRINT => velocity * sprint
+  override protected def action(): Action = getAction
+  override protected def direction(): Direction = getDirection
+  override protected def getSprint(): Double = sprint

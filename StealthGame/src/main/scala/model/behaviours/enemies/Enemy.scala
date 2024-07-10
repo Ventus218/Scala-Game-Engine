@@ -6,7 +6,7 @@ import sge.swing.*
 import model.logic.*
 import EnemyMovement.*
 import model.behaviours.*
-import model.logic.MovementStateImpl.direction
+import model.logic.MovementStateImpl.*
 
 abstract class Enemy(
     width: Double,
@@ -24,6 +24,8 @@ abstract class Enemy(
     ):
   import Privates.*
   import Direction.*
+  import Action.*
+
   private val visualRange =
     VisualRange(width, visualRangeSize, this)
   override def onInit: Engine => Unit =
@@ -31,6 +33,10 @@ abstract class Enemy(
       super.onInit(engine)
       updateVisualRangeProperties()
       engine.create(visualRange)
+
+  override protected def action(): Action = getAction
+  override protected def direction(): Direction = getDirection
+  override protected def getSprint(): Double = 0
 
   private object Privates:
     import metrics.Vector2D.Versor2D.*
