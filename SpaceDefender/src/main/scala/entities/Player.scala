@@ -7,6 +7,7 @@ import physics2d.CircleCollider
 import sge.swing.*
 import util.*
 import Timer.*
+import managers.*
 
 import java.awt.Color
 import scala.concurrent.duration.*
@@ -21,13 +22,14 @@ trait Player extends Behaviour
 
 object Player:
 
-  val playerSize: Double = 1
-  val playerMaxHealth: Int = 5
-  val playerFireRate: Int = 5
+  val playerSize: Double    = 1
+  val playerMaxHealth: Int  = 5
+  val playerFireRate: Int   = 5
   val invulnerabilityTime: FiniteDuration = 2.seconds
 
-  private val invulnerabilityFlashes = 30
-  private val firePeriod: FiniteDuration = 1.second / playerFireRate
+  private val playerMovementLerpFactor: Double = 0.25
+  private val invulnerabilityFlashes: Int      = 30
+  private val firePeriod: FiniteDuration       = 1.second / playerFireRate
 
   /** Create the Player
     * @param position
@@ -86,7 +88,11 @@ object Player:
     override def onDeath(): Unit = setDeathState()
 
     private def moveTo(pos: Vector2D): Unit =
-      position = VectorUtils.lerp(position, pos, 0.3)
+      position = VectorUtils.lerp(
+        position,
+        GameManager.adjustPlayerPosition(pos),
+        playerMovementLerpFactor
+      )
     private def resetFireTimer(input: InputButton)(engine: Engine): Unit =
       fireTimer = Timer.runEvery(firePeriod, ())
     private def fire(input: InputButton)(engine: Engine): Unit =

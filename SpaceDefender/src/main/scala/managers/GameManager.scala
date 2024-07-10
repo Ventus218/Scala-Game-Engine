@@ -5,6 +5,7 @@ import behaviours.*
 import dimension2d.*
 import entities.*
 import physics2d.*
+import util.VectorUtils
 
 import scala.util.Random
 
@@ -16,9 +17,11 @@ object GameManager extends Behaviour:
   val pixelsPerUnit: Int = (screenSize._1.toDouble / arenaWidth).toInt
   val arenaHeight: Double = screenSize._2.toDouble / pixelsPerUnit.toDouble
   
-  val arenaRightBorder: Double = arenaWidth / 2 - 1.5
+  val arenaRightBorder: Double = arenaWidth / 2 - 1
   val arenaLeftBorder: Double = -arenaRightBorder
   val arenaTopBorder: Double = arenaHeight / 2 - 2.5
+  val arenaBottomBorder: Double = - arenaHeight / 2 + 1
+  val playerTopBorder: Double = -1
 
   /** Check if a positionable is inside/outside the arena, aka is still visible
     * @param who
@@ -35,7 +38,20 @@ object GameManager extends Behaviour:
     Random.between(arenaLeftBorder, arenaRightBorder),
     Random.between(0, arenaTopBorder)
     )
-    
+
+  /** Adjust the given position to be inside the player movement area.
+    * @param position
+    *   the position to adjust
+    * @return
+    *   the correct position
+    */
+  def adjustPlayerPosition(position: Vector2D): Vector2D =
+    VectorUtils.clamp(
+      position,
+      (arenaLeftBorder, arenaBottomBorder),
+      (arenaRightBorder, playerTopBorder)
+    )
+
 
   private var playerRef: Option[Player] = Option.empty
   private var enemiesRef: Seq[Enemy] = Seq.empty
