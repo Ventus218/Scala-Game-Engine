@@ -15,7 +15,7 @@ object Bullets:
 
   def enemyBullet(position: Vector2D, size: Double, velocity: Vector2D): EnemyBullet =
     new Behaviour
-      with CircleRenderer(size, Color.red)
+      with CircleRenderer(size, Color.red, priority = -1)
       with CircleCollider(size)
       with SingleScalable
       with Positionable(position)
@@ -26,7 +26,7 @@ object Bullets:
     val bulletRadius = 0.1
     val speed = 15
     new Behaviour
-      with CircleRenderer(bulletRadius, Color.cyan)
+      with CircleRenderer(bulletRadius, Color.cyan, priority = -1)
       with CircleCollider(bulletRadius)
       with SingleScalable
       with Positionable(position)
