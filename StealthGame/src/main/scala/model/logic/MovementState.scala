@@ -13,18 +13,17 @@ enum Action:
 
 sealed trait MovementState:
   type Movement
-
   def apply(direction: Direction): Movement
 
-  def direction: NextState[Movement, Direction]
-  def action: NextState[Movement, Action]
+  def direction: State[Movement, Direction]
+  def action: State[Movement, Action]
 
-  def turnLeft(): NextState[Movement, Unit]
-  def turnRight(): NextState[Movement, Unit]
+  def turnLeft(): State[Movement, Unit]
+  def turnRight(): State[Movement, Unit]
 
-  def move(): NextState[Movement, Unit]
-  def sprint(): NextState[Movement, Unit]
-  def stop(): NextState[Movement, Unit]
+  def move(): State[Movement, Unit]
+  def sprint(): State[Movement, Unit]
+  def stop(): State[Movement, Unit]
 
 object MovementStateImpl extends MovementState:
   opaque type Movement = (Action, Direction)
@@ -35,26 +34,30 @@ object MovementStateImpl extends MovementState:
   override def apply(direction: Direction): Movement =
     (IDLE, direction)
 
-  override def direction: NextState[Movement, Direction] =
-    NextState(s => (s, s._2))
+  override def direction: State[Movement, Direction] =
+    State(s => (s, s._2))
 
-  override def action: NextState[Movement, Action] =
-    NextState(s => (s, s._1))
+  override def action: State[Movement, Action] =
+    State(s => (s, s._1))
 
-  override def turnLeft(): NextState[Movement, Unit] =
-    NextState((s, d) => ((s, getLeftDirection(d)), ()))
+  override def turnLeft(): State[Movement, Unit] =
+    State((s, d) => ((s, getLeftDirection(d)), ()))
 
-  override def turnRight(): NextState[Movement, Unit] =
-    NextState((s, d) => ((s, getRightDirection(d)), ()))
+  override def turnRight(): State[Movement, Unit] =
+    State((s, d) => ((s, getRightDirection(d)), ()))
 
-  override def stop(): NextState[Movement, Unit] =
-    NextState((_, d) => getState(IDLE, d))
+  override def stop(): State[Movement, Unit] =
+    State((_, d) => getState(IDLE, d))
 
-  override def move(): NextState[Movement, Unit] =
-    NextState((_, d) => getState(MOVE, d))
+  override def move(): State[Movement, Unit] =
+    State((_, d) => getState(MOVE, d))
 
-  override def sprint(): NextState[Movement, Unit] =
-    NextState((_, d) => getState(SPRINT, d))
+  override def sprint(): State[Movement, Unit] =
+    State((_, d) => getState(SPRINT, d))
+
+  extension [T <: Direction | Action](m: State[Movement, T])
+    def withFilter(p: T => Boolean): State[Movement, Unit] =
+      State(s => if (p(m(s)._2)) then (s, ()) else ((IDLE, s._2), ()))
 
   private object Privates:
     import Direction.*

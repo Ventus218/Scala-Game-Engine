@@ -11,7 +11,7 @@ class MovementTests extends AnyFlatSpec:
   import Privates.*
 
   "Movement" should "have the initial direction after being created" in:
-    val nextState: NextState[Movement, Direction] =
+    val nextState: State[Movement, Direction] =
       for d <- direction
       yield d
 
@@ -99,6 +99,31 @@ class MovementTests extends AnyFlatSpec:
       checkDirections(rightDirection, nextStopState, nextMoveState, nextSprintState)
     )
 
+  it should "set Action to IDLE if filter not possible" in:
+    val nextMoveState =
+      for
+        _ <- move()
+        d <- direction
+        if d == RIGHT
+      yield
+        ()
+
+    val nextSprintState =
+      for
+        _ <- sprint()
+        a <- action
+        if a == MOVE
+      yield
+        ()
+
+    _actualDirection = RIGHT
+    nextMoveState(initialState)._1 shouldBe (MOVE, _actualDirection)
+    
+    _actualDirection = LEFT
+    nextMoveState(initialState)._1 shouldBe (IDLE, _actualDirection)
+
+    nextSprintState(initialState)._1 shouldBe (IDLE, _actualDirection)
+    
   private object Privates:
     var _actualDirection: Direction = RIGHT
     def initialState = MovementStateImpl(_actualDirection)
@@ -119,9 +144,9 @@ class MovementTests extends AnyFlatSpec:
 
     def checkDirections(
         direction: Direction,
-        nextStopState: NextState[Movement, Unit],
-        nextMoveState: NextState[Movement, Unit],
-        nextSprintState: NextState[Movement, Unit]
+        nextStopState: State[Movement, Unit],
+        nextMoveState: State[Movement, Unit],
+        nextSprintState: State[Movement, Unit]
     ): Assertion =
       nextStopState(initialState)._1 shouldBe (IDLE, direction)
       nextMoveState(initialState)._1 shouldBe (MOVE, direction)
