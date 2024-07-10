@@ -19,3 +19,6 @@ object Config:
   val PLAYER_SPRINT: Double = 2
 
   val PATROL_SPEED: Double = 7
+
+  val STAIRS_WIDTH: Double = 7
+  val STAIRS_HEIGHT: Double = 7

@@ -41,7 +41,6 @@ class Enemy(
   def swapVisualRangeDimension() = visualRange.swapDimension()
 
   def updateVisualRangeOffset(): Unit =
-    println(velocity)
     direction match
       case TOP =>
         setVisualRangeOffsetVertical(up)
