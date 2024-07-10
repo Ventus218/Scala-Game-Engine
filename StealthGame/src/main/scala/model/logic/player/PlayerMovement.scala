@@ -46,7 +46,7 @@ object PlayerMovement extends MovementActions:
       val sprintState =
         for
           a <- action
-          _ <- if a == MOVE then sprint() else stop()
+          _ <- if a != IDLE then sprint() else stop()
         yield ()
 
       updateState(sprintState)

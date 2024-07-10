@@ -23,7 +23,7 @@ class Player(
     A -> (onMoveLeft and onResetSpeed.onlyWhenReleased),
     S -> (onMoveBottom and onResetSpeed.onlyWhenReleased),
     D -> (onMoveRight and onResetSpeed.onlyWhenReleased),
-    Space -> onSprint
+    Space -> (onSprint and onResetSpeed.onlyWhenReleased)
   )
 
   override def onInit: Engine => Unit = engine =>
@@ -32,8 +32,8 @@ class Player(
     position = position.setX(io.scenePosition(io.size).x * -1 + width)
 
   override def onUpdate: Engine => Unit = engine =>
-    super.onUpdate(engine)
     updateSpeed()
+    super.onUpdate(engine)
 
   private object Privates:
     import Direction.*
