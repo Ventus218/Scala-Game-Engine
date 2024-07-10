@@ -26,11 +26,11 @@ class Player(
   import Privates.*
 
   var inputHandlers: Map[InputButton, Handler] = Map(
-    W -> onMoveTop,
-    A -> onMoveLeft,
-    S -> onMoveBottom,
-    D -> onMoveRight,
-    Space -> onSprint.onlyWhenHeld
+    W -> (onMoveTop and onResetSpeed.onlyWhenReleased),
+    A -> (onMoveLeft and onResetSpeed.onlyWhenReleased),
+    S -> (onMoveBottom and onResetSpeed.onlyWhenReleased),
+    D -> (onMoveRight and onResetSpeed.onlyWhenReleased),
+    Space -> onSprint
   )
 
   override def onInit: Engine => Unit = engine =>
@@ -41,10 +41,6 @@ class Player(
   override def onUpdate: Engine => Unit = engine =>
     super.onUpdate(engine)
     updateSpeed()
-
-  override def onLateUpdate: Engine => Unit = engine =>
-    super.onLateUpdate(engine)
-    resetSpeed()
 
   private object Privates:
     import Direction.*

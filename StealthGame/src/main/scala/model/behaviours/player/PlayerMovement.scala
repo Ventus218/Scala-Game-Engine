@@ -63,12 +63,13 @@ private object PlayerMovement:
 
       updateState(sprintState)
 
-  def resetSpeed() =
-    val stopState =
-      for _ <- stop()
-      yield ()
+  def onResetSpeed(input: InputButton): Engine => Unit = 
+    engine =>
+      val stopState =
+        for _ <- stop()
+        yield ()
 
-    updateState(stopState)
+      updateState(stopState)
 
   private object Privates:
     def updateState(state: State[Movement, Unit]) = movement = state(
