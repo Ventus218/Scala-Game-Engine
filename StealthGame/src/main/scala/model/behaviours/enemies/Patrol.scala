@@ -7,15 +7,16 @@ import sge.swing.*
 class Patrol(
     width: Double,
     height: Double,
-    speed: Double,
+    speed: Vector2D,
     position: Vector2D = (0, 0)
 )(
+    scaleWidth: Double = 1,
+    scaleHeight: Double = 1,
     visualRangeWidth: Double = width,
     visualRangeHeight: Double = height * 2
-) extends Enemy(visualRangeWidth, visualRangeHeight)
-    with Behaviour
-    with Positionable(position)
-    with ImageRenderer("patrol.png", width, height)
-    with RectCollider(width, height)
-    with Scalable
-    with Velocity
+) extends Enemy(width, height, speed, "patrol.png", position)(
+      scaleWidth,
+      scaleHeight,
+      visualRangeWidth,
+      visualRangeHeight
+    )

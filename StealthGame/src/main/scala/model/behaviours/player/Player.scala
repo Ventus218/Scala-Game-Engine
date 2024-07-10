@@ -1,11 +1,10 @@
 package model.behaviours.player
 
 import sge.core.*
-import behaviours.dimension2d.{Positionable, Scalable}
-import behaviours.physics2d.{RectCollider, Velocity}
 import sge.swing.*
 import model.logic.*
 import player.PlayerMovement.*
+import model.behaviours.Character
 
 class Player(
     width: Double,
@@ -15,12 +14,7 @@ class Player(
 )(
     speed: Vector2D = (1, 1),
     sprint: Double = 1.5
-) extends Behaviour
-    with Positionable
-    with ImageRenderer("ninja.png", width, height)
-    with RectCollider(width, height)
-    with Scalable(scaleWidth, scaleHeight)
-    with Velocity
+) extends Character(width, height, speed, "ninja.png")(scaleWidth, scaleHeight)
     with InputHandler:
   import Privates.*
 

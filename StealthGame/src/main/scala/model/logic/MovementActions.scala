@@ -2,7 +2,7 @@ package model.logic
 
 import MovementStateImpl.*
 
-private abstract class MovementActions:
+private trait MovementActions:
   var movement = initialMovement
 
   def getDirection =

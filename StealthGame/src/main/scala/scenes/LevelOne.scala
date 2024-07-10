@@ -16,5 +16,5 @@ object LevelOne extends Scene:
       speed = Vector2D.identity * PLAYER_SPEED,
       sprint = PLAYER_SPRINT
     ),
-    Patrol(CHARACTERS_WIDTH, CHARACTERS_HEIGHT, PATROL_SPEED)()
+    Patrol(CHARACTERS_WIDTH, CHARACTERS_HEIGHT, Vector2D.identity * PATROL_SPEED)()
   )

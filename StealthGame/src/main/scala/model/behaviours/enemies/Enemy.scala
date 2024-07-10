@@ -1,20 +1,26 @@
 package model.behaviours.enemies
 
 import sge.core.*
-import behaviours.dimension2d.{Positionable, Scalable}
-import behaviours.physics2d.{RectCollider, Velocity}
 import sge.swing.*
-import model.behaviours.VisualRange
 import model.logic.*
 import enemies.EnemyMovement.*
+import model.behaviours.*
 
-trait Enemy(visualRangeWidth: Double, visualRangeHeight: Double)
-    extends Behaviour
-    with Positionable
-    with ImageRenderer
-    with RectCollider
-    with Scalable
-    with Velocity:
+abstract class Enemy(
+    width: Double,
+    height: Double,
+    speed: Vector2D,
+    imagePath: String,
+    position: Vector2D = (0, 0)
+)(
+    scaleWidth: Double,
+    scaleHeight: Double,
+    visualRangeWidth: Double,
+    visualRangeHeight: Double
+) extends Character(width, height, speed, imagePath, position)(
+      scaleWidth,
+      scaleHeight
+    ):
   private val visualRange =
     VisualRange(visualRangeWidth, visualRangeHeight, this)
 
