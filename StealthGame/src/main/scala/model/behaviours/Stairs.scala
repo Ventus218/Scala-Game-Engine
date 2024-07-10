@@ -21,8 +21,8 @@ class Stairs(
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight):
         
-  override def onUpdate: Engine => Unit = engine =>
-    super.onUpdate(engine)
-    val player = engine.find[Player]()
-    if (collides(player.head)) 
+  override def onLateUpdate: Engine => Unit = engine =>
+    super.onLateUpdate(engine)
+    val player = engine.find[Player]().head
+    if (collides(player))
       then engine.loadScene(nextScene)
