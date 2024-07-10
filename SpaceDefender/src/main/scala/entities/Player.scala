@@ -21,7 +21,12 @@ object Player:
 
   val playerSize: Int = 1
   val playerHealth: Int = 5
-  
+
+  /** Create the Player
+    * @param position
+    *   the starting position 
+    * @return
+    */
   def apply(position: Vector2D): Behaviour = PlayerImpl(position)
   
   extension (e: Engine)

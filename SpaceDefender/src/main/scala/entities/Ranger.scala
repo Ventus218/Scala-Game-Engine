@@ -10,6 +10,7 @@ import Enemies.*
 import scala.concurrent.duration.*
 import util.*
 import Timer.*
+import entities.EntityStateMachine.*
 import managers.GameManager
 
 import java.awt.Color
@@ -17,6 +18,11 @@ import scala.util.Random
 
 object Ranger:
 
+  /** Create a Ranger enemy
+    * @param position
+    *   the starting position 
+    * @return
+    */
   def apply(position: Vector2D): Enemy = RangerImpl(position)
 
   extension (v: Vector2D)
@@ -24,28 +30,23 @@ object Ranger:
     def normalized: Vector2D = v / v.magnitude
 
   private enum RangerState:
-    case Spawning(inPosition: Vector2D)
     case Moving(toPosition: Vector2D, count: Int)
     case WaitingToShoot()
     case Shooting()
-    case Dying(destroy: Boolean = false)
 
   import RangerState.*
 
-  private class RangerImpl(pos: Vector2D) extends Behaviour
+  private class RangerImpl(pos: Vector2D) 
+    extends EntityStateMachine[RangerState](
+      startingPosition = pos,
+      startingState = Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
+    )
     with Enemy
     with Health(dropperHealth)
     with CircleRenderer(enemySize/2, Color.red)
-    with CircleCollider(enemySize/2)
-    with SingleScalable
-    with Positionable(pos + (0, 5))
-    with Velocity
-    with TimerStateMachine[RangerState](Spawning(pos) forAbout 1500.millis):
+    with CircleCollider(enemySize/2):
 
-    override def onStateChange(state: RangerState)(engine: Engine): Timer[RangerState] = state match
-      case Spawning(_) =>
-        Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
-
+    override def onEntityStateChange(state: RangerState)(engine: Engine): Timer[RangerState] = state match
       case Moving(_, step) if step > 0 =>
         Moving(GameManager.enemyRandomPosition(), step - 1) forAbout 800.millis
 
@@ -59,27 +60,14 @@ object Ranger:
       case Shooting() =>
         Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
 
-      case Dying(false) =>
-        velocity = (0, 0)
-        Dying(true) forAbout 500.millis
-
-      case Dying(_) =>
-        engine.destroy(this)
-        Dying().forever
-
-    override def whileInState(state: RangerState)(engine: Engine): Unit = state match
-      case Spawning(pos) =>
-        position = VectorUtils.lerp(position, pos, 0.2)
-
+    override def whileInEntityState(state: RangerState)(engine: Engine): Unit = state match
       case Moving(pos, _) =>
         position = VectorUtils.lerp(position, pos, 0.2)
-
-      case Dying(true) =>
-        scale = scale - 1.5 * engine.deltaTimeSeconds
-
+        
       case _ =>
 
-    override def onDeath(): Unit = state = Dying()
+    override def onDeath(): Unit = setDeathState()
+    
     private def fireBullet(engine: Engine): Unit =
       GameManager.player.map(_.position).foreach(playerPos =>
         val vel: Vector2D = (playerPos - position).normalized * 8

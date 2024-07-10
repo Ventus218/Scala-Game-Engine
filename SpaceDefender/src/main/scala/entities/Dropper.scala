@@ -10,37 +10,39 @@ import Enemies.*
 import scala.concurrent.duration.*
 import util.*
 import Timer.*
+import entities.EntityStateMachine.*
 import managers.GameManager
 
 import java.awt.Color
 import scala.util.Random
 
 object Dropper:
-  
+
+  /** Create a Dropper enemy
+    * @param position
+    *   the starting position 
+    * @return
+    */
   def apply(position: Vector2D): Enemy = DropperImpl(position)
   
   private enum DropperState:
-    case Spawning(inPosition: Vector2D)
     case Moving(speed: Double)
     case Shooting(lastSpeed: Double)
-    case Dying(destroy: Boolean = false)
   
   import DropperState.*
   
-  private class DropperImpl(pos: Vector2D) extends Behaviour 
+  private class DropperImpl(pos: Vector2D) 
+    extends EntityStateMachine[DropperState](
+      startingPosition = pos, 
+      startingState = Moving(dropperSpeed) forAbout Random.between(1d, 2d).seconds
+    )
     with Enemy
     with Health(dropperHealth)
     with SquareRenderer(enemySize, Color.red, rotation = 45.degrees)
     with CircleCollider(enemySize/2)
-    with SingleScalable
-    with Positionable(pos + (0, 5))
-    with Velocity
-    with TimerStateMachine[DropperState](Spawning(pos) forAbout 1500.millis):
+    with Velocity:
   
-    override def onStateChange(state: DropperState)(engine: Engine): Timer[DropperState] = state match
-      case Spawning(_) =>
-        Moving(dropperSpeed) forAbout Random.between(1d, 2d).seconds
-  
+    override def onEntityStateChange(state: DropperState)(engine: Engine): Timer[DropperState] = state match
       case Shooting(speed) =>
         Moving(speed) forAbout Random.between(1d, 2d).seconds
   
@@ -48,18 +50,7 @@ object Dropper:
         fireBullet(engine)
         Shooting(velocity.x) forAbout 700.millis
   
-      case Dying(false) =>
-        velocity = (0, 0)
-        Dying(true) forAbout 500.millis
-  
-      case Dying(_) =>
-        engine.destroy(this)
-        Dying().forever
-  
-    override def whileInState(state: DropperState)(engine: Engine): Unit = state match
-      case Spawning(pos) =>
-        position = VectorUtils.lerp(position, pos, 0.2)
-  
+    override def whileInEntityState(state: DropperState)(engine: Engine): Unit = state match
       case Moving(speed) =>
         (velocity.x, position.x) match
           case (v, x) if v > 0 && x >= GameManager.arenaRightBorder => velocity = (-speed, 0)
@@ -70,11 +61,9 @@ object Dropper:
       case Shooting(_) =>
         velocity = (0, 0)
   
-      case Dying(true) =>
-        scale = scale - 1.5 * engine.deltaTimeSeconds
-  
-      case _ =>
-  
-    override def onDeath(): Unit = state = Dying()
+    override def onDeath(): Unit = 
+      velocity = (0, 0)
+      setDeathState()
+      
     private def fireBullet(engine: Engine): Unit =
       engine.create(Bullets.enemyBullet(position, size = 0.15, velocity = (0, -8)))
