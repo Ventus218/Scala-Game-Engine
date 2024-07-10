@@ -23,26 +23,24 @@ object GameManager extends Behaviour:
     */
   def isOutsideArena(who: Positionable): Boolean =
     Math.abs(who.position.x) >= arenaWidth/2 + 1 || Math.abs(who.position.y) >= arenaHeight/2 + 1
-    
-  private var playerRef: Option[CircleCollider & Health] = Option.empty
-  private var enemiesRef: Set[CircleCollider & Health] = Set.empty
 
-  /** Get the player reference. It is updated at the very start of the game.
+  private var playerRef: Option[Player] = Option.empty
+  private var enemiesRef: Set[Enemy] = Set.empty
+
+  /** Get the player reference. It is updated at every early update.
     * @return
     *   the player
     */
-  def player: Option[CircleCollider & Health] = playerRef
+  def player: Option[Player] = playerRef
 
   /** Get the enemies references. It is updated at every early update.
     * @return
     *   the enemies
     */
-  def enemies: Set[CircleCollider & Health] = enemiesRef
+  def enemies: Set[Enemy] = enemiesRef
 
-  override def onStart: Engine => Unit =
-    engine =>
-      playerRef = engine.find[Player]("player")
   override def onEarlyUpdate: Engine => Unit =
     engine =>
+      playerRef = engine.find[Player]("player")
       enemiesRef = engine.find[Enemy]().toSet
 
