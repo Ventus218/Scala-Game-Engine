@@ -9,6 +9,8 @@ import DeckState.*
 import scala.collection.immutable.ListSet
 
 object Trump:
+  case class Player[PlayerInfo](info: PlayerInfo, hand: Hand)
+
   opaque type Game[PlayerInfo] = GameImpl[PlayerInfo]
   private case class GameImpl[PlayerInfo](
       currentPlayer: Player[PlayerInfo],
@@ -16,15 +18,6 @@ object Trump:
       deck: ShuffledDeck,
       trumpCard: Card
   )
-
-  extension [PI](game: Game[PI])
-    def currentPlayer: Player[PI] = game.currentPlayer
-    def nextPlayer: Player[PI] = game.nextPlayer
-    def player(info: PI): Player[PI] = info match
-      case currentPlayer.`info` => currentPlayer
-      case _                    => nextPlayer
-    def deck: ShuffledDeck = game.deck
-    def trumpCard: Card = game.trumpCard
 
   def apply[PlayerInfo](
       deck: ShuffledDeck,
@@ -44,4 +37,11 @@ object Trump:
       .run(deck)
       .map((deck, config) => GameImpl(config._1, config._2, deck, config._3))
 
-  case class Player[PlayerInfo](info: PlayerInfo, hand: Hand)
+  extension [PI](game: Game[PI])
+    def currentPlayer: Player[PI] = game.currentPlayer
+    def nextPlayer: Player[PI] = game.nextPlayer
+    def player(info: PI): Player[PI] = info match
+      case currentPlayer.`info` => currentPlayer
+      case _                    => nextPlayer
+    def deck: ShuffledDeck = game.deck
+    def trumpCard: Card = game.trumpCard
