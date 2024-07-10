@@ -20,7 +20,7 @@ object Ranger:
 
   /** Create a Ranger enemy
     * @param position
-    *   the starting position 
+    *   the starting position
     * @return
     */
   def apply(position: Vector2D): Enemy = RangerImpl(position)
@@ -30,13 +30,13 @@ object Ranger:
     def normalized: Vector2D = v / v.magnitude
 
   private enum RangerState:
-    case Moving(toPosition: Vector2D, count: Int)
+    case Moving(toPosition: Vector2D, stepCount: Int)
     case WaitingToShoot()
-    case Shooting()
+    case Shooting(bulletCount: Int, target: Option[Vector2D])
 
   import RangerState.*
 
-  private class RangerImpl(pos: Vector2D) 
+  private class RangerImpl(pos: Vector2D)
     extends EntityStateMachine[RangerState](
       startingPosition = pos,
       startingState = Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
@@ -47,30 +47,32 @@ object Ranger:
     with CircleCollider(enemySize/2):
 
     override def onEntityStateChange(state: RangerState)(engine: Engine): Timer[RangerState] = state match
-      case Moving(_, step) if step > 0 =>
-        Moving(GameManager.enemyRandomPosition(), step - 1) forAbout 800.millis
-
       case Moving(_, 0) =>
         WaitingToShoot() forAbout 1.second
 
-      case WaitingToShoot() =>
-        fireBullet(engine)
-        Shooting() forAbout 400.millis
+      case Moving(_, step) =>
+        Moving(GameManager.enemyRandomPosition(), step - 1) forAbout 800.millis
 
-      case Shooting() =>
+      case WaitingToShoot() =>
+        Shooting(3, GameManager.player.map(_.position)).immediately
+
+      case Shooting(0, _) =>
         Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
+
+      case Shooting(n, target) =>
+        fireBullet(engine, target)
+        Shooting(n - 1, target) forAbout 100.millis
 
     override def whileInEntityState(state: RangerState)(engine: Engine): Unit = state match
       case Moving(pos, _) =>
         position = VectorUtils.lerp(position, pos, 0.2)
-        
+
       case _ =>
 
     override def onDeath(): Unit = setDeathState()
-    
-    private def fireBullet(engine: Engine): Unit =
-      GameManager.player.map(_.position).foreach(playerPos =>
+
+    private def fireBullet(engine: Engine, target: Option[Vector2D]): Unit =
+      target.foreach(playerPos =>
         val vel: Vector2D = (playerPos - position).normalized * 8
         engine.create(Bullets.enemyBullet(position, size = 0.15, velocity = vel))
       )
-      

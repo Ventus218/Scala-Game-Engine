@@ -23,7 +23,7 @@ trait TimerStateMachine[T](initialState: Timer[T]) extends Behaviour:
     * @param s
     *   the new state
     */
-  protected def state_=(s: T): Unit = timer = Timer.runAfter(0.nanos, s)
+  protected def state_=(s: T): Unit = timer = s.immediately
 
   /** Setup the actions to do while in a given state.
     * This function will be called during [[onUpdate]]

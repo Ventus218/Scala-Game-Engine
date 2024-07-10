@@ -83,7 +83,8 @@ object Timer:
   extension[T] (state: T)
     infix def forAbout(duration: FiniteDuration): Timer[T] = Timer.runOnceAfter(duration, state)
     infix def ~(duration: FiniteDuration): Timer[T] = state forAbout duration
-    infix def forever: Timer[T] = Timer.alwaysDisabled(state)
+    def forever: Timer[T] = Timer.alwaysDisabled(state)
+    def immediately: Timer[T] = Timer.runAfter(0.nanos, state)
 
   private case class AlwaysDisableTimer[T](state: T) extends Timer[T]:
     override val duration: FiniteDuration = 0.millis
