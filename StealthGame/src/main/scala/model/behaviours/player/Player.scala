@@ -1,19 +1,18 @@
 package model.behaviours.player
 
 import sge.core.*
+import behaviours.dimension2d.{Positionable, Scalable}
+import behaviours.physics2d.{RectCollider, Velocity}
 import sge.swing.*
-import sge.core.behaviours.dimension2d.{Positionable, Scalable}
-import sge.core.behaviours.physics2d.{RectCollider, Velocity}
 import model.logic.*
 
 class Player(
     width: Double,
     height: Double,
-    initialDirection: Direction,
     scaleWidth: Double = 1,
     scaleHeight: Double = 1
 )(
-    movementVelocity: Vector2D = (1, 1),
+    speed: Vector2D = (1, 1),
     sprint: Double = 1.5
 ) extends Behaviour
     with Positionable
@@ -51,10 +50,10 @@ class Player(
       val action = getAction(movement)._2
 
       velocity = direction match
-        case TOP    => (0, movementVelocity.y)
-        case BOTTOM => (0, -movementVelocity.y)
-        case LEFT   => (-movementVelocity.x, 0)
-        case RIGHT  => (movementVelocity.x, 0)
+        case TOP    => (0, speed.y)
+        case BOTTOM => (0, -speed.y)
+        case LEFT   => (-speed.x, 0)
+        case RIGHT  => (speed.x, 0)
 
       velocity = action match
         case IDLE   => (0, 0)
