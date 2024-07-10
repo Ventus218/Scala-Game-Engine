@@ -5,6 +5,7 @@ import behaviours.dimension2d.{Positionable, Scalable}
 import behaviours.physics2d.{RectCollider, Velocity}
 import sge.swing.*
 import model.logic.*
+import player.PlayerMovement.*
 
 class Player(
     width: Double,
@@ -21,7 +22,6 @@ class Player(
     with Scalable(scaleWidth, scaleHeight)
     with Velocity
     with InputHandler:
-  import PlayerMovement.*
   import Privates.*
 
   var inputHandlers: Map[InputButton, Handler] = Map(

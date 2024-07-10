@@ -5,6 +5,8 @@ import behaviours.dimension2d.{Positionable, Scalable}
 import behaviours.physics2d.{RectCollider, Velocity}
 import sge.swing.*
 import model.behaviours.VisualRange
+import model.logic.*
+import enemies.EnemyMovement.*
 
 trait Enemy(visualRangeWidth: Double, visualRangeHeight: Double)
     extends Behaviour
@@ -15,6 +17,7 @@ trait Enemy(visualRangeWidth: Double, visualRangeHeight: Double)
     with Velocity:
   private val visualRange =
     VisualRange(visualRangeWidth, visualRangeHeight, this)
+
   override def onInit: Engine => Unit =
     engine =>
       super.onInit(engine)
