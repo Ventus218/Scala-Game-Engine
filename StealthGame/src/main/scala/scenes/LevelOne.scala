@@ -5,7 +5,7 @@ import config.*
 import Difficulty.*
 import Config.*
 import model.behaviours.player.Player
-import model.behaviours.enemies.Patrol
+import model.behaviours.enemies.patrol.Patrol
 import sge.core.behaviours.dimension2d.Positionable
 import sge.core.behaviours.dimension2d.Scalable
 import sge.swing.behaviours.ingame.RectRenderer

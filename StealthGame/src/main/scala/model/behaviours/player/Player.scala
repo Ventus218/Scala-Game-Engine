@@ -3,7 +3,7 @@ package model.behaviours.player
 import sge.core.*
 import sge.swing.*
 import model.logic.*
-import player.PlayerMovement.*
+import PlayerMovement.*
 import model.behaviours.Character
 
 class Player(

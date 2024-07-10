@@ -1,8 +1,8 @@
-package model.logic.enemies
+package model.behaviours.enemies
 
 import model.logic.{*, given}
 import model.logic.MovementStateImpl.*
 import model.behaviours.VisualRange
 
-object EnemyMovement extends MovementActions
+private object EnemyMovement extends MovementActions
   

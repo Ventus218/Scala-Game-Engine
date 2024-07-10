@@ -4,7 +4,7 @@ import utils.*
 import sge.core.*
 import sge.swing.*
 import model.logic.*
-import enemies.EnemyMovement.*
+import EnemyMovement.*
 import model.behaviours.*
 import model.logic.MovementStateImpl.direction
 
@@ -29,31 +29,37 @@ abstract class Enemy(
   override def onInit: Engine => Unit =
     engine =>
       super.onInit(engine)
-      setupDirection(getDirection, visualRange)
-      setVisualRangeProperties()
+      updateVisualRangeProperties()
       engine.create(visualRange)
 
   private object Privates:
     import metrics.Vector2D.Versor2D.*
 
-    def setVisualRangeProperties() =
+    def updateVisualRangeProperties() =
+      updateVisualRangeDirection()
+      updateVisualRangeOffset()
+
+    def updateVisualRangeDirection() =
+      getDirection match
+        case LEFT | RIGHT => visualRange.swapDimension()
+        case _            =>
+
+    def updateVisualRangeOffset(): Unit =
       getDirection match
         case TOP =>
-          visualRange.positionOffset = up * verticalOffset
+          setVisualRangeOffset(up)
         case BOTTOM =>
-          visualRange.positionOffset = down * verticalOffset
+          setVisualRangeOffset(down)
         case LEFT =>
-          visualRange.positionOffset = left * horizzontalOffset
+          setVisualRangeOffset(left)
         case RIGHT =>
-          visualRange.positionOffset = right * horizzontalOffset
+          setVisualRangeOffset(right)
 
-    def setupDirection(direction: Direction, visualRange: VisualRange) =
-      direction match
-        case LEFT | RIGHT => visualRange.swapDimension()
-        case _     =>
+    def setVisualRangeOffset(vector: Vector2D): Unit =
+      visualRange.positionOffset = vector * verticalOffset
 
-    private def verticalOffset =
+    def verticalOffset =
       (imageHeight / 2 + visualRange.shapeHeight / 2)
 
-    private def horizzontalOffset =
+    def horizzontalOffset =
       (imageWidth / 2 + visualRange.shapeWidth / 2)

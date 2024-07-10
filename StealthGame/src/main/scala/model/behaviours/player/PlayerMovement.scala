@@ -1,4 +1,4 @@
-package model.logic.player
+package model.behaviours.player
 
 import sge.core.*
 import sge.swing.*
@@ -8,7 +8,7 @@ import MovementStateImpl.*
 import State.*
 import Action.*
 
-object PlayerMovement extends MovementActions:
+private object PlayerMovement extends MovementActions:
   def onMoveTop(input: InputButton): Engine => Unit =
     engine =>
       val turnState =

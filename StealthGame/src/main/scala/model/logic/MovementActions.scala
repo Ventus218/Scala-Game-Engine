@@ -2,7 +2,7 @@ package model.logic
 
 import MovementStateImpl.*
 
-private trait MovementActions:
+trait MovementActions:
   var movement = initialMovement
 
   def getDirection =
@@ -26,7 +26,7 @@ private trait MovementActions:
       _ <- turnTo(wantedDirection)
     yield ()
 
-  private def turnTo(
+  protected def turnTo(
       wantedDirection: Direction
   ): State[Movement, Unit] =
     for

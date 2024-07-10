@@ -1,8 +1,9 @@
-package model.behaviours.enemies
+package model.behaviours.enemies.patrol
 import sge.core.*
 import behaviours.dimension2d.*
 import behaviours.physics2d.*
 import sge.swing.*
+import model.behaviours.enemies.Enemy
 
 class Patrol(
     width: Double,
