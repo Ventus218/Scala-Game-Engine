@@ -109,10 +109,11 @@ object Engine:
         gameObjectsToDisable = gameObjectsToDisable + gameObject
 
     private def disableObjectsToBeDisabled(): Unit =
-      gameObjectsToDisable.foreach: o =>
+      val disabled = Set.from(gameObjectsToDisable)
+      gameObjectsToDisable = Set.empty
+      disabled.foreach: o =>
         o.enabled = false
         o.onDisabled(this)
-      gameObjectsToDisable = Set.empty
 
     override def create(gameObject: Behaviour): Unit =
       if gameObjects.exists(_ eq gameObject) || gameObjectsToAdd(gameObject)
