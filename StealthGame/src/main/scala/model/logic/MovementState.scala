@@ -13,7 +13,7 @@ enum Action:
 
 sealed trait MovementState:
   type Movement
-  def apply(direction: Direction): Movement
+  def initialMovement: Movement
 
   def direction: State[Movement, Direction]
   def action: State[Movement, Action]
@@ -29,10 +29,11 @@ object MovementStateImpl extends MovementState:
   opaque type Movement = (Action, Direction)
 
   import Action.*
+  import Direction.*
   import Privates.*
 
-  override def apply(direction: Direction): Movement =
-    (IDLE, direction)
+  override def initialMovement: Movement =
+    (IDLE, RIGHT)
 
   override def direction: State[Movement, Direction] =
     State(s => (s, s._2))
@@ -60,8 +61,6 @@ object MovementStateImpl extends MovementState:
       State(s => if (p(m(s)._2)) then (s, ()) else ((IDLE, s._2), ()))
 
   private object Privates:
-    import Direction.*
-
     def getLeftDirection(direction: Direction): Direction =
       direction match
         case RIGHT  => TOP

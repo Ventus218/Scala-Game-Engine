@@ -3,7 +3,7 @@ package scenes
 import sge.core.*
 import config.*
 import Difficulty.*
-import model.behaviours.Player
+import model.behaviours.player.Player
 import model.logic.Direction
 
 object LevelOne extends Scene:

@@ -11,7 +11,7 @@ class MovementTests extends AnyFlatSpec:
   import Privates.*
 
   "Movement" should "have the initial direction after being created" in:
-    val nextState: State[Movement, Direction] =
+    val nextState =
       for d <- direction
       yield d
 
@@ -25,6 +25,91 @@ class MovementTests extends AnyFlatSpec:
     nextState.run(initialState) shouldBe (initialState, IDLE)
 
   it should "stop, move and sprint" in:
+    Action.values.foreach(action =>
+      checkDirections(
+        d => d,
+        nextStopState,
+        nextMoveState,
+        nextSprintState
+      )
+    )
+
+  it should "turn direction to left" in:
+    val nextStopStateLeft =
+      for
+        _ <- nextStopState
+        _ <- turnLeft()
+      yield ()
+
+    val nextMoveStateLeft =
+      for
+        _ <- nextMoveState
+        _ <- turnLeft()
+      yield ()
+
+    val nextSprintStateLeft =
+      for
+        _ <- nextSprintState
+        _ <- turnLeft()
+      yield ()
+
+    checkDirections(
+      getLeftDirection,
+      nextStopStateLeft,
+      nextMoveStateLeft,
+      nextSprintStateLeft
+    )
+
+  it should "turn direction to right" in:
+    val nextStopStateRight =
+      for
+        _ <- nextStopState
+        _ <- turnRight()
+      yield ()
+
+    val nextMoveStateRight =
+      for
+        _ <- nextMoveState
+        _ <- turnRight()
+      yield ()
+
+    val nextSprintStateRight =
+      for
+        _ <- nextSprintState
+        _ <- turnRight()
+      yield ()
+
+    checkDirections(
+      getRightDirection,
+      nextStopStateRight,
+      nextMoveStateRight,
+      nextSprintStateRight
+    )
+
+  it should "set Action to IDLE if filter not possible" in:
+    val nextMoveStateFalse =
+      for
+        _ <- nextMoveState
+        d <- direction
+        if d == RIGHT && d == LEFT
+      yield ()
+
+    val nextSprintStateTrue =
+      for
+        _ <- nextSprintState
+        a <- action
+        if a == SPRINT
+      yield ()
+
+    _actualDirection = direction(initialState)._2
+    nextMoveStateFalse(initialState)._1 shouldBe (IDLE, _actualDirection)
+
+    nextSprintStateTrue(initialState)._1 shouldBe (SPRINT, _actualDirection)
+
+  private object Privates:
+    var _actualDirection: Direction = direction(initialState)._2
+    def initialState = initialMovement
+
     val nextStopState =
       for _ <- stop()
       yield ()
@@ -36,97 +121,6 @@ class MovementTests extends AnyFlatSpec:
     val nextSprintState =
       for _ <- sprint()
       yield ()
-
-    Action.values.foreach(action =>
-      Direction.values.foreach(direction =>
-        _actualDirection = direction
-        checkDirections(
-          direction,
-          nextStopState,
-          nextMoveState,
-          nextSprintState
-        )
-      )
-    )
-
-  it should "turn direction to left" in:
-    val nextStopState =
-      for
-        _ <- stop()
-        _ <- turnLeft()
-      yield ()
-
-    val nextMoveState =
-      for
-        _ <- move()
-        _ <- turnLeft()
-      yield ()
-
-    val nextSprintState =
-      for
-        _ <- sprint()
-        _ <- turnLeft()
-      yield ()
-
-    Direction.values.foreach(direction =>
-      _actualDirection = direction
-      val leftDirection = getLeftDirection(direction)
-      checkDirections(leftDirection, nextStopState, nextMoveState, nextSprintState)
-    )
-  
-  it should "turn direction to right" in:
-    val nextStopState =
-      for
-        _ <- stop()
-        _ <- turnRight()
-      yield ()
-
-    val nextMoveState =
-      for
-        _ <- move()
-        _ <- turnRight()
-      yield ()
-
-    val nextSprintState =
-      for
-        _ <- sprint()
-        _ <- turnRight()
-      yield ()
-
-    Direction.values.foreach(direction =>
-      _actualDirection = direction
-      val rightDirection = getRightDirection(direction)
-      checkDirections(rightDirection, nextStopState, nextMoveState, nextSprintState)
-    )
-
-  it should "set Action to IDLE if filter not possible" in:
-    val nextMoveState =
-      for
-        _ <- move()
-        d <- direction
-        if d == RIGHT
-      yield
-        ()
-
-    val nextSprintState =
-      for
-        _ <- sprint()
-        a <- action
-        if a == MOVE
-      yield
-        ()
-
-    _actualDirection = RIGHT
-    nextMoveState(initialState)._1 shouldBe (MOVE, _actualDirection)
-    
-    _actualDirection = LEFT
-    nextMoveState(initialState)._1 shouldBe (IDLE, _actualDirection)
-
-    nextSprintState(initialState)._1 shouldBe (IDLE, _actualDirection)
-    
-  private object Privates:
-    var _actualDirection: Direction = RIGHT
-    def initialState = MovementStateImpl(_actualDirection)
 
     def getLeftDirection(direction: Direction): Direction =
       direction match
@@ -143,11 +137,12 @@ class MovementTests extends AnyFlatSpec:
         case BOTTOM => LEFT
 
     def checkDirections(
-        direction: Direction,
+        getNextDirection: Direction => Direction,
         nextStopState: State[Movement, Unit],
         nextMoveState: State[Movement, Unit],
         nextSprintState: State[Movement, Unit]
     ): Assertion =
-      nextStopState(initialState)._1 shouldBe (IDLE, direction)
-      nextMoveState(initialState)._1 shouldBe (MOVE, direction)
-      nextSprintState(initialState)._1 shouldBe (SPRINT, direction)
+      val nextDirection = getNextDirection(direction(initialState)._2)
+      nextStopState(initialState)._1 shouldBe (IDLE, nextDirection)
+      nextMoveState(initialState)._1 shouldBe (MOVE, nextDirection)
+      nextSprintState(initialState)._1 shouldBe (SPRINT, nextDirection)
