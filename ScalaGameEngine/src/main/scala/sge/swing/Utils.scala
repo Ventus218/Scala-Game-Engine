@@ -27,8 +27,8 @@ object Utils:
       */
     def scenePosition(pixelPosition: (Int, Int)): Vector2D =
       (
-        io.center.x + (pixelPosition._1 - io.size._1 / 2) / io.pixelsPerUnit,
-        io.center.y - (pixelPosition._2 - io.size._2 / 2) / io.pixelsPerUnit
+        io.center.x + (pixelPosition._1 - io.size._1 / 2).toDouble / io.pixelsPerUnit,
+        io.center.y - (pixelPosition._2 - io.size._2 / 2).toDouble / io.pixelsPerUnit
       )
 
   extension (engine: Engine)
