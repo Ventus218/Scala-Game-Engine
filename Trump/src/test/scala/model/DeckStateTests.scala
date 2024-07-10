@@ -35,3 +35,22 @@ class DeckStateTests extends AnyFlatSpec:
     val deck = Deck.stockDeck
     deck.isInstanceOf[Deck] shouldBe true
     shuffleDeck.run(deck)._1.isInstanceOf[ShuffledDeck] shouldBe true
+
+  it should "allow to deal multiple cards" in:
+    val dealAllCards =
+      for cards <- deal(deck.size)
+      yield cards
+
+    val (newDeck, cards) = dealAllCards.run(deck)
+    newDeck.size shouldBe 0
+    cards.isDefined shouldBe true
+    cards.get.toSeq should contain theSameElementsInOrderAs deck.cards.toSeq
+
+  it should "return none when trying to deal more cards that the deck has" in:
+    val dealTooManyCards =
+      for cards <- deal(deck.size + 1)
+      yield cards
+
+    val (newDeck, cards) = dealTooManyCards.run(deck)
+    newDeck.size shouldBe deck.size
+    cards shouldBe None
