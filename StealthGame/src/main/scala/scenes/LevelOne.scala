@@ -11,6 +11,7 @@ import sge.swing.behaviours.ingame.RectRenderer
 import model.logic.{*, given}
 import MovementStateImpl.*
 import model.behaviours.enemies.patterns.MovingPattern
+import model.behaviours.enemies.patterns.TurningLeftPattern
 
 object LevelOne extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
@@ -18,5 +19,5 @@ object LevelOne extends Scene:
       speed = Vector2D.identity * PLAYER_SPEED,
       sprint = PLAYER_SPRINT
     ),
-    new Enemy(CHARACTERS_WIDTH, CHARACTERS_HEIGHT, Vector2D.identity * PATROL_SPEED, "patrol.png")() with MovingPattern
+    new Enemy(CHARACTERS_WIDTH, CHARACTERS_HEIGHT, Vector2D.identity * PATROL_SPEED, "patrol.png")() with MovingPattern with TurningLeftPattern(1)
   )

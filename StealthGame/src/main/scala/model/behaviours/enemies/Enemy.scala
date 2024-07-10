@@ -2,6 +2,7 @@ package model.behaviours.enemies
 
 import utils.*
 import sge.core.*
+import metrics.Vector2D.Versor2D.*
 import sge.swing.*
 import model.logic.*
 import EnemyMovement.*
@@ -28,41 +29,44 @@ class Enemy(
 
   private val visualRange =
     VisualRange(width, visualRangeSize, this)
-  override def onInit: Engine => Unit =
-    engine =>
-      super.onInit(engine)
-      updateVisualRangeProperties()
-      engine.create(visualRange)
+  override def onInit: Engine => Unit = engine =>
+    super.onInit(engine)
+    setupVisualRangeProperties()
+    engine.create(visualRange)
 
   override protected def action: Action = getAction
   override protected def direction: Direction = getDirection
   override protected def getSprint: Double = 0
 
-  private object Privates:
-    import metrics.Vector2D.Versor2D.*
+  def swapVisualRangeDimension() = visualRange.swapDimension()
 
-    def updateVisualRangeProperties() =
-      updateVisualRangeDirection()
+  def updateVisualRangeOffset(): Unit =
+    println(velocity)
+    direction match
+      case TOP =>
+        setVisualRangeOffsetVertical(up)
+      case BOTTOM =>
+        setVisualRangeOffsetVertical(down)
+      case LEFT =>
+        setVisualRangeOffsetHorizzontal(left)
+      case RIGHT =>
+        setVisualRangeOffsetHorizzontal(right)
+
+  private object Privates:
+    def setupVisualRangeProperties() =
+      setupVisualRangeDirection()
       updateVisualRangeOffset()
 
-    def updateVisualRangeDirection() =
+    def setupVisualRangeDirection() =
       getDirection match
-        case LEFT | RIGHT => visualRange.swapDimension()
+        case LEFT | RIGHT => swapVisualRangeDimension()
         case _            =>
 
-    def updateVisualRangeOffset(): Unit =
-      getDirection match
-        case TOP =>
-          setVisualRangeOffset(up)
-        case BOTTOM =>
-          setVisualRangeOffset(down)
-        case LEFT =>
-          setVisualRangeOffset(left)
-        case RIGHT =>
-          setVisualRangeOffset(right)
-
-    def setVisualRangeOffset(vector: Vector2D): Unit =
+    def setVisualRangeOffsetVertical(vector: Vector2D): Unit =
       visualRange.positionOffset = vector * verticalOffset
+
+    def setVisualRangeOffsetHorizzontal(vector: Vector2D): Unit =
+      visualRange.positionOffset = vector * horizzontalOffset
 
     def verticalOffset =
       (imageHeight / 2 + visualRange.shapeHeight / 2)

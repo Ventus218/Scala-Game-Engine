@@ -11,7 +11,7 @@ import Direction.*
 import sge.core.*
 import mocks.MockSwingIO
 
-class EnemiesMovementTests extends AnyFlatSpec with BeforeAndAfterEach:
+class EnemiesVisualRangeTests extends AnyFlatSpec with BeforeAndAfterEach:
   val visualRangesize: Double = 10
   val width: Double = 5
   val height: Double = 3
@@ -29,7 +29,7 @@ class EnemiesMovementTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   "Enemies" should "have the right visual range dimensions at startup" in:
     test(engine) on scene soThat:
-      _.onEarlyUpdate(
+      _.onLateUpdate(
         engine.find[VisualRange]().head.shapeWidth shouldBe (direction(
           initialMovement
         )._2 match
@@ -42,7 +42,7 @@ class EnemiesMovementTests extends AnyFlatSpec with BeforeAndAfterEach:
 
   it should "have the right offset at startup" in:
     test(engine) on scene soThat:
-      _.onEarlyUpdate(
+      _.onLateUpdate(
         engine.find[VisualRange]().head.positionOffset shouldBe (direction(
           initialMovement
         )._2 match
