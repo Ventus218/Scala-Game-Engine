@@ -40,16 +40,13 @@ class Player(
     import Action.*
 
     def updateSpeed() =
-      val direction = getDirection(movement)._2
-      val action = getAction(movement)._2
-
-      velocity = direction match
+      velocity = getDirection match
         case TOP    => (0, speed.y)
         case BOTTOM => (0, -speed.y)
         case LEFT   => (-speed.x, 0)
         case RIGHT  => (speed.x, 0)
 
-      velocity = action match
+      velocity = getAction match
         case IDLE   => (0, 0)
         case MOVE   => velocity
         case SPRINT => velocity * sprint

@@ -6,12 +6,16 @@ private trait MovementActions:
   var movement = initialMovement
 
   def getDirection =
-    for d <- direction
-    yield d
+    val directionState =
+      for d <- direction
+      yield d
+    directionState.run(movement)._2
 
   def getAction =
-    for a <- action
-    yield a
+    val actionState =
+      for a <- action
+      yield a
+    actionState.run(movement)._2
 
   protected def updateState(state: State[Movement, Unit]) =
     movement = state(movement)._1
