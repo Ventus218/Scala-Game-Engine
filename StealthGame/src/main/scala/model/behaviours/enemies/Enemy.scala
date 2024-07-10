@@ -8,16 +8,16 @@ import EnemyMovement.*
 import model.behaviours.*
 import model.logic.MovementStateImpl.*
 
-abstract class Enemy(
+class Enemy(
     width: Double,
     height: Double,
     speed: Vector2D,
     imagePath: String,
     position: Vector2D = (0, 0)
 )(
-    scaleWidth: Double,
-    scaleHeight: Double,
-    visualRangeSize: Double
+    scaleWidth: Double = 1,
+    scaleHeight: Double = 1,
+    visualRangeSize: Double = height * 2
 ) extends Character(width, height, speed, imagePath, position)(
       scaleWidth,
       scaleHeight
@@ -34,9 +34,9 @@ abstract class Enemy(
       updateVisualRangeProperties()
       engine.create(visualRange)
 
-  override protected def action(): Action = getAction
-  override protected def direction(): Direction = getDirection
-  override protected def getSprint(): Double = 0
+  override protected def action: Action = getAction
+  override protected def direction: Direction = getDirection
+  override protected def getSprint: Double = 0
 
   private object Privates:
     import metrics.Vector2D.Versor2D.*

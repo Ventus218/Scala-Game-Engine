@@ -29,6 +29,6 @@ class Player(
     val io = engine.io.asInstanceOf[SwingIO]
     position = position.setX(io.scenePosition(io.size).x * -1 + width)
 
-  override protected def action(): Action = getAction
-  override protected def direction(): Direction = getDirection
-  override protected def getSprint(): Double = sprint
+  override protected def action: Action = getAction
+  override protected def direction: Direction = getDirection
+  override protected def getSprint: Double = sprint

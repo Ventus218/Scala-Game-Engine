@@ -17,7 +17,7 @@ trait MovementActions:
       yield a
     actionState.run(movement)._2
 
-  protected def updateState(state: State[Movement, Unit]) =
+  def updateState(state: State[Movement, Unit]) =
     movement = state(movement)._1
 
   protected def moveAndTurn(wantedDirection: Direction) =
