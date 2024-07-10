@@ -1,7 +1,9 @@
 package util
 
 import sge.core.*
-import scala.concurrent.duration._
+import util.Timer.*
+
+import scala.concurrent.duration.*
 
 /** Behaviour that represents a finite state machine, with built-in timers to execute delayed
   * state changes.
@@ -16,8 +18,12 @@ trait TimerStateMachine[T](initialState: Timer[T]) extends Behaviour:
   /** The state of the machine
     */
   def state: T = timer.state
-  
-  protected def state_=(s: T)(engine: Engine): Unit = timer = onStateChange(s)(engine)
+
+  /** Set the current state. The state is effectively set in the next frame.
+    * @param s
+    *   the new state
+    */
+  protected def state_=(s: T): Unit = timer = Timer.runAfter(0.nanos, s)
 
   /** Setup the actions to do while in a given state.
     * This function will be called during [[onUpdate]]

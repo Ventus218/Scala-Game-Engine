@@ -32,11 +32,23 @@ class Dropper(pos: Vector2D) extends Behaviour with Enemy
   with TimerStateMachine[DropperState](Spawning(pos) forAbout 1500.millis):
 
   override def onStateChange(state: DropperState)(engine: Engine): Timer[DropperState] = state match
-    case Spawning(_)                         => Moving(dropperSpeed) forAbout Random.between(1d, 2d).second
-    case Moving(_)                           => Shooting(velocity.x) forAbout 700.millis
-    case Shooting(s)                         => Moving(s) forAbout Random.between(1d, 2d).second
-    case Dying(destroy) if !destroy          => Dying(true) forAbout 500.millis
-    case Dying(_)                            => engine.destroy(this); Dying().forever
+    case Spawning(_) =>
+      Moving(dropperSpeed) forAbout Random.between(1d, 2d).seconds
+
+    case Shooting(speed) =>
+      Moving(speed) forAbout Random.between(1d, 2d).seconds
+
+    case Moving(_) =>
+      fireBullet(engine)
+      Shooting(velocity.x) forAbout 700.millis
+
+    case Dying(false) =>
+      velocity = (0, 0)
+      Dying(true) forAbout 500.millis
+
+    case Dying(_) =>
+      engine.destroy(this)
+      Dying().forever
 
   override def whileInState(state: DropperState)(engine: Engine): Unit = state match
     case Spawning(pos) =>
@@ -44,15 +56,19 @@ class Dropper(pos: Vector2D) extends Behaviour with Enemy
 
     case Moving(speed) =>
       (velocity.x, position.x) match
-        case (v, x) if v > 0 && x >= GameManager.arenaRightBorder => velocity = velocity.setX(-speed)
-        case (v, x) if v < 0 && x <= GameManager.arenaLeftBorder  => velocity = velocity.setX(-speed)
-        case (v, _) if v == 0                                     => velocity = velocity.setX(speed)
+        case (v, x) if v > 0 && x >= GameManager.arenaRightBorder => velocity = (-speed, 0)
+        case (v, x) if v < 0 && x <= GameManager.arenaLeftBorder  => velocity = (-speed, 0)
+        case (0, _)                                               => velocity = (+speed, 0)
         case _ =>
 
     case Shooting(_) =>
-      velocity = velocity.setX(0)
+      velocity = (0, 0)
 
-    case Dying(destroy) if destroy =>
-      scale = scale - 0.98 * engine.deltaTimeSeconds
+    case Dying(true) =>
+      scale = scale - 1.5 * engine.deltaTimeSeconds
 
     case _ =>
+
+  override def onDeath(): Unit = state = Dying()
+  private def fireBullet(engine: Engine): Unit =
+    engine.create(Bullets.enemyBullet(position, size = 0.15, speed = 8))
