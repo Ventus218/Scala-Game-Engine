@@ -9,6 +9,10 @@ import util.VectorUtils
 
 import java.awt.Color
 
+/** Flag trait for identifying the player
+  */
+trait Player extends Behaviour with CircleCollider with Health with Identifiable
+
 object Player:
 
   val playerSize: Int = 1
@@ -22,6 +26,7 @@ object Player:
     
     
   private class PlayerImpl(pos: Vector2D) extends Behaviour
+    with Player
     with Identifiable("player")
     with Health(playerHealth)
     with CircleCollider(playerSize)

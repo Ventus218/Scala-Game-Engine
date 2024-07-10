@@ -41,8 +41,8 @@ object GameManager extends Behaviour:
 
   override def onStart: Engine => Unit =
     engine =>
-      playerRef = engine.find[CircleCollider & Health & Identifiable]("player")
+      playerRef = engine.find[Player]("player")
   override def onEarlyUpdate: Engine => Unit =
     engine =>
-      enemiesRef = engine.find[CircleCollider & Health]().toSet.filterNot(player.contains)
+      enemiesRef = engine.find[Enemy]().toSet
 

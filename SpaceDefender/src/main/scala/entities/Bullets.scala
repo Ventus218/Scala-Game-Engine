@@ -51,9 +51,13 @@ object Bullets:
     private def hitTarget: Option[Health] = targets.find(collides(_))
     private def isOutside: Boolean = GameManager.isOutsideArena(this)
 
+  /** An enemy bullet
+    */
   trait EnemyBullet(override val damage: Int) extends Bullet:
     override def targets: Set[CircleCollider & Health] = GameManager.player.toSet
 
+  /** A player bullet
+    */
   trait PlayerBullet(override val damage: Int) extends Bullet:
     override def targets: Set[CircleCollider & Health] = GameManager.enemies
 
