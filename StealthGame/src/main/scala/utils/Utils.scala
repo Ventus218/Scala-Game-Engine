@@ -1,6 +1,7 @@
-import sge.core.Behaviour
-import sge.core.Engine
-import sge.core.behaviours.Identifiable
+package utils
+
+import sge.core.*
+import behaviours.Identifiable
 import scala.reflect.TypeTest
 
 extension (engine: Engine)
@@ -18,3 +19,13 @@ extension (engine: Engine)
   ): Unit =
     val behaviour = engine.find[B](id).get
     if enable then engine.enable(behaviour) else engine.disable(behaviour)
+
+import model.behaviours.VisualRange
+
+extension (visualRange: VisualRange)
+  def swapDimension() =
+    val height = visualRange.shapeHeight
+    visualRange.shapeHeight = visualRange.shapeWidth
+    visualRange.shapeWidth = height
+    visualRange.colliderHeight = visualRange.shapeHeight
+    visualRange.colliderWidth = visualRange.shapeWidth

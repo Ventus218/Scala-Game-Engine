@@ -33,7 +33,7 @@ object MovementStateImpl extends MovementState:
   import Privates.*
 
   override def initialMovement: Movement =
-    (IDLE, RIGHT)
+    (IDLE, BOTTOM)
 
   override def direction: State[Movement, Direction] =
     State(s => (s, s._2))

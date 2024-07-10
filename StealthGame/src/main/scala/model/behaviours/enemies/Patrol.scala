@@ -12,11 +12,9 @@ class Patrol(
 )(
     scaleWidth: Double = 1,
     scaleHeight: Double = 1,
-    visualRangeWidth: Double = width,
-    visualRangeHeight: Double = height * 2
+    visualRangeSize: Double = width * 2,
 ) extends Enemy(width, height, speed, "patrol.png", position)(
       scaleWidth,
       scaleHeight,
-      visualRangeWidth,
-      visualRangeHeight
+      visualRangeSize
     )

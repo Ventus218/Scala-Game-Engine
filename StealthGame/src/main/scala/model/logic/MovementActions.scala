@@ -26,13 +26,9 @@ private trait MovementActions:
       _ <- turnTo(wantedDirection)
     yield ()
 
-  private def moveState =
-    for
-      a <- action
-      _ <- if a == Action.SPRINT then sprint() else move()
-    yield ()
-
-  private def turnTo(wantedDirection: Direction): State[Movement, Unit] =
+  private def turnTo(
+      wantedDirection: Direction
+  ): State[Movement, Unit] =
     for
       d <- direction
       _ <-
@@ -43,4 +39,10 @@ private trait MovementActions:
             _ <- turnLeft()
             _ <- turnTo(wantedDirection)
           yield d
+    yield ()
+
+  private def moveState =
+    for
+      a <- action
+      _ <- if a == Action.SPRINT then sprint() else move()
     yield ()
