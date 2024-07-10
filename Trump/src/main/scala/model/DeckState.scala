@@ -6,33 +6,23 @@ import statemonad.*
 import scala.collection.immutable.ListSet
 
 object DeckState:
-  def deal[D: DeckOps](): State[D, D, Either[TrumpError, Card]] =
-    State(d =>
+  def deal[D: DeckOps](): EitherState[D, D, Card, TrumpError] =
+    EitherState(d =>
       d.deal match
-        case Right(newDeck, card) => (newDeck, Right(card))
-        case Left(error)          => (d, Left(error))
+        case Right(newDeck, card) => Right(newDeck, card)
+        case Left(error)          => Left(error)
     )
 
-  def shuffle[D: DeckOps]()(using seed: Int): State[D, ShuffledDeck, Unit] =
-    State(d => (d.shuffle, ()))
+  def shuffle[D: DeckOps]()(using
+      seed: Int
+  ): EitherState[D, ShuffledDeck, Unit, Unit] =
+    EitherState(d => Right(d.shuffle, ()))
 
-  def deal[D: DeckOps](n: Int): State[D, D, Either[TrumpError, ListSet[Card]]] =
-    State(s =>
-      val computation: State[D, D, Either[TrumpError, ListSet[Card]]] = n match
-        case 0 => State(s => (s, Right(ListSet())))
-        case n =>
-          for
-            cards <- deal(n - 1)
-            card <- deal()
-            res = for
-              card <- card
-              cards <- cards
-            yield (cards + card)
-          yield res
-      val res = computation.run(s)
-
-      // If the operation fails the state is not altered
-      res._2 match
-        case Left(error)  => (s, Left(error))
-        case Right(cards) => res
-    )
+  def deal[D: DeckOps](n: Int): EitherState[D, D, ListSet[Card], TrumpError] =
+    n match
+      case 0 => EitherState(s => Right(s, ListSet()))
+      case n =>
+        for
+          cards <- deal(n - 1)
+          card <- deal()
+        yield cards + card
