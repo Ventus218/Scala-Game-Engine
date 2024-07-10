@@ -12,7 +12,9 @@ object Trump:
   opaque type Game[PlayerInfo] = GameImpl[PlayerInfo]
   private case class GameImpl[PlayerInfo](
       currentPlayer: Player[PlayerInfo],
-      nextPlayer: Player[PlayerInfo]
+      nextPlayer: Player[PlayerInfo],
+      deck: ShuffledDeck,
+      trumpCard: Card
   )
 
   extension [PI](game: Game[PI])
@@ -21,6 +23,8 @@ object Trump:
     def player(info: PI): Player[PI] = info match
       case currentPlayer.`info` => currentPlayer
       case _                    => nextPlayer
+    def deck: ShuffledDeck = game.deck
+    def trumpCard: Card = game.trumpCard
 
   def apply[PlayerInfo](
       deck: ShuffledDeck,
@@ -30,12 +34,14 @@ object Trump:
       hands <- deal(6)
       trumpCard <- deal()
       handsSeq = hands.toSeq
-      _ <- deal()
-    yield GameImpl(
+    yield (
       Player(playersInfo.player1, Hand(handsSeq(0), handsSeq(2), handsSeq(4))),
-      Player(playersInfo.player2, Hand(handsSeq(1), handsSeq(3), handsSeq(5)))
+      Player(playersInfo.player2, Hand(handsSeq(1), handsSeq(3), handsSeq(5))),
+      trumpCard
     )
 
-    prepareGame.run(deck).map((_, game) => game)
+    prepareGame
+      .run(deck)
+      .map((deck, config) => GameImpl(config._1, config._2, deck, config._3))
 
   case class Player[PlayerInfo](info: PlayerInfo, hand: Hand)

@@ -14,13 +14,13 @@ class TrumpTests extends AnyFlatSpec:
   val playersInfo = PlayersInfo(p1, p2).get
   val game = Trump(initialDeck, playersInfo).right.get
 
-  "Trump" should "be constructed only if the deck has enough cards to play a turn" in:
+  "Trump" should "construct a game only if the deck has enough cards to play a turn" in:
     val validDeck = Deck(initialDeck.cards.take(8).toSeq*).shuffle
     val invalidDeck = validDeck.deal.right.get._1
     Trump(validDeck, playersInfo).isRight shouldBe true
     Trump(invalidDeck, playersInfo).isRight shouldBe false
 
-  it should "let players play in the correct order" in:
+  "Game" should "let players play in the correct order" in:
     game.currentPlayer.info shouldBe playersInfo.player1
 
   it should "give three cards to each player hand initially" in:
@@ -47,3 +47,10 @@ class TrumpTests extends AnyFlatSpec:
       deckCards(3),
       deckCards(5)
     )
+
+  it should "deal a trump card after dealing player hands" in:
+    game.trumpCard shouldBe initialDeck.cards.toSeq(6)
+
+  it should "have dealt 7 cards (two hands an the trump card) initially" in:
+    game.deck.size shouldBe initialDeck.size - 7
+
