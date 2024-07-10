@@ -6,36 +6,75 @@ import behaviours.*
 import dimension2d.*
 import sge.swing.*
 import util.*
+import Timer.*
+import ui.*
 
-import java.awt.*
+import scala.concurrent.duration.*
 import scala.util.Random
+
+private enum GameState:
+  case Starting
+  case EnterPlayer
+  case ShowMissionText
+  case HideMissionText
+  case GameStart
+  case PlayerDestroyed
+  case GameEnding
+  case GameTerminated
+
+import GameState.*
 
 /** Manager of the game
   */
-object GameManager extends Behaviour:
+object GameManager extends Behaviour with TimerStateMachine[GameState](Starting forAbout 1500.millis):
 
   import GameConstants.*
 
-  private var playerRef: Option[Player] = Option(Player(0, arenaBottomBorder + 1))
-  private var enemiesRef: Seq[Enemy] = Seq.empty
+  private var playerRef:  Option[Player] = Option(Player())
+  private var enemiesRef: Seq[Enemy]     = Seq.empty
 
   private var score: Int = 0
-  private val scoreText: UITextRenderer =
-    new Behaviour with UITextRenderer(
-      s"Score: $score",
-      scoreTextFont,
-      Color.white,
-      textOffset = (10, 10)
-    )
 
-  override def onStart: Engine => Unit =
-    engine =>
+  private val scoreText:   UITextRenderer = ScoreText()
+  private val missionText: MissionText    = MissionText()
+
+  override def onStateChange(state: GameState)(engine: Engine): Timer[GameState] = state match
+    case Starting =>
       engine.create(scoreText)
       playerRef.foreach(engine.create)
-  override def onEarlyUpdate: Engine => Unit =
-    engine =>
+      EnterPlayer forAbout 1500.millis
+
+    case EnterPlayer =>
+      engine.create(missionText)
+      ShowMissionText forAbout 1500.millis
+
+    case ShowMissionText =>
+      HideMissionText forAbout 1500.millis
+
+    case HideMissionText =>
+      engine.destroy(missionText)
+      GameStart.forever
+
+    case PlayerDestroyed =>
+      GameEnding forAbout 1500.millis
+
+    case GameEnding =>
+      System.exit(0)
+      GameTerminated.forever
+
+    case GameStart      => GameStart.forever
+    case GameTerminated => GameTerminated.forever
+
+  override def whileInState(state: GameState)(engine: Engine): Unit = state match
+    case GameStart =>
       playerRef = engine.find[Player]("player")
       enemiesRef = engine.find[Enemy]().toSeq
+
+    case ShowMissionText => missionText.show()
+
+    case HideMissionText => missionText.hide()
+
+    case _ =>
 
   /** Adds score to the current one
     * @param points

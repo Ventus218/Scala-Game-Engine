@@ -4,6 +4,7 @@ import sge.core.*
 import util.*
 import Timer.*
 import behaviours.dimension2d.*
+import managers.GameConstants
 
 import scala.concurrent.duration.*
 
@@ -15,7 +16,7 @@ object EntityStateMachine:
     case Spawning()
     case Dying(destroy: Boolean = false)
 
-  private val startingOffset: Vector2D = (0, 10)
+  private val startingOffset: Vector2D = (0, GameConstants.arenaHeight)
   private  val spawnLerpFactor = 0.2
   private val deathScaleFactor = 1.5
 
@@ -31,8 +32,14 @@ import EntityState.*
   * @tparam T
   *   The type of the state of the FS machine.
   */
-abstract class EntityStateMachine[T](startingPosition: Vector2D, entityHealth: Int, startingState: Timer[EntityState | T]) extends Behaviour
-  with TimerStateMachine[EntityState | T](Spawning() forAbout 1500.millis)
+abstract class EntityStateMachine[T](
+    startingPosition: Vector2D, 
+    entityHealth: Int, 
+    startingState: Timer[EntityState | T], 
+    startingTime: FiniteDuration = 1500.millis,
+    startingOffset: Vector2D = startingOffset
+) extends Behaviour
+  with TimerStateMachine[EntityState | T](Spawning() forAbout startingTime)
   with Health(entityHealth)
   with SingleScalable
   with Positionable(startingPosition + startingOffset):

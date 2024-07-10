@@ -22,21 +22,22 @@ trait Player extends Behaviour
 
 object Player:
 
-  val playerSize: Double    = 1
-  val playerMaxHealth: Int  = 5
-  val playerFireRate: Int   = 5
-  val invulnerabilityTime: FiniteDuration = 2.seconds
+  val playerSize:             Double         = 1
+  val playerMaxHealth:        Int            = 5
+  val playerFireRate:         Int            = 5
+  val invulnerabilityTime:    FiniteDuration = 2.seconds
+  val playerStartingPosition: Vector2D       = (0, GameConstants.arenaBottomBorder + 1)
 
-  private val playerMovementLerpFactor: Double = 0.25
-  private val invulnerabilityFlashes: Int      = 30
-  private val firePeriod: FiniteDuration       = 1.second / playerFireRate
+  private val playerMovementLerpFactor: Double         = 0.25
+  private val invulnerabilityFlashes:   Int            = 30
+  private val firePeriod:               FiniteDuration = 1.second / playerFireRate
 
   /** Create the Player
     * @param position
     *   the starting position
     * @return
     */
-  def apply(position: Vector2D): Player = PlayerImpl(position)
+  def apply(position: Vector2D = playerStartingPosition): Player = PlayerImpl(position)
 
   extension (e: Engine)
     def swingIO: SwingIO = e.io.asInstanceOf[SwingIO]
@@ -52,7 +53,9 @@ object Player:
     extends EntityStateMachine[PlayerState](
       startingPosition = pos,
       entityHealth = playerMaxHealth,
-      startingState = Normal().forever
+      startingState = Normal().forever,
+      startingTime = 1.second,
+      startingOffset = (0, -GameConstants.arenaHeight)
     )
     with Player
     with Identifiable("player")
