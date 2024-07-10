@@ -23,76 +23,79 @@ private object PlayerMovement:
 
   def onMoveTop(input: InputButton): Engine => Unit =
     engine =>
-      val turnTopState =
-        for
-          _ <- moveState
-          d <- direction
-          _ <- turnTo(d, TOP)
+      val turnState =
+        for _ <- moveAndTurn(TOP)
         yield ()
 
-      movement = turnTopState(movement)._1
+      updateState(turnState)
 
   def onMoveBottom(input: InputButton): Engine => Unit =
     engine =>
-      val turnBottomState =
-        for
-          _ <- moveState
-          d <- direction
-          _ <- turnTo(d, BOTTOM)
+      val turnState =
+        for _ <- moveAndTurn(BOTTOM)
         yield ()
 
-      movement = turnBottomState(movement)._1
+      updateState(turnState)
 
   def onMoveRight(input: InputButton): Engine => Unit =
     engine =>
-      val turnRightState =
-        for
-          _ <- moveState
-          d <- direction
-          _ <- turnTo(d, RIGHT)
+      val turnState =
+        for _ <- moveAndTurn(RIGHT)
         yield ()
 
-      movement = turnRightState(movement)._1
+      updateState(turnState)
 
   def onMoveLeft(input: InputButton): Engine => Unit =
     engine =>
-      val turnLeftState =
-        for
-          _ <- moveState
-          d <- direction
-          _ <- turnTo(d, LEFT)
+      val turnState =
+        for _ <- moveAndTurn(LEFT)
         yield ()
 
-      movement = turnLeftState(movement)._1
+      updateState(turnState)
 
-  def onSprint(input: InputButton): Engine => Unit = engine =>
-    val sprintState =
-      for
-        a <- action
-        _ <- if a == MOVE then sprint() else stop()
-      yield ()
+  def onSprint(input: InputButton): Engine => Unit =
+    engine =>
+      val sprintState =
+        for
+          a <- action
+          _ <- if a == MOVE then sprint() else stop()
+        yield ()
 
-    movement = sprintState(movement)._1
+      updateState(sprintState)
 
   def resetSpeed() =
     val stopState =
       for _ <- stop()
       yield ()
-    movement = stopState(movement)._1
+
+    updateState(stopState)
 
   private object Privates:
-    def moveState =
-        for
-          a <- action
-          _ <- if a == SPRINT then sprint() else move()
-        yield ()
+    def updateState(state: State[Movement, Unit]) = movement = state(
+      movement
+    )._1
 
-    def turnTo(startingDirection: Direction, wantedDirection: Direction): State[Movement, Direction] =
-      if startingDirection == wantedDirection
-      then direction
-      else
-        for
-          _ <- turnLeft()
-          d <- direction
-          _ <- turnTo(d, wantedDirection)
-        yield d
+    def moveAndTurn(wantedDirection: Direction) =
+      for
+        _ <- moveState
+        _ <- turnTo(wantedDirection)
+      yield ()
+
+    private def moveState =
+      for
+        a <- action
+        _ <- if a == SPRINT then sprint() else move()
+      yield ()
+
+    private def turnTo(wantedDirection: Direction): State[Movement, Unit] =
+      for
+        d <- direction
+        _ <-
+          if d == wantedDirection
+          then direction
+          else
+            for
+              _ <- turnLeft()
+              _ <- turnTo(wantedDirection)
+            yield d
+      yield ()

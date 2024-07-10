@@ -30,7 +30,7 @@ class Player(
     A -> onMoveLeft,
     S -> onMoveBottom,
     D -> onMoveRight,
-    Space -> onSprint.onlyWhenHeld,
+    Space -> onSprint.onlyWhenHeld
   )
 
   override def onInit: Engine => Unit = engine =>
