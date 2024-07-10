@@ -86,6 +86,21 @@ class EngineObjectCreationTests extends AnyFlatSpec with BeforeAndAfterEach:
     objTester.happenedEvents should contain theSameElementsInOrderAs
       Seq(Init, Start, EarlyUpdate, Update, LateUpdate, Deinit)
 
+  it should "work when called inside onInit in a created object" in:
+    var created = false
+    val objCreator = new Behaviour:
+      override def onInit: Engine => Unit = e =>
+        created = true
+        e.create(obj1)
+
+    test(engine) runningFor 3 frames so that:
+      _.onUpdate:
+        if !created then
+          engine.create(objCreator)
+      .onDeinit:
+        engine.find[GameObjectMock]() should contain (obj1)
+
+
   "destroy" should "remove a game object from the scene" in:
     test(engine) on scene soThat:
       _.onStart:

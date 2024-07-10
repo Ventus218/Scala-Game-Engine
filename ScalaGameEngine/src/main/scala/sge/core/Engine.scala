@@ -148,9 +148,10 @@ object Engine:
 
     private def applyCreate(): Unit =
       gameObjects = gameObjects ++ gameObjectsToAdd
-      gameObjectsToAdd.foreach(_.onInit(this))
-      gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
+      val created = Set.from(gameObjectsToAdd)
       gameObjectsToAdd = Set.empty
+      created.foreach(_.onInit(this))
+      created.filter(_.enabled).foreach(_.onStart(this))
 
     private def applyDestroy(): Unit =
       gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
