@@ -23,20 +23,47 @@ private object PlayerMovement:
 
   def onMoveTop(input: InputButton): Engine => Unit =
     engine =>
-      val moveState =
-        for
-          a <- action
-          _ <- if a == SPRINT then sprint() else move()
-        yield ()
-
       val turnTopState =
         for
           _ <- moveState
           d <- direction
-          _ <- turnToTop(d)
+          _ <- turnTo(d, TOP)
         yield ()
 
       movement = turnTopState(movement)._1
+
+  def onMoveBottom(input: InputButton): Engine => Unit =
+    engine =>
+      val turnBottomState =
+        for
+          _ <- moveState
+          d <- direction
+          _ <- turnTo(d, BOTTOM)
+        yield ()
+
+      movement = turnBottomState(movement)._1
+
+  def onMoveRight(input: InputButton): Engine => Unit =
+    engine =>
+      val turnRightState =
+        for
+          _ <- moveState
+          d <- direction
+          _ <- turnTo(d, RIGHT)
+        yield ()
+
+      movement = turnRightState(movement)._1
+
+  def onMoveLeft(input: InputButton): Engine => Unit =
+    engine =>
+      val turnLeftState =
+        for
+          _ <- moveState
+          d <- direction
+          _ <- turnTo(d, LEFT)
+        yield ()
+
+      movement = turnLeftState(movement)._1
 
   def onSprint(input: InputButton): Engine => Unit = engine =>
     val sprintState =
@@ -54,12 +81,18 @@ private object PlayerMovement:
     movement = stopState(movement)._1
 
   private object Privates:
-    def turnToTop(d: Direction): State[Movement, Direction] =
-      if d == TOP
+    def moveState =
+        for
+          a <- action
+          _ <- if a == SPRINT then sprint() else move()
+        yield ()
+
+    def turnTo(startingDirection: Direction, wantedDirection: Direction): State[Movement, Direction] =
+      if startingDirection == wantedDirection
       then direction
       else
         for
           _ <- turnLeft()
           d <- direction
-          _ <- turnToTop(d)
+          _ <- turnTo(d, wantedDirection)
         yield d

@@ -13,7 +13,8 @@ class Player(
     scaleWidth: Double = 1,
     scaleHeight: Double = 1
 )(
-    movementVelocity: Vector2D = (1, 1)
+    movementVelocity: Vector2D = (1, 1),
+    sprint: Double = 1.5
 ) extends Behaviour
     with Positionable
     with ImageRenderer("ninja.png", width, height)
@@ -26,7 +27,10 @@ class Player(
 
   var inputHandlers: Map[InputButton, Handler] = Map(
     W -> onMoveTop,
-    Space -> onSprint,
+    A -> onMoveLeft,
+    S -> onMoveBottom,
+    D -> onMoveRight,
+    Space -> onSprint.onlyWhenHeld,
   )
 
   override def onInit: Engine => Unit = engine =>
@@ -59,4 +63,4 @@ class Player(
       velocity = action match
         case IDLE   => (0, 0)
         case MOVE   => velocity
-        case SPRINT => velocity * 1.5
+        case SPRINT => velocity * sprint
