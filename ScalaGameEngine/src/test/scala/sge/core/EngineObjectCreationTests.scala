@@ -100,6 +100,20 @@ class EngineObjectCreationTests extends AnyFlatSpec with BeforeAndAfterEach:
       .onDeinit:
         engine.find[GameObjectMock]() should contain (obj1)
 
+  it should "work when called inside onStart in a created object" in:
+    var created = false
+    val objCreator = new Behaviour:
+      override def onStart: Engine => Unit = e =>
+        created = true
+        e.create(obj1)
+
+    test(engine) runningFor 3 frames so that :
+      _.onUpdate:
+        if !created then
+          engine.create(objCreator)
+      .onDeinit:
+        engine.find[GameObjectMock]() should contain(obj1)
+
 
   "destroy" should "remove a game object from the scene" in:
     test(engine) on scene soThat:
