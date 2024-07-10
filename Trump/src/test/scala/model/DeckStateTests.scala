@@ -43,14 +43,14 @@ class DeckStateTests extends AnyFlatSpec:
 
     val (newDeck, cards) = dealAllCards.run(deck)
     newDeck.size shouldBe 0
-    cards.isDefined shouldBe true
-    cards.get.toSeq should contain theSameElementsInOrderAs deck.cards.toSeq
+    cards.isRight shouldBe true
+    cards.right.get.toSeq should contain theSameElementsInOrderAs deck.cards.toSeq
 
-  it should "return none when trying to deal more cards that the deck has" in:
+  it should "return TrumpError.NotEnoughCards when trying to deal more cards that the deck has" in:
     val dealTooManyCards =
       for cards <- deal(deck.size + 1)
       yield cards
 
     val (newDeck, cards) = dealTooManyCards.run(deck)
     newDeck.size shouldBe deck.size
-    cards shouldBe None
+    cards shouldBe Left(TrumpError.NotEnoughCards)

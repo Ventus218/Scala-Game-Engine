@@ -10,16 +10,16 @@ abstract class DecksTests[D: DeckOps] extends AnyFlatSpec:
   def deck: D
 
   deckType should "allow to deal a card" in:
-    val (newDeck, card) = deck.deal
-    newDeck.size shouldBe deck.size - 1
-    card.isDefined shouldBe true
+    deck.deal match
+      case Right(newDeck, card) => newDeck.size shouldBe deck.size - 1
+      case Left(error)          => fail(error.message)
 
-  it should "deal no card if the deck is empty" in:
-    def _emptyDeck(d: D): D = d.size match
-      case 1 => d.deal._1
-      case _ => _emptyDeck(d.deal._1)
+  it should "return TrumpError.NotEnoughCards if the deck is empty" in:
+    def _emptyDeck(d: D): D = d.deal match
+      case Right(newDeck, _) => _emptyDeck(newDeck)
+      case Left(value)       => d
 
-    _emptyDeck(deck).deal._2 shouldBe None
+    _emptyDeck(deck).deal shouldBe Left(TrumpError.NotEnoughCards)
 
   it should "not contain duplicate cards" in:
     val card = Card(Cups, Ace)
@@ -57,10 +57,10 @@ class DeckTests extends DecksTests[Deck]:
   it should "Deal cards in order" in:
     def _testDealingCardsInOrder(d: Deck, expectedCards: Seq[Card]): Unit =
       d.deal match
-        case (newDeck, Some(card)) =>
+        case Right(newDeck, card) =>
           card shouldBe expectedCards.head;
           _testDealingCardsInOrder(newDeck, expectedCards.tail)
-        case (newDeck, _) => ()
+        case _ => ()
 
     _testDealingCardsInOrder(deck, cards)
 

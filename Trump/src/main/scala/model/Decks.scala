@@ -8,7 +8,7 @@ object Decks:
   trait DeckOps[T]:
     extension (d: T)
       def size: Int
-      def deal: (T, Option[Card])
+      def deal: Either[TrumpError, (T, Card)]
       def shuffle(using seed: Int): ShuffledDeck
       def cards: ListSet[Card]
 
@@ -17,8 +17,9 @@ object Decks:
   given DeckOps[Deck] with
     extension (d: Deck)
       def size: Int = d.size
-      def deal: (Deck, Option[Card]) =
-        (d.drop(1), d.headOption)
+      def deal: Either[TrumpError, (Deck, Card)] = d.headOption match
+        case Some(card) => Right((d.drop(1), card))
+        case None       => Left(TrumpError.NotEnoughCards)
       def shuffle(using seed: Int): ShuffledDeck =
         ShuffledDeck(d)(using given_DeckOps_Deck)
       def cards: ListSet[Card] = d
