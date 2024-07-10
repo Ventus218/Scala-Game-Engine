@@ -31,8 +31,9 @@ import EntityState.*
   * @tparam T
   *   The type of the state of the FS machine.
   */
-abstract class EntityStateMachine[T](startingPosition: Vector2D, startingState: Timer[EntityState | T]) extends Behaviour
+abstract class EntityStateMachine[T](startingPosition: Vector2D, entityHealth: Int, startingState: Timer[EntityState | T]) extends Behaviour
   with TimerStateMachine[EntityState | T](Spawning() forAbout 1500.millis)
+  with Health(entityHealth)
   with SingleScalable
   with Positionable(startingPosition + startingOffset):
 
@@ -80,4 +81,6 @@ abstract class EntityStateMachine[T](startingPosition: Vector2D, startingState: 
 
     case s => whileInEntityState(s.asInstanceOf[T])(engine)
 
-  protected def setDeathState(): Unit = state = Dying()
+  override protected def onDeath(): Unit = 
+    super.onDeath()
+    state = Dying()

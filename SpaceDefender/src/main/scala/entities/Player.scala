@@ -36,7 +36,7 @@ object Player:
     *   the starting position
     * @return
     */
-  def apply(position: Vector2D): Behaviour = PlayerImpl(position)
+  def apply(position: Vector2D): Player = PlayerImpl(position)
 
   extension (e: Engine)
     def swingIO: SwingIO = e.io.asInstanceOf[SwingIO]
@@ -51,11 +51,11 @@ object Player:
   private class PlayerImpl(pos: Vector2D)
     extends EntityStateMachine[PlayerState](
       startingPosition = pos,
+      entityHealth = playerMaxHealth,
       startingState = Normal().forever
     )
     with Player
     with Identifiable("player")
-    with Health(playerMaxHealth)
     with CircleCollider(playerSize / 2)
     with SquareRenderer(playerSize, Color.cyan)
     with InputHandler:
@@ -85,7 +85,6 @@ object Player:
       if !invulnerable then
         state = Hurt(invulnerabilityFlashes)
         super.onHit()
-    override def onDeath(): Unit = setDeathState()
 
     private def moveTo(pos: Vector2D): Unit =
       position = VectorUtils.lerp(

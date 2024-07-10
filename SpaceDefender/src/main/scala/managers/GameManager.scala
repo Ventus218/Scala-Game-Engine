@@ -1,46 +1,61 @@
 package managers
 
 import sge.core.*
+import entities.*
 import behaviours.*
 import dimension2d.*
-import entities.*
-import physics2d.*
-import util.VectorUtils
+import sge.swing.*
+import util.*
 
+import java.awt.*
 import scala.util.Random
 
-/** Object containing all game general info regarding the arena
+/** Manager of the game
   */
 object GameManager extends Behaviour:
-  val screenSize: (Int, Int) = (600, 900)
-  val arenaWidth: Double = 10
-  val pixelsPerUnit: Int = (screenSize._1.toDouble / arenaWidth).toInt
-  val arenaHeight: Double = screenSize._2.toDouble / pixelsPerUnit.toDouble
-  
-  val arenaRightBorder: Double = arenaWidth / 2 - 1
-  val arenaLeftBorder: Double = -arenaRightBorder
-  val arenaTopBorder: Double = arenaHeight / 2 - 2.5
-  val arenaBottomBorder: Double = - arenaHeight / 2 + 1
-  val playerTopBorder: Double = -1
+
+  import GameConstants.*
+
+  private var playerRef: Option[Player] = Option(Player(0, arenaBottomBorder + 1))
+  private var enemiesRef: Seq[Enemy] = Seq.empty
+
+  private var score: Int = 0
+  private val scoreText: UITextRenderer =
+    new Behaviour with UITextRenderer(
+      s"Score: $score",
+      scoreTextFont,
+      Color.white,
+      textOffset = (10, 10)
+    )
+
+  override def onStart: Engine => Unit =
+    engine =>
+      engine.create(scoreText)
+      playerRef.foreach(engine.create)
+  override def onEarlyUpdate: Engine => Unit =
+    engine =>
+      playerRef = engine.find[Player]("player")
+      enemiesRef = engine.find[Enemy]().toSeq
+
+  /** Adds score to the current one
+    * @param points
+    *   the score to add
+    */
+  def addScore(points: Int): Unit =
+    score += points
+    scoreText.textContent = s"Score: $score"
 
   /** Check if a positionable is inside/outside the arena, aka is still visible
-    * @param who
+   *
+   * @param who
     * @return
     */
   def isOutsideArena(who: Positionable): Boolean =
     Math.abs(who.position.x) >= arenaWidth/2 + 1 || Math.abs(who.position.y) >= arenaHeight/2 + 1
 
-  /** Get a random position inside the enemy spawning space
-    * @return
-    *   the position
-    */
-  def enemyRandomPosition(): Vector2D = (
-    Random.between(arenaLeftBorder, arenaRightBorder),
-    Random.between(0, arenaTopBorder)
-    )
-
   /** Adjust the given position to be inside the player movement area.
-    * @param position
+   *
+   * @param position
     *   the position to adjust
     * @return
     *   the correct position
@@ -52,24 +67,26 @@ object GameManager extends Behaviour:
       (arenaRightBorder, playerTopBorder)
     )
 
-
-  private var playerRef: Option[Player] = Option.empty
-  private var enemiesRef: Seq[Enemy] = Seq.empty
-
-  /** Get the player reference. It is updated at every early update.
-    * @return
-    *   the player
+  /** Get a random position inside the enemy spawning space
+   *
+   * @return
+    *   the position
     */
-  def player: Option[Player] = playerRef
+  def enemyRandomPosition(): Vector2D = (
+    Random.between(arenaLeftBorder, arenaRightBorder),
+    Random.between(0, arenaTopBorder)
+  )
 
   /** Get the enemies references. It is updated at every early update.
-    * @return
+   *
+   * @return
     *   the enemies
     */
   def enemies: Seq[Enemy] = enemiesRef
 
-  override def onEarlyUpdate: Engine => Unit =
-    engine =>
-      playerRef = engine.find[Player]("player")
-      enemiesRef = engine.find[Enemy]().toSeq
-
+  /** Get the player reference. It is updated at every early update.
+   *
+   * @return
+    *   the player
+    */
+  def player: Option[Player] = playerRef

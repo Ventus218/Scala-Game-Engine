@@ -11,7 +11,7 @@ import scala.concurrent.duration.*
 import util.*
 import Timer.*
 import entities.EntityStateMachine.*
-import managers.GameManager
+import managers.{GameConstants, GameManager}
 
 import java.awt.Color
 import scala.util.Random
@@ -39,12 +39,14 @@ object Ranger:
   private class RangerImpl(pos: Vector2D)
     extends EntityStateMachine[RangerState](
       startingPosition = pos,
+      entityHealth = rangerHealth,
       startingState = Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
     )
     with Enemy
-    with Health(dropperHealth)
     with CircleRenderer(enemySize/2, Color.red)
     with CircleCollider(enemySize/2):
+
+    override def score: Int = rangerScore
 
     override def onEntityStateChange(state: RangerState)(engine: Engine): Timer[RangerState] = state match
       case Moving(_, 0) =>
@@ -68,8 +70,6 @@ object Ranger:
         position = VectorUtils.lerp(position, pos, 0.2)
 
       case _ =>
-
-    override def onDeath(): Unit = setDeathState()
 
     private def fireBullet(engine: Engine, target: Option[Vector2D]): Unit =
       target.foreach(playerPos =>

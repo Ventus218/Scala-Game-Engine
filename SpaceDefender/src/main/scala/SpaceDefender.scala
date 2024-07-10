@@ -9,8 +9,8 @@ object SpaceDefender extends App:
     SwingIO
       .withTitle("Space Defender")
       .withCenter(0, 0)
-      .withSize(GameManager.screenSize)
-      .withPixelsPerUnitRatio(GameManager.pixelsPerUnit)
+      .withSize(GameConstants.screenSize)
+      .withPixelsPerUnitRatio(GameConstants.pixelsPerUnit)
       .withBackgroundColor(Color.black)
       .build(),
     Storage(),

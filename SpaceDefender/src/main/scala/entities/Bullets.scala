@@ -4,7 +4,7 @@ import sge.core.*
 import behaviours.*
 import physics2d.*
 import dimension2d.*
-import managers.GameManager
+import managers.{GameConstants, GameManager}
 import sge.swing.behaviours.ingame.CircleRenderer
 
 import java.awt.Color
