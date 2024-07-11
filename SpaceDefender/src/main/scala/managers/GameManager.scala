@@ -34,13 +34,15 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
 
   private var score: Int = 0
 
-  private val scoreText:   UITextRenderer = ScoreText()
-  private val missionText: MissionText    = MissionText()
+  private val scoreText:   ScoreText   = ScoreText()
+  private val healthText:  HealthText  = HealthText()
+  private val missionText: MissionText = MissionText()
 
   override def onStateChange(state: GameState)(engine: Engine): Timer[GameState] = state match
     case Starting =>
-      engine.create(scoreText)
       player.foreach(engine.create)
+      engine.create(scoreText)
+      engine.create(healthText)
       EnterPlayer forAbout 1500.millis
 
     case EnterPlayer =>
@@ -78,7 +80,7 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
     */
   def addScore(points: Int): Unit =
     score += points
-    scoreText.textContent = s"Score: $score"
+    scoreText.setScore(score)
     
   def onPlayerDeath(): Unit = state = PlayerDestroyed
 

@@ -1,14 +1,15 @@
 package ui
 
 import managers.*
-import sge.core.Behaviour
-import sge.swing.behaviours.overlay.UITextRenderer
+import sge.core.*
+import sge.swing.*
 
 import java.awt.Color
 
 class ScoreText extends Behaviour with UITextRenderer(
-  s"Score: 0",
-  GameConstants.scoreTextFont,
-  Color.white,
-  textOffset = (10, 10)
-)
+    "Score: 0",
+    GameConstants.scoreTextFont,
+    Color.white,
+    textOffset = (10, 10)
+  ):
+  def setScore(value: Int): Unit = textContent = s"Score: $value"

@@ -30,6 +30,8 @@ object GameConstants:
   val scoreTextSize: Int  = 25
   val scoreTextFont: Font = Font("Arial", Font.BOLD, scoreTextSize)
 
+  val healthTextFont: Font = Font("Arial", Font.BOLD, scoreTextSize)
+
   val missionTextSize:       Double = 0.8
   val missionTextLerpFactor: Double = 0.15
   val missionTextColor:      Color  = Color.yellow
