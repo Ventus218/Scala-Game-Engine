@@ -140,5 +140,5 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
   
   private def saveScore(s: Int)(e: Engine): Unit =
     e.storage.set(scoreStorageKey, s)
-    if e.storage.getOption[Int](topScoreStorageKey).exists(_ < s) then
+    if !e.storage.getOption[Int](topScoreStorageKey).exists(_ >= s) then
       e.storage.set(topScoreStorageKey, s)
