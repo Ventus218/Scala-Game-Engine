@@ -76,8 +76,27 @@ class TrumpTests extends AnyFlatSpec:
 
   it should "swap players after one has played its turn" in:
     val card = game.currentPlayer.hand.cards.head
-    val oldNextPlayer = game.nextPlayer
+    val oldNextPlayer = game.nextPlayer.info
 
     val newGame = game.playCard(card).right.get
-    newGame.currentPlayer shouldBe oldNextPlayer
+    newGame.currentPlayer.info shouldBe oldNextPlayer
+
+  it should "empty the field after the second player has played his turn" in:
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val newGame = for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+    yield (g2)
+    newGame.right.get.field.placedCards should contain theSameElementsAs Seq()
+
+  it should "deal one card to each player after the end of a turn" in:
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val newGame = for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+    yield (g2)
+    newGame.right.get.currentPlayer.hand.size shouldBe 3
+    newGame.right.get.nextPlayer.hand.size shouldBe 3
 

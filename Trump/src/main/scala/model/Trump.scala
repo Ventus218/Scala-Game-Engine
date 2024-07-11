@@ -43,6 +43,30 @@ object Trump:
     )
 
   private object GameState:
+    def nop[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+      EitherState(game => Right(game, ()))
+
+    def dealFromDeck[PI](): EitherState[Game[PI], Game[PI], Card, TrumpError] =
+      EitherState(game =>
+        for (deck, card) <- game.deck.deal
+        yield (game.copy(deck = deck), card)
+      )
+
+    def giveCardToPlayer[PI](
+        card: Card,
+        playerInfo: PI
+    ): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+      EitherState(game =>
+        val player = game.player(playerInfo)
+        val newPlayer = player.copy(hand = player.hand.pickupCard(card))
+
+        game.currentPlayer.info match
+          case newPlayer.`info` =>
+            Right(game.copy(currentPlayer = newPlayer), ())
+          case _ =>
+            Right(game.copy(nextPlayer = newPlayer), ())
+      )
+
     def takeCardFromCurrentPlayerHand[PI](
         card: Card
     ): EitherState[Game[PI], Game[PI], Card, TrumpError] =
@@ -57,13 +81,24 @@ object Trump:
     def placeCardOnField[PI](
         card: Card,
         playerInfo: PI
-    ): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+    ): EitherState[Game[PI], Game[PI], Field[PI], TrumpError] =
       EitherState(game =>
-        Right(game.copy(field = game.field.place(card, playerInfo)), ())
+        val field = game.field.place(card, playerInfo)
+        Right(game.copy(field = field), field)
       )
+
+    def currentPlayer[PI]()
+        : EitherState[Game[PI], Game[PI], Player[PI], TrumpError] =
+      EitherState(game => Right(game, game.currentPlayer))
+    def nextPlayer[PI]()
+        : EitherState[Game[PI], Game[PI], Player[PI], TrumpError] =
+      EitherState(game => Right(game, game.nextPlayer))
 
     def swapPlayers[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
       EitherState(game => Right(game.swappedPlayers, ()))
+
+    def emptyField[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+      EitherState(game => Right(game.copy(field = Field()), ()))
 
   import GameState.*
   extension [PI](game: Game[PI])
@@ -78,8 +113,21 @@ object Trump:
     def playCard(card: Card): Either[TrumpError, Game[PI]] =
       (for
         card <- takeCardFromCurrentPlayerHand(card)
-        _ <- placeCardOnField(card, currentPlayer.info)
+        field <- placeCardOnField(card, currentPlayer.info)
+        _ <-
+          if field.placedCards.size != 2 then nop()
+          else
+            for
+              _ <- emptyField()
+              c1 <- dealFromDeck()
+              c2 <- dealFromDeck()
+              currentPlayer <- GameState.currentPlayer[PI]()
+              nextPlayer <- GameState.nextPlayer[PI]()
+              _ <- giveCardToPlayer(c1, currentPlayer.info)
+              _ <- giveCardToPlayer(c2, nextPlayer.info)
+            yield ()
         _ <- swapPlayers()
       yield ()).run(game).map((game, _) => game)
+
     private def swappedPlayers: Game[PI] =
       game.copy(currentPlayer = nextPlayer, nextPlayer = currentPlayer)
