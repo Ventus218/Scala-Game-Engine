@@ -28,5 +28,7 @@ object Config:
   
   val STAIRS_WIDTH: Double = 7
   val STAIRS_HEIGHT: Double = 7
+
+  val WALL_SIZE: Double = 1.5
   
   def UITextFontWithSize(size: Int): Font = Font("Arial", Font.BOLD, size)

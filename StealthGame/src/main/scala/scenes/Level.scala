@@ -10,6 +10,7 @@ import walls.*
 import sge.core.*
 import behaviours.dimension2d.{Positionable, Scalable}
 import sge.swing.*
+import model.behaviours.{TopBound, BottomBound, RightBound, LeftBound}
 
 object Level extends Scene:
   def apply(

@@ -1,4 +1,4 @@
-package model.behaviours.walls
+package model.behaviours
 
 import sge.swing.*
 import model.behaviours.Wall

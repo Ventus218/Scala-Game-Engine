@@ -22,5 +22,8 @@ import java.awt.Color
 
 object LevelOne extends Scene:
   override def apply(): Iterable[Behaviour] = Level(this, LevelTwo, (0, SCENE_HEIGHT / 2 - STAIRS_HEIGHT)) ++ Seq(
-    
+    RendererWall(height = 11.5, initialPosition = (-STAIRS_WIDTH, SCENE_HEIGHT / 2 - STAIRS_HEIGHT))(),
+    RendererWall(height = 25, initialPosition = (-30,0))(),
+    RendererWall(width = 20, initialPosition = (10 - STAIRS_WIDTH, SCENE_HEIGHT / 2 - STAIRS_HEIGHT - STAIRS_HEIGHT / 2 - WALL_SIZE))(),
+    RendererWall(width = 50, initialPosition = (-5, 5))()
   )
