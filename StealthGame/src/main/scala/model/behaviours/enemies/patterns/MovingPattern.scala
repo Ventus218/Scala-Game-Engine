@@ -1,16 +1,11 @@
 package model.behaviours.enemies.patterns
-import sge.core.*
-import model.logic.{*, given}
-import MovementStateImpl.*
-import model.behaviours.enemies.*
-import EnemyMovement.*
 
-trait MovingPattern extends Enemy:
-  val movingState =
-    for
-      _ <- move()
-    yield ()
+import sge.core.Engine
+import model.logic.MovementStateImpl.*
+import model.behaviours.enemies.EnemyMovement.*
 
+trait MovingPattern extends OnCollidePattern:
+  private var secondsPassed: Double = 0
   override def onStart: Engine => Unit = engine =>
     super.onStart(engine)
-    updateState(movingState)
+    updateState(move())

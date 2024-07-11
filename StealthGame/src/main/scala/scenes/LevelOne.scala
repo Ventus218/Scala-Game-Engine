@@ -37,12 +37,12 @@ object LevelOne extends Scene:
       CHARACTERS_HEIGHT,
       Vector2D.identity * PATROL_SPEED,
       "patrol.png"
-    )() with MovingPattern with TurningLeftPattern(2),
+    )() with MovingPattern with TurningLeftPattern(2) with TurnLeftOnCollidePattern,
     Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", (10, 10))(),
     LifesBehaviour(),
     TopBound(),
     LeftBound(),
     RightBound(),
     BottomBound(),
-    new Wall(20d, 2d, (20, 20))() with RectRenderer(20d, 2d, Color.black)
+    new Wall(20d, 2d, (0, -30))() with RectRenderer(20d, 2d, Color.black)
   )

@@ -3,6 +3,8 @@ package utils
 import sge.core.*
 import behaviours.Identifiable
 import scala.reflect.TypeTest
+import sge.core.behaviours.physics2d.RectCollider
+import sge.swing.behaviours.ingame.RectRenderer
 
 extension (engine: Engine)
   def setEnableAll[B <: Behaviour](enable: Boolean)(using
@@ -20,9 +22,7 @@ extension (engine: Engine)
     val behaviour = engine.find[B](id).get
     if enable then engine.enable(behaviour) else engine.disable(behaviour)
 
-import model.behaviours.VisualRange
-
-extension (visualRange: VisualRange)
+extension (visualRange: RectCollider & RectRenderer)
   def swapDimension() =
     val height = visualRange.shapeHeight
     visualRange.shapeHeight = visualRange.shapeWidth

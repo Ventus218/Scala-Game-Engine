@@ -5,17 +5,9 @@ import MovementStateImpl.*
 trait MovementActions:
   var movement = initialMovement
 
-  def getDirection =
-    val directionState =
-      for d <- direction
-      yield d
-    directionState.run(movement)._2
+  def getDirection = direction(movement)._2
 
-  def getAction =
-    val actionState =
-      for a <- action
-      yield a
-    actionState.run(movement)._2
+  def getAction = action(movement)._2
 
   def updateState(state: State[Movement, Unit]) =
     movement = state(movement)._1

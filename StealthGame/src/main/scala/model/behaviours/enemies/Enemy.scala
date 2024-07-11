@@ -8,6 +8,8 @@ import model.logic.*
 import EnemyMovement.*
 import model.behaviours.*
 import model.logic.MovementStateImpl.*
+import scala.compiletime.ops.boolean
+import model.behaviours.CharacterCollisions.collidesWithWalls
 
 class Enemy(
     width: Double,
@@ -44,6 +46,9 @@ class Enemy(
   def updateVisualRangeProperties() =
     swapVisualRangeDimension()
     updateVisualRangeOffset()
+
+  def visualRangeCollidesWithWalls(engine: Engine): Boolean =
+    collidesWithWalls(engine, visualRange)
 
   private object Privates:
     def setupVisualRangeProperties() =

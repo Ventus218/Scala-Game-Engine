@@ -5,7 +5,7 @@ import MovementStateImpl.*
 import model.behaviours.enemies.*
 import EnemyMovement.*
 
-private trait TurningPattern extends Enemy:
+private trait TurningPattern extends OnCollidePattern:
   val nSecondsToRepeat: Double
   val turnState: State[Movement, Unit]
 
@@ -23,13 +23,9 @@ private trait TurningPattern extends Enemy:
 trait TurningLeftPattern(override val nSecondsToRepeat: Double)
     extends Enemy
     with TurningPattern:
-  override val turnState =
-    for _ <- turnLeft()
-    yield ()
+  override val turnState = turnLeft()
 
 trait TurningRightPattern(override val nSecondsToRepeat: Double)
     extends Enemy
     with TurningPattern:
-  override val turnState =
-    for _ <- turnRight()
-    yield ()
+  override val turnState = turnRight()
