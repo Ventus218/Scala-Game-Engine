@@ -82,11 +82,17 @@ object Player:
         Hurt(i - 1) forAbout invulnerabilityTime / invulnerabilityFlashes
 
       case _ => Normal().forever
-      
+
     override def whileInEntityState(state: PlayerState)(engine: Engine): Unit =
       moveTo(engine.mousePos)
-      
-    override def onHit(): Unit = state = Hurt(invulnerabilityFlashes)
+
+    override protected def onHit(): Unit =
+      super.onHit()
+      state = Hurt(invulnerabilityFlashes)
+
+    override protected def onDeath(): Unit =
+      super.onDeath()
+      GameManager.onPlayerDeath()
 
     private def moveTo(pos: Vector2D): Unit =
       position = VectorUtils.lerp(

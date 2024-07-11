@@ -53,6 +53,7 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
 
     case HideMissionText =>
       engine.destroy(missionText)
+      engine.create(Ranger(0, 3))
       GameStart.forever
 
     case PlayerDestroyed =>
@@ -83,18 +84,18 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
   def addScore(points: Int): Unit =
     score += points
     scoreText.textContent = s"Score: $score"
+    
+  def onPlayerDeath(): Unit = state = PlayerDestroyed
 
   /** Check if a positionable is inside/outside the arena, aka is still visible
-   *
-   * @param who
+    * @param who
     * @return
     */
   def isOutsideArena(who: Positionable): Boolean =
     Math.abs(who.position.x) >= arenaWidth/2 + 1 || Math.abs(who.position.y) >= arenaHeight/2 + 1
 
   /** Adjust the given position to be inside the player movement area.
-   *
-   * @param position
+    * @param position
     *   the position to adjust
     * @return
     *   the correct position
@@ -107,8 +108,7 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
     )
 
   /** Get a random position inside the enemy spawning space
-   *
-   * @return
+    * @return
     *   the position
     */
   def enemyRandomPosition(): Vector2D = (
@@ -117,15 +117,13 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
   )
 
   /** Get the enemies references. It is updated at every early update.
-   *
-   * @return
+    * @return
     *   the enemies
     */
   def enemies: Seq[Enemy] = enemiesRef
 
   /** Get the player reference. It is updated at every early update.
-   *
-   * @return
+    * @return
     *   the player
     */
   def player: Option[Player] = playerRef
