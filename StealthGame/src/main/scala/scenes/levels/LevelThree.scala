@@ -1,4 +1,4 @@
-package scenes
+package scenes.levels
 
 import config.Config.*
 import sge.core.*
@@ -6,11 +6,12 @@ import model.logic.Direction
 import model.behaviours.*
 import enemies.*
 import patterns.*
+import scenes.WinGame
 
 object LevelThree extends Scene:
   override def apply(): Iterable[Behaviour] = Level(
     this,
-    WinLevel,
+    WinGame,
     playerPosition = (0, SCENE_HEIGHT / 2 - CHARACTERS_HEIGHT / 2),
     stairsPosition = (0, -SCENE_HEIGHT / 2 + STAIRS_HEIGHT)
   ) ++ Walls() ++ Enemies()

@@ -1,6 +1,6 @@
-package scenes
+package scenes.levels
 
-import behaviours.LifesBehaviour
+import scenes.behaviours.LifesBehaviour
 import config.Config.*
 
 import model.behaviours.player.Player

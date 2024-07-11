@@ -20,6 +20,9 @@ Tenendo premuto `Spazio` si può "sprintare", ovvero aumentare la velocità del 
 
 ## Implementazione
 
+### Config
+**Config** contiene tutte le impostazioni globali per il gioco, come la dimensione dello schermo, della scena, dei personaggi ecc.
+
 ### Action
 **Action** è un enum con tre case `IDLE`, `MOVE`, `SPRINT`, che rappresentano rispettivamente lo stare fermo, il muoversi e il correre.
 
@@ -63,6 +66,18 @@ Esso estende **OnCollidePattern**, questo perchè ci si aspetta che se un nemico
 
 #### TurningPattern
 **TurningPattern** è un trait privato, e le sue estensioni **TurningLeftPattern** e **TurningRightPattern** prendono in ingresso un numero di secondi che rappresentano ogni quanto tempo il nemico si deve girare rispettivamente verso sinistra o destra.
+
+### Level
+**Level** rappresenta la scena che tutti i livelli doveno avere, per esempio **Player**, le scale, il testo che mostra la vita del giocatore, e i confini della scena.
+
+### StartingMenu
+**StartingMenu** mostra un background con due tasti, `Play` per scegliere la difficoltà e `Close` per chiudere il gioco.
+
+### DifficultyMeny
+**DifficultyMenu** mostra lo stesso background di **StartingMenu** e da la possibilità di tornare indietro al menù iniziale o di scegliere la difficoltà. Una volta scelta la difficoltà, verrà caricato il primo livello e il gioco inizierà.
+
+### LoseGame e WinGame
+**LoseGame** e **WinGame** rappresentano rispettivamente il menù di sconfitta e quello di vittoria. L'unica differenza tra queste due scene e la **StartingMenu** è una scritta in overlay che indica se il giocatore ha vinto oppure ha perso.
 
 ## Immagini
 Tutte le immagini sono state scaricate gratis da Freepik.

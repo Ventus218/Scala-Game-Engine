@@ -9,10 +9,18 @@ import sge.testing.TestUtils.test
 
 class LifesTests extends AnyFlatSpec with BeforeAndAfterEach:
   val emptyScene: Scene = () => Seq()
-  var player = Player(5, 5, emptyScene, emptyScene)()
+  var player = Player(
+    currentScene = emptyScene,
+    nextScene = emptyScene,
+    initialPosition = (0, 0)
+  )()
 
-  override protected def beforeEach(): Unit = 
-    player = Player(5, 5, emptyScene, emptyScene)()
+  override protected def beforeEach(): Unit =
+    player = Player(
+      currentScene = emptyScene,
+      nextScene = emptyScene,
+      initialPosition = (0, 0)
+    )()
 
   "Player lifes" should "be initialized as Lifes on storage" in:
     val engine: Engine = Engine(MockSwingIO(), Storage())

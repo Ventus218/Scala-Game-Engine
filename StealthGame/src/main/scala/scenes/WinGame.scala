@@ -8,7 +8,7 @@ import output.overlay.UIAnchor
 
 import java.awt.Color
 
-object WinLevel extends Scene:
+object WinGame extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
     new UITextRenderer(
       "Congratulasions, you won!",

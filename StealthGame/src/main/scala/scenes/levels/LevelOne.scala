@@ -1,4 +1,4 @@
-package scenes
+package scenes.levels
 
 import sge.core.*
 import behaviours.dimension2d.{Positionable, Scalable}

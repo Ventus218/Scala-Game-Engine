@@ -10,13 +10,17 @@ import model.logic.Direction
 import Direction.*
 import sge.core.*
 import mocks.MockSwingIO
+import config.Config.CHARACTERS_WIDTH
+import config.Config.CHARACTERS_HEIGHT
 
 class EnemiesVisualRangeTests extends AnyFlatSpec with BeforeAndAfterEach:
-  val visualRangesize: Double = 10
-  val width: Double = 5
-  val height: Double = 3
+  val width: Double = CHARACTERS_WIDTH
+  val height: Double = CHARACTERS_HEIGHT
+  val visualRangeSize: Double = height * 2
   val enemy =
-    new Enemy(width, height, (5, 5), "")(visualRangeSize = visualRangesize)
+    new Enemy("patrol.png", initialDirection = TOP)(visualRangeSize =
+      visualRangeSize
+    )
 
   var engine = Engine(MockSwingIO(), Storage())
   val scene = () =>
@@ -30,25 +34,14 @@ class EnemiesVisualRangeTests extends AnyFlatSpec with BeforeAndAfterEach:
   "Enemies" should "have the right visual range dimensions at startup" in:
     test(engine) on scene soThat:
       _.onLateUpdate(
-        engine.find[VisualRange]().head.shapeWidth shouldBe (direction(
-          initialMovement
-        )._2 match
-          case TOP    => enemy.imageWidth
-          case BOTTOM => enemy.imageWidth
-          case LEFT   => visualRangesize
-          case RIGHT  => visualRangesize
-        )
+        engine.find[VisualRange]().head.shapeWidth shouldBe enemy.imageWidth
       )
 
   it should "have the right offset at startup" in:
     test(engine) on scene soThat:
       _.onLateUpdate(
-        engine.find[VisualRange]().head.positionOffset shouldBe (direction(
-          initialMovement
-        )._2 match
-          case TOP    => (0, visualRangesize / 2 + height / 2)
-          case BOTTOM => (0, -visualRangesize / 2 - height / 2)
-          case LEFT   => (-visualRangesize / 2 - width / 2, 0)
-          case RIGHT  => (visualRangesize / 2 + width / 2, 0)
-        )
+        engine
+          .find[VisualRange]()
+          .head
+          .positionOffset shouldBe (0, visualRangeSize / 2 + height / 2)
       )

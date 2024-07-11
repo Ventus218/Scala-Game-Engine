@@ -8,6 +8,7 @@ import Config.*
 import Difficulty.*
 import java.awt.Color
 import scenes.behaviours.{GameButton, BackgroundImage}
+import levels.LevelOne
 
 object DifficultyMenu extends Scene:
   import Privates.*
