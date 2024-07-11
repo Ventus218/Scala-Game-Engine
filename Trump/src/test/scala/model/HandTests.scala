@@ -16,10 +16,10 @@ class HandTests extends AnyFlatSpec:
     hand.pickupCard(Card(Coins, Two)).size shouldBe cards.size + 1
 
   it should "place a card" in:
-    hand.placeCard(cards.head) shouldBe (Hand(cards.tail*), Option(cards.head))
+    hand.placeCard(cards.head) shouldBe Right(Hand(cards.tail*), cards.head)
 
   it should "not place a card which is not in it" in:
-    hand.placeCard(Card(Clubs, Six)) shouldBe (Hand(cards*), None)
+    hand.placeCard(Card(Clubs, Six)) shouldBe a[Left[TrumpError, (Hand, Card)]]
 
   it should "allow to list all cards in it" in:
     hand.cards should contain theSameElementsAs cards

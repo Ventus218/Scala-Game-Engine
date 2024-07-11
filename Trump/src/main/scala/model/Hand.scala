@@ -10,7 +10,9 @@ object Hand:
 
   extension (h: Hand)
     def pickupCard(c: Card): Hand = h + c
-    def placeCard(c: Card): (Hand, Option[Card]) =
-      (h.removedAll(Seq(c)), h.find(_ == c))
+    def placeCard(c: Card): Either[TrumpError, (Hand, Card)] =
+      h(c) match
+        case true  => Right(h - c, c)
+        case false => Left(TrumpError.RuleBroken("Card was not in hand"))
     def size: Int = h.size
     def cards: Iterable[Card] = h
