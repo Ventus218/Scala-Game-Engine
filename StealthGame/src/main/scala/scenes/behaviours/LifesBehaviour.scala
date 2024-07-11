@@ -12,13 +12,15 @@ trait LifesBehaviour extends Behaviour with UITextRenderer
 object LifesBehaviour:
   def apply(): LifesBehaviour = LifesBehaviourImpl()
   
-  private val text = "Lifes: "
+  private val text = " with lifes: "
 
   private class LifesBehaviourImpl
       extends LifesBehaviour
       with Behaviour
       with UITextRenderer(text, UITextFontWithSize(20), Color.BLACK):
 
-    override def onLateUpdate: Engine => Unit = engine =>
-      textContent = text + engine.storage.get[Difficulty]("Difficulty").lifes
-      super.onLateUpdate(engine)
+    override def onInit: Engine => Unit = engine =>
+      val difficultyText = engine.storage.get[String]("Difficulty").toUpperCase()
+      val difficultyLifes = engine.storage.get[Int]("Lifes")
+      textContent = difficultyText + text + difficultyLifes
+      super.onInit(engine)

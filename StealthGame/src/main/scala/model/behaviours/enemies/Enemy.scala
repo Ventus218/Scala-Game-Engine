@@ -31,6 +31,7 @@ class Enemy(
     VisualRange(width, visualRangeSize, this)
   override def onInit: Engine => Unit = engine =>
     super.onInit(engine)
+    movement = initialMovement
     setupVisualRangeProperties()
     engine.create(visualRange)
 

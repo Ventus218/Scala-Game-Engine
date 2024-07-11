@@ -11,4 +11,6 @@ trait MovingPattern extends Enemy:
       _ <- move()
     yield ()
 
-  updateState(movingState)
+  override def onStart: Engine => Unit = engine =>
+    super.onStart(engine)
+    updateState(movingState)
