@@ -16,3 +16,6 @@ Ogni volta che il personaggio supera un livello guadagna una vita, ad eccezione 
 
 ## Tutorial
 TODO
+
+## Immagini
+Tutte le immagini sono state scaricate gratis da Freepik.
