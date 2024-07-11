@@ -57,10 +57,11 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
       GameStart.forever
 
     case PlayerDestroyed =>
+      saveScore(score)(engine)
       GameEnding forAbout 1500.millis
 
     case GameEnding =>
-      System.exit(0)
+      engine.loadScene(SceneManager.gameoverScene)
       GameTerminated.forever
 
     case GameStart      => GameStart.forever
@@ -136,3 +137,8 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
     *   the player
     */
   def player: Option[Player] = playerRef
+  
+  private def saveScore(s: Int)(e: Engine): Unit =
+    e.storage.set(scoreStorageKey, s)
+    if e.storage.getOption[Int](topScoreStorageKey).exists(_ < s) then
+      e.storage.set(topScoreStorageKey, s)

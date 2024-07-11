@@ -14,6 +14,7 @@ class GameButton(text: String, pos: Vector2D, onPress: Engine => Unit) extends B
     _textSize = buttonTextSize,
     _textColor = Color.white,
     _textStyle = Bold,
+    _textOffset = (0, (buttonSize.y - buttonTextSize)/2),
     _inputButtonTriggers = Set(MouseButton1)
   )
   with Positionable(pos)

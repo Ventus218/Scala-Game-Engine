@@ -1,10 +1,10 @@
 package ui
 
 import managers.GameConstants.*
-import sge.core.Engine
+import sge.core.*
 
-class YourScoreDisplay extends TwoLineText(
-  (0, 0),
+class YourScoreDisplay(pos: Vector2D) extends TwoLineText(
+  pos,
   "Your score:", "???",
   yourScoreTextSize,
   yourScoreTextColor

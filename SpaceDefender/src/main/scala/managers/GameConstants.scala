@@ -16,6 +16,9 @@ object GameConstants:
   val arenaBottomBorder: Double = - arenaHeight / 2 + 1
   val playerTopBorder:   Double = -1
 
+  val scoreStorageKey:    String = "score"
+  val topScoreStorageKey: String = "topScore"
+  
   val buttonColor:    Color            = Color.decode("#DA1616")
   val buttonSize:     (Double, Double) = (2, 1)
   val buttonTextSize: Double           = 0.7
@@ -26,6 +29,9 @@ object GameConstants:
   val missionTextSize:       Double = 0.8
   val missionTextLerpFactor: Double = 0.15
   val missionTextColor:      Color  = Color.yellow
-  
+
   val yourScoreTextSize:  Double = 0.6
-  val yourScoreTextColor: Color  = Color.white
+  val yourScoreTextColor: Color  = Color.decode("#CCCCCC")
+
+  val gameoverTextSize:  Double = 1
+  val gameoverTextColor: Color  = Color.white
