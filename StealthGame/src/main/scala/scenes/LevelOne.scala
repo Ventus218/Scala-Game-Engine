@@ -23,7 +23,7 @@ import java.awt.Color
 object LevelOne extends Scene:
   private val stairsY: Double = SCENE_HEIGHT / 2 - STAIRS_HEIGHT
   override def apply(): Iterable[Behaviour] =
-    Level(this, LevelTwo, (0, stairsY)) ++ Walls() ++ Enemies()
+    Level(this, LevelTwo, stairsPosition = (0, stairsY)) ++ Walls() ++ Enemies()
 
   private object Walls:
     val topVerticalWallHeight: Double = 11.5

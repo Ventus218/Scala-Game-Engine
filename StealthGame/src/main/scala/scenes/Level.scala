@@ -16,14 +16,14 @@ object Level extends Scene:
   def apply(
       currentScene: Scene,
       nextScene: Scene,
-      stairsPosition: Vector2D
+      stairsPosition: Vector2D,
+      playerPosition: Vector2D = (-SCENE_WIDTH / 2 + CHARACTERS_WIDTH / 2, 0)
   ): Iterable[Behaviour] =
     Seq(
       Player(
-        width = CHARACTERS_WIDTH,
-        height = CHARACTERS_HEIGHT,
         currentScene = currentScene,
-        nextScene = nextScene
+        nextScene = nextScene,
+        initialPosition = playerPosition
       )(
         speed = Vector2D.identity * PLAYER_SPEED,
         sprint = PLAYER_SPRINT

@@ -10,18 +10,18 @@ import PlayerMovement.*
 import model.logic.MovementStateImpl.stop
 import sge.core.behaviours.physics2d.RectCollider
 import CharacterCollisions.*
+import config.Config.*
 
 class Player(
-    width: Double,
-    height: Double,
     currentScene: Scene,
     nextScene: Scene,
+    initialPosition: Vector2D,
     scaleWidth: Double = 1,
     scaleHeight: Double = 1
 )(
     speed: Vector2D = (1, 1),
     sprint: Double = 1.5
-) extends Character(width, height, speed, "ninja.png")(scaleWidth, scaleHeight)
+) extends Character(speed = speed, imagePath = "ninja.png", initialPosition = initialPosition)(scaleWidth, scaleHeight)
     with InputHandler:
   var inputHandlers: Map[InputButton, Handler] = Map(
     W -> (onMoveTop(this) and onResetSpeed.onlyWhenReleased),
@@ -35,8 +35,6 @@ class Player(
   override def onInit: Engine => Unit = engine =>
     super.onInit(engine)
     _lifes = engine.storage.get[Int]("Lifes")
-    val io = engine.io.asInstanceOf[SwingIO]
-    position = position.setX(io.scenePosition(io.size).x * -1 + width)
 
   override def onLateUpdate: Engine => Unit = engine =>
     collidesWithWalls(engine, this)

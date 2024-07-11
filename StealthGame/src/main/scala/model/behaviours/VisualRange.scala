@@ -9,7 +9,7 @@ import config.Config.VISUAL_RANGE_COLOR
 class VisualRange(width: Double, height: Double, follower: Positionable)
     extends Behaviour
     with Positionable
-    with RectRenderer(width, height, VISUAL_RANGE_COLOR)
+    with RectRenderer(width, height, VISUAL_RANGE_COLOR, priority = 99)
     with RectCollider(width, height)
     with PositionFollower(follower)
     with Scalable

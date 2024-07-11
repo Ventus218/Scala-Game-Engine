@@ -13,7 +13,7 @@ object LevelTwo extends Scene:
     Level(
       this,
       LevelThree,
-      (SCENE_WIDTH / 2 - STAIRS_WIDTH, 0)
+      stairsPosition = (SCENE_WIDTH / 2 - STAIRS_WIDTH, 0)
     ) ++ Walls() ++ Enemies()
 
   private object Walls:

@@ -13,8 +13,8 @@ import config.Config.CHARACTERS_WIDTH
 import config.Config.CHARACTERS_HEIGHT
 
 private abstract class Character(
-    width: Double,
-    height: Double,
+    width: Double = CHARACTERS_WIDTH,
+    height: Double = CHARACTERS_HEIGHT,
     speed: Vector2D,
     imagePath: String,
     initialPosition: Vector2D = (0, 0)
@@ -23,7 +23,7 @@ private abstract class Character(
     scaleHeight: Double = 1
 ) extends Behaviour
     with Positionable(initialPosition)
-    with ImageRenderer(imagePath, width, height, priority = 2)
+    with ImageRenderer(imagePath, width, height)
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight)
     with Velocity:
