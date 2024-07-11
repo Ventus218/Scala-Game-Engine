@@ -15,7 +15,8 @@ Se invece il personaggio dovesse entrare nel raggio visivo di una guardia, esso 
 Ogni volta che il personaggio supera un livello guadagna una vita, ad eccezione della difficoltà `Impossibile`.
 
 ## Tutorial
-TODO
+Per muovere il personaggio si usano i tasti `W`, `A`, `S`, `D`, rispettivamente per muoverlo verso sopra, sinistra, sotto e destra.
+Tenendo premuto `Spazio` si può "sprintare", ovvero aumentare la velocità del proprio personaggio.
 
 ## Immagini
 Tutte le immagini sono state scaricate gratis da Freepik.
