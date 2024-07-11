@@ -91,6 +91,7 @@ class MovementTests extends AnyFlatSpec:
       for
         _ <- nextMoveState
         d <- direction
+        _ <- movementState
         if d == RIGHT && d == LEFT
       yield ()
 
@@ -98,6 +99,7 @@ class MovementTests extends AnyFlatSpec:
       for
         _ <- nextSprintState
         a <- action
+        _ <- movementState
         if a == SPRINT
       yield ()
 

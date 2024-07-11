@@ -15,6 +15,8 @@ sealed trait MovementState:
   type Movement
   def initialMovement: Movement
 
+  def movementState: State[Movement, Unit]
+
   def direction: State[Movement, Direction]
   def action: State[Movement, Action]
 
@@ -34,6 +36,9 @@ object MovementStateImpl extends MovementState:
 
   override def initialMovement: Movement =
     (IDLE, BOTTOM)
+
+  override def movementState: State[Movement, Unit] =
+    State(s => (s, ()))
 
   override def direction: State[Movement, Direction] =
     State(s => (s, s._2))
@@ -58,7 +63,7 @@ object MovementStateImpl extends MovementState:
 
   extension (m: State[Movement, Unit])
     def withFilter(p: Unit => Boolean): State[Movement, Unit] =
-      State(s => if (p(m(s)._2)) then m(s) else stop().run(s))
+      State(s => if (p(m(s)._2)) then m(s) else getState(IDLE, s._2))
 
   private object Privates:
     def getLeftDirection(direction: Direction): Direction =

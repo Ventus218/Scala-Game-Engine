@@ -75,7 +75,7 @@ class Enemy(
       visualRange.positionOffset = vector * horizzontalOffset
 
     def verticalOffset =
-      (shapeHeight / 2 + visualRange.shapeHeight / 2)
+      (imageHeight / 2 + visualRange.shapeHeight / 2)
 
     def horizzontalOffset =
-      (shapeWidth / 2 + visualRange.shapeWidth / 2)
+      (imageWidth / 2 + visualRange.shapeWidth / 2)

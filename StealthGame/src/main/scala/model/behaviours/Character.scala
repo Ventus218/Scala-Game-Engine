@@ -21,8 +21,7 @@ private abstract class Character(
     scaleHeight: Double = 1
 ) extends Behaviour
     with Positionable(initialPosition)
-    // with ImageRenderer(imagePath, width, height)
-    with RectRenderer(width, height, Color.YELLOW)
+    with ImageRenderer(imagePath, width, height)
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight)
     with Velocity:
