@@ -19,10 +19,14 @@ object GameConstants:
   val scoreStorageKey:    String = "score"
   val topScoreStorageKey: String = "topScore"
   
-  val buttonColor:    Color            = Color.decode("#DA1616")
-  val buttonSize:     (Double, Double) = (2, 1)
-  val buttonTextSize: Double           = 0.7
+  val buttonColor:     Color            = Color.decode("#DA1616")
+  val playButtonColor: Color            = Color.decode("#1A5EFF")
+  val buttonSize:      (Double, Double) = (2, 1)
+  val buttonTextSize:  Double           = 0.7
 
+  val titleSize:  Double = 1.2
+  val titleColor: Color  = Color.white
+  
   val scoreTextSize: Int  = 25
   val scoreTextFont: Font = Font("Arial", Font.BOLD, scoreTextSize)
 

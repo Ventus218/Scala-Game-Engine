@@ -8,7 +8,7 @@ import output.Text.TextStyle.Bold
 
 import java.awt.Color
 
-class GameButton(text: String, pos: Vector2D, onPress: Engine => Unit) extends Behaviour
+class GameButton(text: String, pos: Vector2D, onPress: Engine => Unit, color: Color = buttonColor) extends Behaviour
   with Button(
     _buttonText = text,
     _textSize = buttonTextSize,
@@ -18,5 +18,5 @@ class GameButton(text: String, pos: Vector2D, onPress: Engine => Unit) extends B
     _inputButtonTriggers = Set(MouseButton1)
   )
   with Positionable(pos)
-  with RectRenderer(buttonSize.x, buttonSize.y, buttonColor):
+  with RectRenderer(buttonSize.x, buttonSize.y, color):
   override def onButtonPressed: Engine => Unit = onPress
