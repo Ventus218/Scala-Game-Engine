@@ -18,8 +18,9 @@ object Bullets:
   
   val laserWidth: Double = 0.2
   
-  val dropperBulletSpeed: Vector2D = (0, -8)
-  val dropperBulletSize:  Double   = 0.15
+  val fastSpeed:  Double = 8
+  val slowSpeed:  Double = 2
+  val bulletSize: Double = 0.15
 
   def enemyBullet(position: Vector2D, size: Double, velocity: Vector2D): EnemyBullet =
     new Behaviour

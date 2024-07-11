@@ -1,5 +1,10 @@
 package entities
 
+import util.*
+import Timer.*
+import VectorUtils.*
+import entities.EntityStateMachine.*
+import managers.*
 import sge.core.*
 import behaviours.*
 import physics2d.*
@@ -8,10 +13,6 @@ import sge.swing.behaviours.ingame.CircleRenderer
 import Enemy.*
 
 import scala.concurrent.duration.*
-import util.*
-import Timer.*
-import entities.EntityStateMachine.*
-import managers.{GameConstants, GameManager}
 
 import java.awt.Color
 import scala.util.Random
@@ -24,10 +25,6 @@ object Ranger:
     * @return
     */
   def apply(position: Vector2D = GameManager.frontalEnemyRandomPosition()): Enemy = RangerImpl(position)
-
-  extension (v: Vector2D)
-    def magnitude: Double = Math.sqrt(v.x*v.x + v.y*v.y)
-    def normalized: Vector2D = v / v.magnitude
 
   private enum RangerState:
     case Moving(toPosition: Vector2D, stepCount: Int)
@@ -62,7 +59,7 @@ object Ranger:
         Moving(GameManager.frontalEnemyRandomPosition(), 2) forAbout 800.millis
 
       case Shooting(n, target) =>
-        fireBullet(engine, target)
+        fireBullet(target)(engine)
         Shooting(n - 1, target) forAbout 100.millis
 
     override def whileInEntityState(state: RangerState)(engine: Engine): Unit = state match
@@ -71,7 +68,7 @@ object Ranger:
 
       case _ =>
 
-    private def fireBullet(engine: Engine, target: Option[Vector2D]): Unit =
+    private def fireBullet(target: Option[Vector2D])(engine: Engine): Unit =
       target.foreach(playerPos =>
         val vel: Vector2D = (playerPos - position).normalized * 8
         engine.create(Bullets.enemyBullet(position, size = 0.15, velocity = vel))

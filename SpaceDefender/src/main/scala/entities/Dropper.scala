@@ -102,8 +102,8 @@ object Dropper:
       engine.create(
         Bullets.enemyBullet(
           position,
-          Bullets.dropperBulletSize,
-          Bullets.dropperBulletSpeed
+          Bullets.bulletSize,
+          (0, -Bullets.fastSpeed)
         )
       )
 
