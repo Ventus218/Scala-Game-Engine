@@ -20,13 +20,34 @@ object EnemyTests:
     50
   )
   val player: Player = Player()
-  def spawner(spawnFunction: => Behaviour): Behaviour = new Behaviour with InputHandler:
-    var inputHandlers: Map[InputButton, Handler] = Map(R -> spawn.onlyWhenPressed)
+  def spawner(spawnFunction: => Enemy): Behaviour = new Behaviour with InputHandler:
+    var inputHandlers: Map[InputButton, Handler] = Map(Space -> spawn.onlyWhenPressed)
     def spawn(input: InputButton)(engine: Engine): Unit = engine.create(spawnFunction)
 
   @main def testDropper(): Unit =
     engine.run: () =>
       Seq(
         player,
-        spawner(Dropper.dropper(0, 0))
+        spawner(Enemy.dropper(0, 0))
+      )
+
+  @main def testRanger(): Unit =
+    engine.run: () =>
+      Seq(
+        player,
+        spawner(Enemy.ranger(0, 0))
+      )
+
+  @main def testTurret(): Unit =
+    engine.run: () =>
+      Seq(
+        player,
+        spawner(Enemy.turret(0, 0))
+      )
+
+  @main def testBeacon(): Unit =
+    engine.run: () =>
+      Seq(
+        player,
+        spawner(Enemy.beacon(0, 0))
       )

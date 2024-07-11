@@ -30,17 +30,21 @@ object Enemy:
   val dropperScore: Int    = 10
   def dropperMovingTime: FiniteDuration = Random.between(1d, 2d).seconds
   def dropperShootingTime: FiniteDuration = 700.millis
-
-
+  
   val rangerHealth: Int = 5
   val rangerScore: Int  = 20
 
-  val beaconHealth: Int    = 10
+  val turretHealth: Int = 15
+  val turretSpeed: Double = 15
+  val turretScore: Int = 50
+  
+  val beaconHealth: Int    = 20
   val beaconSpeed:  Double = 1
-  val beaconScore:  Int    = 50
+  val beaconScore:  Int    = 100
   def beaconMovingTime: FiniteDuration = Random.between(2.5, 4d).seconds
   def beaconShootingTime: FiniteDuration = 2.seconds
-
-  val turretHealth: Int    = 20
-  val turretSpeed:  Double = 15
-  val turretScore:  Int    = 100
+  
+  def dropper(position: Vector2D): Enemy = Dropper.dropper(position)
+  def ranger(position: Vector2D): Enemy = Ranger(position)
+  def turret(position: Vector2D): Enemy = Turret(position)
+  def beacon(position: Vector2D): Enemy = Dropper.beacon(position)

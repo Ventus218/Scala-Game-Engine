@@ -77,13 +77,13 @@ object EnemySpawner:
 
     private def spawnDropper(engine: Engine): Unit =
       val pos = GameManager.rearEnemyRandomPosition()
-      dropperTimer = dropperTimer.map { u => engine.create(Dropper.dropper(pos)) }.updated(engine.dt)
+      dropperTimer = dropperTimer.map { u => engine.create(Enemy.dropper(pos)) }.updated(engine.dt)
     private def spawnRanger(engine: Engine): Unit =
       val pos = GameManager.frontalEnemyRandomPosition()
-      rangerTimer = rangerTimer.map { u => engine.create(Ranger(pos)) }.updated(engine.dt)
+      rangerTimer = rangerTimer.map { u => engine.create(Enemy.ranger(pos)) }.updated(engine.dt)
     private def spawnBeacon(engine: Engine): Unit =
       val pos = GameManager.rearEnemyRandomPosition()
-      beaconTimer = beaconTimer.map { u => engine.create(Dropper.beacon(pos)) }.updated(engine.dt)
+      beaconTimer = beaconTimer.map { u => engine.create(Enemy.beacon(pos)) }.updated(engine.dt)
     private def spawnTurret(engine: Engine): Unit =
       val pos = GameManager.frontalEnemyRandomPosition()
-      turretTimer = turretTimer.map { u => engine.create(Turret(pos)) }.updated(engine.dt)
+      turretTimer = turretTimer.map { u => engine.create(Enemy.turret(pos)) }.updated(engine.dt)

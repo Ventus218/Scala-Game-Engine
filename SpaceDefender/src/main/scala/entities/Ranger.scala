@@ -53,7 +53,7 @@ object Ranger:
         Moving(GameManager.frontalEnemyRandomPosition(), step - 1) forAbout 800.millis
 
       case WaitingToShoot() =>
-        Shooting(3, GameManager.player.map(_.position)).immediately
+        Shooting(3, engine.find[Player]().headOption.map(_.position)).immediately
 
       case Shooting(0, _) =>
         Moving(GameManager.frontalEnemyRandomPosition(), 2) forAbout 800.millis
