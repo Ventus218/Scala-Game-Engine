@@ -7,6 +7,9 @@ import MovementStateImpl.initialMovement
 import model.behaviours.*
 import PlayerCollisions.*
 import PlayerMovement.*
+import model.logic.MovementStateImpl.stop
+import sge.core.behaviours.physics2d.RectCollider
+import CharacterCollisions.*
 
 class Player(
     width: Double,
@@ -21,10 +24,10 @@ class Player(
 ) extends Character(width, height, speed, "ninja.png")(scaleWidth, scaleHeight)
     with InputHandler:
   var inputHandlers: Map[InputButton, Handler] = Map(
-    W -> (onMoveTop and onResetSpeed.onlyWhenReleased),
-    A -> (onMoveLeft and onResetSpeed.onlyWhenReleased),
-    S -> (onMoveBottom and onResetSpeed.onlyWhenReleased),
-    D -> (onMoveRight and onResetSpeed.onlyWhenReleased),
+    W -> (onMoveTop(this) and onResetSpeed.onlyWhenReleased),
+    A -> (onMoveLeft(this) and onResetSpeed.onlyWhenReleased),
+    S -> (onMoveBottom(this) and onResetSpeed.onlyWhenReleased),
+    D -> (onMoveRight(this) and onResetSpeed.onlyWhenReleased),
     Space -> (onSprint and onResetSpeed.onlyWhenReleased)
   )
   private var _lifes = 0
@@ -36,11 +39,12 @@ class Player(
     position = position.setX(io.scenePosition(io.size).x * -1 + width)
 
   override def onLateUpdate: Engine => Unit = engine =>
-    super.onLateUpdate(engine)
+    collidesWithWalls(engine, this)
     collidesWithEnemies(engine, this, currentScene)
     collidesWithStairs(engine, this, nextScene)
+    super.onLateUpdate(engine)
 
-  def lifes_=(l: Int) = 
+  def lifes_=(l: Int) =
     require(l >= 0)
     _lifes = l
   def lifes = _lifes

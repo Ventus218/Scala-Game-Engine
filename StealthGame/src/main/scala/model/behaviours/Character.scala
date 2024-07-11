@@ -5,46 +5,57 @@ import behaviours.dimension2d.{Positionable, Scalable}
 import behaviours.physics2d.{RectCollider, Velocity}
 import sge.swing.*
 import model.logic.*
-import Action.* 
+import Action.*
 import Direction.*
+import model.behaviours.CharacterCollisions.collidesWithWalls
+import java.awt.Color
 
 private abstract class Character(
     width: Double,
     height: Double,
     speed: Vector2D,
     imagePath: String,
-    position: Vector2D = (0, 0)
+    initialPosition: Vector2D = (0, 0)
 )(
     scaleWidth: Double = 1,
     scaleHeight: Double = 1
 ) extends Behaviour
-    with Positionable(position)
-    with ImageRenderer(imagePath, width, height)
+    with Positionable(initialPosition)
+    // with ImageRenderer(imagePath, width, height)
+    with RectRenderer(width, height, Color.YELLOW)
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight)
     with Velocity:
+
+  private val offsetToMoveFromCollider = 0.1
 
   override def onInit: Engine => Unit = engine =>
     super.onInit(engine)
     resetMovement()
 
-  override def onUpdate: Engine => Unit = engine =>
-    updateSpeed()
-    super.onUpdate(engine)
+  override def onEarlyUpdate: Engine => Unit = engine =>
+    super.onEarlyUpdate(engine)
+    updateSpeed(engine)
 
-  private def updateSpeed(): Unit =
+  private def updateSpeed(engine: Engine): Unit =
     velocity = direction match
       case TOP    => (0, speed.y)
       case BOTTOM => (0, -speed.y)
       case LEFT   => (-speed.x, 0)
       case RIGHT  => (speed.x, 0)
 
-    velocity = action match
-      case IDLE   => (0, 0)
-      case MOVE   => velocity
-      case SPRINT => velocity * getSprint
+    if collidesWithWalls(engine, this)
+    then velocity = velocity * -1
+    else
+      velocity = action match
+        case IDLE   => (0, 0)
+        case MOVE   => velocity
+        case SPRINT => velocity * getSprint
 
   protected def resetMovement(): Unit
   protected def direction: Direction
   protected def action: Action
   protected def getSprint: Double
+
+  private def updatePosition(offset: Vector2D) =
+    position = position + offset

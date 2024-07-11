@@ -20,6 +20,12 @@ trait MovementActions:
   def updateState(state: State[Movement, Unit]) =
     movement = state(movement)._1
 
+  protected def stopAndTurn(wantedDirection: Direction) =
+    for
+      _ <- stop()
+      _ <- turnTo(wantedDirection)
+    yield ()
+
   protected def moveAndTurn(wantedDirection: Direction) =
     for
       _ <- moveState

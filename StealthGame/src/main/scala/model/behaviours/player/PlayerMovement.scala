@@ -7,36 +7,37 @@ import Direction.*
 import MovementStateImpl.*
 import State.*
 import Action.*
+import model.behaviours.CharacterCollisions.collidesWithWalls
 
 private object PlayerMovement extends MovementActions:
-  def onMoveTop(input: InputButton): Engine => Unit =
+  def onMoveTop(player: Player)(input: InputButton): Engine => Unit =
     engine =>
       val turnState =
-        for _ <- moveAndTurn(TOP)
+        for _ <- if collidesWithWalls(engine, player) then stop() else moveAndTurn(TOP)
         yield ()
 
       updateState(turnState)
 
-  def onMoveBottom(input: InputButton): Engine => Unit =
+  def onMoveBottom(player: Player)(input: InputButton): Engine => Unit =
     engine =>
       val turnState =
-        for _ <- moveAndTurn(BOTTOM)
+        for _ <- if collidesWithWalls(engine, player) then stop() else moveAndTurn(BOTTOM)
         yield ()
 
       updateState(turnState)
 
-  def onMoveRight(input: InputButton): Engine => Unit =
+  def onMoveRight(player: Player)(input: InputButton): Engine => Unit =
     engine =>
       val turnState =
-        for _ <- moveAndTurn(RIGHT)
+        for _ <- if collidesWithWalls(engine, player) then stop() else moveAndTurn(RIGHT)
         yield ()
 
       updateState(turnState)
 
-  def onMoveLeft(input: InputButton): Engine => Unit =
+  def onMoveLeft(player: Player)(input: InputButton): Engine => Unit =
     engine =>
       val turnState =
-        for _ <- moveAndTurn(LEFT)
+        for _ <- if collidesWithWalls(engine, player) then stop() else moveAndTurn(LEFT)
         yield ()
 
       updateState(turnState)
@@ -52,9 +53,4 @@ private object PlayerMovement extends MovementActions:
       updateState(sprintState)
 
   def onResetSpeed(input: InputButton): Engine => Unit =
-    engine =>
-      val stopState =
-        for _ <- stop()
-        yield ()
-
-      updateState(stopState)
+    engine => updateState(stop())

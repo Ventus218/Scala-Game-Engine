@@ -43,5 +43,6 @@ object LevelOne extends Scene:
     TopBound(),
     LeftBound(),
     RightBound(),
-    BottomBound()
+    BottomBound(),
+    new Wall(20, 2, (20, 20))() with RectRenderer(20, 2, Color.black)
   )

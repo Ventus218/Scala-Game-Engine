@@ -56,9 +56,9 @@ object MovementStateImpl extends MovementState:
   override def sprint(): State[Movement, Unit] =
     State((_, d) => getState(SPRINT, d))
 
-  extension [T <: Direction | Action](m: State[Movement, T])
-    def withFilter(p: T => Boolean): State[Movement, Unit] =
-      State(s => if (p(m(s)._2)) then (s, ()) else ((IDLE, s._2), ()))
+  extension (m: State[Movement, Unit])
+    def withFilter(p: Unit => Boolean): State[Movement, Unit] =
+      State(s => if (p(m(s)._2)) then m(s) else stop().run(s))
 
   private object Privates:
     def getLeftDirection(direction: Direction): Direction =
