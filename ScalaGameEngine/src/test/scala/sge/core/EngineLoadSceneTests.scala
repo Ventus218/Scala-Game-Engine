@@ -84,3 +84,13 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
           _.onDeinit:
             engine.find[GameObjectMock]() shouldBe empty
 
+  it should "not apply destroy on objects from previous scenes" in:
+    val obj = GameObjectMock()
+    val sceneWithObj: Scene = scene1.joined(() => Seq(obj))
+
+    test(engine) on sceneWithObj runningFor 2 frames so that:
+      _.onStart:
+        engine.destroy(obj)
+        engine.loadSceneTestingOnGameloopEvents(scene2):
+          _.onDeinit:
+            engine.find[GameObjectMock]() shouldBe empty
