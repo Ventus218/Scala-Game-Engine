@@ -60,19 +60,21 @@ class TrumpTests extends AnyFlatSpec:
     game.field.size shouldBe 0
 
   it should "allow the current player to place a card on the field" in:
-    val card = game.currentPlayer.hand.cards.head
+    val player = game.currentPlayer
+    val card = player.hand.cards.head
 
     val newGame = game.playCard(card).right.get
     newGame.field.placedCards should contain theSameElementsInOrderAs Seq(
       PlacedCard(card, game.currentPlayer.info)
     )
+    newGame.player(player.info).hand.cards should contain noElementsOf Seq(card)
 
   it should "deny the current player to place a card which is not in his hand" in:
     val card = game.nextPlayer.hand.cards.head // notice wrong player
 
     game.playCard(card) shouldBe a[Left[TrumpError.RuleBroken, Game[String]]]
 
-  it should "switch players after one has played its turn" in:
+  it should "swap players after one has played its turn" in:
     val card = game.currentPlayer.hand.cards.head
     val oldNextPlayer = game.nextPlayer
 

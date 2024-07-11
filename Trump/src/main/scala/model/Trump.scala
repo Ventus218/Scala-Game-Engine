@@ -42,6 +42,30 @@ object Trump:
       GameImpl(config._1, config._2, deck, config._3, Field())
     )
 
+  private object GameState:
+    def takeCardFromCurrentPlayerHand[PI](
+        card: Card
+    ): EitherState[Game[PI], Game[PI], Card, TrumpError] =
+      EitherState(game =>
+        for (hand, card) <- game.currentPlayer.hand.placeCard(card)
+        yield (
+          game.copy(currentPlayer = game.currentPlayer.copy(hand = hand)),
+          card
+        )
+      )
+
+    def placeCardOnField[PI](
+        card: Card,
+        playerInfo: PI
+    ): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+      EitherState(game =>
+        Right(game.copy(field = game.field.place(card, playerInfo)), ())
+      )
+
+    def swapPlayers[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+      EitherState(game => Right(game.swappedPlayers, ()))
+
+  import GameState.*
   extension [PI](game: Game[PI])
     def currentPlayer: Player[PI] = game.currentPlayer
     def nextPlayer: Player[PI] = game.nextPlayer
@@ -52,18 +76,10 @@ object Trump:
     def trumpCard: Card = game.trumpCard
     def field = game.field
     def playCard(card: Card): Either[TrumpError, Game[PI]] =
-      currentPlayer.hand.cards.find(_ == card) match
-        case Some(card) =>
-          Right(
-            game.copy(
-              currentPlayer = nextPlayer,
-              nextPlayer = currentPlayer,
-              field = field.place(card, currentPlayer.info)
-            )
-          )
-        case None =>
-          Left(
-            TrumpError.RuleBroken(
-              "Cannot place a card which is not contained in current player's hand"
-            )
-          )
+      (for
+        card <- takeCardFromCurrentPlayerHand(card)
+        _ <- placeCardOnField(card, currentPlayer.info)
+        _ <- swapPlayers()
+      yield ()).run(game).map((game, _) => game)
+    private def swappedPlayers: Game[PI] =
+      game.copy(currentPlayer = nextPlayer, nextPlayer = currentPlayer)
