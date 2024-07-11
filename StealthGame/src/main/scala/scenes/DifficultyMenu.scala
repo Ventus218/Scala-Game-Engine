@@ -45,5 +45,5 @@ object DifficultyMenu extends Scene:
     def onBackButton: Engine => Unit = engine => engine.loadScene(StartingMenu)
     def onDifficultyButton(difficulty: Difficulty): Engine => Unit = engine =>
       engine.storage.set("Lifes", difficulty.lifes)
-      engine.storage.set("Difficulty", difficulty.text)
+      engine.storage.set("Difficulty", difficulty)
       engine.loadScene(LevelOne)

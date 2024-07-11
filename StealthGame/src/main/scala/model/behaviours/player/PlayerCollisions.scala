@@ -4,6 +4,7 @@ import sge.core.*
 import model.behaviours.*
 import enemies.*
 import scenes.LoseGame
+import config.Difficulty
 
 private object PlayerCollisions:
   def collidesWithEnemies(engine: Engine, player: Player, currentScene: Scene) =
@@ -17,12 +18,14 @@ private object PlayerCollisions:
         else engine.loadScene(currentScene)
     )
 
-  def collidesWithStairs(engine: Engine, player: Player, nextScene: Scene) = 
+  def collidesWithStairs(engine: Engine, player: Player, nextScene: Scene) =
     val stairs = engine.find[Stairs]()
     stairs.collectFirst(stair =>
       if (player.collides(stair)) then
-        player.lifes = player.lifes + 1
-        updateLifes(engine, player.lifes)
+        if engine.storage.get[Difficulty]("Difficulty") != Difficulty.IMPOSSIBLE
+        then
+          player.lifes = player.lifes + 1
+          updateLifes(engine, player.lifes)
         engine.loadScene(nextScene)
     )
 

@@ -21,7 +21,7 @@ object LifesBehaviour:
       with UITextRenderer(text, UITextFontWithSize(20), Color.BLACK):
 
     override def onInit: Engine => Unit = engine =>
-      val difficultyText = engine.storage.get[String]("Difficulty").toUpperCase()
+      val difficultyText = engine.storage.get[Difficulty]("Difficulty").text.toUpperCase()
       val difficultyLifes = engine.find[Player]().head.lifes
       textContent = difficultyText + text + difficultyLifes
       super.onInit(engine)
