@@ -175,6 +175,7 @@ object Engine:
       while !shouldStop do
         gameObjects = sceneToLoad.get()
         sceneToLoad = Option.empty
+        gameObjectsToAdd = Set.empty
 
         gameObjects.foreach(_.onInit(this))
 

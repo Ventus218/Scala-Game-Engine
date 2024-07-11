@@ -74,3 +74,13 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
           _.onStart:
             hasCalledStart = true
     hasCalledStart shouldBe true
+
+  "The new scene" should "not have object created in previous scenes" in:
+    val obj = GameObjectMock()
+    test(engine) on scene1 runningFor 2 frames so that:
+      _.onStart:
+        engine.create(obj)
+        engine.loadSceneTestingOnGameloopEvents(scene2):
+          _.onDeinit:
+            engine.find[GameObjectMock]() shouldBe empty
+
