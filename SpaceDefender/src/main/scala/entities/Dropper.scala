@@ -3,8 +3,7 @@ package entities
 import sge.core.*
 import behaviours.*
 import physics2d.*
-import dimension2d.*
-import sge.swing.behaviours.ingame.SquareRenderer
+import sge.swing.behaviours.ingame.*
 import Enemy.*
 
 import scala.concurrent.duration.*
@@ -38,7 +37,7 @@ object Dropper:
       startingState = Moving(dropperSpeed) forAbout Random.between(1d, 2d).seconds
     )
     with Enemy
-    with SquareRenderer(enemySize, Color.red, rotation = 45.degrees)
+    with RectRenderer(enemySize, enemySize/2, Color.red)
     with CircleCollider(enemySize/2)
     with Velocity:
 
