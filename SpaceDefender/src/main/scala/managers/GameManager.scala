@@ -31,7 +31,6 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
   import GameConstants.*
 
   private var playerRef:  Option[Player] = Option(Player())
-  private var enemiesRef: Seq[Enemy]     = Seq.empty
 
   private var score: Int = 0
 
@@ -41,7 +40,7 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
   override def onStateChange(state: GameState)(engine: Engine): Timer[GameState] = state match
     case Starting =>
       engine.create(scoreText)
-      playerRef.foreach(engine.create)
+      player.foreach(engine.create)
       EnterPlayer forAbout 1500.millis
 
     case EnterPlayer =>
@@ -68,14 +67,9 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
     case GameTerminated => GameTerminated.forever
 
   override def whileInState(state: GameState)(engine: Engine): Unit = state match
-    case GameStart =>
-      playerRef = engine.find[Player]("player")
-      enemiesRef = engine.find[Enemy]().toSeq
-
+    case GameStart       => playerRef = engine.find[Player]("player")
     case ShowMissionText => missionText.show()
-
     case HideMissionText => missionText.hide()
-
     case _ =>
 
   /** Adds score to the current one
@@ -125,12 +119,6 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
     Random.between(arenaLeftBorder, arenaRightBorder),
     arenaTopBorder
   )
-
-  /** Get the enemies references. It is updated at every early update.
-    * @return
-    *   the enemies
-    */
-  def enemies: Seq[Enemy] = enemiesRef
 
   /** Get the player reference. It is updated at every early update.
     * @return

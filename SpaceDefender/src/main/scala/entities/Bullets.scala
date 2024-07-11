@@ -58,24 +58,24 @@ object Bullets:
     */
   trait Bullet[T <: CircleCollider & Health] extends Behaviour with Collider with Positionable:
     def damage: Int
-    def targets: Set[T]
+    def targets: Engine => Set[T]
 
     override def onUpdate: Engine => Unit =
       engine =>
-        hitTarget match
+        hitTarget(engine) match
           case Some(t)           => t.hit(damage); onTargetHit(engine)
           case None if isOutside => engine.destroy(this)
           case _                 =>
         super.onUpdate(engine)
 
     protected def onTargetHit(engine: Engine): Unit = engine.destroy(this)
-    private def hitTarget: Option[T] = targets.find(collides(_))
+    private def hitTarget(engine: Engine): Option[T] = targets(engine).find(collides(_))
     private def isOutside: Boolean = GameManager.isOutsideArena(this)
 
   /** An enemy bullet
     */
   trait EnemyBullet(override val damage: Int) extends Bullet[Player]:
-    override def targets: Set[Player] = GameManager.player.toSet
+    override def targets: Engine => Set[Player] = _.find[Player]().toSet
 
   /** An enemy laser (is still a bullet)
    */
@@ -92,5 +92,5 @@ object Bullets:
   /** A player bullet
     */
   trait PlayerBullet(override val damage: Int) extends Bullet[Enemy]:
-    override def targets: Set[Enemy] = GameManager.enemies.toSet
+    override def targets: Engine => Set[Enemy] = _.find[Enemy]().toSet
 
