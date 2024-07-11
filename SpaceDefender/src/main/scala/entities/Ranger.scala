@@ -9,7 +9,7 @@ import sge.core.*
 import behaviours.*
 import physics2d.*
 import dimension2d.*
-import sge.swing.behaviours.ingame.CircleRenderer
+import sge.swing.behaviours.ingame.*
 import Enemy.*
 
 import scala.concurrent.duration.*
@@ -40,7 +40,7 @@ object Ranger:
       startingState = Moving(GameManager.frontalEnemyRandomPosition(), 2) forAbout 800.millis
     )
     with Enemy
-    with CircleRenderer(enemySize/2, Color.red)
+    with ImageRenderer("ranger.png", enemySize, enemySize)
     with CircleCollider(enemySize/2):
 
     override def score: Int = rangerScore

@@ -8,6 +8,7 @@ object SceneManager:
   
   val menuScene: Scene = () =>
     Seq(
+      Background(),
       TitleText(0, 3),
       TitleScoreDisplay((0, 0), "Top score", topScoreStorageKey),
       GameButton("Play", (0, -3), onPress = _.loadScene(gameScene), color = playButtonColor),
@@ -16,11 +17,13 @@ object SceneManager:
 
   val gameScene: Scene = () =>
     Seq(
+      Background(),
       GameManager
     )
     
   val gameoverScene: Scene = () =>
     Seq(
+      Background(),
       GameOverText(0, 2),
       TitleScoreDisplay((0, 0), "Your score", scoreStorageKey),
       GameButton("Menu", (0, -3), onPress = _.loadScene(menuScene))

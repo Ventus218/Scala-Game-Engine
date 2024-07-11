@@ -37,7 +37,7 @@ object Turret:
       startingState = Rotating() forAbout 1300.millis
     )
       with Enemy
-      with SquareRenderer(enemySize, Color.red)
+      with ImageRenderer("turret.png", enemySize, enemySize)
       with CircleCollider(enemySize / 2):
 
     override def score: Int = turretScore

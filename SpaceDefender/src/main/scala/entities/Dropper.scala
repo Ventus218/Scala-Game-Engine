@@ -50,7 +50,8 @@ object Dropper:
       scoreVal: Int,
       initialState: Timer[DropperState | EntityState],
       movingTime: => FiniteDuration,
-      shootingTime: => FiniteDuration
+      shootingTime: => FiniteDuration,
+      image: String
     )
     extends EntityStateMachine[DropperState](
       startingPosition = pos,
@@ -58,7 +59,7 @@ object Dropper:
       startingState = initialState
     )
     with Enemy
-    with RectRenderer(enemySize, enemySize/2, Color.red)
+    with ImageRenderer(image, enemySize, enemySize)
     with CircleCollider(enemySize/2)
     with Velocity:
 
@@ -96,7 +97,8 @@ object Dropper:
     dropperScore,
     initialState = Moving(dropperSpeed) forAbout dropperMovingTime,
     movingTime   = dropperMovingTime,
-    shootingTime = dropperShootingTime
+    shootingTime = dropperShootingTime,
+    image = "dropper.png"
   ):
     override def fireBullet(engine: Engine): Unit =
       engine.create(
@@ -113,7 +115,8 @@ object Dropper:
     beaconScore,
     initialState = Moving(beaconSpeed) forAbout beaconMovingTime,
     movingTime   = beaconMovingTime,
-    shootingTime = beaconShootingTime
+    shootingTime = beaconShootingTime,
+    image = "beacon.png"
   ):
     override def fireBullet(engine: Engine): Unit =
       engine.create(

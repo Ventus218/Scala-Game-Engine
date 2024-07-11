@@ -24,7 +24,7 @@ object Bullets:
 
   def enemyBullet(position: Vector2D, size: Double, velocity: Vector2D): EnemyBullet =
     new Behaviour
-      with CircleRenderer(size, Color.red, priority = -1)
+      with CircleRenderer(size, Color.red, priority = 2)
       with CircleCollider(size)
       with SingleScalable
       with Positionable(position)
@@ -33,7 +33,7 @@ object Bullets:
 
   def enemyLaser(startPosition: Vector2D, length: Double, lifeTime: FiniteDuration): EnemyLaser =
     new Behaviour
-      with RectRenderer(laserWidth, length, Color.red, priority = -1)
+      with RectRenderer(laserWidth, length, Color.red, priority = 2)
       with RectCollider(laserWidth, length)
       with Scalable
       with Positionable(startPosition - (0, length/2))
@@ -44,7 +44,7 @@ object Bullets:
     val bulletRadius = 0.1
     val speed = 15
     new Behaviour
-      with CircleRenderer(bulletRadius, Color.cyan, priority = -1)
+      with CircleRenderer(bulletRadius, Color.cyan, priority = 2)
       with CircleCollider(bulletRadius)
       with SingleScalable
       with Positionable(position)

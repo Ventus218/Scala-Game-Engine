@@ -61,14 +61,13 @@ object Player:
     with Invulnerability
     with Identifiable("player")
     with CircleCollider(playerSize / 2)
-    with SquareRenderer(playerSize, Color.cyan)
+    with ImageRenderer("player.png", playerSize, playerSize)
     with InputHandler:
 
     var inputHandlers: Map[InputButton, Handler] = Map(
       MouseButton1 -> (resetFireTimer.onlyWhenPressed and fire)
     )
 
-//    private var invulnerable: Boolean = false
     private var fireTimer: Timer[Unit] = Timer.runEvery(firePeriod, ())
     override def onEntityStateChange(state: PlayerState)(engine: Engine): Timer[PlayerState] = state match
       case Hurt(0) =>

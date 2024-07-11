@@ -21,7 +21,7 @@ object EnemyTests:
   )
   val player: Player = Player()
   def spawner(spawnFunction: => Enemy): Behaviour = new Behaviour with InputHandler:
-    var inputHandlers: Map[InputButton, Handler] = Map(Space -> spawn.onlyWhenPressed)
+    var inputHandlers: Map[InputButton, Handler] = Map(Space  -> spawn.onlyWhenPressed)
     def spawn(input: InputButton)(engine: Engine): Unit = engine.create(spawnFunction)
 
   @main def testDropper(): Unit =

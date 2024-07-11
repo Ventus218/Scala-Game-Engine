@@ -41,13 +41,13 @@ object EnemySpawner:
     val dropperSpawnCycleTime: FiniteDuration = 4.seconds
     val rangerSpawnCycleTime:  FiniteDuration = 7.seconds
     val turretSpawnCycleTime: FiniteDuration = 10.seconds
-    val beaconSpawnCycleTime: FiniteDuration = 15.seconds
+    val beaconSpawnCycleTime: FiniteDuration = 20.seconds
 
     var dropperTimer: Timer[Unit] = Timer.runEvery(dropperSpawnCycleTime, ())
     var rangerTimer:  Timer[Unit] = Timer.runEvery(rangerSpawnCycleTime, ())
     var turretTimer:  Timer[Unit] = Timer.runEvery(turretSpawnCycleTime, ())
     var beaconTimer:  Timer[Unit] = Timer.runEvery(beaconSpawnCycleTime, ())
-    
+
     override def whileInState(state: SpawnPhase)(engine: Engine): Unit = state match
       case Phase1 =>
         spawnDropper(engine)
@@ -76,7 +76,7 @@ object EnemySpawner:
       case Phase3 | Phase4 => Phase4.forever
 
     private def spawnDropper(engine: Engine): Unit =
-      val pos = GameManager.rearEnemyRandomPosition()
+      val pos = GameManager.rearEnemyRandomPosition() - (0, 1)
       dropperTimer = dropperTimer.map { u => engine.create(Enemy.dropper(pos)) }.updated(engine.dt)
     private def spawnRanger(engine: Engine): Unit =
       val pos = GameManager.frontalEnemyRandomPosition()
