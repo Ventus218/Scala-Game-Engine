@@ -96,22 +96,24 @@ object Engine:
         gameObjectsToEnable = gameObjectsToEnable + gameObject
 
     private def enableObjectsToBeEnabled(): Unit =
-      gameObjectsToEnable.foreach: o =>
+      val enabled = Set.from(gameObjectsToEnable)
+      gameObjectsToEnable = Set.empty
+      enabled.foreach: o =>
         o.enabled = true
         o.onEnabled(this)
-      gameObjectsToEnable.foreach: o =>
+      enabled.foreach: o =>
         o.onStart(this)
-      gameObjectsToEnable = Set.empty
 
     override def disable(gameObject: Behaviour): Unit =
       if gameObject.enabled then
         gameObjectsToDisable = gameObjectsToDisable + gameObject
 
     private def disableObjectsToBeDisabled(): Unit =
-      gameObjectsToDisable.foreach: o =>
+      val disabled = Set.from(gameObjectsToDisable)
+      gameObjectsToDisable = Set.empty
+      disabled.foreach: o =>
         o.enabled = false
         o.onDisabled(this)
-      gameObjectsToDisable = Set.empty
 
     override def create(gameObject: Behaviour): Unit =
       if gameObjects.exists(_ eq gameObject) || gameObjectsToAdd(gameObject)
@@ -148,14 +150,16 @@ object Engine:
 
     private def applyCreate(): Unit =
       gameObjects = gameObjects ++ gameObjectsToAdd
-      gameObjectsToAdd.foreach(_.onInit(this))
-      gameObjectsToAdd.filter(_.enabled).foreach(_.onStart(this))
+      val created = Set.from(gameObjectsToAdd)
       gameObjectsToAdd = Set.empty
+      created.foreach(_.onInit(this))
+      created.filter(_.enabled).foreach(_.onStart(this))
 
     private def applyDestroy(): Unit =
       gameObjects = gameObjects.filterNot(gameObjectsToRemove.contains)
-      gameObjectsToRemove.foreach(_.onDeinit(this))
+      val destroyed = Set.from(gameObjectsToRemove)
       gameObjectsToRemove = Set.empty
+      destroyed.foreach(_.onDeinit(this))
 
     private var shouldStop = false
     private var alreadyStarted = false
@@ -171,6 +175,10 @@ object Engine:
       while !shouldStop do
         gameObjects = sceneToLoad.get()
         sceneToLoad = Option.empty
+        gameObjectsToAdd = Set.empty
+        gameObjectsToRemove = Set.empty
+        gameObjectsToEnable = Set.empty
+        gameObjectsToDisable = Set.empty
 
         gameObjects.foreach(_.onInit(this))
 
