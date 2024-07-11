@@ -16,5 +16,5 @@ object SpaceDefender extends App:
     Storage(),
     50
   )
-  engine.run(SceneManager.testScene)
+  engine.run(SceneManager.gameScene)
   println("Thank you for playing!")

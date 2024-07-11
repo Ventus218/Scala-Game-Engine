@@ -41,6 +41,7 @@ object EnemySpawner:
 
     var dropperTimer: Timer[Unit] = Timer.runEvery(dropperSpawnCycleTime, ())
     var rangerTimer:  Timer[Unit] = Timer.runEvery(rangerSpawnCycleTime, ())
+    
     override def whileInState(state: SpawnPhase)(engine: Engine): Unit = state match
       case Phase1 =>
         spawnDropper(engine)

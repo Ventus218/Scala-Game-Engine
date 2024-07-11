@@ -26,4 +26,6 @@ object GameConstants:
   val missionTextSize:       Double = 0.8
   val missionTextLerpFactor: Double = 0.15
   val missionTextColor:      Color  = Color.yellow
-
+  
+  val yourScoreTextSize:  Double = 0.6
+  val yourScoreTextColor: Color  = Color.white

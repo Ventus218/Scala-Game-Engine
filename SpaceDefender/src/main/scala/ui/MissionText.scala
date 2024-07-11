@@ -1,9 +1,7 @@
 package ui
 
 import managers.GameConstants.*
-import sge.core.*
 import util.VectorUtils
-
 
 class MissionText extends TwoLineText(
   (arenaWidth, 0),

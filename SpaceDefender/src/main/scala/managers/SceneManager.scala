@@ -5,9 +5,12 @@ import sge.core.*
 
 object SceneManager:
 
-  val testScene: Scene = () =>
+  val gameScene: Scene = () =>
     Seq(
-      GameManager,
-//      Dropper(0, 5),
-//      Ranger(0, 5)
+      GameManager
+    )
+    
+  val gameoverScene: Scene = () =>
+    Seq(
+      
     )
