@@ -9,6 +9,8 @@ import Action.*
 import Direction.*
 import model.behaviours.CharacterCollisions.collidesWithWalls
 import java.awt.Color
+import config.Config.CHARACTERS_WIDTH
+import config.Config.CHARACTERS_HEIGHT
 
 private abstract class Character(
     width: Double,
@@ -21,7 +23,7 @@ private abstract class Character(
     scaleHeight: Double = 1
 ) extends Behaviour
     with Positionable(initialPosition)
-    with ImageRenderer(imagePath, width, height)
+    with ImageRenderer(imagePath, width, height, priority = 2)
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight)
     with Velocity:

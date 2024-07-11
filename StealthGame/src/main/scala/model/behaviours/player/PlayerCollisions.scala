@@ -8,8 +8,8 @@ import config.Difficulty
 
 private object PlayerCollisions:
   def collidesWithEnemies(engine: Engine, player: Player, currentScene: Scene) =
-    val enemies = engine.find[VisualRange]() ++ engine.find[Enemy]()
-    enemies.collectFirst(collider =>
+    val enemies = engine.find[VisualRange]()
+    enemies.foreach(collider =>
       if player.collides(collider)
       then
         player.lifes = player.lifes - 1
@@ -20,7 +20,7 @@ private object PlayerCollisions:
 
   def collidesWithStairs(engine: Engine, player: Player, nextScene: Scene) =
     val stairs = engine.find[Stairs]()
-    stairs.collectFirst(stair =>
+    stairs.foreach(stair =>
       if (player.collides(stair)) then
         if engine.storage.get[Difficulty]("Difficulty") != Difficulty.IMPOSSIBLE
         then

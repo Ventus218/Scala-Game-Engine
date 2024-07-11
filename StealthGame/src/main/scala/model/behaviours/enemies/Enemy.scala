@@ -9,15 +9,15 @@ import model.behaviours.*
 import model.logic.MovementStateImpl.*
 import scala.compiletime.ops.boolean
 import model.behaviours.CharacterCollisions.collidesWithWalls
-import config.Config.PATROL_SPEED
+import config.Config.*
 
 class Enemy(
-    width: Double,
-    height: Double,
-    imagePath: String,
-    initialDirection: Direction,
-    position: Vector2D = (0, 0),
-    speed: Vector2D = (PATROL_SPEED, PATROL_SPEED)
+  imagePath: String,
+  initialDirection: Direction,
+  position: Vector2D = (0, 0),
+  speed: Vector2D = (PATROL_SPEED, PATROL_SPEED),
+  width: Double = CHARACTERS_WIDTH,
+  height: Double = CHARACTERS_HEIGHT,
 )(
     visualRangeSize: Double = height * 2,
     scaleWidth: Double = 1,

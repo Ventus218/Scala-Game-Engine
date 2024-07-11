@@ -71,15 +71,11 @@ object LevelOne extends Scene:
 
     def apply() = Seq(
       new Enemy(
-        CHARACTERS_WIDTH,
-        CHARACTERS_HEIGHT,
         "patrol.png",
         Direction.TOP,
         (bottomEnemyX, bottomEnemyY)
       )() with MovingPattern with StopThenTurnRightOnCollidePattern(1),
       new Enemy(
-        CHARACTERS_WIDTH,
-        CHARACTERS_HEIGHT,
         "patrol.png",
         Direction.LEFT,
         (rightEnemyX, rightEnemyY)
