@@ -5,6 +5,7 @@ import sge.swing.*
 import model.logic.*
 import PlayerMovement.*
 import model.behaviours.Character
+import model.logic.MovementStateImpl.initialMovement
 
 class Player(
     width: Double,
@@ -32,3 +33,5 @@ class Player(
   override protected def action: Action = getAction
   override protected def direction: Direction = getDirection
   override protected def getSprint: Double = sprint
+
+  override protected def resetMovement(): Unit = movement = initialMovement

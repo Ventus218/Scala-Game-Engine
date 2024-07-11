@@ -39,18 +39,11 @@ class Enemy(
   override protected def direction: Direction = getDirection
   override protected def getSprint: Double = 0
 
-  def swapVisualRangeDimension() = visualRange.swapDimension()
+  override protected def resetMovement(): Unit = movement = initialMovement
 
-  def updateVisualRangeOffset(): Unit =
-    direction match
-      case TOP =>
-        setVisualRangeOffsetVertical(up)
-      case BOTTOM =>
-        setVisualRangeOffsetVertical(down)
-      case LEFT =>
-        setVisualRangeOffsetHorizzontal(left)
-      case RIGHT =>
-        setVisualRangeOffsetHorizzontal(right)
+  def updateVisualRangeProperties() =
+    swapVisualRangeDimension()
+    updateVisualRangeOffset()
 
   private object Privates:
     def setupVisualRangeProperties() =
@@ -61,6 +54,19 @@ class Enemy(
       getDirection match
         case LEFT | RIGHT => swapVisualRangeDimension()
         case _            =>
+
+    def swapVisualRangeDimension() = visualRange.swapDimension()
+
+    def updateVisualRangeOffset(): Unit =
+      direction match
+        case TOP =>
+          setVisualRangeOffsetVertical(up)
+        case BOTTOM =>
+          setVisualRangeOffsetVertical(down)
+        case LEFT =>
+          setVisualRangeOffsetHorizzontal(left)
+        case RIGHT =>
+          setVisualRangeOffsetHorizzontal(right)
 
     def setVisualRangeOffsetVertical(vector: Vector2D): Unit =
       visualRange.positionOffset = vector * verticalOffset

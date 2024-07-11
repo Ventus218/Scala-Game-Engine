@@ -18,8 +18,7 @@ private trait TurningPattern extends Enemy:
     then
       secondsPassed = 0
       updateState(turnState)
-      swapVisualRangeDimension()
-      updateVisualRangeOffset()
+      updateVisualRangeProperties()
 
 trait TurningLeftPattern(override val nSecondsToRepeat: Double)
     extends Enemy

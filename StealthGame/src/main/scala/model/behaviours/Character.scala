@@ -24,6 +24,10 @@ private abstract class Character(
     with Scalable(scaleWidth, scaleHeight)
     with Velocity:
 
+  override def onInit: Engine => Unit = engine =>
+    super.onInit(engine)
+    resetMovement()
+
   override def onUpdate: Engine => Unit = engine =>
     updateSpeed()
     super.onUpdate(engine)
@@ -40,6 +44,7 @@ private abstract class Character(
       case MOVE   => velocity
       case SPRINT => velocity * getSprint
 
+  protected def resetMovement(): Unit
   protected def direction: Direction
   protected def action: Action
   protected def getSprint: Double
