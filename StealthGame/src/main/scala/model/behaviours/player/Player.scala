@@ -3,14 +3,10 @@ package model.behaviours.player
 import sge.core.*
 import sge.swing.*
 import model.logic.*
+import MovementStateImpl.initialMovement
+import model.behaviours.*
+import PlayerCollisions.*
 import PlayerMovement.*
-import model.behaviours.Character
-import model.logic.MovementStateImpl.initialMovement
-import model.behaviours.VisualRange
-import model.behaviours.enemies.Enemy
-import scenes.LoseGame
-import scenes.LevelOne
-import model.behaviours.Stairs
 
 class Player(
     width: Double,
@@ -41,31 +37,13 @@ class Player(
 
   override def onLateUpdate: Engine => Unit = engine =>
     super.onLateUpdate(engine)
-    val enemies = engine.find[VisualRange]() ++ engine.find[Enemy]()
-    enemies.collectFirst(collider =>
-      if collides(collider)
-      then
-        lifes = lifes - 1
-        updateLifes(engine)
-        if lifes <= 0 then engine.loadScene(LoseGame)
-        else engine.loadScene(currentScene)
-    )
-
-    val stairs = engine.find[Stairs]()
-    stairs.collectFirst(stair =>
-      if (collides(stair)) then
-        lifes = lifes + 1
-        updateLifes(engine)
-        engine.loadScene(nextScene)
-    )
+    collidesWithEnemies(engine, this, currentScene)
+    collidesWithStairs(engine, this, nextScene)
 
   def lifes_=(l: Int) = 
     require(l >= 0)
     _lifes = l
   def lifes = _lifes
-
-  private def updateLifes(engine: Engine) =
-    engine.storage.set("Lifes", lifes)
 
   override protected def action: Action = getAction
   override protected def direction: Direction = getDirection
