@@ -4,5 +4,6 @@ import model.logic.{*, given}
 import model.logic.MovementStateImpl.*
 import model.behaviours.VisualRange
 
-private object EnemyMovement extends MovementActions
-  
+trait EnemyMovement extends MovementActions:
+  def turn(initialDirection: Direction) =
+    updateState(turnTo(initialDirection))

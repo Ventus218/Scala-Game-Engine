@@ -4,7 +4,6 @@ import sge.core.Engine
 import model.logic.{*, given}
 import MovementStateImpl.*
 import model.behaviours.enemies.*
-import EnemyMovement.*
 import sge.core.EngineUtils.deltaTimeSeconds
 
 trait TurnLeftOnCollidePattern extends OnCollidePattern:

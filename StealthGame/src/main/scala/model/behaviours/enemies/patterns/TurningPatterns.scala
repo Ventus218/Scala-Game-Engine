@@ -3,9 +3,8 @@ import sge.core.*
 import model.logic.{*, given}
 import MovementStateImpl.*
 import model.behaviours.enemies.*
-import EnemyMovement.*
 
-private trait TurningPattern extends OnCollidePattern:
+private trait TurningPattern extends Enemy:
   val nSecondsToRepeat: Double
   val turnState: State[Movement, Unit]
 

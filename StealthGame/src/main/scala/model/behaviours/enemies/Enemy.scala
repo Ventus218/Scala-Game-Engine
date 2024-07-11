@@ -5,26 +5,27 @@ import sge.core.*
 import metrics.Vector2D.Versor2D.*
 import sge.swing.*
 import model.logic.*
-import EnemyMovement.*
 import model.behaviours.*
 import model.logic.MovementStateImpl.*
 import scala.compiletime.ops.boolean
 import model.behaviours.CharacterCollisions.collidesWithWalls
+import config.Config.PATROL_SPEED
 
 class Enemy(
     width: Double,
     height: Double,
-    speed: Vector2D,
     imagePath: String,
-    position: Vector2D = (0, 0)
+    initialDirection: Direction,
+    position: Vector2D = (0, 0),
+    speed: Vector2D = (PATROL_SPEED, PATROL_SPEED)
 )(
+    visualRangeSize: Double = height * 2,
     scaleWidth: Double = 1,
-    scaleHeight: Double = 1,
-    visualRangeSize: Double = height * 2
+    scaleHeight: Double = 1
 ) extends Character(width, height, speed, imagePath, position)(
       scaleWidth,
       scaleHeight
-    ):
+    ) with EnemyMovement:
   import Privates.*
   import Direction.*
   import Action.*
@@ -34,6 +35,7 @@ class Enemy(
   override def onInit: Engine => Unit = engine =>
     super.onInit(engine)
     movement = initialMovement
+    turn(initialDirection)
     setupVisualRangeProperties()
     engine.create(visualRange)
 

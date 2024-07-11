@@ -21,9 +21,67 @@ import scenes.behaviours.LifesBehaviour
 import java.awt.Color
 
 object LevelOne extends Scene:
-  override def apply(): Iterable[Behaviour] = Level(this, LevelTwo, (0, SCENE_HEIGHT / 2 - STAIRS_HEIGHT)) ++ Seq(
-    RendererWall(height = 11.5, initialPosition = (-STAIRS_WIDTH, SCENE_HEIGHT / 2 - STAIRS_HEIGHT))(),
-    RendererWall(height = 25, initialPosition = (-30,0))(),
-    RendererWall(width = 20, initialPosition = (10 - STAIRS_WIDTH, SCENE_HEIGHT / 2 - STAIRS_HEIGHT - STAIRS_HEIGHT / 2 - WALL_SIZE))(),
-    RendererWall(width = 50, initialPosition = (-5, 5))()
-  )
+  private val stairsY: Double = SCENE_HEIGHT / 2 - STAIRS_HEIGHT
+  override def apply(): Iterable[Behaviour] =
+    Level(this, LevelTwo, (0, stairsY)) ++ Walls() ++ Enemies()
+
+  private object Walls:
+    val topVerticalWallHeight: Double = 11.5
+    val topVerticalWallPosition: Vector2D =
+      (-STAIRS_WIDTH, SCENE_HEIGHT / 2 - STAIRS_HEIGHT)
+
+    val topHorizzontalWallWidth: Double = 20
+    val topHorizzontalWallX: Double = topHorizzontalWallWidth / 2 - STAIRS_WIDTH
+    val topHorizzontalWallY: Double =
+      stairsY - STAIRS_HEIGHT / 2 - WALL_SIZE
+
+    val centerHorizzontalWallWidth: Double = 50
+    val centerHorizzontalWallPosition: Vector2D = (-5, 5)
+
+    val centerVerticalWallWidth: Double = 32
+    val centerVerticalWallPosition: Vector2D = (-30, -10.25)
+
+    def apply() = Seq(
+      RendererWall(
+        height = topVerticalWallHeight,
+        initialPosition = topVerticalWallPosition
+      )(),
+      RendererWall(
+        height = centerVerticalWallWidth,
+        initialPosition = centerVerticalWallPosition
+      )(),
+      RendererWall(
+        width = topHorizzontalWallWidth,
+        initialPosition = (topHorizzontalWallX, topHorizzontalWallY)
+      )(),
+      RendererWall(
+        width = centerHorizzontalWallWidth,
+        initialPosition = centerHorizzontalWallPosition
+      )()
+    )
+
+  private object Enemies:
+    import Walls.*
+
+    val bottomEnemyX: Double = centerVerticalWallPosition._1 + CHARACTERS_WIDTH
+    val bottomEnemyY: Double = -SCENE_HEIGHT / 2 + CHARACTERS_HEIGHT
+
+    val rightEnemyX: Double = SCENE_WIDTH / 2 - CHARACTERS_WIDTH * 3
+    val rightEnemyY: Double = topHorizzontalWallY - CHARACTERS_WIDTH
+
+    def apply() = Seq(
+      new Enemy(
+        CHARACTERS_WIDTH,
+        CHARACTERS_HEIGHT,
+        "patrol.png",
+        Direction.TOP,
+        (bottomEnemyX, bottomEnemyY)
+      )() with MovingPattern with StopThenTurnRightOnCollidePattern(1),
+      new Enemy(
+        CHARACTERS_WIDTH,
+        CHARACTERS_HEIGHT,
+        "patrol.png",
+        Direction.LEFT,
+        (rightEnemyX, rightEnemyY)
+      )() with TurningLeftPattern(2)
+    )
