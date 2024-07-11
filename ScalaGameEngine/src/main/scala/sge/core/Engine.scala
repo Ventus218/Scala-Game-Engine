@@ -178,6 +178,7 @@ object Engine:
         gameObjectsToAdd = Set.empty
         gameObjectsToRemove = Set.empty
         gameObjectsToEnable = Set.empty
+        gameObjectsToDisable = Set.empty
 
         gameObjects.foreach(_.onInit(this))
 

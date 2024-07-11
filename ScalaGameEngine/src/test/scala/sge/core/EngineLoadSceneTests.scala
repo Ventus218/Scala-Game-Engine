@@ -110,3 +110,15 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
         engine.enable(obj)
         engine.loadSceneTestingOnGameloopEvents(scene2)()
     hasCalledEnabled shouldBe false
+
+  it should "not apply disable on objects from previous scenes" in :
+    var hasCalledDisabled = false
+    val obj = new Behaviour():
+      override def onDisabled: Engine => Unit = e => hasCalledDisabled = true
+    val sceneWithObj: Scene = scene1.joined(() => Seq(obj))
+
+    test(engine) on sceneWithObj runningFor 2 frames so that:
+      _.onStart:
+        engine.disable(obj)
+        engine.loadSceneTestingOnGameloopEvents(scene2)()
+    hasCalledDisabled shouldBe false
