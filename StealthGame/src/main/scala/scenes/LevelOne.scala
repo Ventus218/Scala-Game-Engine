@@ -20,7 +20,12 @@ import scenes.behaviours.LifesBehaviour
 object LevelOne extends Scene:
 
   override def apply(): Iterable[Behaviour] = Seq(
-    Player(width = CHARACTERS_WIDTH, height = CHARACTERS_HEIGHT)(
+    Player(
+      width = CHARACTERS_WIDTH,
+      height = CHARACTERS_HEIGHT,
+      currentScene = this,
+      nextScene = this //TODO change
+    )(
       speed = Vector2D.identity * PLAYER_SPEED,
       sprint = PLAYER_SPRINT
     ),
@@ -29,10 +34,7 @@ object LevelOne extends Scene:
       CHARACTERS_HEIGHT,
       Vector2D.identity * PATROL_SPEED,
       "patrol.png"
-    )() with MovingPattern with TurningLeftPattern(2)
-    ,
-    Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", nextScene = LevelOne, (10, 10))(),
+    )() with MovingPattern with TurningLeftPattern(2),
+    Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", (10, 10))(),
     LifesBehaviour()
   )
-
-  def reset() = ()
