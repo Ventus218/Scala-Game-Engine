@@ -150,8 +150,17 @@ class TrumpTests extends AnyFlatSpec:
     yield (g2)
     newGame.right.get.currentPlayer.info shouldBe p2
 
-  it should "give the field to the turn winner" in:
-    ???
+  it should "give the played cards to the turn winner" in:
+    val game = Trump(deckP1Lucky, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val newGame = (for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+    yield (g2)).right.get
+
+    val acquiredCards = Seq(c1, c2)
+    newGame.currentPlayer.acquiredCards should contain theSameElementsAs acquiredCards
 
   it should "deal new cards at the end of the turn starting from the winner of that turn" in:
     val game = Trump(deckP1Lucky, playersInfo).right.get

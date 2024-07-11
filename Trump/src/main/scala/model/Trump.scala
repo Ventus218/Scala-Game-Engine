@@ -10,7 +10,11 @@ import DeckState.*
 import scala.collection.immutable.ListSet
 
 object Trump:
-  case class Player[PlayerInfo](info: PlayerInfo, hand: Hand)
+  case class Player[PlayerInfo](
+      info: PlayerInfo,
+      hand: Hand,
+      acquiredCards: Set[Card] = Set.empty
+  )
 
   opaque type Game[PlayerInfo] = GameImpl[PlayerInfo]
   private case class GameImpl[PlayerInfo](
@@ -65,6 +69,22 @@ object Trump:
             Right(game.copy(currentPlayer = newPlayer), ())
           case _ =>
             Right(game.copy(nextPlayer = newPlayer), ())
+      )
+
+    def giveFieldPlayer[PI](
+        playerInfo: PI
+    ): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+      EitherState(game =>
+        val player = game.player(playerInfo)
+        val fieldCards = game.field.placedCards.map(_.card)
+        val newPlayer =
+          player.copy(acquiredCards = player.acquiredCards ++ fieldCards)
+
+        game.currentPlayer.info match
+          case newPlayer.`info` =>
+            Right(game.copy(currentPlayer = newPlayer, field = Field()), ())
+          case _ =>
+            Right(game.copy(nextPlayer = newPlayer, field = Field()), ())
       )
 
     def takeCardFromCurrentPlayerHand[PI](
@@ -137,7 +157,7 @@ object Trump:
             for
               turnWinner <- turnWinner[PI]()
               turnLoser <- GameState.otherPlayer(turnWinner)
-              _ <- emptyField()
+              _ <- giveFieldPlayer(turnWinner)
               c1 <- dealFromDeck()
               c2 <- dealFromDeck()
               currentPlayer <- GameState.currentPlayer[PI]()
