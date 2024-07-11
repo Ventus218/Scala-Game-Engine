@@ -54,3 +54,5 @@ class TrumpTests extends AnyFlatSpec:
   it should "have dealt 7 cards (two hands an the trump card) initially" in:
     game.deck.size shouldBe initialDeck.size - 7
 
+  it should "have no card placed on the field initially" in:
+    game.field.size shouldBe 0

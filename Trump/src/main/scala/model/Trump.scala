@@ -4,6 +4,7 @@ import PlayersInfo.*
 import Decks.{given_DeckOps_ShuffledDeck, *}
 import Hand.*
 import Cards.*
+import Field.*
 import statemonad.*
 import DeckState.*
 import scala.collection.immutable.ListSet
@@ -16,7 +17,8 @@ object Trump:
       currentPlayer: Player[PlayerInfo],
       nextPlayer: Player[PlayerInfo],
       deck: ShuffledDeck,
-      trumpCard: Card
+      trumpCard: Card,
+      field: Field[PlayerInfo]
   )
 
   def apply[PlayerInfo](
@@ -48,3 +50,4 @@ object Trump:
       case _                    => nextPlayer
     def deck: ShuffledDeck = game.deck
     def trumpCard: Card = game.trumpCard
+    def field = game.field
