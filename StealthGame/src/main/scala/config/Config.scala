@@ -2,6 +2,7 @@ package config
 import java.awt.Color
 import sge.swing.input.InputButton
 import java.awt.event.KeyEvent.*
+import java.awt.Font
 
 object Config:
   val SCREEN_WIDTH: Int = 1280
@@ -11,14 +12,16 @@ object Config:
   val BUTTON_WIDTH: Double = 30
   val BUTTON_HEIGHT: Double = 5
   val BUTTON_OFFSET: Double = (BUTTON_HEIGHT + 2)
-
+  
   val CHARACTERS_WIDTH: Double = 7
   val CHARACTERS_HEIGHT: Double = 7
-
+  
   val PLAYER_SPEED: Double = 7
   val PLAYER_SPRINT: Double = 2
-
+  
   val PATROL_SPEED: Double = 7
-
+  
   val STAIRS_WIDTH: Double = 7
   val STAIRS_HEIGHT: Double = 7
+  
+  def UITextFontWithSize(size: Int): Font = Font("Arial", Font.BOLD, size)

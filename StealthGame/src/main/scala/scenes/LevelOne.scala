@@ -15,6 +15,7 @@ import enemies.patterns.*
 
 import model.logic.{*, given}
 import MovementStateImpl.*
+import scenes.behaviours.LifesBehaviour
 
 object LevelOne extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
@@ -28,5 +29,6 @@ object LevelOne extends Scene:
       Vector2D.identity * PATROL_SPEED,
       "patrol.png"
     )() with MovingPattern with TurningLeftPattern(2),
-    Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", nextScene = LevelOne, (10, 10))()
+    Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", nextScene = LevelOne, (10, 10))(),
+    LifesBehaviour()
   )
