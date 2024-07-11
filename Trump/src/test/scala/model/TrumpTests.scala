@@ -4,6 +4,8 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Decks.*
 import PlayersInfo.*
+import Field.*
+import Trump.*
 
 class TrumpTests extends AnyFlatSpec:
   given seed: Int = 10
@@ -56,3 +58,24 @@ class TrumpTests extends AnyFlatSpec:
 
   it should "have no card placed on the field initially" in:
     game.field.size shouldBe 0
+
+  it should "allow the current player to place a card on the field" in:
+    val card = game.currentPlayer.hand.cards.head
+
+    val newGame = game.playCard(card).right.get
+    newGame.field.placedCards should contain theSameElementsInOrderAs Seq(
+      PlacedCard(card, game.currentPlayer.info)
+    )
+
+  it should "deny the current player to place a card which is not in his hand" in:
+    val card = game.nextPlayer.hand.cards.head // notice wrong player
+
+    game.playCard(card) shouldBe a[Left[TrumpError.RuleBroken, Game[String]]]
+
+  it should "switch players after one has played its turn" in:
+    val card = game.currentPlayer.hand.cards.head
+    val oldNextPlayer = game.nextPlayer
+
+    val newGame = game.playCard(card).right.get
+    newGame.currentPlayer shouldBe oldNextPlayer
+

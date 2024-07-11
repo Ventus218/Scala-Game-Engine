@@ -51,3 +51,19 @@ object Trump:
     def deck: ShuffledDeck = game.deck
     def trumpCard: Card = game.trumpCard
     def field = game.field
+    def playCard(card: Card): Either[TrumpError, Game[PI]] =
+      currentPlayer.hand.cards.find(_ == card) match
+        case Some(card) =>
+          Right(
+            game.copy(
+              currentPlayer = nextPlayer,
+              nextPlayer = currentPlayer,
+              field = field.place(card, currentPlayer.info)
+            )
+          )
+        case None =>
+          Left(
+            TrumpError.RuleBroken(
+              "Cannot place a card which is not contained in current player's hand"
+            )
+          )
