@@ -5,7 +5,6 @@ import config.Config.*
 
 import model.behaviours.player.Player
 import model.behaviours.*
-import walls.*
 
 import sge.core.*
 import behaviours.dimension2d.{Positionable, Scalable}

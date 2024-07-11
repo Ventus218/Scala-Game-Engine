@@ -12,7 +12,6 @@ import model.behaviours.player.Player
 import model.behaviours.enemies.Enemy
 import model.behaviours.*
 import enemies.patterns.*
-import walls.*
 
 import model.logic.{*, given}
 import MovementStateImpl.*
