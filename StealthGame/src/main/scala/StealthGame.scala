@@ -5,7 +5,7 @@ import scenes.StartingMenu
 import scenes.LoseGame
 
 @main def main =
-  val io = SwingIOg
+  val io = SwingIO
     .withTitle("Stealth Game")
     .withSize(SCREEN_WIDTH, SCREEN_HEIGHT)
     .withPixelsPerUnitRatio(PIXEL_UNIT_RATIO)
