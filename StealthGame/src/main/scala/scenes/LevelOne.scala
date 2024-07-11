@@ -2,7 +2,7 @@ package scenes
 
 import sge.core.*
 import behaviours.dimension2d.{Positionable, Scalable}
-import sge.swing.behaviours.ingame.RectRenderer
+import sge.swing.*
 
 import config.*
 import Difficulty.*
@@ -12,10 +12,13 @@ import model.behaviours.player.Player
 import model.behaviours.enemies.Enemy
 import model.behaviours.*
 import enemies.patterns.*
+import walls.*
 
 import model.logic.{*, given}
 import MovementStateImpl.*
 import scenes.behaviours.LifesBehaviour
+
+import java.awt.Color
 
 object LevelOne extends Scene:
 
@@ -24,7 +27,7 @@ object LevelOne extends Scene:
       width = CHARACTERS_WIDTH,
       height = CHARACTERS_HEIGHT,
       currentScene = this,
-      nextScene = this //TODO change
+      nextScene = this // TODO change
     )(
       speed = Vector2D.identity * PLAYER_SPEED,
       sprint = PLAYER_SPRINT
@@ -36,5 +39,9 @@ object LevelOne extends Scene:
       "patrol.png"
     )() with MovingPattern with TurningLeftPattern(2),
     Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", (10, 10))(),
-    LifesBehaviour()
+    LifesBehaviour(),
+    TopBound(),
+    LeftBound(),
+    RightBound(),
+    BottomBound()
   )

@@ -9,6 +9,9 @@ object Config:
   val SCREEN_HEIGHT: Int = 720
   val PIXEL_UNIT_RATIO: Int = 10
 
+  val SCENE_WIDTH = (SCREEN_WIDTH / PIXEL_UNIT_RATIO)
+  val SCENE_HEIGHT = (SCREEN_HEIGHT / PIXEL_UNIT_RATIO)
+
   val BUTTON_WIDTH: Double = 30
   val BUTTON_HEIGHT: Double = 5
   val BUTTON_OFFSET: Double = (BUTTON_HEIGHT + 2)
