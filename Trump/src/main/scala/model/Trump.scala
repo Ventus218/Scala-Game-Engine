@@ -94,11 +94,25 @@ object Trump:
         : EitherState[Game[PI], Game[PI], Player[PI], TrumpError] =
       EitherState(game => Right(game, game.nextPlayer))
 
+    def player[PI](
+        playerInfo: PI
+    ): EitherState[Game[PI], Game[PI], Player[PI], TrumpError] =
+      EitherState(game => Right(game, game.player(playerInfo)))
+    def otherPlayer[PI](
+        playerInfo: PI
+    ): EitherState[Game[PI], Game[PI], Player[PI], TrumpError] =
+      EitherState(game => Right(game, game.otherPlayer(playerInfo)))
+
     def swapPlayers[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
       EitherState(game => Right(game.swappedPlayers, ()))
 
     def emptyField[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
       EitherState(game => Right(game.copy(field = Field()), ()))
+
+    def turnWinner[PI](): EitherState[Game[PI], Game[PI], PI, TrumpError] =
+      EitherState(game =>
+        TurnWinLogic.turnWinner(game.field, game.trumpCard.suit).map((game, _))
+      )
 
   import GameState.*
   extension [PI](game: Game[PI])
@@ -107,6 +121,9 @@ object Trump:
     def player(info: PI): Player[PI] = info match
       case currentPlayer.`info` => currentPlayer
       case _                    => nextPlayer
+    def otherPlayer(info: PI): Player[PI] = info match
+      case currentPlayer.`info` => nextPlayer
+      case _                    => currentPlayer
     def deck: ShuffledDeck = game.deck
     def trumpCard: Card = game.trumpCard
     def field = game.field
@@ -115,18 +132,22 @@ object Trump:
         card <- takeCardFromCurrentPlayerHand(card)
         field <- placeCardOnField(card, currentPlayer.info)
         _ <-
-          if field.placedCards.size != 2 then nop()
+          if field.placedCards.size != 2 then swapPlayers()
           else
             for
+              turnWinner <- turnWinner[PI]()
+              turnLoser <- GameState.otherPlayer(turnWinner)
               _ <- emptyField()
               c1 <- dealFromDeck()
               c2 <- dealFromDeck()
               currentPlayer <- GameState.currentPlayer[PI]()
               nextPlayer <- GameState.nextPlayer[PI]()
-              _ <- giveCardToPlayer(c1, currentPlayer.info)
-              _ <- giveCardToPlayer(c2, nextPlayer.info)
+              _ <- giveCardToPlayer(c1, turnWinner)
+              _ <- giveCardToPlayer(c2, turnLoser.info)
+              _ <-
+                if turnWinner == currentPlayer.info then nop()
+                else swapPlayers()
             yield ()
-        _ <- swapPlayers()
       yield ()).run(game).map((game, _) => game)
 
     private def swappedPlayers: Game[PI] =

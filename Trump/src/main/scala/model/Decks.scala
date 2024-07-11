@@ -41,3 +41,7 @@ object Decks:
   object ShuffledDeck:
     def apply[D: DeckOps](deck: D)(using seed: Int): ShuffledDeck =
       Random(seed).shuffle(deck.cards)
+
+    /** Just for testing purposes */
+    private[model] def makeShuffledDeck(cards: Card*): ShuffledDeck =
+      ListSet(cards*)

@@ -3,6 +3,7 @@ package model
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.*
 import Decks.*
+import Cards.*
 import PlayersInfo.*
 import Field.*
 import Trump.*
@@ -24,6 +25,12 @@ class TrumpTests extends AnyFlatSpec:
 
   "Game" should "let players play in the correct order" in:
     game.currentPlayer.info shouldBe playersInfo.player1
+
+  it should "return the correct player" in:
+    game.player(p1) shouldBe game.currentPlayer
+
+  it should "return the correct otherPlayer" in:
+    game.otherPlayer(p1) shouldBe game.nextPlayer
 
   it should "give three cards to each player hand initially" in:
     game.player(p1).hand.size shouldBe 3
@@ -74,13 +81,6 @@ class TrumpTests extends AnyFlatSpec:
 
     game.playCard(card) shouldBe a[Left[TrumpError.RuleBroken, Game[String]]]
 
-  it should "swap players after one has played its turn" in:
-    val card = game.currentPlayer.hand.cards.head
-    val oldNextPlayer = game.nextPlayer.info
-
-    val newGame = game.playCard(card).right.get
-    newGame.currentPlayer.info shouldBe oldNextPlayer
-
   it should "empty the field after the second player has played his turn" in:
     val c1 = game.currentPlayer.hand.cards.head
     val c2 = game.nextPlayer.hand.cards.head
@@ -100,3 +100,70 @@ class TrumpTests extends AnyFlatSpec:
     newGame.right.get.currentPlayer.hand.size shouldBe 3
     newGame.right.get.nextPlayer.hand.size shouldBe 3
 
+  val trumpCard = Card(Cups, Two)
+  val winningCards = Seq(Card(Cups, King), Card(Cups, Three), Card(Cups, Ace))
+  val losingCards = Seq(Card(Clubs, Two), Card(Clubs, Four), Card(Clubs, Five))
+  // whatever p1 will play it will win
+  val deckP1Lucky = ShuffledDeck.makeShuffledDeck(
+    winningCards(0),
+    losingCards(0),
+    winningCards(1),
+    losingCards(1),
+    winningCards(2),
+    losingCards(2),
+    trumpCard,
+    Card(Coins, Ace),
+    Card(Coins, Two),
+    Card(Coins, Three)
+  )
+  // whatever p2 will play it will win
+  val deckP2Lucky = ShuffledDeck.makeShuffledDeck(
+    losingCards(0),
+    winningCards(0),
+    losingCards(1),
+    winningCards(1),
+    losingCards(2),
+    winningCards(2),
+    trumpCard,
+    Card(Coins, Ace),
+    Card(Coins, Two),
+    Card(Coins, Three)
+  )
+
+  it should "not swap player turns if the first player won the turn" in:
+    val game = Trump(deckP1Lucky, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val newGame = for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+    yield (g2)
+    newGame.right.get.currentPlayer.info shouldBe p1
+
+  it should "swap player turns if the second player won the turn" in:
+    val game = Trump(deckP2Lucky, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val newGame = for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+    yield (g2)
+    newGame.right.get.currentPlayer.info shouldBe p2
+
+  it should "give the field to the turn winner" in:
+    ???
+
+  it should "deal new cards at the end of the turn starting from the winner of that turn" in:
+    val game = Trump(deckP1Lucky, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val cardToWinner = game.deck.cards.head
+    val cardToLoser = game.deck.cards.drop(1).head
+    val newGame = for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+    yield (g2)
+    newGame.right.get.currentPlayer.hand.cards
+      .exists(_ == cardToWinner) shouldBe true
+    newGame.right.get.nextPlayer.hand.cards
+      .exists(_ == cardToLoser) shouldBe true
