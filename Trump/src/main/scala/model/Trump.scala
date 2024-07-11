@@ -33,9 +33,12 @@ object Trump:
       trumpCard
     )
 
-    prepareGame
-      .run(deck)
-      .map((deck, config) => GameImpl(config._1, config._2, deck, config._3))
+    for
+      (deck, config) <- prepareGame.run(deck)
+      _ <- deck.deal // Ensure deck has at least one card (not modifying deck)
+    yield (
+      GameImpl(config._1, config._2, deck, config._3, Field())
+    )
 
   extension [PI](game: Game[PI])
     def currentPlayer: Player[PI] = game.currentPlayer
