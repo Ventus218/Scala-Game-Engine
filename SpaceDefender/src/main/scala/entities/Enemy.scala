@@ -18,7 +18,7 @@ trait Enemy extends Behaviour
     super.onDeath()
     GameManager.addScore(score)
 
-object Enemies:
+object Enemy:
 
   val enemySize: Double = 1
 
@@ -26,7 +26,7 @@ object Enemies:
   val dropperSpeed: Double = 4
   val dropperScore: Int    = 10
 
-  val rangerHealth: Int = 3
-  val rangerScore: Int  = 15
+  val rangerHealth: Int = 5
+  val rangerScore: Int  = 20
   
   

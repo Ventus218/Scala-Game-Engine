@@ -5,13 +5,13 @@ import behaviours.*
 import physics2d.*
 import dimension2d.*
 import sge.swing.behaviours.ingame.SquareRenderer
-import Enemies.*
+import Enemy.*
 
 import scala.concurrent.duration.*
 import util.*
 import Timer.*
 import entities.EntityStateMachine.*
-import managers.GameConstants
+import managers.{GameConstants, GameManager}
 
 import java.awt.Color
 import scala.util.Random
@@ -23,7 +23,7 @@ object Dropper:
     *   the starting position 
     * @return
     */
-  def apply(position: Vector2D): Enemy = DropperImpl(position)
+  def apply(position: Vector2D = GameManager.rearEnemyRandomPosition()): Enemy = DropperImpl(position)
   
   private enum DropperState:
     case Moving(speed: Double)

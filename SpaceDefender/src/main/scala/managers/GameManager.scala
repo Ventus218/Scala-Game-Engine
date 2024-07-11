@@ -53,7 +53,7 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
 
     case HideMissionText =>
       engine.destroy(missionText)
-      engine.create(Ranger(0, 3))
+      engine.create(EnemySpawner())
       GameStart.forever
 
     case PlayerDestroyed =>
@@ -107,13 +107,22 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
       (arenaRightBorder, playerTopBorder)
     )
 
-  /** Get a random position inside the enemy spawning space
+  /** Get a random position inside the enemy spawning frontal space
     * @return
-    *   the position
+    *   the frontal position
     */
-  def enemyRandomPosition(): Vector2D = (
+  def frontalEnemyRandomPosition(): Vector2D = (
     Random.between(arenaLeftBorder, arenaRightBorder),
     Random.between(0, arenaTopBorder)
+  )
+
+  /** Get a random position inside the enemy spawning rear space
+    * @return
+    *   the position in the rear
+    */
+  def rearEnemyRandomPosition(): Vector2D = (
+    Random.between(arenaLeftBorder, arenaRightBorder),
+    arenaTopBorder
   )
 
   /** Get the enemies references. It is updated at every early update.

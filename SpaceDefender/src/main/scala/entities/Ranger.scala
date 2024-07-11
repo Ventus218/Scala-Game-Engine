@@ -5,7 +5,7 @@ import behaviours.*
 import physics2d.*
 import dimension2d.*
 import sge.swing.behaviours.ingame.CircleRenderer
-import Enemies.*
+import Enemy.*
 
 import scala.concurrent.duration.*
 import util.*
@@ -23,7 +23,7 @@ object Ranger:
     *   the starting position
     * @return
     */
-  def apply(position: Vector2D): Enemy = RangerImpl(position)
+  def apply(position: Vector2D = GameManager.frontalEnemyRandomPosition()): Enemy = RangerImpl(position)
 
   extension (v: Vector2D)
     def magnitude: Double = Math.sqrt(v.x*v.x + v.y*v.y)
@@ -40,7 +40,7 @@ object Ranger:
     extends EntityStateMachine[RangerState](
       startingPosition = pos,
       entityHealth = rangerHealth,
-      startingState = Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
+      startingState = Moving(GameManager.frontalEnemyRandomPosition(), 2) forAbout 800.millis
     )
     with Enemy
     with CircleRenderer(enemySize/2, Color.red)
@@ -53,13 +53,13 @@ object Ranger:
         WaitingToShoot() forAbout 1.second
 
       case Moving(_, step) =>
-        Moving(GameManager.enemyRandomPosition(), step - 1) forAbout 800.millis
+        Moving(GameManager.frontalEnemyRandomPosition(), step - 1) forAbout 800.millis
 
       case WaitingToShoot() =>
         Shooting(3, GameManager.player.map(_.position)).immediately
 
       case Shooting(0, _) =>
-        Moving(GameManager.enemyRandomPosition(), 2) forAbout 800.millis
+        Moving(GameManager.frontalEnemyRandomPosition(), 2) forAbout 800.millis
 
       case Shooting(n, target) =>
         fireBullet(engine, target)

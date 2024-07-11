@@ -12,7 +12,7 @@ object GameConstants:
   
   val arenaRightBorder:  Double = arenaWidth / 2 - 1
   val arenaLeftBorder:   Double = -arenaRightBorder
-  val arenaTopBorder:    Double = arenaHeight / 2 - 1
+  val arenaTopBorder:    Double = arenaHeight / 2 - 2
   val arenaBottomBorder: Double = - arenaHeight / 2 + 1
   val playerTopBorder:   Double = -1
   
