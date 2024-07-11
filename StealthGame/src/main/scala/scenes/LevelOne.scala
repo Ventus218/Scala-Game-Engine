@@ -37,7 +37,7 @@ object LevelOne extends Scene:
       CHARACTERS_HEIGHT,
       Vector2D.identity * PATROL_SPEED,
       "patrol.png"
-    )() with MovingPattern with TurningLeftPattern(2) with TurnLeftOnCollidePattern,
+    )() with MovingPattern with TurningLeftPattern(2) with StopThenTurnLeftOnCollidePattern(2),
     Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", (10, 10))(),
     LifesBehaviour(),
     TopBound(),
