@@ -8,6 +8,7 @@ import Field.*
 import statemonad.*
 import DeckState.*
 import scala.collection.immutable.ListSet
+import TrumpError.*
 
 object Trump:
   case class Player[PlayerInfo](
@@ -21,7 +22,8 @@ object Trump:
       currentPlayer: Player[PlayerInfo],
       nextPlayer: Player[PlayerInfo],
       deck: ShuffledDeck,
-      trumpCard: Card,
+      trumpCard: Option[Card],
+      trumpSuit: Suit,
       field: Field[PlayerInfo]
   )
 
@@ -43,17 +45,35 @@ object Trump:
       (deck, config) <- prepareGame.run(deck)
       _ <- deck.deal // Ensure deck has at least one card (not modifying deck)
     yield (
-      GameImpl(config._1, config._2, deck, config._3, Field())
+      GameImpl(
+        config._1,
+        config._2,
+        deck,
+        Some(config._3),
+        config._3.suit,
+        Field()
+      )
     )
 
   private object GameState:
     def nop[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
       EitherState(game => Right(game, ()))
 
+    def deck[PI](): EitherState[Game[PI], Game[PI], ShuffledDeck, TrumpError] =
+      EitherState(game => Right(game, game.deck))
+
     def dealFromDeck[PI](): EitherState[Game[PI], Game[PI], Card, TrumpError] =
       EitherState(game =>
         for (deck, card) <- game.deck.deal
         yield (game.copy(deck = deck), card)
+      )
+
+    def dealTrumpCard[PI](): EitherState[Game[PI], Game[PI], Card, TrumpError] =
+      EitherState(game =>
+        game.trumpCard match
+          case Some(trumpCard) => Right(game.copy(trumpCard = None), trumpCard)
+          case None =>
+            Left(BadGameState("Impossible to deal trump card as it is missing"))
       )
 
     def giveCardToPlayer[PI](
@@ -131,7 +151,7 @@ object Trump:
 
     def turnWinner[PI](): EitherState[Game[PI], Game[PI], PI, TrumpError] =
       EitherState(game =>
-        TurnWinLogic.turnWinner(game.field, game.trumpCard.suit).map((game, _))
+        TurnWinLogic.turnWinner(game.field, game.trumpSuit).map((game, _))
       )
 
   import GameState.*
@@ -145,7 +165,8 @@ object Trump:
       case currentPlayer.`info` => nextPlayer
       case _                    => currentPlayer
     def deck: ShuffledDeck = game.deck
-    def trumpCard: Card = game.trumpCard
+    def trumpCard: Option[Card] = game.trumpCard
+    def trumpSuit: Suit = game.trumpSuit
     def field = game.field
     def playCard(card: Card): Either[TrumpError, Game[PI]] =
       (for
@@ -158,12 +179,20 @@ object Trump:
               turnWinner <- turnWinner[PI]()
               turnLoser <- GameState.otherPlayer(turnWinner)
               _ <- giveFieldPlayer(turnWinner)
-              c1 <- dealFromDeck()
-              c2 <- dealFromDeck()
-              currentPlayer <- GameState.currentPlayer[PI]()
-              nextPlayer <- GameState.nextPlayer[PI]()
-              _ <- giveCardToPlayer(c1, turnWinner)
-              _ <- giveCardToPlayer(c2, turnLoser.info)
+              deck <- GameState.deck()
+              _ <-
+                if deck.size > 0 then
+                  for
+                    c1 <- dealFromDeck()
+                    deck <- GameState.deck()
+                    c2 <-
+                      if deck.size != 0 then dealFromDeck() else dealTrumpCard()
+                    currentPlayer <- GameState.currentPlayer[PI]()
+                    nextPlayer <- GameState.nextPlayer[PI]()
+                    _ <- giveCardToPlayer(c1, turnWinner)
+                    _ <- giveCardToPlayer(c2, turnLoser.info)
+                  yield ()
+                else nop()
               _ <-
                 if turnWinner == currentPlayer.info then nop()
                 else swapPlayers()

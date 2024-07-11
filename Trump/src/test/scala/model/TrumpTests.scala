@@ -58,7 +58,7 @@ class TrumpTests extends AnyFlatSpec:
     )
 
   it should "deal a trump card after dealing player hands" in:
-    game.trumpCard shouldBe initialDeck.cards.toSeq(6)
+    game.trumpCard shouldBe Some(initialDeck.cards.toSeq(6))
 
   it should "have dealt 7 cards (two hands an the trump card) initially" in:
     game.deck.size shouldBe initialDeck.size - 7
@@ -112,9 +112,7 @@ class TrumpTests extends AnyFlatSpec:
     winningCards(2),
     losingCards(2),
     trumpCard,
-    Card(Coins, Ace),
-    Card(Coins, Two),
-    Card(Coins, Three)
+    Card(Coins, Ace)
   )
   // whatever p2 will play it will win
   val deckP2Lucky = ShuffledDeck.makeShuffledDeck(
@@ -125,9 +123,7 @@ class TrumpTests extends AnyFlatSpec:
     losingCards(2),
     winningCards(2),
     trumpCard,
-    Card(Coins, Ace),
-    Card(Coins, Two),
-    Card(Coins, Three)
+    Card(Coins, Ace)
   )
 
   it should "not swap player turns if the first player won the turn" in:
@@ -167,7 +163,22 @@ class TrumpTests extends AnyFlatSpec:
     val c1 = game.currentPlayer.hand.cards.head
     val c2 = game.nextPlayer.hand.cards.head
     val cardToWinner = game.deck.cards.head
-    val cardToLoser = game.deck.cards.drop(1).head
+    val cardToLoser = game.trumpCard.get
+    val newGame = for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+    yield (g2)
+    newGame.right.get.currentPlayer.hand.cards
+      .exists(_ == cardToWinner) shouldBe true
+    newGame.right.get.nextPlayer.hand.cards
+      .exists(_ == cardToLoser) shouldBe true
+
+  it should "deal the trumpCard when there are no more cards in the deck" in:
+    val game = Trump(deckP1Lucky, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val cardToWinner = game.deck.cards.head
+    val cardToLoser = game.trumpCard.get
     val newGame = for
       g1 <- game.playCard(c1)
       g2 <- g1.playCard(c2)
