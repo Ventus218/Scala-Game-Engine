@@ -3,7 +3,7 @@ package model
 import Field.*
 import Cards.*
 
-object TurnWinLogic:
+private[model] object TurnWinLogic:
   def turnWinner[PlayerInfo](
       field: Field[PlayerInfo],
       trump: Suit
