@@ -176,6 +176,8 @@ object Engine:
         gameObjects = sceneToLoad.get()
         sceneToLoad = Option.empty
         gameObjectsToAdd = Set.empty
+        gameObjectsToRemove = Set.empty
+        gameObjectsToEnable = Set.empty
 
         gameObjects.foreach(_.onInit(this))
 

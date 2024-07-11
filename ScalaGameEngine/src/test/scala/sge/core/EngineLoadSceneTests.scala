@@ -85,7 +85,9 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
             engine.find[GameObjectMock]() shouldBe empty
 
   it should "not apply destroy on objects from previous scenes" in:
-    val obj = GameObjectMock()
+    var calledDeinitCount = 0
+    val obj = new Behaviour():
+      override def onDeinit: Engine => Unit = e => calledDeinitCount += 1
     val sceneWithObj: Scene = scene1.joined(() => Seq(obj))
 
     test(engine) on sceneWithObj runningFor 2 frames so that:
@@ -94,3 +96,17 @@ class EngineLoadSceneTests extends AnyFlatSpec with BeforeAndAfterEach:
         engine.loadSceneTestingOnGameloopEvents(scene2):
           _.onDeinit:
             engine.find[GameObjectMock]() shouldBe empty
+            calledDeinitCount shouldBe 1
+
+  it should "not apply enable on objects from previous scenes" in :
+    var hasCalledEnabled = false
+    val obj = new Behaviour(false):
+      override def onEnabled: Engine => Unit = e => hasCalledEnabled = true
+
+    val sceneWithObj: Scene = scene1.joined(() => Seq(obj))
+
+    test(engine) on sceneWithObj runningFor 2 frames so that :
+      _.onStart:
+        engine.enable(obj)
+        engine.loadSceneTestingOnGameloopEvents(scene2)()
+    hasCalledEnabled shouldBe false
