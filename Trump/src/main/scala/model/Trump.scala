@@ -174,6 +174,22 @@ object Trump:
         TurnWinLogic.turnWinner(game.field, game.trumpSuit).map((game, _))
       )
 
+    def computeResult[PI]()
+        : EitherState[Game[PI], Game[PI], Option[TrumpResult], TrumpError] =
+      for
+        currentP <- GameState.currentPlayer[PI]()
+        nextP <- GameState.nextPlayer[PI]()
+        currentPlayerPoints = currentP.acquiredCards.map(_.rank.value).sum
+        nextPlayerPoints = nextP.acquiredCards.map(_.rank.value).sum
+      yield
+        if currentP.hand.size == 0 then
+          currentPlayerPoints match
+            case p if p == nextPlayerPoints => Some(TrumpResult.Draw)
+            case p if p > nextPlayerPoints =>
+              Some(TrumpResult.Win(currentP.info))
+            case _ => Some(TrumpResult.Win(nextP.info))
+        else None
+
   import GameState.*
   extension [PI](game: Game[PI])
     def currentPlayer: Player[PI] = game.currentPlayer
@@ -209,8 +225,6 @@ object Trump:
                     deck <- GameState.deck()
                     c2 <-
                       if deck.size != 0 then dealFromDeck() else dealTrumpCard()
-                    currentPlayer <- GameState.currentPlayer[PI]()
-                    nextPlayer <- GameState.nextPlayer[PI]()
                     _ <- giveCardToPlayer(c1, turnWinner)
                     _ <- giveCardToPlayer(c2, turnLoser.info)
                   yield ()
@@ -219,18 +233,7 @@ object Trump:
                 if turnWinner == currentPlayer.info then nop()
                 else swapPlayers()
             yield ()
-        currentPlayer <- GameState.currentPlayer[PI]()
-        nextPlayer <- GameState.nextPlayer[PI]()
-        currentPlayerPoints = currentPlayer.acquiredCards.map(_.rank.value).sum
-        nextPlayerPoints = nextPlayer.acquiredCards.map(_.rank.value).sum
-        result =
-          if currentPlayer.hand.size == 0 then
-            currentPlayerPoints match
-              case p if p == nextPlayerPoints => Some(TrumpResult.Draw)
-              case p if p > nextPlayerPoints =>
-                Some(TrumpResult.Win(currentPlayer.info))
-              case _ => Some(TrumpResult.Win(nextPlayer.info))
-          else None
+        result <- computeResult()
       yield (result)).run(game).map((game, result) => (game, result))
 
     private def swappedPlayers: Game[PI] =
