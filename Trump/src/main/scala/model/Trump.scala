@@ -168,7 +168,9 @@ object Trump:
     def trumpCard: Option[Card] = game.trumpCard
     def trumpSuit: Suit = game.trumpSuit
     def field = game.field
-    def playCard(card: Card): Either[TrumpError, Game[PI]] =
+    def playCard(
+        card: Card
+    ): Either[TrumpError, (Game[PI], Option[TrumpResult])] =
       (for
         card <- takeCardFromCurrentPlayerHand(card)
         field <- placeCardOnField(card, currentPlayer.info)
@@ -197,7 +199,7 @@ object Trump:
                 if turnWinner == currentPlayer.info then nop()
                 else swapPlayers()
             yield ()
-      yield ()).run(game).map((game, _) => game)
+      yield ()).run(game).map((game, _) => (game, None))
 
     private def swappedPlayers: Game[PI] =
       game.copy(currentPlayer = nextPlayer, nextPlayer = currentPlayer)

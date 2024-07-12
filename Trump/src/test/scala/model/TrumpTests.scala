@@ -70,7 +70,7 @@ class TrumpTests extends AnyFlatSpec:
     val player = game.currentPlayer
     val card = player.hand.cards.head
 
-    val newGame = game.playCard(card).right.get
+    val newGame = game.playCard(card).right.get._1
     newGame.field.placedCards should contain theSameElementsInOrderAs Seq(
       PlacedCard(card, game.currentPlayer.info)
     )
@@ -84,21 +84,21 @@ class TrumpTests extends AnyFlatSpec:
   it should "empty the field after the second player has played his turn" in:
     val c1 = game.currentPlayer.hand.cards.head
     val c2 = game.nextPlayer.hand.cards.head
-    val newGame = for
+    val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-    yield (g2)
-    newGame.right.get.field.placedCards should contain theSameElementsAs Seq()
+      g2 <- g1._1.playCard(c2)
+    yield (g2)).right.get._1
+    newGame.field.placedCards should contain theSameElementsAs Seq()
 
   it should "deal one card to each player after the end of a turn" in:
     val c1 = game.currentPlayer.hand.cards.head
     val c2 = game.nextPlayer.hand.cards.head
-    val newGame = for
+    val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-    yield (g2)
-    newGame.right.get.currentPlayer.hand.size shouldBe 3
-    newGame.right.get.nextPlayer.hand.size shouldBe 3
+      g2 <- g1._1.playCard(c2)
+    yield (g2)).right.get._1
+    newGame.currentPlayer.hand.size shouldBe 3
+    newGame.nextPlayer.hand.size shouldBe 3
 
   val trumpCard = Card(Cups, Two)
   val winningCards = Seq(Card(Cups, King), Card(Cups, Three), Card(Cups, Ace))
@@ -130,21 +130,21 @@ class TrumpTests extends AnyFlatSpec:
     val game = Trump(deckP1Lucky, playersInfo).right.get
     val c1 = game.currentPlayer.hand.cards.head
     val c2 = game.nextPlayer.hand.cards.head
-    val newGame = for
+    val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-    yield (g2)
-    newGame.right.get.currentPlayer.info shouldBe p1
+      g2 <- g1._1.playCard(c2)
+    yield (g2)).right.get._1
+    newGame.currentPlayer.info shouldBe p1
 
   it should "swap player turns if the second player won the turn" in:
     val game = Trump(deckP2Lucky, playersInfo).right.get
     val c1 = game.currentPlayer.hand.cards.head
     val c2 = game.nextPlayer.hand.cards.head
-    val newGame = for
+    val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-    yield (g2)
-    newGame.right.get.currentPlayer.info shouldBe p2
+      g2 <- g1._1.playCard(c2)
+    yield (g2)).right.get._1
+    newGame.currentPlayer.info shouldBe p2
 
   it should "give the played cards to the turn winner" in:
     val game = Trump(deckP1Lucky, playersInfo).right.get
@@ -152,8 +152,8 @@ class TrumpTests extends AnyFlatSpec:
     val c2 = game.nextPlayer.hand.cards.head
     val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-    yield (g2)).right.get
+      g2 <- g1._1.playCard(c2)
+    yield (g2)).right.get._1
 
     val acquiredCards = Seq(c1, c2)
     newGame.currentPlayer.acquiredCards should contain theSameElementsAs acquiredCards
@@ -164,14 +164,12 @@ class TrumpTests extends AnyFlatSpec:
     val c2 = game.nextPlayer.hand.cards.head
     val cardToWinner = game.deck.cards.head
     val cardToLoser = game.trumpCard.get
-    val newGame = for
+    val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-    yield (g2)
-    newGame.right.get.currentPlayer.hand.cards
-      .exists(_ == cardToWinner) shouldBe true
-    newGame.right.get.nextPlayer.hand.cards
-      .exists(_ == cardToLoser) shouldBe true
+      g2 <- g1._1.playCard(c2)
+    yield (g2)).right.get._1
+    newGame.currentPlayer.hand.cards.exists(_ == cardToWinner) shouldBe true
+    newGame.nextPlayer.hand.cards.exists(_ == cardToLoser) shouldBe true
 
   it should "deal the trumpCard when there are no more cards in the deck" in:
     val game = Trump(deckP1Lucky, playersInfo).right.get
@@ -179,14 +177,12 @@ class TrumpTests extends AnyFlatSpec:
     val c2 = game.nextPlayer.hand.cards.head
     val cardToWinner = game.deck.cards.head
     val cardToLoser = game.trumpCard.get
-    val newGame = for
+    val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-    yield (g2)
-    newGame.right.get.currentPlayer.hand.cards
-      .exists(_ == cardToWinner) shouldBe true
-    newGame.right.get.nextPlayer.hand.cards
-      .exists(_ == cardToLoser) shouldBe true
+      g2 <- g1._1.playCard(c2)
+    yield (g2)).right.get._1
+    newGame.currentPlayer.hand.cards.exists(_ == cardToWinner) shouldBe true
+    newGame.nextPlayer.hand.cards.exists(_ == cardToLoser) shouldBe true
 
   it should "stop dealing cards when the deck is finished and the trumpCard was given" in:
     val game = Trump(deckP1Lucky, playersInfo).right.get
@@ -194,11 +190,35 @@ class TrumpTests extends AnyFlatSpec:
     val c2 = game.nextPlayer.hand.cards.head
     val c3 = game.currentPlayer.hand.cards.drop(1).head
     val c4 = game.nextPlayer.hand.cards.drop(1).head
-    val newGame = for
+    val newGame = (for
       g1 <- game.playCard(c1)
-      g2 <- g1.playCard(c2)
-      g3 <- g2.playCard(c3)
-      g4 <- g3.playCard(c4)
-    yield (g4)
-    newGame.right.get.currentPlayer.hand.cards.size shouldBe 2
-    newGame.right.get.nextPlayer.hand.cards.size shouldBe 2
+      g2 <- g1._1.playCard(c2)
+      g3 <- g2._1.playCard(c3)
+      g4 <- g3._1.playCard(c4)
+    yield (g4)).right.get._1
+    newGame.currentPlayer.hand.cards.size shouldBe 2
+    newGame.nextPlayer.hand.cards.size shouldBe 2
+
+  import TrumpResult.*
+  it should "give a winner when the game is finished if one of the two players have higher points than the other" in:
+    val game = Trump(deckP1Lucky, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val c3 = game.currentPlayer.hand.cards.drop(1).head
+    val c4 = game.nextPlayer.hand.cards.drop(1).head
+    val c5 = game.currentPlayer.hand.cards.drop(2).head
+    val c6 = game.nextPlayer.hand.cards.drop(2).head
+    val c7 = game.currentPlayer.hand.cards.drop(3).head
+    val c8 = game.nextPlayer.hand.cards.drop(3).head
+    val newGame = (for
+      g1 <- game.playCard(c1)
+      g2 <- g1._1.playCard(c2)
+      g3 <- g2._1.playCard(c3)
+      g4 <- g3._1.playCard(c4)
+      g5 <- g4._1.playCard(c4)
+      g6 <- g5._1.playCard(c4)
+      g7 <- g6._1.playCard(c4)
+      g8 <- g7._1.playCard(c4)
+    yield (g4)).right.get._1
+
+    newGame shouldBe Some(Win(p1))
