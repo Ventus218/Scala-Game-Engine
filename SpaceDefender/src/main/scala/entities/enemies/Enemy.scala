@@ -39,7 +39,7 @@ object Enemy:
   val turretSpeed: Double = 15
   val turretScore: Int = 50
 
-  val beaconHealth: Int    = 20
+  val beaconHealth: Int    = 10
   val beaconSpeed:  Double = 1
   val beaconScore:  Int    = 100
   def beaconMovingTime: FiniteDuration = Random.between(2.5, 4d).seconds
