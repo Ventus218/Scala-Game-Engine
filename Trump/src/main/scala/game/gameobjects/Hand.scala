@@ -8,12 +8,13 @@ import sge.core.behaviours.dimension2d.*
 class Hand(
     val player: String,
     position: Vector2D = (0, 0),
-    val spacing: Double = 0
+    val spacing: Double = 0,
+    val show: Boolean
 ) extends Behaviour
     with Positionable(position):
 
   val leftCard: CardImage = new Behaviour
-    with CardImage(_card = Option.empty, _show = false)
+    with CardImage(_card = Option.empty, _show = show)
     with Positionable
     with PositionFollower(
       this,
@@ -25,7 +26,7 @@ class Hand(
     )
 
   val centerCard: CardImage = new Behaviour
-    with CardImage(_card = Option.empty, _show = false)
+    with CardImage(_card = Option.empty, _show = show)
     with Positionable
     with PositionFollower(this)
     with ChangeableImageRenderer(
@@ -34,7 +35,7 @@ class Hand(
     )
 
   val rightCard: CardImage = new Behaviour
-    with CardImage(_card = Option.empty, _show = false)
+    with CardImage(_card = Option.empty, _show = show)
     with Positionable
     with PositionFollower(
       this,
@@ -53,13 +54,14 @@ class Hand(
     super.onInit(engine)
 
   override def onUpdate: Engine => Unit = engine =>
-    val newLeftCard = engine.gameModel.player(player).hand.cards.headOption
+    val playerHand = engine.gameModel.player(player).hand.cards
+    val newLeftCard = playerHand.headOption
     if leftCard.card != newLeftCard then leftCard.card = newLeftCard
 
-    val newCenterCard = engine.gameModel.player(player).hand.cards.headOption
+    val newCenterCard = playerHand.drop(1).headOption
     if centerCard.card != newCenterCard then centerCard.card = newCenterCard
 
-    val newRightCard = engine.gameModel.player(player).hand.cards.headOption
+    val newRightCard = playerHand.drop(2).headOption
     if rightCard.card != newRightCard then rightCard.card = newRightCard
 
     super.onUpdate(engine)
