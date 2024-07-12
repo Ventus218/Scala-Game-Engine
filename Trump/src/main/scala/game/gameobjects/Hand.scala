@@ -25,10 +25,10 @@ class Hand(
   )
 
   private def onCardClicked(engine: Engine, card: Card): Unit =
-    println(card)
-    engine.gameModel.playCard(card) match
-      case Right(newGame) => engine.gameModel = newGame._1
-      case Left(value)    => throw Exception(value.message)
+    if engine.gameModel.currentPlayer.info == player then
+      engine.gameModel.playCard(card) match
+        case Right(newGame) => engine.gameModel = newGame._1
+        case Left(value)    => throw Exception(value.message)
 
   override def onInit: Engine => Unit = engine =>
     engine.create(leftCard)
