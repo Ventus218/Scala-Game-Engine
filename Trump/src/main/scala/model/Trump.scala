@@ -27,35 +27,58 @@ object Trump:
       field: Field[PlayerInfo]
   )
 
+  private case class GameInitData[PlayerInfo](
+      deck: ShuffledDeck,
+      playersInfo: PlayersInfo[PlayerInfo]
+  )
+
   def apply[PlayerInfo](
       deck: ShuffledDeck,
       playersInfo: PlayersInfo[PlayerInfo]
   ): Either[TrumpError, Game[PlayerInfo]] =
-    val prepareGame = for
-      hands <- deal(6)
-      trumpCard <- deal()
-      handsSeq = hands.toSeq
-    yield (
-      Player(playersInfo.player1, Hand(handsSeq(0), handsSeq(2), handsSeq(4))),
-      Player(playersInfo.player2, Hand(handsSeq(1), handsSeq(3), handsSeq(5))),
-      trumpCard
-    )
-
-    for
-      (deck, config) <- prepareGame.run(deck)
-      _ <- deck.deal // Ensure deck has at least one card (not modifying deck)
-    yield (
-      GameImpl(
-        config._1,
-        config._2,
-        deck,
-        Some(config._3),
-        config._3.suit,
-        Field()
-      )
-    )
+    GameState
+      .initGame()
+      .run(GameInitData(deck, playersInfo))
+      .map((game, _) => game)
 
   private object GameState:
+    def initGame[PI]()
+        : EitherState[GameInitData[PI], Game[PI], Unit, TrumpError] =
+      EitherState(gameInitData =>
+        val prepareGame =
+          for
+            hands <- deal(6)
+            trumpCard <- deal()
+            handsSeq = hands.toSeq
+          yield (
+            Player(
+              gameInitData.playersInfo.player1,
+              Hand(handsSeq(0), handsSeq(2), handsSeq(4))
+            ),
+            Player(
+              gameInitData.playersInfo.player2,
+              Hand(handsSeq(1), handsSeq(3), handsSeq(5))
+            ),
+            trumpCard
+          )
+
+        for
+          (deck, config) <- prepareGame.run(gameInitData.deck)
+          _ <-
+            deck.deal // Ensure deck has at least one card (not modifying deck)
+        yield (
+          GameImpl(
+            config._1,
+            config._2,
+            deck,
+            Some(config._3),
+            config._3.suit,
+            Field()
+          ),
+          ()
+        )
+      )
+
     def nop[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
       EitherState(game => Right(game, ()))
 
