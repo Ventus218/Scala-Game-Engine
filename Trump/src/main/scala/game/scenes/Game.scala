@@ -7,5 +7,6 @@ import game.Values
 object Game extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
     GameModel(Values.Ids.gameModel),
-    Deck(position = (-40, 0))
+    Deck(position = (-40, 0)),
+    TrumpCard(position = (-30, 0))
   )
