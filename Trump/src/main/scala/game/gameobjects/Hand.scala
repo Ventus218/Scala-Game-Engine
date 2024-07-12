@@ -75,4 +75,7 @@ class Hand(
         color = Color(0, 0, 0, 0) // Transparent
       )
       with Button:
-      override def onButtonPressed: Engine => Unit = onCardClicked(_, card.get)
+      override def onButtonPressed: Engine => Unit = engine =>
+        card match
+          case None       => ()
+          case Some(card) => onCardClicked(engine, card)
