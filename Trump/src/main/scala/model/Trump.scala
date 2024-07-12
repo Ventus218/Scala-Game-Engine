@@ -199,7 +199,19 @@ object Trump:
                 if turnWinner == currentPlayer.info then nop()
                 else swapPlayers()
             yield ()
-      yield ()).run(game).map((game, _) => (game, None))
+        currentPlayer <- GameState.currentPlayer[PI]()
+        nextPlayer <- GameState.nextPlayer[PI]()
+        currentPlayerPoints = currentPlayer.acquiredCards.map(_.rank.value).sum
+        nextPlayerPoints = nextPlayer.acquiredCards.map(_.rank.value).sum
+        result =
+          if currentPlayer.hand.size == 0 then
+            currentPlayerPoints match
+              case p if p == nextPlayerPoints => Some(TrumpResult.Draw)
+              case p if p > nextPlayerPoints =>
+                Some(TrumpResult.Win(currentPlayer.info))
+              case _ => Some(TrumpResult.Win(nextPlayer.info))
+          else None
+      yield (result)).run(game).map((game, result) => (game, result))
 
     private def swappedPlayers: Game[PI] =
       game.copy(currentPlayer = nextPlayer, nextPlayer = currentPlayer)

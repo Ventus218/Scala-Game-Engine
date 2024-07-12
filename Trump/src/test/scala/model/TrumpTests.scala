@@ -208,17 +208,17 @@ class TrumpTests extends AnyFlatSpec:
     val c4 = game.nextPlayer.hand.cards.drop(1).head
     val c5 = game.currentPlayer.hand.cards.drop(2).head
     val c6 = game.nextPlayer.hand.cards.drop(2).head
-    val c7 = game.currentPlayer.hand.cards.drop(3).head
-    val c8 = game.nextPlayer.hand.cards.drop(3).head
     val newGame = (for
       g1 <- game.playCard(c1)
       g2 <- g1._1.playCard(c2)
       g3 <- g2._1.playCard(c3)
       g4 <- g3._1.playCard(c4)
-      g5 <- g4._1.playCard(c4)
-      g6 <- g5._1.playCard(c4)
-      g7 <- g6._1.playCard(c4)
-      g8 <- g7._1.playCard(c4)
-    yield (g4)).right.get._1
+      g5 <- g4._1.playCard(c5)
+      g6 <- g5._1.playCard(c6)
+      c7 = g6._1.currentPlayer.hand.cards.head
+      g7 <- g6._1.playCard(c7)
+      c8 = g7._1.currentPlayer.hand.cards.head
+      g8 <- g7._1.playCard(c8)
+    yield (g8)).right.get
 
-    newGame shouldBe Some(Win(p1))
+    newGame._2 shouldBe Some(Win(p1))
