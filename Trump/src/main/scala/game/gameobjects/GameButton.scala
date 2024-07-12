@@ -5,12 +5,17 @@ import sge.swing.*
 import java.awt.Color
 import sge.swing.output.Text.*
 import sge.core.behaviours.dimension2d.Positionable
+import game.Values
 
 class GameButton(
     val text: String,
     position: Vector2D
 ) extends Behaviour
-    with RectRenderer(24, 8, Color.gray)
+    with RectRenderer(
+      width = Values.Dimensions.Buttons.width,
+      height = Values.Dimensions.Buttons.height,
+      Color.gray
+    )
     with Positionable(position)
     with Button(
       _buttonText = text,

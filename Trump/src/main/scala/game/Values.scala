@@ -10,6 +10,9 @@ object Values:
     object Cards:
       val width: Double = 10
       val height: Double = 16
+    object Buttons:
+      val width: Double = 25
+      val height: Double = 8
 
   object Positions:
     val deck: Vector2D = (-40, 0)
