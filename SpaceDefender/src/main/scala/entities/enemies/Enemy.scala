@@ -35,9 +35,9 @@ object Enemy:
   val rangerHealth: Int = 5
   val rangerScore: Int  = 20
 
-  val turretHealth: Int = 15
+  val turretHealth: Int   = 15
   val turretSpeed: Double = 15
-  val turretScore: Int = 50
+  val turretScore: Int    = 50
 
   val beaconHealth: Int    = 10
   val beaconSpeed:  Double = 1
