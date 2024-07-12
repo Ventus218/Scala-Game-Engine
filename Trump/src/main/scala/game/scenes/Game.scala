@@ -8,5 +8,6 @@ object Game extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
     GameModel(Values.Ids.gameModel),
     Deck(position = (-40, 0)),
-    TrumpCard(position = (-30, 0))
+    TrumpCard(position = (-30, 0)),
+    Hand("P1", (0, -20))
   )

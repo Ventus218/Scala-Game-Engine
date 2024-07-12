@@ -8,7 +8,7 @@ object Trump extends App:
   val swingIO = SwingIO
     .withTitle("Trump")
     .withSize(1200, 800)
-    .withPixelsPerUnitRatio(10)
+    .withPixelsPerUnitRatio(12)
     .withBackgroundColor(Color(60, 120, 80))
     .build()
   val engine = Engine(swingIO, Storage(), 60)
