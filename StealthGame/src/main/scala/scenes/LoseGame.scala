@@ -8,6 +8,9 @@ import java.awt.Font
 import java.awt.Color
 import config.Config.*
 
+/** Scene containing the items of the main menu plus an UI Renderer to tell the
+  * player he lost.
+  */
 object LoseGame extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
     new UITextRenderer(

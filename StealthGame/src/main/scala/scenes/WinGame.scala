@@ -8,6 +8,9 @@ import output.overlay.UIAnchor
 
 import java.awt.Color
 
+/** Scene containing the items of the main menu plus an UI Renderer to tell the
+  * player he won.
+  */
 object WinGame extends Scene:
   override def apply(): Iterable[Behaviour] = Seq(
     new UITextRenderer(

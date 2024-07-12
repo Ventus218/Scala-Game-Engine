@@ -12,15 +12,15 @@ object LevelThree extends Scene:
   override def apply(): Iterable[Behaviour] = Level(
     this,
     WinGame,
-    playerPosition = (0, SCENE_HEIGHT / 2 - CHARACTERS_HEIGHT / 2),
-    stairsPosition = (0, -SCENE_HEIGHT / 2 + STAIRS_HEIGHT)
+    playerPosition = (0, SCENE_TOP_EDGE - CHARACTERS_HEIGHT / 2),
+    stairsPosition = (0, -SCENE_TOP_EDGE + STAIRS_HEIGHT)
   ) ++ Walls() ++ Enemies()
 
 object Walls:
   import Enemies.*
 
   val wallsWidth = 30
-  val rightWallX = SCENE_WIDTH / 2 - wallsWidth / 2
+  val rightWallX = SCENE_RIGHT_EDGE - wallsWidth / 2
   val wallsY = CHARACTERS_HEIGHT * 2.5 + movingEnemyY
 
   def apply() = Seq(
@@ -36,7 +36,7 @@ object Walls:
 
 object Enemies:
   import Walls.*
-  val movingEnemyX = SCENE_WIDTH / 2 - CHARACTERS_WIDTH / 2
+  val movingEnemyX = SCENE_RIGHT_EDGE - CHARACTERS_WIDTH / 2
   val movingEnemyY = -10
 
   val rightEnemyX = rightWallX - wallsWidth - CHARACTERS_WIDTH / 2

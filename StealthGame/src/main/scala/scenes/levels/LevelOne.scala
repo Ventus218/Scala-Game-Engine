@@ -20,14 +20,14 @@ import scenes.behaviours.LifesBehaviour
 import java.awt.Color
 
 object LevelOne extends Scene:
-  private val stairsY: Double = SCENE_HEIGHT / 2 - STAIRS_HEIGHT
+  private val stairsY: Double = SCENE_TOP_EDGE - STAIRS_HEIGHT
   override def apply(): Iterable[Behaviour] =
     Level(this, LevelTwo, stairsPosition = (0, stairsY)) ++ Walls() ++ Enemies()
 
   private object Walls:
     val topVerticalWallHeight: Double = 11.5
     val topVerticalWallPosition: Vector2D =
-      (-STAIRS_WIDTH, SCENE_HEIGHT / 2 - STAIRS_HEIGHT)
+      (-STAIRS_WIDTH, SCENE_TOP_EDGE - STAIRS_HEIGHT)
 
     val topHorizzontalWallWidth: Double = 20
     val topHorizzontalWallX: Double = topHorizzontalWallWidth / 2 - STAIRS_WIDTH
@@ -63,9 +63,9 @@ object LevelOne extends Scene:
     import Walls.*
 
     val bottomEnemyX: Double = centerVerticalWallPosition._1 + CHARACTERS_WIDTH
-    val bottomEnemyY: Double = -SCENE_HEIGHT / 2 + CHARACTERS_HEIGHT
+    val bottomEnemyY: Double = -SCENE_TOP_EDGE + CHARACTERS_HEIGHT
 
-    val rightEnemyX: Double = SCENE_WIDTH / 2 - CHARACTERS_WIDTH * 3
+    val rightEnemyX: Double = SCENE_RIGHT_EDGE - CHARACTERS_WIDTH * 3
     val rightEnemyY: Double = topHorizzontalWallY - CHARACTERS_WIDTH
 
     def apply() = Seq(

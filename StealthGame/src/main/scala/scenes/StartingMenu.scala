@@ -7,6 +7,9 @@ import java.awt.Color
 import config.Config.*
 import scenes.behaviours.{BackgroundImage, GameButton}
 
+/** Scene containing the element of the main menu, with a Play button and a
+  * Close button
+  */
 object StartingMenu extends Scene:
   import Privates.*
 

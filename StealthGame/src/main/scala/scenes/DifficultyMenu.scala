@@ -10,6 +10,10 @@ import java.awt.Color
 import scenes.behaviours.{GameButton, BackgroundImage}
 import levels.LevelOne
 
+/** Scene containing the items of the difficulty menu in order to chose between
+  * Easy, Normal, Hard and Impossible difficulty, plus a button to go back to
+  * the main menu
+  */
 object DifficultyMenu extends Scene:
   import Privates.*
   override def apply(): Iterable[Behaviour] =
@@ -47,5 +51,5 @@ object DifficultyMenu extends Scene:
     def onDifficultyButton(difficulty: Difficulty): Engine => Unit = engine =>
       engine.storage.set("Lifes", difficulty.lifes)
       engine.storage.set("Difficulty", difficulty)
-      
+
       engine.loadScene(LevelOne)

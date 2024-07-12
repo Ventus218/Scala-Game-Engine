@@ -13,7 +13,7 @@ object LevelTwo extends Scene:
     Level(
       this,
       LevelThree,
-      stairsPosition = (SCENE_WIDTH / 2 - STAIRS_WIDTH, 0)
+      stairsPosition = (SCENE_RIGHT_EDGE - STAIRS_WIDTH, 0)
     ) ++ Walls() ++ Enemies()
 
   private object Walls:
@@ -26,8 +26,8 @@ object LevelTwo extends Scene:
 
   private object Enemies:
     val bottomLeftEnemyPosition = (
-      -SCENE_WIDTH / 2 + CHARACTERS_WIDTH,
-      -SCENE_HEIGHT / 2 + CHARACTERS_HEIGHT
+      -SCENE_RIGHT_EDGE + CHARACTERS_WIDTH,
+      -SCENE_TOP_EDGE + CHARACTERS_HEIGHT
     )
     val topRightEnemyPosition = bottomLeftEnemyPosition * -1
     def apply() = Seq(
