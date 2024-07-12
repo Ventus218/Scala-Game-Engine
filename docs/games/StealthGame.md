@@ -5,9 +5,9 @@ Corrado Stortini
 
 ## Abstract
 L'obbiettivo è la realizzazione di una demo di un gioco che vadi ad utilizzare varie funzionalità dello **ScalaGameEngine**.
-Nel gioco **Stealth Game** il giocatore controllerà il personaggio protagonista e lo muoverà affinchè esso non venga scoperto dalle guardie, le quali potranno avere diversi pattern di movimento.
-Il gioco consiste in tre livelli, e il giocatore per passare al livello successivo e, infine, vincere, dovrà raggiungere le scale.
-Se invece il personaggio dovesse entrare nel raggio visivo di una guardia, esso rinizierà il livello attuale, fino ad un numero di volte che dipende dalla difficoltà.
+Nel gioco **Stealth Game** il giocatore controllerà il proprio personaggio e lo muoverà affinchè esso non venga scoperto dalle guardie, le quali potranno avere diversi pattern di movimento.
+Il gioco consiste in tre livelli e il giocatore, per passare al livello successivo e, infine, vincere, dovrà raggiungere le scale.
+Se invece il personaggio dovesse entrare nel raggio visivo di una guardia, esso rinizierà il livello attuale un numero di volte che dipende dalla difficoltà. Se il numero di vite scende a 0, il giocatore verrà notificato di aver perso la partita.
 - `Facile`: 5 vite
 - `Normale`: 3 vite
 - `Difficile`: 1 vita
@@ -15,8 +15,8 @@ Se invece il personaggio dovesse entrare nel raggio visivo di una guardia, esso 
 Ogni volta che il personaggio supera un livello guadagna una vita, ad eccezione della difficoltà `Impossibile`.
 
 ## Tutorial
-Per muovere il personaggio si usano i tasti `W`, `A`, `S`, `D`, rispettivamente per muoverlo verso sopra, sinistra, sotto e destra.
-Tenendo premuto `Spazio` si può "sprintare", ovvero aumentare la velocità del proprio personaggio.
+Per muovere il personaggio verso Sopra, Sinistra, Sotto e Destra si usano rispettivamente i tasti `W`, `A`, `S`, `D`.
+Tenendo premuto `Spazio` si può correre aumentando la velocità del proprio personaggio.
 
 ## Implementazione
 
