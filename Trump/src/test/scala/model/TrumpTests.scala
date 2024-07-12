@@ -222,3 +222,38 @@ class TrumpTests extends AnyFlatSpec:
     yield (g8)).right.get
 
     newGame._2 shouldBe Some(Win(p1))
+
+  it should "give a draw result when the game is finished if the players have acquired the same points" in:
+    // every player will make 0 point
+    val drawDeck = ShuffledDeck.makeShuffledDeck(
+      Card(Cups, Five),
+      Card(Cups, Six),
+      Card(Cups, Seven),
+      Card(Coins, Four),
+      Card(Coins, Five),
+      Card(Coins, Six),
+      Card(Cups, Two), // trump card
+      Card(Cups, Four)
+    )
+
+    val game = Trump(drawDeck, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val newGame = (for
+      g1 <- game.playCard(c1)
+      c2 = g1._1.currentPlayer.hand.cards.head
+      g2 <- g1._1.playCard(c2)
+      c3 = g2._1.currentPlayer.hand.cards.head
+      g3 <- g2._1.playCard(c3)
+      c4 = g3._1.currentPlayer.hand.cards.head
+      g4 <- g3._1.playCard(c4)
+      c5 = g4._1.currentPlayer.hand.cards.head
+      g5 <- g4._1.playCard(c5)
+      c6 = g5._1.currentPlayer.hand.cards.head
+      g6 <- g5._1.playCard(c6)
+      c7 = g6._1.currentPlayer.hand.cards.head
+      g7 <- g6._1.playCard(c7)
+      c8 = g7._1.currentPlayer.hand.cards.head
+      g8 <- g7._1.playCard(c8)
+    yield (g8)).right.get
+
+    newGame._2 shouldBe Some(Draw)
