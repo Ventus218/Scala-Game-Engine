@@ -6,6 +6,6 @@ import model.behaviours.VisualRange
 import sge.core.*
 import behaviours.physics2d.RectCollider
 
-trait EnemyMovement extends MovementActions:
+private trait EnemyMovement extends MovementActions:
   def turn(initialDirection: Direction) =
     updateState(turnTo(initialDirection))

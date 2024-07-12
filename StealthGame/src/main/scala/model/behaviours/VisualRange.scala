@@ -6,7 +6,16 @@ import behaviours.physics2d.RectCollider
 import sge.swing.*
 import config.Config.VISUAL_RANGE_COLOR
 
-class VisualRange(width: Double, height: Double, follower: Positionable)
+/** Visual range of a character
+  *
+  * @param width
+  *   Width of the visual range
+  * @param height
+  *   Height of the visual range
+  * @param follower
+  *   character that has this visual range
+  */
+class VisualRange(width: Double, height: Double, follower: Character)
     extends Behaviour
     with Positionable
     with RectRenderer(width, height, VISUAL_RANGE_COLOR, priority = 99)

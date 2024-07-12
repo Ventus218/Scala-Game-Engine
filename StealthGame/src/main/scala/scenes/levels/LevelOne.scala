@@ -73,7 +73,7 @@ object LevelOne extends Scene:
         "patrol.png",
         Direction.TOP,
         (bottomEnemyX, bottomEnemyY)
-      )() with MovingPattern with StopThenTurnRightOnCollidePattern(1),
+      )() with StopThenTurnRightOnCollidePattern(1),
       new Enemy(
         "patrol.png",
         Direction.LEFT,

@@ -7,6 +7,14 @@ import behaviours.dimension2d.*
 import sge.swing.*
 import java.awt.Color
 
+/** Wall not rendered
+  *
+  * @param width
+  * @param height
+  * @param initialPosition
+  * @param scaleWidth
+  * @param scaleHeight
+  */
 class Wall(
     width: Double = WALL_SIZE,
     height: Double = WALL_SIZE,
@@ -19,6 +27,14 @@ class Wall(
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight)
 
+/** Wall with a Black RectRenderer, with high priority.
+  *
+  * @param width
+  * @param height
+  * @param initialPosition
+  * @param scaleWidth
+  * @param scaleHeight
+  */
 class RendererWall(
     width: Double = WALL_SIZE,
     height: Double = WALL_SIZE,

@@ -12,6 +12,24 @@ import sge.core.behaviours.physics2d.RectCollider
 import CharacterCollisions.*
 import config.Config.*
 
+/** It is the character controlled by the player, which can move up, left,
+  * bottom or right and collides with enemies's visual ranges or stairs. When
+  * colliding with an enemy life will decrement, and when going to 0 there will
+  * be GameOver.
+  *
+  * @param currentScene
+  *   current scene loaded, used to reload the scene if it collides with an
+  *   enemy
+  * @param nextScene
+  *   next scene to load, used to load the next level when colliding with stairs
+  * @param initialPosition
+  * @param scaleWidth
+  * @param scaleHeight
+  * @param speed
+  *   the character will move with this speed when using W, A, S, D
+  * @param sprint
+  *   multiplies the speed when sprinting with Space
+  */
 class Player(
     currentScene: Scene,
     nextScene: Scene,
@@ -21,7 +39,11 @@ class Player(
 )(
     speed: Vector2D = (1, 1),
     sprint: Double = 1.5
-) extends Character(speed = speed, imagePath = "ninja.png", initialPosition = initialPosition)(scaleWidth, scaleHeight)
+) extends Character(
+      speed = speed,
+      imagePath = "ninja.png",
+      initialPosition = initialPosition
+    )(scaleWidth, scaleHeight)
     with InputHandler:
   var inputHandlers: Map[InputButton, Handler] = Map(
     W -> (onMoveTop(this) and onResetSpeed.onlyWhenReleased),

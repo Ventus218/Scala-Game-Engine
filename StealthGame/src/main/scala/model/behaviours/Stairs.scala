@@ -6,6 +6,15 @@ import behaviours.physics2d.{RectCollider, Velocity}
 import sge.swing.*
 import model.behaviours.player.Player
 
+/** Stairs that let the player go to the next scene when colliding with them
+  *
+  * @param width
+  * @param height
+  * @param imagePath
+  * @param position
+  * @param scaleWidth
+  * @param scaleHeight
+  */
 class Stairs(
     width: Double,
     height: Double,

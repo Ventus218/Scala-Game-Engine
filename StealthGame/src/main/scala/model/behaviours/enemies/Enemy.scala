@@ -11,13 +11,30 @@ import scala.compiletime.ops.boolean
 import model.behaviours.CharacterCollisions.collidesWithWalls
 import config.Config.*
 
+/** It rappresents a general Enemy with a Visual Range.
+  *
+  * @param imagePath
+  *   path to the image of this enemy
+  * @param initialDirection
+  *   direction that this enemy will face when the scene is loaded
+  * @param position
+  * @param speed
+  *   speed of this enemy in case of moving action
+  * @param width
+  * @param height
+  * @param visualRangeSize
+  *   size of the visual range, it will be its height if the enemy is facing TOP
+  *   or BOTTOM, and will be its width otherwise
+  * @param scaleWidth
+  * @param scaleHeight
+  */
 class Enemy(
-  imagePath: String,
-  initialDirection: Direction,
-  position: Vector2D = (0, 0),
-  speed: Vector2D = (PATROL_SPEED, PATROL_SPEED),
-  width: Double = CHARACTERS_WIDTH,
-  height: Double = CHARACTERS_HEIGHT,
+    imagePath: String,
+    initialDirection: Direction,
+    position: Vector2D = (0, 0),
+    speed: Vector2D = (PATROL_SPEED, PATROL_SPEED),
+    width: Double = CHARACTERS_WIDTH,
+    height: Double = CHARACTERS_HEIGHT
 )(
     visualRangeSize: Double = height * 2,
     scaleWidth: Double = 1,
@@ -25,7 +42,8 @@ class Enemy(
 ) extends Character(width, height, speed, imagePath, position)(
       scaleWidth,
       scaleHeight
-    ) with EnemyMovement:
+    )
+    with EnemyMovement:
   import Privates.*
   import Direction.*
   import Action.*
