@@ -2,17 +2,18 @@ package game.behaviours
 
 import sge.core.*
 import sge.swing.*
+import sge.swing.behaviours.Renderer
 import output.Images.*
 import sge.core.behaviours.dimension2d.Positionable
 import java.awt.Graphics2D
-import sge.swing.behaviours.Renderer
+import game.Values
 
 trait CardImage(
     val cardImagePath: String,
     var show: Boolean,
-    val width: Double,
-    val height: Double,
-    val backsideCardImagePath: String = "cards/backside.png",
+    val width: Double = Values.Dimensions.Cards.width,
+    val height: Double = Values.Dimensions.Cards.height,
+    val backsideCardImagePath: String = Values.ImagePaths.cardBackside,
     val offset: Vector2D = (0, 0),
     val rotation: Angle = 0.degrees
 ) extends Renderer
@@ -22,11 +23,11 @@ trait CardImage(
     simpleImage(backsideCardImagePath, width, height)
 
   private val frontsideRenderer: ImageRenderer = new Behaviour
-    with ImageRenderer(cardImagePath, width, height)
+    with ImageRenderer(cardImagePath, width, height, offset, rotation)
     with Positionable(position)
 
   private val backsideRenderer: ImageRenderer = new Behaviour
-    with ImageRenderer(backsideCardImagePath, width, height)
+    with ImageRenderer(backsideCardImagePath, width, height, offset, rotation)
     with Positionable(position)
 
   override def renderer: SwingIO => Graphics2D => Unit = show match
