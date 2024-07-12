@@ -16,4 +16,4 @@ class GameModel(id: String) extends Behaviour with Identifiable(id):
     Trump(deck, players).right.get
 
   def game: Game[String] = _game
-  private def game_=(newValue: Game[String]) = _game = newValue
+  def game_=(newValue: Game[String]) = _game = newValue
