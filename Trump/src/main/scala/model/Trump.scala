@@ -174,6 +174,24 @@ object Trump:
         TurnWinLogic.turnWinner(game.field, game.trumpSuit).map((game, _))
       )
 
+    def refillPlayerHands[PI](
+        turnWinner: PI
+    ): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
+      for
+        deck <- GameState.deck()
+        _ <-
+          if deck.size > 0 then
+            for
+              c1 <- dealFromDeck()
+              deck <- GameState.deck()
+              c2 <- if deck.size != 0 then dealFromDeck() else dealTrumpCard()
+              _ <- giveCardToPlayer(c1, turnWinner)
+              turnLoser <- otherPlayer(turnWinner)
+              _ <- giveCardToPlayer(c2, turnLoser.info)
+            yield ()
+          else nop()
+      yield ()
+
     def computeResult[PI]()
         : EitherState[Game[PI], Game[PI], Option[TrumpResult], TrumpError] =
       for
@@ -217,18 +235,8 @@ object Trump:
               turnWinner <- turnWinner[PI]()
               turnLoser <- GameState.otherPlayer(turnWinner)
               _ <- giveFieldPlayer(turnWinner)
-              deck <- GameState.deck()
-              _ <-
-                if deck.size > 0 then
-                  for
-                    c1 <- dealFromDeck()
-                    deck <- GameState.deck()
-                    c2 <-
-                      if deck.size != 0 then dealFromDeck() else dealTrumpCard()
-                    _ <- giveCardToPlayer(c1, turnWinner)
-                    _ <- giveCardToPlayer(c2, turnLoser.info)
-                  yield ()
-                else nop()
+              _ <- refillPlayerHands(turnWinner)
+              currentPlayer <- GameState.currentPlayer()
               _ <-
                 if turnWinner == currentPlayer.info then nop()
                 else swapPlayers()
