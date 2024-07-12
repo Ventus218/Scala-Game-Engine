@@ -11,4 +11,5 @@ object Game extends Scene:
     TrumpCard(position = (-30, 0)),
     Hand("P1", (0, -20), spacing = 1, show = true),
     Hand("P2", (0, 20), spacing = 1, show = false)
+    Field()
   )
