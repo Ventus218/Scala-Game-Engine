@@ -1,5 +1,8 @@
 package config
 
+/** Gives all the difficulty choice of the game, with their corresponding lifes
+  * of the player and their names as strings
+  */
 enum Difficulty:
   case EASY
   case NORMAL

@@ -1,32 +1,88 @@
 package model.logic
 
+/** Define the 4 direction of the characters: TOP, LEFT, BOTTOM and RIGHT
+  */
 enum Direction:
   case TOP
-  case BOTTOM
   case LEFT
+  case BOTTOM
   case RIGHT
 
+/** Define the three actions of the characters: IDLE, MOVE, SPRINT
+  */
 enum Action:
   case IDLE
   case MOVE
   case SPRINT
 
+/** Gives the capability to get a Movement and then evolve it through the State
+  * Monad
+  */
 sealed trait MovementState:
+  /** Type of the State to evolve
+    */
   type Movement
+
+  /** Returns the first state of Movement
+    */
   def initialMovement: Movement
 
+  /** Returns a State with a Movement and Unit as result, used just to get the
+    * current Movement
+    */
   def movementState: State[Movement, Unit]
 
+  /** Gets the current Direction
+    *
+    * @return
+    *   a State with the Movement (unmodified) and the current Direction
+    */
   def direction: State[Movement, Direction]
+
+  /** Gets the current Action
+    *
+    * @return
+    *   a State with the Movement (unmodified) and the current Direction
+    */
   def action: State[Movement, Action]
 
+  /** Turns to left the current direction of the movement
+    *
+    * @return
+    *   a State with the new Movement and Unit as a result
+    */
   def turnLeft(): State[Movement, Unit]
+
+  /** Turns to right the current direction of the movement
+    *
+    * @return
+    *   a State with the new Movement and Unit as a result
+    */
   def turnRight(): State[Movement, Unit]
 
+  /** Changes to MOVE the current action of the movement
+    *
+    * @return
+    *   a State with the new Movement and Unit as a result
+    */
   def move(): State[Movement, Unit]
+
+  /** Changes to SPRINT the current action of the movement
+    *
+    * @return
+    *   a State with the new Movement and Unit as a result
+    */
   def sprint(): State[Movement, Unit]
+
+  /** Changes to IDLE the current action of the movement
+    *
+    * @return
+    *   a State with the new Movement and Unit as a result
+    */
   def stop(): State[Movement, Unit]
 
+/** Implementation of MovementState
+  */
 object MovementStateImpl extends MovementState:
   opaque type Movement = (Action, Direction)
 
@@ -61,9 +117,18 @@ object MovementStateImpl extends MovementState:
   override def sprint(): State[Movement, Unit] =
     State((_, d) => getState(SPRINT, d))
 
-  extension (m: State[Movement, Unit])
+  extension [T](m: State[Movement, T])
+    /** Apply a predicate to the result of the state and if it turns true then
+      * the state won't change, otherwise the movement will stop
+      *
+      * @param p
+      *   predicate to evaluate
+      */
     def withFilter(p: Unit => Boolean): State[Movement, Unit] =
-      State(s => if (p(m(s)._2)) then m(s) else getState(IDLE, s._2))
+      for
+        _ <- m
+        _ <- if p(movementState) then movementState else stop()
+      yield ()
 
   private object Privates:
     def getLeftDirection(direction: Direction): Direction =

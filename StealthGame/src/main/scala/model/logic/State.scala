@@ -1,5 +1,10 @@
 package model.logic
 
+/** Rappresents how a state S evolves with a function passed as input
+  *
+  * @param run
+  *   function that evolve S producing a result A
+  */
 case class State[S, A](run: S => (S, A))
 
 object State:
@@ -7,6 +12,8 @@ object State:
     def apply(s: S): (S, A) = m match
       case State(run) => run(s)
 
+/** Monad trait
+  */
 trait Monad[M[_]]:
   def unit[A](a: A): M[A]
   extension [A](m: M[A])
