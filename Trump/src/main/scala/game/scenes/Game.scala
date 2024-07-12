@@ -9,5 +9,5 @@ object Game extends Scene:
     GameModel(Values.Ids.gameModel),
     Deck(position = (-40, 0)),
     TrumpCard(position = (-30, 0)),
-    Hand("P1", (0, -20))
+    Hand("P1", (0, -20), spacing = 1)
   )
