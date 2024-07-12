@@ -25,7 +25,7 @@ trait ChangeableImageRenderer(
   def imagePath_=(newValue: Option[String]) =
     _imagePath = newValue
     _imagePath match
-      case None => ()
+      case None => imageRenderer = None
       case Some(path) =>
         imageRenderer = Some(
           new Behaviour
