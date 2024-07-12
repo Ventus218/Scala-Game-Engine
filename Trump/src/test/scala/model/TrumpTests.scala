@@ -187,3 +187,18 @@ class TrumpTests extends AnyFlatSpec:
       .exists(_ == cardToWinner) shouldBe true
     newGame.right.get.nextPlayer.hand.cards
       .exists(_ == cardToLoser) shouldBe true
+
+  it should "stop dealing cards when the deck is finished and the trumpCard was given" in:
+    val game = Trump(deckP1Lucky, playersInfo).right.get
+    val c1 = game.currentPlayer.hand.cards.head
+    val c2 = game.nextPlayer.hand.cards.head
+    val c3 = game.currentPlayer.hand.cards.drop(1).head
+    val c4 = game.nextPlayer.hand.cards.drop(1).head
+    val newGame = for
+      g1 <- game.playCard(c1)
+      g2 <- g1.playCard(c2)
+      g3 <- g2.playCard(c3)
+      g4 <- g3.playCard(c4)
+    yield (g4)
+    newGame.right.get.currentPlayer.hand.cards.size shouldBe 2
+    newGame.right.get.nextPlayer.hand.cards.size shouldBe 2
