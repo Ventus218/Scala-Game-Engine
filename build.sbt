@@ -20,3 +20,14 @@ lazy val exampleGame = project
     assembly / assemblyOutputPath := file("./ExampleGame.jar"),
     assembly / mainClass := Some("ExampleGame")
   )
+
+lazy val stealthGame = project
+  .in(file("./StealthGame"))
+  .dependsOn(sge)
+  .settings(
+    name := "StealthGame",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % Test,
+    assembly / assemblyOutputPath := file("./StealthGame.jar"),
+  )
