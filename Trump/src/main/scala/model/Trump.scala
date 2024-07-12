@@ -146,9 +146,6 @@ object Trump:
     def swapPlayers[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
       EitherState(game => Right(game.swappedPlayers, ()))
 
-    def emptyField[PI](): EitherState[Game[PI], Game[PI], Unit, TrumpError] =
-      EitherState(game => Right(game.copy(field = Field()), ()))
-
     def turnWinner[PI](): EitherState[Game[PI], Game[PI], PI, TrumpError] =
       EitherState(game =>
         TurnWinLogic.turnWinner(game.field, game.trumpSuit).map((game, _))
