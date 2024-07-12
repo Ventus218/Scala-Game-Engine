@@ -242,7 +242,7 @@ object Trump:
                 else swapPlayers()
             yield ()
         result <- computeResult()
-      yield (result)).run(game).map((game, result) => (game, result))
+      yield (result)).run(game)
 
     private def swappedPlayers: Game[PI] =
       game.copy(currentPlayer = nextPlayer, nextPlayer = currentPlayer)
