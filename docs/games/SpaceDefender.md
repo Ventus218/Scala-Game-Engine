@@ -6,7 +6,7 @@ Michele Ravaioli
 ## Abstract
 L'obbiettivo è la realizzazione di una demo di un gioco che utilizzi le varie funzionalità dello **ScalaGameEngine**.
 Nel gioco **Space Defender** il giocatore controllerà una navicella spaziale con lo scopo di guadagnare più punti possibili, distruggendo con proiettili le navicelle nemiche.
-Queste ultime lanciano a loro volta proiettili che possono danneggiare il player. La partita termina quando il player viene colpito danneggiato troppo dai colpi nemici.
+Queste ultime lanciano a loro volta proiettili che possono danneggiare il player. La partita termina quando il player viene danneggiato troppo dai colpi nemici.
 
 ## Tutorial
 La navicella del giocatore si muove nella posizione del puntatore del mouse, e spara colpi periodicamente se viene premuto il tasto sinistro del mouse.
