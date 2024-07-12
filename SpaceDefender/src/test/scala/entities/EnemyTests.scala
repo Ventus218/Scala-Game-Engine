@@ -1,5 +1,6 @@
 package entities
 
+import entities.enemies.Enemy
 import managers.*
 import sge.core.*
 import sge.swing.*

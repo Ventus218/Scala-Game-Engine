@@ -8,6 +8,16 @@ import output.Text.TextStyle.Bold
 
 import java.awt.Color
 
+/** A generic game button, with a white text
+  * @param text
+  *   the text
+  * @param pos
+  *   the position
+  * @param onPress
+  *   the action to do on press
+  * @param color
+  *   the fill color
+  */
 class GameButton(text: String, pos: Vector2D, onPress: Engine => Unit, color: Color = buttonColor) extends Behaviour
   with Button(
     _buttonText = text,

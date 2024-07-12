@@ -8,6 +8,7 @@ import managers.*
 import sge.swing.*
 import util.*
 import Timer.*
+import entities.enemies.Enemy
 
 import java.awt.Color
 import scala.concurrent.duration.*

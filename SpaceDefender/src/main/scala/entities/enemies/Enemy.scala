@@ -1,12 +1,13 @@
-package entities
+package entities.enemies
 
+import entities.*
+import managers.GameManager
 import sge.core.*
 import behaviours.*
-import managers.GameManager
+import dimension2d.*
 import physics2d.*
-import dimension2d.Positionable
 
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.util.Random
 
 /** Flag trait for identifying an enemy.
@@ -49,7 +50,7 @@ object Enemy:
     *   the starting position
     * @return
     */
-  def dropper(position: Vector2D): Enemy = Dropper.dropper(position)
+  def dropper(position: Vector2D): Enemy = Dropper(position)
 
   /** Create a Ranger enemy
     * @param position
@@ -70,4 +71,4 @@ object Enemy:
     *   the starting position
     * @return
     */
-  def beacon(position: Vector2D): Enemy = Dropper.beacon(position)
+  def beacon(position: Vector2D): Enemy = Beacon(position)

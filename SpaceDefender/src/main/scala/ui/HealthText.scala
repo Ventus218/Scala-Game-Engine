@@ -8,6 +8,8 @@ import output.overlay.UIAnchor
 
 import java.awt.Color
 
+/** The health bar
+ */
 class HealthText extends Behaviour with UITextRenderer(
     "",
     GameConstants.scoreTextFont,

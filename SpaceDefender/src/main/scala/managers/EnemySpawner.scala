@@ -4,6 +4,7 @@ import sge.core.*
 import util.*
 import Timer.*
 import entities.*
+import enemies.Enemy
 
 import scala.concurrent.duration.*
 

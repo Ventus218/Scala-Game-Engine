@@ -6,6 +6,8 @@ import behaviours.dimension2d.*
 import behaviours.physics2d.*
 import sge.swing.*
 
+/** The moving space background
+ */
 class Background extends Behaviour:
   def speed: Double = 0.3
   private def background(pos: Vector2D): ImageRenderer = new Behaviour
