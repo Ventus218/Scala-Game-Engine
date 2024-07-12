@@ -184,6 +184,7 @@ class InputHandlerTests extends AnyFlatSpec with BeforeAndAfterEach:
     override def center_=(pos: Vector2D): Unit = ???
     override def center: Vector2D = ???
     override def show(): Unit = ???
+    override def frameIconPath: String = ???
 
 /** A complex input test, move with WASD and teleport with left mouse click
   */
