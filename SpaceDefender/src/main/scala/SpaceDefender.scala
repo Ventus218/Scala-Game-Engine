@@ -3,7 +3,7 @@ import sge.swing.*
 import managers.*
 import java.awt.Color
 
-object SpaceDefenders extends App:
+object SpaceDefender extends App:
   println("Starting Space Defenders...")
   val engine: Engine = Engine(
     SwingIO

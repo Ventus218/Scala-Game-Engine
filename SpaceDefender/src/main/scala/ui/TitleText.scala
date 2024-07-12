@@ -5,7 +5,7 @@ import sge.core.*
 
 class TitleText(pos: Vector2D) extends TwoLineText(
   pos,
-  "SPACE", "DEFENDERS",
+  "SPACE", "DEFENDER",
   titleSize,
   titleColor
 )
