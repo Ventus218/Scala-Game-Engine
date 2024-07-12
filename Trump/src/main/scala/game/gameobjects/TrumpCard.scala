@@ -11,6 +11,7 @@ class TrumpCard(position: Vector2D)
     extends Behaviour
     with Positionable(position)
     with CardImage(
+      _card = Option.empty,
       _show = true
     )
     with ChangeableImageRenderer(
@@ -20,7 +21,7 @@ class TrumpCard(position: Vector2D)
     ):
 
   override def onStart: Engine => Unit = engine =>
-    imagePath = Some(engine.gameModel.trumpCard.get.toImagePath)
+    card = Some(engine.gameModel.trumpCard.get)
     super.onStart(engine)
 
   override def onEarlyUpdate: Engine => Unit = engine =>

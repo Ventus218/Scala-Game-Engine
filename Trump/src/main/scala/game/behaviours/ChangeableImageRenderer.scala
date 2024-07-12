@@ -13,13 +13,14 @@ trait ChangeableImageRenderer(
     val width: Double,
     val height: Double,
     val offset: Vector2D = (0, 0),
-    val rotation: Angle = 0.degrees
+    val rotation: Angle = 0.degrees,
+    val priority: Int = 0
 ) extends Renderer
     with Positionable:
 
-  imagePath = initialImagePath
-
   private var _imagePath: Option[String] = Option.empty
+  
+  imagePath = initialImagePath
   def imagePath: Option[String] = _imagePath
   def imagePath_=(newValue: Option[String]) =
     _imagePath = newValue
@@ -28,7 +29,7 @@ trait ChangeableImageRenderer(
       case Some(path) =>
         imageRenderer = Some(
           new Behaviour
-            with ImageRenderer(path, width, height, offset, rotation)
+            with ImageRenderer(path, width, height, offset, rotation, priority)
             with Positionable(position)
         )
 

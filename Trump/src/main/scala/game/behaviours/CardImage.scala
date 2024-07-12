@@ -7,20 +7,27 @@ import output.Images.*
 import sge.core.behaviours.dimension2d.Positionable
 import java.awt.Graphics2D
 import game.Values
+import model.Cards.*
+import game.*
 
 trait CardImage(
+    private var _card: Option[Card],
     private var _show: Boolean,
     val backsideCardImagePath: String = Values.ImagePaths.cardBackside
 ) extends ChangeableImageRenderer:
 
-  private var originalImagePath: Option[String] = Option.empty
+  card = _card
+  def card: Option[Card] = _card
+  def card_=(newValue: Option[Card]) =
+    _card = newValue
+    show = show // trigger imagePath update
 
+  show = _show
   def show: Boolean = _show
   def show_=(newValue: Boolean) =
     _show = newValue
     _show match
       case true =>
-        imagePath = originalImagePath
+        imagePath = _card.map(_.toImagePath)
       case false =>
-        originalImagePath = imagePath
         imagePath = Some(backsideCardImagePath)
