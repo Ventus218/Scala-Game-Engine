@@ -21,6 +21,7 @@ object Values:
 
   object Ids:
     val gameModel: String = "gameModel"
+    val playerReadyButton: String = "playerReadyButton"
 
   object Text:
     val size: Double = 3

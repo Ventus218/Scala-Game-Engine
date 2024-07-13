@@ -15,6 +15,8 @@ class Hand(
 ) extends Behaviour
     with Positionable(position):
 
+  var show = false
+
   val leftCard: CardImage = handCard(
     Versor2D.left * (Values.Dimensions.Cards.width + spacing)
   )
@@ -24,10 +26,18 @@ class Hand(
   )
 
   private def onCardClicked(engine: Engine, card: Card): Unit =
-    if engine.gameModel.currentPlayer.info == player then
-      engine.gameModel.playCard(card) match
-        case Right(newGame) => engine.gameModel = newGame._1
-        case Left(value)    => throw Exception(value.message)
+    if engine.gameModel.currentPlayer.info == player && show then
+      (for
+        playCardResult <- engine.gameModel.playCard(card).left.map(_.message)
+        playerReadyButton <- engine
+          .find[PlayerReadyButton](Values.Ids.playerReadyButton)
+          .toRight("Didn't find the PlayerReadyButton")
+      yield (playCardResult, playerReadyButton)) match
+        case Left(errorMessage) => throw Exception(errorMessage)
+        case Right((playCardResult, playerReadyButton)) =>
+          engine.gameModel = playCardResult._1
+          show = false
+          engine.enable(playerReadyButton)
 
   override def onInit: Engine => Unit = engine =>
     engine.create(leftCard)
@@ -36,7 +46,7 @@ class Hand(
     super.onInit(engine)
 
   override def onUpdate: Engine => Unit = engine =>
-    val showHand = engine.gameModel.currentPlayer.info == player
+    val showHand = engine.gameModel.currentPlayer.info == player && show
 
     val playerHand = engine.gameModel.player(player).hand.cards
     val newLeftCard = playerHand.headOption

@@ -13,5 +13,6 @@ object Game extends Scene:
     AcquiredCards("P1", (40, -20)),
     Hand("P2", (0, 20), spacing = 1),
     AcquiredCards("P2", (40, 20)),
-    Field()
+    Field(),
+    PlayerReadyButton(id = Values.Ids.playerReadyButton, (35, 0))
   )
