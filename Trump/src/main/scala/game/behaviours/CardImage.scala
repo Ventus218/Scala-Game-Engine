@@ -30,4 +30,4 @@ trait CardImage(
       case true =>
         imagePath = _card.map(_.toImagePath)
       case false =>
-        imagePath = Some(backsideCardImagePath)
+        imagePath = _card.map(_ => backsideCardImagePath)
