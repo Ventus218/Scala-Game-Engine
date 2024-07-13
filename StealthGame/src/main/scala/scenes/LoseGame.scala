@@ -16,7 +16,7 @@ object LoseGame extends Scene:
     new UITextRenderer(
       "You lost",
       UITextFontWithSize(50),
-      Color.BLACK,
+      Color.YELLOW,
       UIAnchor.Center,
       textOffset = (0, (-BUTTON_HEIGHT * 2 * PIXEL_UNIT_RATIO).toInt)
     ) with Behaviour
