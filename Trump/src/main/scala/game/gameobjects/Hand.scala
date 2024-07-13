@@ -11,8 +11,7 @@ import java.awt.Color
 class Hand(
     val player: String,
     position: Vector2D = (0, 0),
-    val spacing: Double = 0,
-    val show: Boolean
+    val spacing: Double = 0
 ) extends Behaviour
     with Positionable(position):
 
@@ -37,15 +36,20 @@ class Hand(
     super.onInit(engine)
 
   override def onUpdate: Engine => Unit = engine =>
+    val showHand = engine.gameModel.currentPlayer.info == player
+
     val playerHand = engine.gameModel.player(player).hand.cards
     val newLeftCard = playerHand.headOption
     if leftCard.card != newLeftCard then leftCard.card = newLeftCard
+    leftCard.show = showHand
 
     val newCenterCard = playerHand.drop(1).headOption
     if centerCard.card != newCenterCard then centerCard.card = newCenterCard
+    centerCard.show = showHand
 
     val newRightCard = playerHand.drop(2).headOption
     if rightCard.card != newRightCard then rightCard.card = newRightCard
+    rightCard.show = showHand
 
     super.onUpdate(engine)
 
@@ -53,7 +57,7 @@ class Hand(
     val width = Values.Dimensions.Cards.width
     val height = Values.Dimensions.Cards.height
     new Behaviour
-      with CardImage(_card = Option.empty, _show = show)
+      with CardImage(_card = Option.empty, false)
       with Positionable
       with PositionFollower(
         this,
