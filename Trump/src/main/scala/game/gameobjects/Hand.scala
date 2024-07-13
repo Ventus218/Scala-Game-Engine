@@ -8,12 +8,8 @@ import game.*
 import model.Cards.*
 import java.awt.Color
 
-enum Player:
-  case Current
-  case Next
-
 class Hand(
-    val player: Player,
+    val player: String,
     position: Vector2D = (0, 0),
     val spacing: Double = 0,
     val show: Boolean
@@ -29,7 +25,7 @@ class Hand(
   )
 
   private def onCardClicked(engine: Engine, card: Card): Unit =
-    if player == Player.Current then
+    if engine.gameModel.currentPlayer.info == player then
       engine.gameModel.playCard(card) match
         case Right(newGame) => engine.gameModel = newGame._1
         case Left(value)    => throw Exception(value.message)
@@ -41,9 +37,7 @@ class Hand(
     super.onInit(engine)
 
   override def onUpdate: Engine => Unit = engine =>
-    val playerHand = player match
-      case Player.Current => engine.gameModel.currentPlayer.hand.cards
-      case Player.Next    => engine.gameModel.nextPlayer.hand.cards
+    val playerHand = engine.gameModel.player(player).hand.cards
     val newLeftCard = playerHand.headOption
     if leftCard.card != newLeftCard then leftCard.card = newLeftCard
 
