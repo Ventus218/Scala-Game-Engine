@@ -18,12 +18,20 @@ class Deck(position: Vector2D)
       width = Values.Dimensions.Cards.width,
       height = Values.Dimensions.Cards.height,
       priority = 10
+    )
+    with TextRenderer(
+      text = "",
+      size = Values.Text.size,
+      color = Values.Text.color,
+      priority = 20,
+      offset = (0, 10)
     ):
 
   override def onStart: Engine => Unit = engine =>
     card = Some(engine.gameModel.deck.cards.head)
     super.onStart(engine)
 
-  override def onEarlyUpdate: Engine => Unit = engine =>
+  override def onUpdate: Engine => Unit = engine =>
+    textContent = s"${engine.gameModel.deck.size}"
     if engine.gameModel.deck.size <= 0 then engine.destroy(this)
-    super.onEarlyUpdate(engine)
+    super.onUpdate(engine)
