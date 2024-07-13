@@ -1,6 +1,7 @@
 package game
 
 import sge.core.*
+import java.awt.Color
 
 object Values:
   object ImagePaths:
@@ -20,3 +21,7 @@ object Values:
 
   object Ids:
     val gameModel: String = "gameModel"
+
+  object Text:
+    val size: Double = 3
+    val color: Color = Color.black
