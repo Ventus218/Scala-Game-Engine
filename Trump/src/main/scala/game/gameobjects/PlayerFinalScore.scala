@@ -21,7 +21,8 @@ class PlayerFinalScore(val player: String, position: Vector2D)
         throw Exception("Expected a GameResult to be saved in storage")
       case Some(gameResult) =>
         val gameModel = gameResult.game
-        val score = gameModel.player(player).acquiredCards.map(_.rank.value).sum
+        val score =
+          gameModel.player(player).acquiredCards.toSeq.map(_.rank.value).sum
         textContent = s"$player: $score"
 
     super.onStart(engine)

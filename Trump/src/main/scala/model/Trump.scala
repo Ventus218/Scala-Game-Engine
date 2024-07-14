@@ -197,8 +197,8 @@ object Trump:
       for
         currentP <- GameState.currentPlayer[PI]()
         nextP <- GameState.nextPlayer[PI]()
-        currentPlayerPoints = currentP.acquiredCards.map(_.rank.value).sum
-        nextPlayerPoints = nextP.acquiredCards.map(_.rank.value).sum
+        currentPlayerPoints = currentP.acquiredCards.toSeq.map(_.rank.value).sum
+        nextPlayerPoints = nextP.acquiredCards.toSeq.map(_.rank.value).sum
       yield
         if currentP.hand.size == 0 then
           currentPlayerPoints match
