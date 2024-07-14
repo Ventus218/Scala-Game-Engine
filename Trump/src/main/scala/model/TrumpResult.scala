@@ -1,5 +1,5 @@
 package model
 
-enum TrumpResult:
-  case Win[PlayerInfo](val playerInfo: PlayerInfo)
-  case Draw
+enum TrumpResult[+PlayerInfo]:
+  case Win(val playerInfo: PlayerInfo)
+  case Draw extends TrumpResult[Nothing]

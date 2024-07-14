@@ -193,7 +193,7 @@ object Trump:
       yield ()
 
     def computeResult[PI]()
-        : EitherState[Game[PI], Game[PI], Option[TrumpResult], TrumpError] =
+        : EitherState[Game[PI], Game[PI], Option[TrumpResult[PI]], TrumpError] =
       for
         currentP <- GameState.currentPlayer[PI]()
         nextP <- GameState.nextPlayer[PI]()
@@ -224,7 +224,7 @@ object Trump:
     def field = game.field
     def playCard(
         card: Card
-    ): Either[TrumpError, (Game[PI], Option[TrumpResult])] =
+    ): Either[TrumpError, (Game[PI], Option[TrumpResult[PI]])] =
       (for
         card <- takeCardFromCurrentPlayerHand(card)
         field <- placeCardOnField(card, currentPlayer.info)
