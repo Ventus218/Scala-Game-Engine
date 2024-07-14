@@ -28,23 +28,9 @@ class Hand(
 
   private def onCardClicked(engine: Engine, card: Card): Unit =
     if engine.gameModel.currentPlayer.info == player && show then
-      (for
-        playCardResult <- engine.gameModel.playCard(card).left.map(_.message)
-        playerReadyButton <- engine
-          .find[PlayerReadyButton](Values.Ids.playerReadyButton)
-          .toRight("Didn't find the PlayerReadyButton")
-      yield (playCardResult, playerReadyButton)) match
-        case Left(errorMessage) => throw Exception(errorMessage)
-        case Right(((game, Some(trumpResult)), playerReadyButton)) =>
-          engine.storage.set(
-            StorageKeys.gameResult,
-            GameResult(game, trumpResult)
-          )
-          engine.loadScene(scenes.GameResult)
-        case Right((playCardResult, playerReadyButton)) =>
-          engine.gameModel = playCardResult._1
-          show = false
-          engine.enable(playerReadyButton)
+      engine.find[Field](Values.Ids.field) match
+        case Some(field) => field.playCard(card)(engine); show = false
+        case None        => throw Exception("Unable to find Field in game")
 
   override def onInit: Engine => Unit = engine =>
     engine.create(leftCard)

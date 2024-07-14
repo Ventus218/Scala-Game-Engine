@@ -23,6 +23,7 @@ object Values:
   object Ids:
     val gameModel: String = "gameModel"
     val playerReadyButton: String = "playerReadyButton"
+    val field: String = "field"
 
   object Text:
     val fontName: FontName = "Arial"
