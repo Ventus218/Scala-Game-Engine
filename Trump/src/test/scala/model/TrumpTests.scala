@@ -257,3 +257,17 @@ class TrumpTests extends AnyFlatSpec:
     yield (g8)).right.get
 
     newGame._2 shouldBe Some(Draw)
+
+  it should "assign every available point" in:
+    val totalAvailablePoints = initialDeck.cards.toSeq.map(_.rank.value).sum
+    def randomGame(game: Game[String]): Unit =
+      game.playCard(game.currentPlayer.hand.cards.head) match
+        case Left(error) => fail(s"The game failed before ending: $error")
+        case Right((newGame, None)) => randomGame(newGame)
+        case Right((newGame, _)) =>
+          val currentPlayerScore =
+            newGame.currentPlayer.acquiredCards.toSeq.map(_.rank.value).sum
+          val nextPlayerScore =
+            newGame.nextPlayer.acquiredCards.toSeq.map(_.rank.value).sum
+          currentPlayerScore + nextPlayerScore shouldBe totalAvailablePoints
+    randomGame(game)
