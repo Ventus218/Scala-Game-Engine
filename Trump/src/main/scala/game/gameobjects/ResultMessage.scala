@@ -9,6 +9,7 @@ import sge.swing.output.overlay.UIAnchor
 import game.GameResult
 import game.StorageKeys
 import model.TrumpResult
+import game.Trump.engine
 
 class ResultMessage()
     extends Behaviour
@@ -33,3 +34,7 @@ class ResultMessage()
       case Some(TrumpResult.Draw)        => textContent = "Draw!!"
 
     super.onStart(engine)
+
+  override def onDeinit: Engine => Unit = engine =>
+    engine.storage.unset(StorageKeys.gameResult)
+    super.onDeinit(engine)

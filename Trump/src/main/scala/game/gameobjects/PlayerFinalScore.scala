@@ -25,3 +25,7 @@ class PlayerFinalScore(val player: String, position: Vector2D)
         textContent = s"$player: $score"
 
     super.onStart(engine)
+
+  override def onDeinit: Engine => Unit = engine =>
+    engine.storage.unset(StorageKeys.gameResult)
+    super.onDeinit(engine)
