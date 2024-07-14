@@ -7,6 +7,7 @@ import game.behaviours.*
 import game.*
 import model.Cards.*
 import java.awt.Color
+import model.TrumpResult
 
 class Hand(
     val player: String,
@@ -34,6 +35,12 @@ class Hand(
           .toRight("Didn't find the PlayerReadyButton")
       yield (playCardResult, playerReadyButton)) match
         case Left(errorMessage) => throw Exception(errorMessage)
+        case Right(((game, Some(trumpResult)), playerReadyButton)) =>
+          engine.storage.set(
+            StorageKeys.gameResult,
+            GameResult(game, trumpResult)
+          )
+          engine.loadScene(scenes.GameResult)
         case Right((playCardResult, playerReadyButton)) =>
           engine.gameModel = playCardResult._1
           show = false

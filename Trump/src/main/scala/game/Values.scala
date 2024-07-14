@@ -1,6 +1,7 @@
 package game
 
 import sge.core.*
+import sge.swing.output.Text.*
 import java.awt.Color
 
 object Values:
@@ -24,5 +25,8 @@ object Values:
     val playerReadyButton: String = "playerReadyButton"
 
   object Text:
+    val fontName: FontName = "Arial"
+    val textStyle: TextStyle = TextStyle.Plain
+    val sizePixel: Int = 50
     val size: Double = 3
     val color: Color = Color.black
