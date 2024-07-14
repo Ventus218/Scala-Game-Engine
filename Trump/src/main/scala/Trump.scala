@@ -1,4 +1,3 @@
-package game
 
 import sge.core.*
 import sge.swing.*
@@ -13,4 +12,4 @@ object Trump extends App:
     .build()
   val engine = Engine(swingIO, Storage(), 60)
 
-  engine.run(scenes.Menu)
+  engine.run(game.scenes.Menu)

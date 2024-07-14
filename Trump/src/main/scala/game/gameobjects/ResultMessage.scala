@@ -9,7 +9,6 @@ import sge.swing.output.overlay.UIAnchor
 import game.GameResult
 import game.StorageKeys
 import model.TrumpResult
-import game.Trump.engine
 
 class ResultMessage()
     extends Behaviour
