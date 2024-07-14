@@ -6,6 +6,8 @@ import java.awt.Color
 import sge.swing.output.Text.*
 import sge.core.behaviours.dimension2d.Positionable
 import game.Values
+import game.behaviours.ShapeHoverAnimation
+import sge.core.behaviours.dimension2d.*
 
 class GameButton(
     val text: String,
@@ -26,3 +28,5 @@ class GameButton(
       _textOffset = (0, 0.5),
       _inputButtonTriggers = Set(MouseButton1, MouseButton3)
     )
+    with SingleScalable
+    with ShapeHoverAnimation(1, 1.05)
