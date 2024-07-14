@@ -25,6 +25,6 @@ class GameModel(id: String) extends Behaviour with Identifiable(id):
         Deck(Deck.stockDeck.shuffle.cards.take(10).toSeq*).shuffle
       case _ => Deck.stockDeck.shuffle
 
-    val players = PlayersInfo("P1", "P2").get
+    val players = PlayersInfo(Values.Players.p1PlayerName, Values.Players.p2PlayerName).get
     game = Trump(deck, players).right.get
     super.onInit(engine)

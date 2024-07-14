@@ -5,6 +5,10 @@ import sge.swing.output.Text.*
 import java.awt.Color
 
 object Values:
+  object Players:
+    val p1PlayerName: String = "P1"
+    val p2PlayerName: String = "P2"
+    
   object ImagePaths:
     val cardBackside: String = "cards/backside.png"
 

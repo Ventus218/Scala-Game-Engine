@@ -10,10 +10,10 @@ object Game extends Scene:
     TrumpReminder((-42, 28)),
     Deck(position = (-40, 0)),
     TrumpCard(position = (-30, 0)),
-    Hand("P1", (0, -20), spacing = 1),
-    AcquiredCards("P1", (40, -20)),
-    Hand("P2", (0, 20), spacing = 1),
-    AcquiredCards("P2", (40, 20)),
+    Hand(Values.Players.p1PlayerName, (0, -20), spacing = 1),
+    AcquiredCards(Values.Players.p1PlayerName, (40, -20)),
+    Hand(Values.Players.p2PlayerName, (0, 20), spacing = 1),
+    AcquiredCards(Values.Players.p2PlayerName, (40, 20)),
     Field(id = Values.Ids.field, spacing = 1),
     PlayerReadyButton(id = Values.Ids.playerReadyButton, (35, 0))
   )
