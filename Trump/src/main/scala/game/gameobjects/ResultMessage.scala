@@ -20,7 +20,8 @@ class ResultMessage()
         Values.Text.sizePixel
       ),
       color = Values.Text.color,
-      textAnchor = UIAnchor.Center
+      textAnchor = UIAnchor.Center,
+      textOffset = (0, -75)
     ):
 
   override def onStart: Engine => Unit = engine =>

@@ -16,7 +16,5 @@ object Menu extends Scene:
     MenuCardDecoration(Card(Cups, Ace), (-30, 20), rotation = -10.degrees),
     MenuCardDecoration(Card(Clubs, Ace), (33, 20), rotation = 30.degrees),
     MenuCardDecoration(Card(Coins, Ace), (30, 20), rotation = 10.degrees),
-    new Behaviour
-      with Positionable(Versor2D.up * 20)
-      with TextRenderer("Trump!", size = 10, Color.black)
+    GameTitle()
   )
