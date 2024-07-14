@@ -39,18 +39,31 @@ class Hand(
     super.onInit(engine)
 
   override def onUpdate: Engine => Unit = engine =>
+    // field is needed to hide cards from hand which were played just in the gui and not in the model
+    val field = engine.find[Field](Values.Ids.field) match
+      case None        => throw Exception("Unable to find Field in game")
+      case Some(field) => field
     val showHand = engine.gameModel.currentPlayer.info == player && show
 
     val playerHand = engine.gameModel.player(player).hand.cards
-    val newLeftCard = playerHand.headOption
+    val newLeftCard = for
+      card <- playerHand.headOption
+      newCard <- if Some(card) == field.rightCard.card then None else Some(card)
+    yield newCard
     if leftCard.card != newLeftCard then leftCard.card = newLeftCard
     leftCard.show = showHand
 
-    val newCenterCard = playerHand.drop(1).headOption
+    val newCenterCard = for
+      card <- playerHand.drop(1).headOption
+      newCard <- if Some(card) == field.rightCard.card then None else Some(card)
+    yield newCard
     if centerCard.card != newCenterCard then centerCard.card = newCenterCard
     centerCard.show = showHand
 
-    val newRightCard = playerHand.drop(2).headOption
+    val newRightCard = for
+      card <- playerHand.drop(2).headOption
+      newCard <- if Some(card) == field.rightCard.card then None else Some(card)
+    yield newCard
     if rightCard.card != newRightCard then rightCard.card = newRightCard
     rightCard.show = showHand
 
