@@ -7,6 +7,7 @@ import output.Images.*
 import sge.core.behaviours.dimension2d.Positionable
 import java.awt.Graphics2D
 import game.Values
+import sge.core.behaviours.dimension2d.PositionFollower
 
 trait ChangeableImageRenderer(
     val initialImagePath: Option[String] = Option.empty,
@@ -19,7 +20,7 @@ trait ChangeableImageRenderer(
     with Positionable:
 
   private var _imagePath: Option[String] = Option.empty
-  
+
   imagePath = initialImagePath
   def imagePath: Option[String] = _imagePath
   def imagePath_=(newValue: Option[String]) =
@@ -30,7 +31,8 @@ trait ChangeableImageRenderer(
         imageRenderer = Some(
           new Behaviour
             with ImageRenderer(path, width, height, offset, rotation, priority)
-            with Positionable(position)
+            with Positionable
+            with PositionFollower(this)
         )
 
   private var imageRenderer: Option[ImageRenderer] = Option.empty
