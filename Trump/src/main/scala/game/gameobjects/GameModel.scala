@@ -19,11 +19,12 @@ class GameModel(id: String) extends Behaviour with Identifiable(id):
   def game_=(newValue: Game[String]) = _game = Some(newValue)
 
   override def onInit: Engine => Unit = engine =>
+    given seed: Int = Random.nextInt()
     val deck = engine.storage.getOption[Boolean](StorageKeys.useSmallDeck) match
-      case Some(true) => Deck(Deck.stockDeck.cards.take(8).toSeq*)
-      case _          => Deck.stockDeck
+      case Some(true) =>
+        Deck(Deck.stockDeck.shuffle.cards.take(10).toSeq*).shuffle
+      case _ => Deck.stockDeck.shuffle
 
-    val shuffledDeck = deck.shuffle(using Random.nextInt())
     val players = PlayersInfo("P1", "P2").get
-    game = Trump(shuffledDeck, players).right.get
+    game = Trump(deck, players).right.get
     super.onInit(engine)
