@@ -7,7 +7,7 @@
 
 ## Abstract
 Si vuole realizzare un semplice game engine.
-Inoltre verranno realizzati almeno due giochi diversi, per dimostrare che il framework sia abbastanza general purpose.
+Inoltre verranno realizzati tre giochi diversi, per dimostrare che il framework sia abbastanza general purpose.
 
 Le caratteristiche di base che verranno fornite sono le seguenti:
 - Game loop
@@ -18,7 +18,12 @@ Le caratteristiche di base che verranno fornite sono le seguenti:
 
 L'intenzione è quella di utilizzare le seguenti caratteristiche peculiari di scala:
 - Mixin per realizzare quello che normalmente viene implementato con il pattern Component. In modo da fornire una esperienza di sviluppo più intuitiva.
-- DSL per definire la struttura del gioco, delle scene e degli oggetti di gioco. Questo DSL avrà lo scopo di sostituire un editor grafico con un approccio dichiarativo.
+- DSL per facilitare e rendere più intuitivo il testing dell'engine/game-loop
+
+### Componente funzionale del progetto
+Siccome si è deciso di sfruttare i mixin che sono un concetto strettamente legato alla programmazione ad oggetti, per permettere la valutazione delle nostre competenze in ambito di programmazione funzionale ci siamo concentrati nell'adottare questo paradigma nella realizzazione dei giochi piuttosto che nel motore di gioco.
+
+Per questo ognuno dei partecipanti al progetto ha realizzato in maniera totalmente autonoma il proprio gioco.
 
 ## Indice
 - [Processo di sviluppo](./docs/01_ProcessoSviluppo.md)
