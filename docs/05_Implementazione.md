@@ -162,7 +162,7 @@ engine.loadScene(Scenes.MenuScene)
 engine.loadScene(Scenes.GameScene)
 ```
 
-## SwingIO
+## SwingIO (Output)
 SwingIO è il componente grafico dell'engine, e implementa il trait IO utilizzando le funzionalità del framework Swing.
 
 Il metodo `draw` di SwingIO permette di registrare una funzione `Graphics2D => Unit`, ovvero l'operazione da applicare al contesto grafico della finestra, e la sua priorità, ovvero l'ordine con il quale queste operazioni vengono applicate.
