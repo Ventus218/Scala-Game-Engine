@@ -85,4 +85,4 @@
 |14|Realizzare gioco Corrado|Corrado|||X|
 |14|Realizzare gioco Alessandro|Alessandro|||X|
 |14|Realizzare gioco Michele|Michele|||X|
-|38|Finire documentazione (Retrospettiva)|Tutti|X|||
+|38|Finire documentazione (Retrospettiva)|Tutti|||X|
