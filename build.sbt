@@ -31,7 +31,7 @@ lazy val spaceDefender = project
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % Test,
     assembly / assemblyOutputPath := file("./SpaceDefender.jar"),
     assembly / mainClass := Some("SpaceDefender")
-  )  
+  )
 
 lazy val stealthGame = project
   .in(file("./StealthGame"))
@@ -41,5 +41,17 @@ lazy val stealthGame = project
     version := "0.1.0-SNAPSHOT",
     scalaVersion := scala3Version,
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % Test,
-    assembly / assemblyOutputPath := file("./StealthGame.jar"),
+    assembly / assemblyOutputPath := file("./StealthGame.jar")
+  )
+
+lazy val trump = project
+  .in(file("./Trump"))
+  .dependsOn(sge)
+  .settings(
+    name := "Trump",
+    version := "0.1.0-SNAPSHOT",
+    scalaVersion := scala3Version,
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.18" % Test,
+    assembly / assemblyOutputPath := file("./Trump.jar"),
+    assembly / mainClass := Some("Trump")
   )
