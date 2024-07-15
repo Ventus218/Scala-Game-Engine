@@ -15,8 +15,8 @@ Si è inoltre deciso che lo sprint backlog manterrà una storia di tutte le spri
 Le sprint dureranno una settimana ciascuna e ci si aspetta un quantitativo effettivo di lavoro da parte di ogni sviluppatore di circa 15 ore.
 
 ### Meeting
-- Un incontro a inizio sprint per decidere come suddividere agli sivluppatori le task
-- Per conciliare gli impegni degli studenti si è deciso di utilizzare un gruppo per comunicare giornalmente gli avanzamenti al posto del classico meeting ad inizio giornata
+- Un incontro a inizio sprint per decidere come suddividere agli sviluppatori le task
+- Per conciliare gli impegni degli studenti si è deciso di utilizzare un gruppo whatsapp per comunicare giornalmente gli avanzamenti al posto del classico meeting ad inizio giornata
 - Un incontro a fine sprint per valutare il risultato e applicare eventuali correzioni al processo di sviluppo
 
 ## La nostra definizione di "done"
@@ -36,9 +36,14 @@ Verrà utilizzato il modello Git-Flow.
 Per il nostro caso sembra non sarà particolarmente utile l'utilizzo di *release branch* ma nel caso in cui dovesse diventarlo allora verranno utilizzate.
 
 ### Peer review
-Ogni pull request deve essere approvata da almeno un altro componente del team prima che se ne possa fare il merge.
+Ogni pull request (su main o develop) deve essere approvata da almeno un altro componente del team prima che se ne possa fare il merge.
 
 ### Github branch protection rules
 Per rafforzare il processo di lavoro, si è applicata la seguente regola sui branch *main* e *develop*:
 
 È possibile effettuare merge solo a seguito di una pull request con test verdi e almeno una revisione da parte di uno degli sviluppatori.
+
+### Delivery
+Si sono realizzati due workflow di delivery:
+- Pubblicazione della documentazione sotto forma di GitHub Pages ([qui](/.github/workflows/deploy-gh-pages.yml) il file di configurazione)
+- Creazione di una release a seguito di nuovi tag sul branch main. Con annessa costruzione e pubblicazione dei fat JAR ([esempio](https://github.com/Ventus218/PPS-23-SGE/releases/tag/1.1.1)). ([qui](/.github/workflows/delivery.yml) il file di configurazione)

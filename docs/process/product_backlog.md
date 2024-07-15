@@ -5,7 +5,6 @@ Priority goes from top to bottom.
 
 |Id|Item|Details|
 |--|----|-------|
-|14|Realizzazione dei videogiochi di esempio||
 
 
 ## Done
@@ -47,3 +46,5 @@ Priority goes from top to bottom.
 |12|Refactor e pulizia di TestUtils||
 |36|Aggiornare diagramma modello del dominio||
 |37|Fix: cache delle immagini scalate||
+|14|Realizzazione dei videogiochi di esempio||
+|38|Finire documentazione (Retrospettiva)||

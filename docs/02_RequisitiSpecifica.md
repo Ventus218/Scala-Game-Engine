@@ -48,6 +48,8 @@ Il framework avrà le seguenti caratteristiche:
     - Definizione di un renderer 2D con sprite e dimensione di visualizzazione
     - Definizione di un collider 2D con dimensione.
     - Possibilità di leggere l'input (tastiera e mouse)
+    - Fisica semplificata (velocità e accelerazione)
+- avrà a disposizione un insieme di API che semplifichino il testing di dell'engine o degli elementi di gioco
 
 ### Sistema
 - L'engine chiama dei metodi sui game object in momenti specifici del game loop.
@@ -58,11 +60,10 @@ Il framework avrà le seguenti caratteristiche:
 ## Non funzionali
 - La flessibilità ed estensibilità del sistema sono le cose più importanti. L'obiettivo è quello di permettere potenzialmente all'utente di allargare le funzionalità del framework.
 (Ad esempio si potrebbe introdurre la possibilità di realizzare giochi 3D semplicemente creando i propri behaviour specifici)
-
-- La semplicità e intuitività di utilizzo dell'engine da parte dell'utente
+- La semplicità e intuitività di utilizzo dell'engine da parte dell'utente (essendo gli sviluppatori anche stakeholders la realizzazione di questo requisito verrà controllata in base alla loro soddisfazione)
 
 ## Implementazione
 - Dato lo scopo del progetto (dimostrare le competenze aquisite durante l'insegnamento) si utilizzerà Scala.
 - Gli svilupattori intendono utilizzare i mixin per realizzare quello che normalmente viene implementato con il pattern Component, in quanto sembra essere un buon campo di applicazione di questo concetto.
 - Per ottenere come risultato una codebase solida e di qualità si è deciso di implementare la tecnica del Test Driven Development (TDD).
-- Per implementare l'editor testuale si è deciso di sviluppare un DSL che permetta di definire le scene.
+- Per facilitare il testing dei componenti di gioco e dell'engine si svilupperà un DSL per il suddetto scopo.

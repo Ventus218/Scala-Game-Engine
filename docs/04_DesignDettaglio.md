@@ -23,7 +23,7 @@ IO è pensato per essere implementato in modo che si possa definire un qualsiasi
 
 Le classi che implementano IO possono inoltre agganciarsi a un momento specifico del game loop ovvero la fine dell'elaborazione di un frame, attraverso il metodo `onFrameEnd`, oppure alla fine dell'intero game loop attraverso il metodo `onEngineStop`.
 
-Le specifiche implementazioni di IO forniranno ai behaviour addetti all rendering o all'input tutte le informazioni e i riferimenti di cui hanno bisogno per svolgere il loro compito.
+Le specifiche implementazioni di IO forniranno ai behaviour addetti al rendering o all'input tutte le informazioni e i riferimenti di cui hanno bisogno per svolgere il loro compito.
 
 Questo implica che l'utente utilizzando una specifica implementazione di IO assuma nei behaviour che quella sia l'implementazione sottostante.
 
