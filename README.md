@@ -2,9 +2,9 @@
 ![Logo](./docs/img/logo-SGE.jpg)
 
 ## Autori
-- Alessandro Venturini
-- Michele Ravaioli
-- Corrado Stortini
+- [Alessandro Venturini](https://github.com/Ventus218)
+- [Michele Ravaioli](https://github.com/RavaMichi)
+- [Corrado Stortini](https://github.com/Corstor)
 
 ## Abstract
 Si vuole realizzare un semplice game engine.
