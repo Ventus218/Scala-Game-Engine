@@ -75,5 +75,13 @@
 |34|L'engine non deve essere runnabile più di una volta, aggiornare i test, e l'implementazione che deve lanciare delle eccezioni se necessario|Corrado|||X|
 |35|Refactor: togliere tuple dove vengono passati x e y e mettere un tipo ad-hoc|Tutti|||X|
 |13|Scelta e design dei videogiochi di esempio|Tutti|||X|
-|37|Fix: cache delle immagini scalate|Michele|X|||
 |12|Refactor e pulizia di TestUtils|Alessandro|||X|
+
+## Sprint 4 (inizio 8/07/2024)
+
+|Backlog item Id|Sprint task|Assignee|Not started|Work in progress|Done|
+|------------|-----------|------------|::|:-:|:-:|
+|37|Fix: cache delle immagini scalate|Michele|||X|
+|14|Realizzare gioco Corrado|Corrado|X|||
+|14|Realizzare gioco Alessandro|Alessandro|X|||
+|14|Realizzare gioco Michele|Michele|X|||

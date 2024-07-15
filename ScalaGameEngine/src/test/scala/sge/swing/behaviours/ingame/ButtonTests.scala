@@ -182,5 +182,6 @@ class ButtonTests extends AnyFlatSpec with BeforeAndAfterEach:
     override def pixelsPerUnit: Int = ???
     override def title: String = "???"
     override def center: Vector2D = ???
+    override def frameIconPath: String = ???
 
   extension (e: Engine) def mockIO: MockSwingIO = e.io.asInstanceOf[MockSwingIO]

@@ -14,11 +14,13 @@ trait UITextRenderer(
     private var font: Font,
     private var color: Color,
     var textAnchor: UIAnchor = UIAnchor.TopLeft,
-    var textOffset: (Int, Int) = (0, 0)
+    var textOffset: (Int, Int) = (0, 0),
+    priority: Int = Int.MaxValue
 ) extends Renderer:
   require(font != null, "text font can't be null")
   textContent = text
   textColor = color
+  this.renderingPriority = priority
 
   import UIAnchor.*
 
