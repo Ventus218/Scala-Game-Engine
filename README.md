@@ -1,4 +1,5 @@
 # Scala Game Engine
+![Logo](./docs/img/logo-SGE.jpg)
 
 ## Autori
 - Alessandro Venturini
@@ -33,3 +34,8 @@ Per questo ognuno dei partecipanti al progetto ha realizzato in maniera totalmen
 - [Implementazione](./docs/05_Implementazione.md)
 - [Testing](./docs/06_Testing.md)
 - [Retrospettiva](./docs/07_Retrospettiva.md)
+
+## Documentazione ai giochi sviluppati
+- [SpaceDefender](./docs/games/SpaceDefender.md) (Michele)
+- [StealthGame](./docs/games/StealthGame.md) (Corrado)
+- [Trump (Briscola)](./docs/games/Briscola.md) (Alessandro)
