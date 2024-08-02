@@ -1,5 +1,5 @@
 # Scala Game Engine
-![Logo](./docs/img/logo-SGE.jpg)
+![Logo](./docs/img/logo-SGE.png)
 
 ## Autori
 - [Alessandro Venturini](https://github.com/Ventus218)
