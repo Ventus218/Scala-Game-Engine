@@ -45,6 +45,11 @@ trait TimerStateMachine[T](initialState: Timer[T]) extends Behaviour:
     */
   def onStateChange(state: T)(engine: Engine): Timer[T]
 
+  override def onInit: Engine => Unit =
+    engine =>
+      super.onInit(engine)
+      timer = initialState
+
   override def onEarlyUpdate: Engine => Unit =
     engine =>
       super.onEarlyUpdate(engine)
