@@ -30,7 +30,7 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
 
   import GameConstants.*
 
-  private var playerRef:  Option[Player] = Option(Player())
+  private var playerRef:  Option[Player] = Option.empty
 
   private var score: Int = 0
 
@@ -40,6 +40,9 @@ object GameManager extends Behaviour with TimerStateMachine[GameState](Starting 
 
   override def onStateChange(state: GameState)(engine: Engine): Timer[GameState] = state match
     case Starting =>
+      playerRef = Option(Player())
+      score = 0
+      scoreText.setScore(0)
       player.foreach(engine.create)
       engine.create(scoreText)
       engine.create(healthText)
