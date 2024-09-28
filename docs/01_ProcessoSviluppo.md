@@ -46,4 +46,4 @@ Per rafforzare il processo di lavoro, si è applicata la seguente regola sui bra
 ### Delivery
 Si sono realizzati due workflow di delivery:
 - Pubblicazione della documentazione sotto forma di GitHub Pages ([qui](/.github/workflows/deploy-gh-pages.yml) il file di configurazione)
-- Creazione di una release a seguito di nuovi tag sul branch main. Con annessa costruzione e pubblicazione dei fat JAR ([esempio](https://github.com/Ventus218/PPS-23-SGE/releases/tag/1.1.1)). ([qui](/.github/workflows/delivery.yml) il file di configurazione)
+- Creazione di una release a seguito di nuovi tag sul branch main. Con annessa costruzione e pubblicazione dei fat JAR ([esempio](https://github.com/Ventus218/Scala-Game-Engine/releases/tag/1.1.4)). ([qui](/.github/workflows/delivery.yml) il file di configurazione)
