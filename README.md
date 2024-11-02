@@ -8,8 +8,11 @@
 
 ## Prova i giochi di esempio!
 
-![Space Defender inizio partita](./docs/vid/space-defender-earlygame.gif)
-![Space Defender fine partita](./docs/vid/space-defender-engame.gif)
+<!-- I know HTML's align and width are deprecated but that's the olny way to make it work on GitHub too -->
+<div align=center>
+  <img src="./docs/vid/space-defender-earlygame.gif" alt="Space Defender inizio partita" width=45%>
+  <img src="./docs/vid/space-defender-engame.gif" alt="Space Defender fine partita" width=45%>
+</div>
 
 [Qui](https://github.com/Ventus218/Scala-Game-Engine/releases/latest) si può trovare l'ultima release, i giochi sono compilati in JAR eseguibili:
 - SpaceDefender.jar
