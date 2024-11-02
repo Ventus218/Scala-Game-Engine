@@ -6,6 +6,19 @@
 - [Michele Ravaioli](https://github.com/RavaMichi)
 - [Corrado Stortini](https://github.com/Corstor)
 
+## Prova i giochi di esempio!
+
+<!-- I know HTML's align and width are deprecated but that's the olny way to make it work on GitHub too -->
+<div align=center>
+  <img src="./docs/vid/space-defender-earlygame.gif" alt="Space Defender inizio partita" width=45%>
+  <img src="./docs/vid/space-defender-engame.gif" alt="Space Defender fine partita" width=45%>
+</div>
+
+[Qui](https://github.com/Ventus218/Scala-Game-Engine/releases/latest) si può trovare l'ultima release, i giochi sono compilati in JAR eseguibili:
+- SpaceDefender.jar
+- StealthGame.jar
+- Trump.jar (Briscola)
+
 ## Abstract
 Si vuole realizzare un semplice game engine.
 Inoltre verranno realizzati tre giochi diversi, per dimostrare che il framework sia abbastanza general purpose.
