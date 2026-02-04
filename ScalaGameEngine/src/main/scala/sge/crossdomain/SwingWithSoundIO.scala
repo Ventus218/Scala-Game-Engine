@@ -6,7 +6,7 @@ import sge.swing.SwingIO
 
 import java.awt.{Color, Graphics2D}
 
-/** A combined IO that includes both graphics (SwingIO) and audio (SwingSoundIO) capabilities.
+/** A combined IO that includes both graphics (SwingIO) and audio (SoundIO) capabilities.
   * This trait allows behaviours to access both rendering and sound functionalities
   * through a single IO instance.
   */
@@ -18,7 +18,7 @@ object SwingWithSoundIO:
 
   /** Creates a new SwingWithSoundIO that combines graphics and audio IO.
     * @param swingIO the SwingIO instance for graphics
-    * @param soundIO the SwingSoundIO instance for audio
+    * @param soundIO the SoundIO instance for audio
     * @return a combined IO instance
     */
   def apply(swingIO: SwingIO, soundIO: SoundIO): SwingWithSoundIO =
@@ -48,7 +48,7 @@ object SwingWithSoundIO:
       SoundIO(masterVolume)
     )
 
-  /** Private implementation combining SwingIO and SwingSoundIO functionality.
+  /** Private implementation combining SwingIO and SoundIO functionality.
     */
   private class SwingWithSoundIOImpl(
       private val graphics: SwingIO,
