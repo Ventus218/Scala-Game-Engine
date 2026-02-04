@@ -1,4 +1,19 @@
 # Testing
+
+<!-- toc -->
+
+- [Come testare il game loop](#come-testare-il-game-loop)
+- [TestUtils](#testutils)
+  * [`TestBuilder`](#testbuilder)
+  * [`TesterObjectBuilder`](#testerobjectbuilder)
+  * [`TestingFunction`](#testingfunction)
+  * [`TestingContext`](#testingcontext)
+  * [Altri metodi per testare l'`Engine`](#altri-metodi-per-testare-lengine)
+- [Utilizzo di TestUtils](#utilizzo-di-testutils)
+- [Testing di Swing](#testing-di-swing)
+
+<!-- tocstop -->
+
 Testare un loop non è sicuramente banale, per questo si sono preparati degli strumenti per semplificare il testing. Si è cercato inoltre di consentire una sintassi leggera e *domain specific*.
 
 ## Come testare il game loop

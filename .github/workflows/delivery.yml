@@ -34,7 +34,7 @@ jobs:
       id: publish-document
       uses: shrink/actions-document-publish@v1
       with:
-        sources: 'README.md docs/*.md'
+        sources: 'docs/*.md'
     - name: Rename pdf file
       run: cp ${{ steps.publish-document.outputs.pdf }} "./Documentazione.pdf"
     - name: Release
