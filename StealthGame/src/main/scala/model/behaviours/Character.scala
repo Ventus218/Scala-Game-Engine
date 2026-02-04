@@ -8,9 +8,11 @@ import model.logic.*
 import Action.*
 import Direction.*
 import model.behaviours.CharacterCollisions.collidesWithWalls
+
 import java.awt.Color
 import config.Config.CHARACTERS_WIDTH
 import config.Config.CHARACTERS_HEIGHT
+import sge.audio.behaviours.BackgroundMusic
 
 private abstract class Character(
     width: Double = CHARACTERS_WIDTH,
@@ -24,6 +26,7 @@ private abstract class Character(
 ) extends Behaviour
     with Positionable(initialPosition)
     with ImageRenderer(imagePath, width, height)
+    with BackgroundMusic("Background.wav")
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight)
     with Velocity:
@@ -46,7 +49,8 @@ private abstract class Character(
       case RIGHT  => (speed.x, 0)
 
     if collidesWithWalls(engine, this)
-    then velocity = velocity * -1
+    then
+      velocity = velocity * -1
     else
       velocity = action match
         case IDLE   => (0, 0)

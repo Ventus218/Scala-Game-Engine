@@ -30,6 +30,14 @@
   * [Renderer](#renderer)
   * [InputHandler](#inputhandler)
   * [Button](#button)
+- [SwingSoundIO (Audio)](#swingsoundio-audio)
+  * [Architettura](#architettura-1)
+  * [Funzionalità principali](#funzionalità-principali)
+  * [Audio Behaviours](#audio-behaviours)
+    + [AudioPlayer](#audioplayer)
+    + [SoundEffect](#soundeffect)
+    + [BackgroundMusic](#backgroundmusic)
+    + [SoundEmitter](#soundemitter)
 
 <!-- tocstop -->
 
@@ -476,3 +484,115 @@ Mixa un RectRenderer per lo sfondo e ha internamente un TextRenderer per il test
 Permette di definire quali tasti (tastiera o mouse) possono premerlo.
 
 Viene premuto solo al rilascio del tasto ed inoltre si assicura che la pressione sia anche incominciata sul tasto.
+
+## SoundIO (Audio)
+SoundIO è il componente audio dell'engine, e implementa il trait IO utilizzando le funzionalità della Java Sound API (`javax.sound.sampled`).
+
+### Architettura
+Si è implementata la seguente architettura:
+- `SoundIO` è l'implementazione di `IO` che utilizza la Java Sound API per la riproduzione audio.
+- `AudioClipId` è un tipo opaco che rappresenta un identificatore univoco per ogni clip audio in riproduzione.
+
+### Funzionalità principali
+Il metodo `play` di SwingSoundIO permette di avviare la riproduzione di un file audio, specificando:
+- Il percorso del file (deve essere nella cartella resources)
+- Se deve essere riprodotto in loop
+- Il volume di riproduzione (da 0.0 a 1.0)
+
+Il metodo restituisce un `AudioClipId` che può essere utilizzato per controllare la riproduzione:
+- `stop(clipId)`: ferma la riproduzione
+- `pause(clipId)`: mette in pausa
+- `resume(clipId)`: riprende la riproduzione
+- `setVolume(clipId, volume)`: modifica il volume
+- `isPlaying(clipId)`: verifica se è in riproduzione
+
+Inoltre, è possibile impostare un `masterVolume` globale che influenza tutti i clip audio.
+
+*Esempio*
+```scala
+val soundIO: SoundIO = SoundIO
+  .withMasterVolume(0.8)    // imposta il volume master
+  .build()                   // costruisce la SoundIO
+
+// Riproduzione di un effetto sonoro
+val clipId = soundIO.play("explosion.wav", volume = 0.7)
+
+// Riproduzione di musica in loop
+val musicId = soundIO.play("bgm.wav", loop = true, volume = 0.5)
+
+// Controllo della riproduzione
+soundIO.pause(musicId)
+soundIO.resume(musicId)
+soundIO.setVolume(musicId, 0.3)
+soundIO.stop(musicId)
+
+// Ferma tutti i clip audio
+soundIO.stopAll()
+```
+
+### Audio Behaviours
+Sono stati implementati diversi behaviour per facilitare l'integrazione dell'audio nei giochi:
+
+#### AudioPlayer
+È il behaviour base che fornisce metodi protetti per interagire con SoundIO:
+- `playAudio(engine, path, loop, volume)`: avvia la riproduzione
+- `stopAudio(engine)`: ferma la riproduzione
+- `pauseAudio(engine)`: mette in pausa
+- `resumeAudio(engine)`: riprende
+- `setAudioVolume(engine, volume)`: modifica il volume
+- `isAudioPlaying(engine)`: verifica lo stato
+
+#### SoundEffect
+Un behaviour per effetti sonori che vengono riprodotti una volta quando l'oggetto viene abilitato. Utile per suoni come esplosioni, pickup, ecc.
+
+```scala
+// Effetto sonoro che viene riprodotto quando l'oggetto entra in scena
+val explosion = new Behaviour with SoundEffect("explosion.wav", volume = 0.8) {}
+```
+
+#### BackgroundMusic
+Un behaviour per la musica di sottofondo che viene riprodotta in loop. La musica si avvia all'abilitazione e si mette in pausa alla disabilitazione.
+
+```scala
+// Musica di sottofondo in loop
+val bgMusic = new Behaviour with BackgroundMusic("bgm.wav", volume = 0.6) {}
+```
+
+#### SoundEmitter
+Un behaviour che permette di riprodurre suoni on-demand tramite il metodo `playSound`. Utile quando si deve attivare un suono dalla logica di gioco.
+
+```scala
+class Player extends Behaviour with SoundEmitter:
+    def shoot(): Unit =
+        playSound("shoot.wav", volume = 0.5)
+    
+    def startEngine(): AudioClipId =
+        playLoopingSound("engine.wav", volume = 0.7)
+```
+
+### SwingWithSoundIO
+Per facilitare l'uso combinato di grafica e audio, è stato creato `SwingWithSoundIO` che combina le funzionalità di `SwingIO` e `SoundIO` in un unico IO. Questo permette di utilizzare sia i renderer grafici che i behaviour audio senza dover gestire due IO separati.
+
+*Esempio*
+```scala
+import sge.core.*
+import sge.swing.*
+import java.awt.Color
+
+object MyGame extends App:
+  val engine: Engine = Engine(
+    SwingWithSoundIO
+      .withTitle("My Game")
+      .withSize((800, 600))
+      .withPixelsPerUnitRatio(50)
+      .withBackgroundColor(Color.black)
+      .withMasterVolume(0.8)
+      .build(),
+    Storage(),
+    60
+  )
+  engine.run(myScene)
+```
+
+In questo modo, i behaviour che richiedono `SwingIO` (come i renderer) e quelli che richiedono `SoundIO` (come i behaviour audio) funzioneranno correttamente con lo stesso IO.
+
