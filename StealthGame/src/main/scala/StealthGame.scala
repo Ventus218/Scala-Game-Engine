@@ -1,10 +1,9 @@
 import sge.core.{Engine, Storage}
 import sge.swing.SwingIO
-import config.Config.{SCREEN_HEIGHT, SCREEN_WIDTH, PIXEL_UNIT_RATIO}
+import config.Config.{PIXEL_UNIT_RATIO, SCREEN_HEIGHT, SCREEN_WIDTH}
 import scenes.StartingMenu
-import scenes.LoseGame
-import scenes.WinGame
-import scenes.DifficultyMenu
+import sge.audio.SoundIO
+import sge.crossdomain.SwingWithSoundIO
 
 @main def main =
   val io = SwingIO
@@ -13,4 +12,8 @@ import scenes.DifficultyMenu
     .withPixelsPerUnitRatio(PIXEL_UNIT_RATIO)
     .build()
 
-  Engine(io, Storage(), fpsLimit = 60).run(StartingMenu)
+  val audio = SoundIO.withMasterVolume(1).build()
+
+  Engine(SwingWithSoundIO(io, audio), Storage(), fpsLimit = 60).run(
+    StartingMenu
+  )

@@ -29,6 +29,15 @@ Questo implica che l'utente utilizzando una specifica implementazione di IO assu
 
 Il caso nel quale l'utente volesse implementare più di un tipo di IO contemporaneamente sarebbe comunque realizzabile sotto al concetto di singolo IO.
 
+## [SoundIO](../src/main/scala/sge/core/SoundIO.scala)
+SoundIO è una estensione di IO che aggiunge funzionalità per la gestione dell'audio. Definisce l'interfaccia per:
+- Riprodurre clip audio (con supporto per loop e volume)
+- Controllare la riproduzione (stop, pause, resume)
+- Gestire il volume dei singoli clip
+- Fermare tutti i clip audio
+
+Ogni clip audio è identificato da un `AudioClipId`, un tipo opaco che permette di controllare la riproduzione in modo sicuro.
+
 ## [Scene](../src/main/scala/sge/core/Scene.scala)
 Siccome l'engine non ha i concetti di scene o di scena attiva, ma solo di game object, allora Scene rappresenta una struttura dati che memorizza come gli oggetti andranno creati quando questa verrà caricata dall'engine.
 
