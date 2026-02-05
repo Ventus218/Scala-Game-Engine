@@ -9,7 +9,9 @@ import GameElements.*
 import Shapes.*
 import Text.*
 import Images.*
+import Animations.*
 import java.awt.{Graphics2D, Color}
+import sge.swing.output.Animations.AnimationController.AnimationControllerBuilder
 
 /** Behaviour for rendering a generic swing game element on a SwingIO
   */
@@ -198,3 +200,77 @@ trait TextRenderer(
   this.renderOffset = offset
   this.renderRotation = rotation
   this.renderingPriority = priority
+
+/** Behaviour for rendering an animated image on a SwingIO. The animation is
+  * automatically updated every frame based on deltaTime. Sizes must be > 0, and
+  * images must be located in a resource folder.
+  */
+trait AnimatedImageRenderer(
+    animation: Animation,
+    width: Double,
+    height: Double,
+    offset: Vector2D = (0, 0),
+    rotation: Angle = 0.degrees,
+    priority: Int = 0
+) extends GameElementRenderer:
+  protected val element: AnimatedImage =
+    Animations.animatedImage(animation, width, height)
+
+  export element.{
+    elementWidth => animationWidth,
+    elementWidth_= => animationWidth_=,
+    elementHeight => animationHeight,
+    elementHeight_= => animationHeight_=,
+  }
+
+  this.renderOffset = offset
+  this.renderRotation = rotation
+  this.renderingPriority = priority
+
+  override def onUpdate: Engine => Unit =
+    engine =>
+      super.onUpdate(engine)
+      element.animation.update(engine.deltaTimeSeconds)
+
+/** Behaviour for rendering animations with multiple animation states. Uses an
+  * AnimationController to manage and switch between different animations.
+  * Useful for characters with idle, walk, run animations, etc.
+  */
+trait ControlledAnimationRenderer(
+    controller: AnimationControllerBuilder,
+    width: Double,
+    height: Double,
+    offset: Vector2D = (0, 0),
+    rotation: Angle = 0.degrees,
+    priority: Int = 0
+) extends GameElementRenderer:
+  protected val element: AnimationController = controller.build()
+
+  export element.{
+    elementWidth => animationWidth,
+    elementWidth_= => animationWidth_=,
+    elementHeight => animationHeight,
+    elementHeight_= => animationHeight_=,
+    currentAnimation,
+    currentAnimationName,
+    reset,
+    hasAnimation
+  }
+
+  this.renderOffset = offset
+  this.renderRotation = rotation
+  this.renderingPriority = priority
+
+  override def onUpdate: Engine => Unit =
+    engine =>
+      super.onUpdate(engine)
+      element.update(engine.deltaTimeSeconds)
+
+  /** Switches to a different animation by name.
+    * @param name
+    *   the name of the animation to play
+    * @param resetIfSame
+    *   whether to restart if already playing this animation
+    */
+  def playAnimation(name: String, resetIfSame: Boolean = false): Unit =
+    element.play(name, resetIfSame)

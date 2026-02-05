@@ -2,42 +2,47 @@
 
 <!-- toc -->
 
-- [Engine](#engine)
-  * [Game Loop (run() e stop())](#game-loop-run-e-stop)
-  * [Delta time nanos](#delta-time-nanos)
-  * [Limite agli FPS (Frames Per Second)](#limite-agli-fps-frames-per-second)
-  * [Metodi per trovare oggetti](#metodi-per-trovare-oggetti)
-  * [Caricamento scene](#caricamento-scene)
-  * [Creazione/Distruzione degli oggetti](#creazionedistruzione-degli-oggetti)
-  * [Abilitazione e disabilitazione degli oggetti](#abilitazione-e-disabilitazione-degli-oggetti)
-- [Storage](#storage)
-- [Scene](#scene)
-  * [Motivazioni dietro a questo approccio](#motivazioni-dietro-a-questo-approccio)
-- [SwingIO (Output)](#swingio-output)
-- [SwingIO (Input)](#swingio-input)
-  * [Architettura](#architettura)
-  * [Implementazione](#implementazione)
-- [Built-in behaviours](#built-in-behaviours)
-  * [Identifiable](#identifiable)
-  * [Positionable](#positionable)
-  * [PositionFollower](#positionfollower)
-  * [Velocity](#velocity)
-  * [Acceleration](#acceleration)
-  * [Scalable e SingleScalable](#scalable-e-singlescalable)
-  * [Collider](#collider)
-    + [RectCollider](#rectcollider)
-    + [CircleCollider](#circlecollider)
-  * [Renderer](#renderer)
-  * [InputHandler](#inputhandler)
-  * [Button](#button)
-- [SwingSoundIO (Audio)](#swingsoundio-audio)
-  * [Architettura](#architettura-1)
-  * [Funzionalità principali](#funzionalità-principali)
-  * [Audio Behaviours](#audio-behaviours)
-    + [AudioPlayer](#audioplayer)
-    + [SoundEffect](#soundeffect)
-    + [BackgroundMusic](#backgroundmusic)
-    + [SoundEmitter](#soundemitter)
+- [Implementazione](#implementazione)
+  - [Engine](#engine)
+    - [Game Loop (run() e stop())](#game-loop-run-e-stop)
+    - [Delta time nanos](#delta-time-nanos)
+    - [Limite agli FPS (Frames Per Second)](#limite-agli-fps-frames-per-second)
+    - [Metodi per trovare oggetti](#metodi-per-trovare-oggetti)
+    - [Caricamento scene](#caricamento-scene)
+    - [Creazione/Distruzione degli oggetti](#creazionedistruzione-degli-oggetti)
+    - [Abilitazione e disabilitazione degli oggetti](#abilitazione-e-disabilitazione-degli-oggetti)
+  - [Storage](#storage)
+  - [Scene](#scene)
+    - [Motivazioni dietro a questo approccio](#motivazioni-dietro-a-questo-approccio)
+  - [SwingIO (Output)](#swingio-output)
+  - [SwingIO (Input)](#swingio-input)
+    - [Architettura](#architettura)
+    - [Implementazione](#implementazione-1)
+  - [Built-in behaviours](#built-in-behaviours)
+    - [Identifiable](#identifiable)
+    - [Positionable](#positionable)
+    - [PositionFollower](#positionfollower)
+    - [Velocity](#velocity)
+    - [Acceleration](#acceleration)
+    - [Scalable e SingleScalable](#scalable-e-singlescalable)
+    - [Collider](#collider)
+      - [RectCollider](#rectcollider)
+      - [CircleCollider](#circlecollider)
+    - [Renderer](#renderer)
+    - [Animations](#animations)
+      - [AnimatedImageRenderer](#animatedimagerenderer)
+      - [ControlledAnimationRenderer](#controlledanimationrenderer)
+    - [InputHandler](#inputhandler)
+    - [Button](#button)
+  - [SoundIO (Audio)](#soundio-audio)
+    - [Architettura](#architettura-1)
+    - [Funzionalità principali](#funzionalità-principali)
+    - [Audio Behaviours](#audio-behaviours)
+      - [AudioPlayer](#audioplayer)
+      - [SoundEffect](#soundeffect)
+      - [BackgroundMusic](#backgroundmusic)
+      - [SoundEmitter](#soundemitter)
+    - [SwingWithSoundIO](#swingwithsoundio)
 
 <!-- tocstop -->
 
@@ -414,6 +419,78 @@ val overlayText: UITextRenderer = new Behaviour with UITextRenderer(
   textAnchor = UIAnchor.TopCenter
 )
 
+```
+
+### Animations
+Il sistema di animazioni permette di gestire facilmente sequenze di immagini animate. È composto da:
+
+- **AnimationFrame**: rappresenta un singolo frame con un percorso immagine e una durata in secondi
+- **Animation**: gestisce una sequenza di frame con supporto per loop, pausa, reset e navigazione tra frame
+- **AnimationController**: permette di gestire più animazioni con nomi (es. "idle", "walk", "run") e switchare tra di esse facilmente
+
+#### AnimatedImageRenderer
+Behaviour per renderizzare una singola animazione. L'animazione viene aggiornata automaticamente ogni frame.
+
+```scala
+// Creazione di un'animazione con durata uniforme
+val walkAnimation = Animation.uniform(
+  Seq("walk_0.png", "walk_1.png", "walk_2.png", "walk_3.png"),
+  frameDuration = 0.1,  // 100ms per frame
+  loop = true
+)
+
+// Creazione da pattern di nomi (run_0.png, run_1.png, ...)
+val runAnimation = Animation.fromPattern(
+  basePath = "sprites/run",
+  extension = "png",
+  frameCount = 6,
+  frameDuration = 0.08,
+  loop = true
+)
+
+// Creazione con durate personalizzate per frame
+val customAnimation = new Animation(
+  Seq(
+    AnimationFrame("frame1.png", 0.2),
+    AnimationFrame("frame2.png", 0.1),
+    AnimationFrame("frame3.png", 0.3)
+  ),
+  loop = false
+)
+
+// Utilizzo come behaviour
+val animatedSprite = new Behaviour 
+  with AnimatedImageRenderer(walkAnimation, width = 1, height = 1)
+  with Positionable(0, 0)
+```
+
+#### ControlledAnimationRenderer
+Behaviour per gestire più animazioni con un controller. Utile per personaggi con diversi stati (idle, walk, attack, ecc.).
+
+```scala
+// Creazione del controller con più animazioni
+val controller = AnimationController.builder()
+  .addAnimation("idle", Animation.uniform(Seq("idle_0.png", "idle_1.png"), 0.5))
+  .addAnimation("walk", Animation.fromPattern("walk", "png", 4, 0.1))
+  .addAnimation("attack", Animation.fromPattern("attack", "png", 6, 0.08, loop = false))
+  .withDefault("idle")
+  .build()
+
+// Utilizzo come behaviour
+class Player extends Behaviour 
+  with ControlledAnimationRenderer(controller, width = 1, height = 2)
+  with Positionable(0, 0):
+  
+  override def onUpdate: Engine => Unit = engine =>
+    super.onUpdate(engine)
+    
+    // Cambia animazione in base allo stato
+    if isMoving then
+      playAnimation("walk")
+    else if isAttacking then
+      playAnimation("attack", resetIfSame = true)
+    else
+      playAnimation("idle")
 ```
 
 ### InputHandler
