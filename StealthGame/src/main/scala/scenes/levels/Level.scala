@@ -10,6 +10,7 @@ import sge.core.*
 import behaviours.dimension2d.{Positionable, Scalable}
 import sge.swing.*
 import model.behaviours.{TopBound, BottomBound, RightBound, LeftBound}
+import sge.audio.behaviours.BackgroundMusic
 
 /** Scene containing the items that will be on every level, like the Player, the
   * UI of the lifes, the stair and the bounds of the map
@@ -31,7 +32,8 @@ object Level extends Scene:
         sprint = PLAYER_SPRINT
       ),
       LifesBehaviour(),
-      Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", stairsPosition)()
+      Stairs(STAIRS_WIDTH, STAIRS_HEIGHT, "stairs.png", stairsPosition)(),
+      new Behaviour with BackgroundMusic("Background.wav")
     ) ++ this()
 
   override def apply(): Iterable[Behaviour] = Seq(

@@ -41,7 +41,23 @@ class Player(
     sprint: Double = 1.5
 ) extends Character(
       speed = speed,
-      imagePath = "ninja.png",
+      animationControllerBuilder = AnimationController
+        .builder()
+        .withDefault("idle_front")
+        .withSize(CHARACTERS_WIDTH, CHARACTERS_HEIGHT)
+        .addAnimation("idle_front", Animation.uniform(Seq("sprites/Front_0.png"), 0.1, false))
+        .addAnimation("idle_back", Animation.uniform(Seq("sprites/Back_0.png"), 0.1, false))
+        .addAnimation("idle_left", Animation.uniform(Seq("sprites/Left_0.png"), 0.1, false))
+        .addAnimation("idle_right", Animation.uniform(Seq("sprites/Right_0.png"), 0.1, false))
+        .addAnimation("move_front", Animation.fromPattern("sprites/Front", "png", 4, 0.15))
+        .addAnimation("move_back", Animation.fromPattern("sprites/Back", "png", 4, 0.15))
+        .addAnimation("move_left", Animation.fromPattern("sprites/Left", "png", 4, 0.15))
+        .addAnimation("move_right", Animation.fromPattern("sprites/Right", "png", 4, 0.15))
+        .addAnimation("sprint_front", Animation.fromPattern("sprites/Front", "png", 4, 0.08))
+        .addAnimation("sprint_back", Animation.fromPattern("sprites/Back", "png", 4, 0.08))
+        .addAnimation("sprint_left", Animation.fromPattern("sprites/Left", "png", 4, 0.08))
+        .addAnimation("sprint_right", Animation.fromPattern("sprites/Right", "png", 4, 0.08))
+        ,
       initialPosition = initialPosition
     )(scaleWidth, scaleHeight)
     with InputHandler:
@@ -58,10 +74,31 @@ class Player(
     super.onInit(engine)
     _lifes = engine.storage.get[Int]("Lifes")
 
+  override def onEarlyUpdate: Engine => Unit = engine =>
+    action match
+      case Action.IDLE => direction match
+        case Direction.TOP => this.playAnimation("idle_back")
+        case Direction.LEFT => this.playAnimation("idle_left")
+        case Direction.BOTTOM => this.playAnimation("idle_front")
+        case Direction.RIGHT => this.playAnimation("idle_right")
+      case Action.MOVE => direction match
+        case Direction.TOP => this.playAnimation("move_back")
+        case Direction.LEFT => this.playAnimation("move_left")
+        case Direction.BOTTOM => this.playAnimation("move_front")
+        case Direction.RIGHT => this.playAnimation("move_right")
+      case Action.SPRINT => direction match
+        case Direction.TOP => this.playAnimation("sprint_back")
+        case Direction.LEFT => this.playAnimation("sprint_left")
+        case Direction.BOTTOM => this.playAnimation("sprint_front")
+        case Direction.RIGHT => this.playAnimation("sprint_right")
+    
+    super.onEarlyUpdate(engine)
+
   override def onLateUpdate: Engine => Unit = engine =>
     collidesWithWalls(engine, this)
     collidesWithEnemies(engine, this, currentScene)
     collidesWithStairs(engine, this, nextScene)
+
     super.onLateUpdate(engine)
 
   def lifes_=(l: Int) =
