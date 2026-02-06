@@ -488,7 +488,7 @@ class Player extends Behaviour
     if isMoving then
       playAnimation("walk")
     else if isAttacking then
-      playAnimation("attack", resetIfSame = true)
+      playAnimation("attack")
     else
       playAnimation("idle")
 ```
