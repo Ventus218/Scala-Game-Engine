@@ -7,14 +7,19 @@ import sge.swing.output.Images.ImageResizer
 import sge.swing.output.Animations.Animation
 import org.scalatest.BeforeAndAfterEach
 import sge.swing.output.GameElements.BaseGameElement
+import sge.swing.output.Animations.AnimationController
+import sge.swing.output.Animations.AnimationController.AnimationControllerBuilder
+import sge.swing.output.GameElements.GameElement
 
 class AnimationsTest extends AnyFlatSpec with BeforeAndAfterEach:
   val animationFrame1 = AnimationFrame("epic-crocodile.png", 0.1)
   val animationFrame2 = AnimationFrame("epic-crocodile_0.png", 0.2)
   var animation = Animation(Seq(animationFrame1, animationFrame2))
+  var controller = AnimationController(Map("default" -> animation), "default", 10, 10)
 
   override protected def beforeEach(): Unit =
     animation = Animation(Seq(animationFrame1, animationFrame2))
+    controller = AnimationController(Map("default" -> animation, "second" -> Animation(Seq(animationFrame2))), "default", 10, 10)
 
   "AnimationFrame" should "have initial values" in:
     animationFrame1.imagePath shouldBe "epic-crocodile.png"
@@ -116,3 +121,62 @@ class AnimationsTest extends AnyFlatSpec with BeforeAndAfterEach:
     image.elementWidth shouldBe 1
     image.elementHeight shouldBe 1
     image shouldBe an[BaseGameElement]
+
+  "AnimationController" should "be created" in:
+    val controller = AnimationController(Map("default" -> animation), "default", 10, 10)
+    controller.currentAnimation.frames shouldBe animation.frames
+    controller.currentAnimation.loop shouldBe animation.loop
+    controller.currentAnimationName shouldBe "default"
+    controller.hasAnimation("default") shouldBe true
+    controller.hasAnimation("other") shouldBe false
+    controller.elementWidth shouldBe 10
+    controller.elementHeight shouldBe 10
+    controller shouldBe a[BaseGameElement]
+  
+  it should "switch between frames" in:
+    controller.currentAnimationName shouldBe "default"
+    controller.play("second")
+    controller.currentAnimation.frames shouldBe Seq(animationFrame2)
+    controller.currentAnimationName shouldBe "second"
+
+  it should "not be possible to play an animation not present" in:
+    an[IllegalArgumentException] shouldBe thrownBy:
+      controller.play("other")
+
+  it should "update the current animation" in:
+    controller.update(0.02)
+    controller.currentAnimation.currentFrame shouldBe animationFrame1
+    controller.update(0.08)
+    controller.currentAnimation.currentFrame shouldBe animationFrame2
+
+  it should "reset the current animation" in:
+    controller.update(0.1)
+    controller.currentAnimation.currentFrame shouldBe animationFrame2
+    controller.reset()
+    controller.currentAnimation.currentFrame shouldBe animationFrame1
+
+  it should "not change animation if trying to change with the same animation" in:
+    controller.update(0.1)
+    controller.play("default")
+    controller.currentAnimation.currentFrame shouldBe animationFrame2
+
+  it should "have animations" in:
+    an[IllegalArgumentException] shouldBe thrownBy:
+      AnimationController(Map(), "default", 10, 10)
+
+  it should "have the default animation in the animations" in:
+    an[IllegalArgumentException] shouldBe thrownBy:
+      AnimationController(Map("other" -> animation), "default", 10, 10)
+
+  it should "be created with a factory" in:
+    val controllerFactory = AnimationController.builder().withSize(10, 10).addAnimation("default", animation).withDefault("default")
+    val controller = controllerFactory.build()
+
+    controller.currentAnimationName shouldBe "default"
+    controller.currentAnimation.frames shouldBe animation.frames
+    controller.elementHeight shouldBe 10
+    controller.elementWidth shouldBe 10
+
+  "AnimationControllerFactory" should "have a default" in:
+    an[IllegalStateException] shouldBe thrownBy:
+      AnimationController.builder().build()

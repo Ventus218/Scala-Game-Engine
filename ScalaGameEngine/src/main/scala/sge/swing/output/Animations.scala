@@ -200,14 +200,12 @@ object Animations:
     /** Switches to a different animation.
       * @param name
       *   the name of the animation to switch to
-      * @param resetIfSame
-      *   whether to reset if switching to the same animation (default false)
       */
-    def play(name: String, resetIfSame: Boolean = false): Unit =
+    def play(name: String): Unit =
       if !animations.contains(name) then
         throw IllegalArgumentException(s"Animation '$name' not found")
       
-      if name != _currentAnimationName || resetIfSame then
+      if name != _currentAnimationName then
         _currentAnimationName = name
         _currentAnimation = animations(name).copy()
 

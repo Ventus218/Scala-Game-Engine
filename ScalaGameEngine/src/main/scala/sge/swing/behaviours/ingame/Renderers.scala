@@ -269,8 +269,6 @@ trait ControlledAnimationRenderer(
   /** Switches to a different animation by name.
     * @param name
     *   the name of the animation to play
-    * @param resetIfSame
-    *   whether to restart if already playing this animation
     */
-  def playAnimation(name: String, resetIfSame: Boolean = false): Unit =
-    element.play(name, resetIfSame)
+  def playAnimation(name: String): Unit =
+    element.play(name)
