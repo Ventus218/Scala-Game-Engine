@@ -153,3 +153,17 @@ object RendererTestUtilities:
     frame.draw(topLeft.renderer(frame))
     frame.draw(topRight.renderer(frame))
     frame.show()
+
+  def animationRenderer(
+    frameNames: Seq[String],
+    framesDuration: Double,
+    width: Int,
+    height: Int,
+    loop: Boolean = true
+  ) = new Behaviour
+      with AnimatedImageRenderer(
+        Animation.uniform(frameNames, framesDuration, loop),
+        width,
+        height
+      )
+      with Positionable

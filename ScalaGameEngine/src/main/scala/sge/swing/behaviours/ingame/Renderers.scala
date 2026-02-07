@@ -206,7 +206,7 @@ trait TextRenderer(
   * images must be located in a resource folder.
   */
 trait AnimatedImageRenderer(
-    animation: Animation,
+    _animation: Animation,
     width: Double,
     height: Double,
     offset: Vector2D = (0, 0),
@@ -214,13 +214,20 @@ trait AnimatedImageRenderer(
     priority: Int = 0
 ) extends GameElementRenderer:
   protected val element: AnimatedImage =
-    Animations.animatedImage(animation, width, height)
+    Animations.animatedImage(_animation, width, height)
 
   export element.{
     elementWidth => animationWidth,
     elementWidth_= => animationWidth_=,
     elementHeight => animationHeight,
     elementHeight_= => animationHeight_=,
+    animation
+  }
+
+  export animation.{
+    frames,
+    loop,
+    totalDuration
   }
 
   this.renderOffset = offset
