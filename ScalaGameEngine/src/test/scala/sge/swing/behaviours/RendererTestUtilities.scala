@@ -155,15 +155,27 @@ object RendererTestUtilities:
     frame.show()
 
   def animationRenderer(
-    frameNames: Seq[String],
-    framesDuration: Double,
-    width: Int,
-    height: Int,
-    loop: Boolean = true
+      frameNames: Seq[String],
+      framesDuration: Double,
+      width: Int,
+      height: Int,
+      loop: Boolean = true
   ) = new Behaviour
-      with AnimatedImageRenderer(
-        Animation.uniform(frameNames, framesDuration, loop),
-        width,
-        height
-      )
-      with Positionable
+    with AnimatedImageRenderer(
+      Animation.uniform(frameNames, framesDuration, loop),
+      width,
+      height
+    )
+    with Positionable
+
+  def animationControllerRenderer(
+    builder: AnimationController.AnimationControllerBuilder,
+    width: Int,
+    height: Int
+  ) = new Behaviour
+    with Positionable
+    with ControlledAnimationRenderer(
+      builder,
+      width,
+      height
+    )

@@ -251,7 +251,7 @@ trait ControlledAnimationRenderer(
     rotation: Angle = 0.degrees,
     priority: Int = 0
 ) extends GameElementRenderer:
-  protected val element: AnimationController = controller.build()
+  protected val element: AnimationController = controller.withSize(width, height).build()
 
   export element.{
     elementWidth => animationWidth,

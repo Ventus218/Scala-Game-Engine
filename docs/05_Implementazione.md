@@ -468,13 +468,12 @@ val animatedSprite = new Behaviour
 Behaviour per gestire più animazioni con un controller. Utile per personaggi con diversi stati (idle, walk, attack, ecc.).
 
 ```scala
-// Creazione del controller con più animazioni
+// Creazione del controller builder con più animazioni
 val controller = AnimationController.builder()
   .addAnimation("idle", Animation.uniform(Seq("idle_0.png", "idle_1.png"), 0.5))
   .addAnimation("walk", Animation.fromPattern("walk", "png", 4, 0.1))
   .addAnimation("attack", Animation.fromPattern("attack", "png", 6, 0.08, loop = false))
   .withDefault("idle")
-  .build()
 
 // Utilizzo come behaviour
 class Player extends Behaviour 

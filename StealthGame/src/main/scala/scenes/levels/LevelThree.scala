@@ -45,7 +45,6 @@ object Enemies:
   def enemyAnimationController = AnimationController
         .builder()
         .withDefault("patrol")
-        .withSize(CHARACTERS_WIDTH, CHARACTERS_HEIGHT)
         .addAnimation("patrol", Animation.uniform(Seq("patrol.png"), 1))
 
   def apply() = Seq(

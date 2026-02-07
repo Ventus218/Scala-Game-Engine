@@ -44,7 +44,6 @@ class Player(
       animationControllerBuilder = AnimationController
         .builder()
         .withDefault("idle_front")
-        .withSize(CHARACTERS_WIDTH, CHARACTERS_HEIGHT)
         .addAnimation("idle_front", Animation.uniform(Seq("sprites/Front_0.png"), 0.1, false))
         .addAnimation("idle_back", Animation.uniform(Seq("sprites/Back_0.png"), 0.1, false))
         .addAnimation("idle_left", Animation.uniform(Seq("sprites/Left_0.png"), 0.1, false))

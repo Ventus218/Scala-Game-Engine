@@ -265,7 +265,7 @@ object Animations:
         * @param height
         * @return
         */
-      def withSize(width: Double, height: Double): AnimationControllerBuilder =
+      private[swing] def withSize(width: Double, height: Double): AnimationControllerBuilder =
         this.width = width
         this.height = height
         this
