@@ -20,7 +20,7 @@ class EnemiesVisualRangeTests extends AnyFlatSpec with BeforeAndAfterEach:
   val height: Double = CHARACTERS_HEIGHT
   val visualRangeSize: Double = height * 2
   val enemy =
-    new Enemy(AnimationController.builder().addAnimation("patrol", Animation.uniform(Seq("patrol.png"), 0.1, false)).withDefault("patrol").withSize(width, height), initialDirection = TOP)(visualRangeSize =
+    new Enemy(AnimationController.builder().addAnimation("patrol", Animation.uniform(Seq("patrol.png"), 0.1, false)).withDefault("patrol"), initialDirection = TOP)(visualRangeSize =
       visualRangeSize
     )
 
