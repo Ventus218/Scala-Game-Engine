@@ -8,6 +8,8 @@ import model.logic.*
 import Action.*
 import Direction.*
 import model.behaviours.CharacterCollisions.collidesWithWalls
+import AnimationController.AnimationControllerBuilder
+
 import java.awt.Color
 import config.Config.CHARACTERS_WIDTH
 import config.Config.CHARACTERS_HEIGHT
@@ -16,14 +18,14 @@ private abstract class Character(
     width: Double = CHARACTERS_WIDTH,
     height: Double = CHARACTERS_HEIGHT,
     speed: Vector2D,
-    imagePath: String,
+    animationControllerBuilder: AnimationControllerBuilder,
     initialPosition: Vector2D = (0, 0)
 )(
     scaleWidth: Double = 1,
     scaleHeight: Double = 1
 ) extends Behaviour
     with Positionable(initialPosition)
-    with ImageRenderer(imagePath, width, height)
+    with ControlledAnimationRenderer(animationControllerBuilder, width, height)
     with RectCollider(width, height)
     with Scalable(scaleWidth, scaleHeight)
     with Velocity:
@@ -46,7 +48,8 @@ private abstract class Character(
       case RIGHT  => (speed.x, 0)
 
     if collidesWithWalls(engine, this)
-    then velocity = velocity * -1
+    then
+      velocity = velocity * -1
     else
       velocity = action match
         case IDLE   => (0, 0)

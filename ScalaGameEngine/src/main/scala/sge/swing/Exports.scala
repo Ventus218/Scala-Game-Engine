@@ -13,4 +13,8 @@ export behaviours.ingame.RectRenderer
 export behaviours.ingame.OvalRenderer
 export behaviours.ingame.TextRenderer
 export behaviours.ingame.ImageRenderer
+export behaviours.ingame.AnimatedImageRenderer
+export behaviours.ingame.ControlledAnimationRenderer
 export behaviours.overlay.UITextRenderer
+export output.Animations
+export output.Animations.*

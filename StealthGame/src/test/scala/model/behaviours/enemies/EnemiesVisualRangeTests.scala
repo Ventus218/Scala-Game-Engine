@@ -12,13 +12,15 @@ import sge.core.*
 import mocks.MockSwingIO
 import config.Config.CHARACTERS_WIDTH
 import config.Config.CHARACTERS_HEIGHT
+import sge.swing.output.Animations.AnimationController
+import sge.swing.output.Animations.Animation
 
 class EnemiesVisualRangeTests extends AnyFlatSpec with BeforeAndAfterEach:
   val width: Double = CHARACTERS_WIDTH
   val height: Double = CHARACTERS_HEIGHT
   val visualRangeSize: Double = height * 2
   val enemy =
-    new Enemy("patrol.png", initialDirection = TOP)(visualRangeSize =
+    new Enemy(AnimationController.builder().addAnimation("patrol", Animation.uniform(Seq("patrol.png"), 0.1, false)).withDefault("patrol"), initialDirection = TOP)(visualRangeSize =
       visualRangeSize
     )
 
@@ -34,7 +36,7 @@ class EnemiesVisualRangeTests extends AnyFlatSpec with BeforeAndAfterEach:
   "Enemies" should "have the right visual range dimensions at startup" in:
     test(engine) on scene soThat:
       _.onLateUpdate(
-        engine.find[VisualRange]().head.shapeWidth shouldBe enemy.imageWidth
+        engine.find[VisualRange]().head.shapeWidth shouldBe enemy.animationWidth
       )
 
   it should "have the right offset at startup" in:

@@ -10,6 +10,7 @@ import model.logic.MovementStateImpl.*
 import scala.compiletime.ops.boolean
 import model.behaviours.CharacterCollisions.collidesWithWalls
 import config.Config.*
+import AnimationController.AnimationControllerBuilder
 
 /** It rappresents a general Enemy with a Visual Range.
   *
@@ -29,7 +30,7 @@ import config.Config.*
   * @param scaleHeight
   */
 class Enemy(
-    imagePath: String,
+    animationControllerBuilder: AnimationControllerBuilder,
     initialDirection: Direction,
     position: Vector2D = (0, 0),
     speed: Vector2D = (PATROL_SPEED, PATROL_SPEED),
@@ -39,7 +40,7 @@ class Enemy(
     visualRangeSize: Double = height * 2,
     scaleWidth: Double = 1,
     scaleHeight: Double = 1
-) extends Character(width, height, speed, imagePath, position)(
+) extends Character(width, height, speed, animationControllerBuilder, position)(
       scaleWidth,
       scaleHeight
     )
@@ -100,7 +101,7 @@ class Enemy(
       visualRange.positionOffset = vector * horizzontalOffset
 
     def verticalOffset =
-      (imageHeight / 2 + visualRange.shapeHeight / 2)
+      (animationHeight / 2 + visualRange.shapeHeight / 2)
 
     def horizzontalOffset =
-      (imageWidth / 2 + visualRange.shapeWidth / 2)
+      (animationWidth / 2 + visualRange.shapeWidth / 2)

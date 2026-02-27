@@ -68,14 +68,19 @@ object LevelOne extends Scene:
     val rightEnemyX: Double = SCENE_RIGHT_EDGE - CHARACTERS_WIDTH * 3
     val rightEnemyY: Double = topHorizzontalWallY - CHARACTERS_WIDTH
 
+    def enemyAnimationController = AnimationController
+        .builder()
+        .withDefault("patrol")
+        .addAnimation("patrol", Animation.uniform(Seq("patrol.png"), 1))
+
     def apply() = Seq(
       new Enemy(
-        "patrol.png",
+        enemyAnimationController,
         Direction.TOP,
         (bottomEnemyX, bottomEnemyY)
       )() with StopThenTurnRightOnCollidePattern(1),
       new Enemy(
-        "patrol.png",
+        enemyAnimationController,
         Direction.LEFT,
         (rightEnemyX, rightEnemyY)
       )() with TurningLeftPattern(2)

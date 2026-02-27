@@ -7,6 +7,7 @@ import model.behaviours.*
 import enemies.*
 import patterns.*
 import scenes.WinGame
+import sge.swing.*
 
 object LevelThree extends Scene:
   override def apply(): Iterable[Behaviour] = Level(
@@ -41,14 +42,25 @@ object Enemies:
 
   val rightEnemyX = rightWallX - wallsWidth - CHARACTERS_WIDTH / 2
 
+  def enemyAnimationController = AnimationController
+        .builder()
+        .withDefault("patrol")
+        .addAnimation("patrol", Animation.uniform(Seq("patrol.png"), 1))
+
   def apply() = Seq(
     new Enemy(
-      "patrol.png",
+      enemyAnimationController,
       Direction.LEFT,
       (movingEnemyX, movingEnemyY)
     )() with MovingPattern with TurnLeftOnCollidePattern,
-    new Enemy("patrol.png", Direction.TOP, (rightEnemyX, wallsY))()
-      with TurningLeftPattern(4),
-    new Enemy("patrol.png", Direction.TOP, (-rightEnemyX, wallsY))()
-      with TurningRightPattern(4)
+    new Enemy(
+      enemyAnimationController,
+      Direction.TOP,
+      (rightEnemyX, wallsY)
+    )() with TurningLeftPattern(4),
+    new Enemy(
+      enemyAnimationController,
+      Direction.TOP,
+      (-rightEnemyX, wallsY)
+    )() with TurningRightPattern(4)
   )

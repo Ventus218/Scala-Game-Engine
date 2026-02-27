@@ -2,34 +2,47 @@
 
 <!-- toc -->
 
-- [Engine](#engine)
-  * [Game Loop (run() e stop())](#game-loop-run-e-stop)
-  * [Delta time nanos](#delta-time-nanos)
-  * [Limite agli FPS (Frames Per Second)](#limite-agli-fps-frames-per-second)
-  * [Metodi per trovare oggetti](#metodi-per-trovare-oggetti)
-  * [Caricamento scene](#caricamento-scene)
-  * [Creazione/Distruzione degli oggetti](#creazionedistruzione-degli-oggetti)
-  * [Abilitazione e disabilitazione degli oggetti](#abilitazione-e-disabilitazione-degli-oggetti)
-- [Storage](#storage)
-- [Scene](#scene)
-  * [Motivazioni dietro a questo approccio](#motivazioni-dietro-a-questo-approccio)
-- [SwingIO (Output)](#swingio-output)
-- [SwingIO (Input)](#swingio-input)
-  * [Architettura](#architettura)
-  * [Implementazione](#implementazione)
-- [Built-in behaviours](#built-in-behaviours)
-  * [Identifiable](#identifiable)
-  * [Positionable](#positionable)
-  * [PositionFollower](#positionfollower)
-  * [Velocity](#velocity)
-  * [Acceleration](#acceleration)
-  * [Scalable e SingleScalable](#scalable-e-singlescalable)
-  * [Collider](#collider)
-    + [RectCollider](#rectcollider)
-    + [CircleCollider](#circlecollider)
-  * [Renderer](#renderer)
-  * [InputHandler](#inputhandler)
-  * [Button](#button)
+- [Implementazione](#implementazione)
+  - [Engine](#engine)
+    - [Game Loop (run() e stop())](#game-loop-run-e-stop)
+    - [Delta time nanos](#delta-time-nanos)
+    - [Limite agli FPS (Frames Per Second)](#limite-agli-fps-frames-per-second)
+    - [Metodi per trovare oggetti](#metodi-per-trovare-oggetti)
+    - [Caricamento scene](#caricamento-scene)
+    - [Creazione/Distruzione degli oggetti](#creazionedistruzione-degli-oggetti)
+    - [Abilitazione e disabilitazione degli oggetti](#abilitazione-e-disabilitazione-degli-oggetti)
+  - [Storage](#storage)
+  - [Scene](#scene)
+    - [Motivazioni dietro a questo approccio](#motivazioni-dietro-a-questo-approccio)
+  - [SwingIO (Output)](#swingio-output)
+  - [SwingIO (Input)](#swingio-input)
+    - [Architettura](#architettura)
+    - [Implementazione](#implementazione-1)
+  - [Built-in behaviours](#built-in-behaviours)
+    - [Identifiable](#identifiable)
+    - [Positionable](#positionable)
+    - [PositionFollower](#positionfollower)
+    - [Velocity](#velocity)
+    - [Acceleration](#acceleration)
+    - [Scalable e SingleScalable](#scalable-e-singlescalable)
+    - [Collider](#collider)
+      - [RectCollider](#rectcollider)
+      - [CircleCollider](#circlecollider)
+    - [Renderer](#renderer)
+    - [Animations](#animations)
+      - [AnimatedImageRenderer](#animatedimagerenderer)
+      - [ControlledAnimationRenderer](#controlledanimationrenderer)
+    - [InputHandler](#inputhandler)
+    - [Button](#button)
+  - [SoundIO (Audio)](#soundio-audio)
+    - [Architettura](#architettura-1)
+    - [Funzionalità principali](#funzionalità-principali)
+    - [Audio Behaviours](#audio-behaviours)
+      - [AudioPlayer](#audioplayer)
+      - [SoundEffect](#soundeffect)
+      - [BackgroundMusic](#backgroundmusic)
+      - [SoundEmitter](#soundemitter)
+    - [SwingWithSoundIO](#swingwithsoundio)
 
 <!-- tocstop -->
 
@@ -408,6 +421,77 @@ val overlayText: UITextRenderer = new Behaviour with UITextRenderer(
 
 ```
 
+### Animations
+Il sistema di animazioni permette di gestire facilmente sequenze di immagini animate. È composto da:
+
+- **AnimationFrame**: rappresenta un singolo frame con un percorso immagine e una durata in secondi
+- **Animation**: gestisce una sequenza di frame con supporto per loop, pausa, reset e navigazione tra frame
+- **AnimationController**: permette di gestire più animazioni con nomi (es. "idle", "walk", "run") e switchare tra di esse facilmente
+
+#### AnimatedImageRenderer
+Behaviour per renderizzare una singola animazione. L'animazione viene aggiornata automaticamente ogni frame.
+
+```scala
+// Creazione di un'animazione con durata uniforme
+val walkAnimation = Animation.uniform(
+  Seq("walk_0.png", "walk_1.png", "walk_2.png", "walk_3.png"),
+  frameDuration = 0.1,  // 100ms per frame
+  loop = true
+)
+
+// Creazione da pattern di nomi (run_0.png, run_1.png, ...)
+val runAnimation = Animation.fromPattern(
+  basePath = "sprites/run",
+  extension = "png",
+  frameCount = 6,
+  frameDuration = 0.08,
+  loop = true
+)
+
+// Creazione con durate personalizzate per frame
+val customAnimation = new Animation(
+  Seq(
+    AnimationFrame("frame1.png", 0.2),
+    AnimationFrame("frame2.png", 0.1),
+    AnimationFrame("frame3.png", 0.3)
+  ),
+  loop = false
+)
+
+// Utilizzo come behaviour
+val animatedSprite = new Behaviour 
+  with AnimatedImageRenderer(walkAnimation, width = 1, height = 1)
+  with Positionable(0, 0)
+```
+
+#### ControlledAnimationRenderer
+Behaviour per gestire più animazioni con un controller. Utile per personaggi con diversi stati (idle, walk, attack, ecc.).
+
+```scala
+// Creazione del controller builder con più animazioni
+val controller = AnimationController.builder()
+  .addAnimation("idle", Animation.uniform(Seq("idle_0.png", "idle_1.png"), 0.5))
+  .addAnimation("walk", Animation.fromPattern("walk", "png", 4, 0.1))
+  .addAnimation("attack", Animation.fromPattern("attack", "png", 6, 0.08, loop = false))
+  .withDefault("idle")
+
+// Utilizzo come behaviour
+class Player extends Behaviour 
+  with ControlledAnimationRenderer(controller, width = 1, height = 2)
+  with Positionable(0, 0):
+  
+  override def onUpdate: Engine => Unit = engine =>
+    super.onUpdate(engine)
+    
+    // Cambia animazione in base allo stato
+    if isMoving then
+      playAnimation("walk")
+    else if isAttacking then
+      playAnimation("attack")
+    else
+      playAnimation("idle")
+```
+
 ### InputHandler
 Permette allo sviluppatore di definire associazioni del tipo `input -> azione`
 
@@ -476,3 +560,115 @@ Mixa un RectRenderer per lo sfondo e ha internamente un TextRenderer per il test
 Permette di definire quali tasti (tastiera o mouse) possono premerlo.
 
 Viene premuto solo al rilascio del tasto ed inoltre si assicura che la pressione sia anche incominciata sul tasto.
+
+## SoundIO (Audio)
+SoundIO è il componente audio dell'engine, e implementa il trait IO utilizzando le funzionalità della Java Sound API (`javax.sound.sampled`).
+
+### Architettura
+Si è implementata la seguente architettura:
+- `SoundIO` è l'implementazione di `IO` che utilizza la Java Sound API per la riproduzione audio.
+- `AudioClipId` è un tipo opaco che rappresenta un identificatore univoco per ogni clip audio in riproduzione.
+
+### Funzionalità principali
+Il metodo `play` di SwingSoundIO permette di avviare la riproduzione di un file audio, specificando:
+- Il percorso del file (deve essere nella cartella resources)
+- Se deve essere riprodotto in loop
+- Il volume di riproduzione (da 0.0 a 1.0)
+
+Il metodo restituisce un `AudioClipId` che può essere utilizzato per controllare la riproduzione:
+- `stop(clipId)`: ferma la riproduzione
+- `pause(clipId)`: mette in pausa
+- `resume(clipId)`: riprende la riproduzione
+- `setVolume(clipId, volume)`: modifica il volume
+- `isPlaying(clipId)`: verifica se è in riproduzione
+
+Inoltre, è possibile impostare un `masterVolume` globale che influenza tutti i clip audio.
+
+*Esempio*
+```scala
+val soundIO: SoundIO = SoundIO
+  .withMasterVolume(0.8)    // imposta il volume master
+  .build()                   // costruisce la SoundIO
+
+// Riproduzione di un effetto sonoro
+val clipId = soundIO.play("explosion.wav", volume = 0.7)
+
+// Riproduzione di musica in loop
+val musicId = soundIO.play("bgm.wav", loop = true, volume = 0.5)
+
+// Controllo della riproduzione
+soundIO.pause(musicId)
+soundIO.resume(musicId)
+soundIO.setVolume(musicId, 0.3)
+soundIO.stop(musicId)
+
+// Ferma tutti i clip audio
+soundIO.stopAll()
+```
+
+### Audio Behaviours
+Sono stati implementati diversi behaviour per facilitare l'integrazione dell'audio nei giochi:
+
+#### AudioPlayer
+È il behaviour base che fornisce metodi protetti per interagire con SoundIO:
+- `playAudio(engine, path, loop, volume)`: avvia la riproduzione
+- `stopAudio(engine)`: ferma la riproduzione
+- `pauseAudio(engine)`: mette in pausa
+- `resumeAudio(engine)`: riprende
+- `setAudioVolume(engine, volume)`: modifica il volume
+- `isAudioPlaying(engine)`: verifica lo stato
+
+#### SoundEffect
+Un behaviour per effetti sonori che vengono riprodotti una volta quando l'oggetto viene abilitato. Utile per suoni come esplosioni, pickup, ecc.
+
+```scala
+// Effetto sonoro che viene riprodotto quando l'oggetto entra in scena
+val explosion = new Behaviour with SoundEffect("explosion.wav", volume = 0.8) {}
+```
+
+#### BackgroundMusic
+Un behaviour per la musica di sottofondo che viene riprodotta in loop. La musica si avvia all'abilitazione e si mette in pausa alla disabilitazione.
+
+```scala
+// Musica di sottofondo in loop
+val bgMusic = new Behaviour with BackgroundMusic("bgm.wav", volume = 0.6) {}
+```
+
+#### SoundEmitter
+Un behaviour che permette di riprodurre suoni on-demand tramite il metodo `playSound`. Utile quando si deve attivare un suono dalla logica di gioco.
+
+```scala
+class Player extends Behaviour with SoundEmitter:
+    def shoot(): Unit =
+        playSound("shoot.wav", volume = 0.5)
+    
+    def startEngine(): AudioClipId =
+        playLoopingSound("engine.wav", volume = 0.7)
+```
+
+### SwingWithSoundIO
+Per facilitare l'uso combinato di grafica e audio, è stato creato `SwingWithSoundIO` che combina le funzionalità di `SwingIO` e `SoundIO` in un unico IO. Questo permette di utilizzare sia i renderer grafici che i behaviour audio senza dover gestire due IO separati.
+
+*Esempio*
+```scala
+import sge.core.*
+import sge.swing.*
+import java.awt.Color
+
+object MyGame extends App:
+  val engine: Engine = Engine(
+    SwingWithSoundIO
+      .withTitle("My Game")
+      .withSize((800, 600))
+      .withPixelsPerUnitRatio(50)
+      .withBackgroundColor(Color.black)
+      .withMasterVolume(0.8)
+      .build(),
+    Storage(),
+    60
+  )
+  engine.run(myScene)
+```
+
+In questo modo, i behaviour che richiedono `SwingIO` (come i renderer) e quelli che richiedono `SoundIO` (come i behaviour audio) funzioneranno correttamente con lo stesso IO.
+
